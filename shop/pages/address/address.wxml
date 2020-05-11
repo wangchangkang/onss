@@ -1,0 +1,42 @@
+<form bindsubmit='save'>
+  <input wx:if="{{mine.id}}" hidden name='id' value='{{mine.id}}'></input>
+  <view class="weui-cells">
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">收货人</view>
+      </view>
+      <view class="weui-cell__bd">
+        <input class="weui-input" confirm-type='next' name='username' placeholder="姓名" value='{{mine.username}}' />
+      </view>
+    </view>
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">联系方式</view>
+      </view>
+      <view class="weui-cell__bd">
+        <input class="weui-input" name='phone' type='number' placeholder="请输入手机号" value='{{mine.phone}}' />
+      </view>
+    </view>
+
+    <view class="weui-cell">
+      <view class="weui-cell__hd">
+        <view class="weui-label">经纬度</view>
+      </view>
+      <view class="weui-cell__bd">
+        <text>{{mine.point[0]}} {{mine.point[1]}}</text>
+      </view>
+      <view class="weui-cell__ft" bindtap='chooseLocation'>
+        🚩
+      </view>
+    </view>
+    <view class="weui-cell weui-cell_input">
+      <view class="weui-cell__hd">
+        <view class="weui-label">详细地址</view>
+      </view>
+      <view class="weui-cell__bd">
+        <textarea cursor-spacing='75' name='detail' placeholder="例如:阳光小区7#177室" value='{{mine.detail}}' style='width:100%;font-size:15px;min-height:50px' auto-height='true'></textarea>
+      </view>
+    </view>
+  </view>
+  <button form-type="submit" type='primary' loading='{{lock}}' disabled='{{lock}}'>保存</button>
+</form>

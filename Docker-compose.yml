@@ -1,0 +1,47 @@
+version: "3"                                   # compose-file的语法版本
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=life
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=123456
+    restart: always
+  nexus:
+    container_name: nexus
+    image: "sonatype/nexus3:latest"
+    restart: always
+    ports:
+      - 8181:8181
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - /Users/wangchanghao/Desktop/work/life/nginx/conf.d:/etc/nginx/conf.d
+      - /Users/wangchanghao/Desktop/work/life/picture:/picture
+  mongo:
+    image: "mongo:latest"
+    container_name: mongo
+    restart: always
+    ports:
+      - 27017:27017
+  store:
+    image: "java:8"
+    container_name: store
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - /Users/wangchanghao/Desktop/work/life/picture:/picture
+      - /Users/wangchanghao/Desktop/work/life/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/life/store-service-0.0.1-SNAPSHOT.jar
+    depends_on:
+      - nginx
+      - mongo
+    entrypoint: ["java","-jar","/life/store-service-0.0.1-SNAPSHOT.jar"]

@@ -1,0 +1,40 @@
+<view class="weui-cells__group_form">
+	<view class="weui-cells weui-cells_form">
+		<input wx:if="{{mine.id}}" hidden name='id' value='{{mine.id}}'></input>
+		<view class="weui-cell">
+			<view class="weui-cell__hd"><label class="weui-label">联系人</label></view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" type="text" confirm-type='next' name='username' placeholder="请输入姓名" />
+			</view>
+		</view>
+
+		<view class="weui-cell">
+			<view class="weui-cell__hd"><label class="weui-label">手机号</label></view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" type="number" name='phone' pattern="[0-9]*" placeholder="请输入11位手机号" />
+			</view>
+		</view>
+
+		<view class="weui-cell">
+			<view class="weui-cell__hd"><label class="weui-label">经纬度</label></view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" type="number" pattern="[0-9]*" placeholder="请选择地址坐标" />
+			</view>
+			<view class="weui-cell__ft" bindtap='chooseLocation'>
+				🚩
+			</view>
+		</view>
+
+		<view class="weui-cell">
+			<view class="weui-cell__hd"><label class="weui-label">详情</label></view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" type="text" name='detail' placeholder="例如:阳光小区7#177室" />
+			</view>
+		</view>
+
+		<view class="weui-cell weui-flex">
+			<navigator style="width:50%" open-type="navigateBack"><button class="weui-flex__item" style="width:100%" type="default">取消</button></navigator>
+			<button class="weui-flex__item" form-type="submit" type='primary'>保存</button>
+		</view>
+	</view>
+</view>

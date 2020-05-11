@@ -1,0 +1,288 @@
+<form bindsubmit="saveStore">
+	<view class="weui-cells__title">申请特约商户</view>
+	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">商户全称</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="license.name" value="{{license.name}}" class="weui-input" placeholder="请输入营业执照名称" maxlength="10" />
+			</view>
+		</view>
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">社会信用代码</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input id="license.number" name="license.number" value="{{license.number}}" class="weui-input" bindinput="bindInput" focus='{{focus.license.number}}' placeholder="18位统一社会信用代码" maxlength="18" />
+			</view>
+		</view>
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">商户简称</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="license.title" value="{{license.title}}" class="weui-input" placeholder="请输入商户简称" maxlength="8" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">主体类型</view>
+			</view>
+			<view class="weui-cell__bd">
+				<radio-group class="weui-input radio-group" bindchange="radioChange" id='license.type'>
+					<label class="radio">
+						<radio value="INDIVIDUAL" checked="{{license.type == 'INDIVIDUAL'}}" />个体 </label>
+					<label class="radio">
+						<radio value="ENTERPRISE" checked="{{license.type == 'ENTERPRISE'}}" />企业 </label>
+				</radio-group>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">主体行业</view>
+			</view>
+			<view class="weui-cell__bd">
+				<picker disabled="{{!license.type}}" bindchange="pickerChange" id="license.industry" range="{{qualification[license.type]}}" value="{{license.industry}}">
+					<view class="weui-input">{{qualification[license.type][license.industry]}}</view>
+				</picker>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">账户类型</view>
+			</view>
+			<view class="weui-cell__bd">
+				<radio-group class="weui-input radio-group" bindchange="radioChange" id="bank.type">
+					<label class="radio"></label>
+					<radio value="PERSONAL" checked="{{bank.type == 'PERSONAL'}}" />个人
+					<label class="radio"></label>
+					<radio value="CORPORATE" checked="{{bank.type == 'CORPORATE'}}" />公户
+				</radio-group>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">开户银行</view>
+			</view>
+			<view class="weui-cell__bd">
+				<picker bindchange="pickerChange" range="{{bankes}}" id="bank.title" value="{{bank.title}}">
+					<view>{{bank.title?bankes[bank.title]:'请选择开户行'}}</view>
+				</picker>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">银行账号</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="bank.number" value="{{bank.number}}" class="weui-input" placeholder="请填写银行账号" />
+			</view>
+		</view>
+
+		<view class="weui-cell" hidden="{{bank.title != bankes.length-1}}">
+			<view class="weui-cell__hd">
+				<view class="weui-label">银行全称</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="bank.name" value="{{bank.name}}" class="weui-input" placeholder='请填写银行全称' />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">开户地址</view>
+			</view>
+			<view class="weui-cell__bd">
+				<picker id="bank.address" bindchange="regionChange" mode="region">
+					<view class="weui-input">{{bank.address.value.length===3?{...bank.address.value}:'请选择开户地址'}}</view>
+				</picker>
+			</view>
+		</view>
+
+		<image wx:if="{{legal.idCardA == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="legal.idCardA"></image>
+		<icon wx:if="{{legal.idCardA!=null}}" type="cancel" bindtap="deletePicture" id="legal.idCardA"></icon>
+		<image wx:if="{{legal.idCardA!=null}}" src="{{prefix}}{{legal.idCardA}}" mode="aspectFit" style="width:100%"></image>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">法人姓名</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="legal.username" value="{{legal.username}}" class="weui-input" placeholder="法人姓名" maxlength="8" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">法人证件号</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="legal.idCard" value="{{legal.idCard}}" class="weui-input" placeholder="法人18位身份证号" maxlength="18" />
+			</view>
+		</view>
+
+		<image wx:if="{{legal.idCardB == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="legal.idCardB"></image>
+		<icon wx:if="{{legal.idCardB!=null}}" type="cancel" bindtap="deletePicture" id="legal.idCardB"></icon>
+		<image wx:if="{{legal.idCardB!=null}}" src="{{prefix}}{{legal.idCardB}}" mode="aspectFit" style="width:100%"></image>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">开始时间</view>
+			</view>
+			<view class="weui-cell__bd">
+				<picker mode="date" bindchange="datePickerChange" id="legal.start">
+					<input name="legal.start" value="{{legal.start}}" class="weui-input" placeholder="身份证登记时间" disabled="true" />
+				</picker>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">结束时间</view>
+			</view>
+			<view class="weui-cell__bd">
+				<picker mode="date" bindchange="datePickerChange" id="legal.end">
+					<input name="legal.end" value="{{legal.end}}" class="weui-input" placeholder="身份证有效截止时间" disabled="true" />
+				</picker>
+			</view>
+		</view>
+
+		<image wx:if="{{license.picture == null}}" src="/images/五证合一.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="license.picture"></image>
+		<icon wx:if="{{license.picture!=null}}" type="cancel" bindtap="deletePicture" id="license.picture"></icon>
+		<image wx:if="{{license.picture!=null}}" src="{{prefix}}{{license.picture}}" mode="aspectFit" style="width:100%"></image>
+
+		<view class="weui-cell">
+			<view class="weui-cell__bd">
+				<view class="weui-uploader">
+					<view class="weui-uploader__hd">
+						<view class="weui-uploader__overview">
+							<view class="weui-uploader__title">小程序截图</view>
+							<view class="weui-uploader__info">{{xcxPictures?xcxPictures.length:0}}/5 <icon bindtap="clearPictues" id="xcxPictures" type="clear" size="21"></icon>
+							</view>
+						</view>
+					</view>
+					<view class="weui-uploader__bd">
+						<view class="weui-uploader__files" id="uploaderFiles">
+							<block wx:for="{{xcxPictures}}" wx:key="*this">
+								<view class="weui-uploader__file" id="{{item}}">
+									<icon type="cancel" bindtap="deletePictures" data-index="{{index}}" id="xcxPictures"></icon>
+									<image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFit" />
+								</view>
+							</block>
+						</view>
+						<view wx:if="{{!xcxPictures||xcxPictures.length<5}}" class="weui-uploader__input-box">
+							<view class="weui-uploader__input" bindtap="chooseImages" id="xcxPictures" data-count="5"></view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+
+		<view class="weui-cell">
+			<view class="weui-cell__bd">
+				<view class="weui-uploader">
+					<view class="weui-uploader__hd">
+						<view class="weui-uploader__overview">
+							<view class="weui-uploader__title">特殊资质图片</view>
+							<view class="weui-uploader__info">{{specialPictures?specialPictures.length:0}}/5 <icon bindtap="clearPictues" id="specialPictures" type="clear" size="21"></icon>
+							</view>
+						</view>
+					</view>
+					<view class="weui-uploader__bd">
+						<view class="weui-uploader__files" id="uploaderFiles">
+							<block wx:for="{{specialPictures}}" wx:key="*this">
+								<view class="weui-uploader__file" id="{{item}}">
+									<icon type="cancel" bindtap="deletePictures" id="specialPictures"></icon>
+									<image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
+								</view>
+							</block>
+						</view>
+						<view wx:if="{{!specialPictures||specialPictures.length<5}}" class="weui-uploader__input-box">
+							<view class="weui-uploader__input" bindtap="chooseImages" id="specialPictures" data-count="5"></view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">姓名</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="contacts[0].name" value="{{contacts[0].name}}" class="weui-input" placeholder="请输入管理员姓名" maxlength="8" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">身份证</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="contacts[0].idCard" value="{{contacts[0].idCard}}" class="weui-input" placeholder="请输入管理员身份证号" maxlength="18" type="number" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">手机号</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="contacts[0].phone" value="{{contacts[0].phone}}" class="weui-input" placeholder="请输入管理员手机号" maxlength="11" type="number" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">常用邮箱</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="contacts[0].email" value="{{contacts[0].email}}" class="weui-input" placeholder="请输入常用邮箱" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">客服电话</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="license.phone" value="{{license.phone}}" type="number" class="weui-input" placeholder="请输入客服电话" maxlength="11" type="number" />
+			</view>
+		</view>
+	</view>
+	<button type="primary" form-type='submit'>确定</button>
+
+</form>
+
+<!-- 超级管理员姓名 身份证号 手机号 邮箱
+
+营业执照照片 编号 名称 法人姓名
+
+法人身份证正/反信息
+
+商户简称 客服电话 小程序APPID 最多5张小程序截图
+
+入驻结算规则ID 所属行业 最多5张特殊资质图片
+
+账户类型 个人/公户 开户名称 法人姓名/企业名称 开户银行 省市编号 开户行全称 银行账号
+
+
+超级管理员姓名 身份证号 手机号 邮箱 商户简称 客服电话 最多5张小程序截图
+
+
+营业执照识别
+
+法人身份证识别
+
+
+入驻结算规则ID 所属行业 最多5张特殊资质图片
+
+私户/公户 开户银行 开户行全称 银行账号 省市编号 -->

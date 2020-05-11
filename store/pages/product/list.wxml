@@ -1,0 +1,27 @@
+<view class="weui-cells__title">
+	商品列表 <navigator url="/pages/product/create" class="fr"><button size='mini' style="font-size:28rpx" bindtap='createProduct'>+</button></navigator>
+</view>
+<view class="weui-panel">
+	<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
+		<mp-slideview buttons="{{[slideButtons[product.status]]}}" id="{{index}}" show="{{index==currentID}}" bindshow="bindShow" bindbuttontap="bindButtonTap">
+			<navigator url="/pages/product/detail?id={{product.id}}&index={{index}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+					<view class="weui-badge">{{product.total}}</view>
+					<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+				</view>
+				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+					<view class="weui-media-box__title">{{product.name}}
+						<icon wx:if="{{product.status}}" type="success" id="{{index}}" class='fr' size="16"></icon>
+						<icon wx:else type="clear" hover-stop-propagation='true' catchtap="deleteProduct" id="{{index}}" class='fr' size="16"></icon>
+					</view>
+					<view class="weui-media-box__desc">
+						<block wx:if="{{product.quality}}">
+							均价:<label class="weui-cell_warn">{{product.average}}</label>
+						</block>
+						单价:<label class="weui-cell_warn">{{product.price}}</label>
+					</view>
+				</view>
+			</navigator>
+		</mp-slideview>
+	</block>
+</view>

@@ -1,0 +1,34 @@
+<view class="weui-panel weui-media-box">
+	<view class=" weui-media-box_appmsg">
+		<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+			<image class="weui-media-box__thumb" src="/images/logo2.png" />
+		</view>
+		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+			<view class="weui-media-box__title">华盛超市</view>
+			<view class="weui-media-box__desc">联系方式：王先生 15063517240 </view>
+		</view>
+	</view>
+</view>
+<view class="weui-cells weui-cells_after-title storeInfo">
+	<view class="weui-cell" bindtap="getLocation" data-latitude="36.46227529413415" data-longitude="116.06162917523524" data-name="星美城市广场二期">
+		<view class="weui-cell__hd">店铺地址：</view>
+		<view class="weui-cell__bd">星美城市广场二期22#281</view>
+		<view class="weui-cell__ft">
+			<image src="/images/位置.png" style="height:1em;width:1em;" />
+		</view>
+	</view>
+	<view class="weui-cell" bindtap="openGallery">
+		<view class="weui-cell__hd">营业执照：</view>
+		<view class="weui-cell__bd weui-cell__ft_in-access">91371523MA3PU9M466</view>
+	</view>
+	<view class="weui-gallery {{istrue ? 'weui-gallery_show' : ''}}" bindtap="closeGallery">
+		<view class="weui-gallery__img__wrp">
+			<image mode="aspectFit" class="weui-gallery__img" src="/images/pic_160.png"></image>
+		</view>
+	</view>
+	<view class="weui-media-box">
+		<view class="weui-media-box__title">经营内容</view>
+		<view class="weui-media-box__desc" style="-webkit-line-clamp:10">果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食</view>
+	</view>
+</view>
+<txv vid="e0354z3cqjp" playerid="txv1"></txv>

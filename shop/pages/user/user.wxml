@@ -1,0 +1,40 @@
+<view class="weui-panel">
+	<view class="weui-media-box weui-media-box_appmsg">
+		<view class="weui-media-box__hd_in-appmsg">
+			<open-data class="weui-media-box__thumb" type="userAvatarUrl"></open-data>
+		</view>
+		<view class="weui-media-box__bd_in-appmsg">
+			<view class="weui-media-box__title">
+				<open-data type="userNickName"></open-data>
+			</view>
+			<view class="weui-media-box__desc">
+				<open-data type="userProvince" lang="zh_CN"></open-data>
+				<open-data type="userCity" lang="zh_CN"></open-data>
+			</view>
+		</view>
+	</view>
+</view>
+
+<view class="weui-cells">
+	<navigator class="weui-cell" hover-class="weui-cell_active" url="/pages/score/list">
+		<image mode="aspectFit" src="/images/订单2.png" style="height:1em;width:1em" />
+		<view class="weui-cell__bd">我的订单</view>
+		<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+	</navigator>
+
+	<navigator class="weui-cell" hover-class="weui-cell_active" url="/pages/address/list">
+		<image mode="aspectFit" src="/images/位置.png" style="height:1em;width:1em" />
+		<view class="weui-cell__bd">收货地址</view>
+		<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+	</navigator>
+</view>
+
+
+<official-account></official-account>
+
+
+<view class="weui-footer weui-footer_fixed-bottom">
+	<button class="weui-footer__text" open-type="contact">联系客服</button>
+	<view class="weui-footer__text">微信公众号：一九七七A</view>
+	<view class="weui-footer__text">Copyright © 2019-2020 www.1977.work</view>
+</view>

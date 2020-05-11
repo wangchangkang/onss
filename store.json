@@ -1,0 +1,130 @@
+[{
+  "_id": {
+    "$oid": "5eb3ffbf7a6b0c05a0ac8780"
+  },
+  "status": false,
+  "subMchId": "91371523MA3PU9M466",
+  "pictures": [],
+  "videos": [],
+  "point": [],
+  "license": {
+    "title": "一九七七",
+    "name": "茌平一九七七",
+    "picture": "/91371523MA3PU9M466/5b88253e2fce45d018fa1220b11cf00d.PNG",
+    "type": "ENTERPRISE",
+    "industry": 0,
+    "number": "91371523MA3PU9M466",
+    "phone": "15063517240"
+  },
+  "contacts": [
+    {
+      "openid": "opeap5cEEKLnicW3uEi31uioGY_8",
+      "role": "0",
+      "phone": "15063517240",
+      "name": "王先生",
+      "idCard": "371523199201251250",
+      "email": "forccc"
+    }
+  ],
+  "legal": {
+    "idCard": "371523199201251250",
+    "idCardA": "/91371523MA3PU9M466/dee8198cea7ec13b506d60de28b7965f.PNG",
+    "idCardB": "/91371523MA3PU9M466/dee8198cea7ec13b506d60de28b7965f.PNG",
+    "start": "2020-04-19",
+    "end": "2020-04-19"
+  },
+  "bank": {
+    "title": "17",
+    "number": "91371523MA3PU9M466",
+    "type": "CORPORATE",
+    "name": "农商银行",
+    "address": {
+      "value": [
+        "北京市",
+        "北京市",
+        "东城区"
+      ],
+      "postcode": "100010",
+      "code": [
+        "110000",
+        "110100",
+        "110101"
+      ]
+    }
+  },
+  "xcxPictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "specialPictures": [
+    "/91371523MA3PU9M466/dee8198cea7ec13b506d60de28b7965f.PNG"
+  ]
+},{
+  "_id": {
+    "$oid": "5eb4017e7a6b0c05a0ac8781"
+  },
+  "status": false,
+  "subMchId": "1",
+  "pictures": [
+    "/91371523MA3PU9M467/5b88253e2fce45d018fa1220b11cf00d.PNG",
+    "/91371523MA3PU9M467/dbaf38c08ea0767c11d6a23e639ba870.PNG",
+    "/91371523MA3PU9M467/9a6372"
+  ],
+  "videos": [
+    "l09179f499o"
+  ],
+  "point": [
+    36.65142,
+    116.90084
+  ],
+  "license": {
+    "title": "一九七七",
+    "name": "茌平一九七七",
+    "picture": "/91371523MA3PU9M467/5b88253e2fce45d018fa1220b11cf00d.PNG",
+    "type": "ENTERPRISE",
+    "industry": 0,
+    "number": "91371523MA3PU9M467",
+    "phone": "15063517240"
+  },
+  "contacts": [
+    {
+      "openid": "opeap5cEEKLnicW3uEi31uioGY_8",
+      "role": "0",
+      "phone": "15063517240",
+      "name": "王先生",
+      "idCard": "371523199201251250",
+      "email": "forccc"
+    }
+  ],
+  "legal": {
+    "idCard": "371523199201251250",
+    "idCardA": "/91371523MA3PU9M467/dee8198cea7ec13b506d60de28b7965f.PNG",
+    "idCardB": "/91371523MA3PU9M467/dee8198cea7ec13b506d60de28b7965f.PNG",
+    "start": "2020-04-19",
+    "end": "2020-04-19"
+  },
+  "bank": {
+    "title": "17",
+    "number": "91371523MA3PU9M467",
+    "type": "CORPORATE",
+    "name": "农商银行",
+    "address": {
+      "value": [
+        "北京市",
+        "北京市",
+        "东城区"
+      ],
+      "postcode": "100010",
+      "code": [
+        "110000",
+        "110100",
+        "110101"
+      ]
+    }
+  },
+  "xcxPictures": [
+    "/91371523MA3PU9M467/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "specialPictures": [
+    "/91371523MA3PU9M467/dee8198cea7ec13b506d60de28b7965f.PNG"
+  ]
+}]

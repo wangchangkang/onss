@@ -1,0 +1,21 @@
+.types{
+  border: 0;
+}
+.types .weui-grid {
+  padding: 8rpx 0rpx;
+  border: 0;
+}
+
+.types image {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.search {
+  text-align: center;
+  margin: 0rpx 20rpx 10rpx 20rpx;
+  height: 10rpx;
+  background-color: #f0f0f0;
+  border-radius: 30rpx;
+  line-height: 10rpx;
+}

@@ -1,0 +1,3 @@
+.status-1 .default,.status-0 .warn {
+  display: none;
+}
