@@ -34,7 +34,7 @@ public class ProductController {
     public Work<Product> product(@RequestHeader(name = "sid") String sid, @PathVariable String id) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         Product product = mongoTemplate.findOne(query, Product.class);
-        return Work.builder(product).code("success").msg("加载成功").build();
+        return Work.success("加载成功", product);
     }
 
     /**
@@ -46,7 +46,7 @@ public class ProductController {
     public Work<List<Product>> products(@RequestHeader(name = "sid") String sid) {
         Query query = Query.query(Criteria.where("sid").is(sid));
         List<Product> products = mongoTemplate.find(query, Product.class);
-        return Work.builder(products).code("success").msg("加载成功").build();
+        return Work.success("加载成功", products);
 
     }
 
@@ -61,10 +61,10 @@ public class ProductController {
         product.setSid(sid);
         if (product.getId() == null) {
             product = mongoTemplate.insert(product);
-            return Work.builder(product).code("success").msg("创建成功").build();
+            return Work.success("创建成功", product);
         } else {
             product = mongoTemplate.save(product);
-            return Work.builder(product).code("success").msg("编辑成功").build();
+            return Work.success("编辑成功", product);
         }
     }
 
@@ -79,7 +79,7 @@ public class ProductController {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         product.setSid(sid);
         mongoTemplate.findAndReplace(query, product);
-        return Work.builder(product).code("success").msg("编辑成功").build();
+        return Work.success("编辑成功", product);
     }
 
     /**
@@ -92,7 +92,7 @@ public class ProductController {
     public Work<Boolean> updateStatus(@RequestHeader(name = "sid") String sid, @RequestHeader(name = "status") Boolean status, @PathVariable String id) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         mongoTemplate.updateFirst(query, Update.update("status", !status), Product.class);
-        return Work.builder(!status).code("success").msg("操作成功").build();
+        return Work.success("操作成功", !status);
     }
 
     /**
@@ -104,6 +104,6 @@ public class ProductController {
     public Work<Boolean> delete(@RequestHeader(name = "sid") String sid, @PathVariable String id) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
-        return Work.builder(true).code("success").msg("删除成功").build();
+        return Work.success("删除成功", true);
     }
 }

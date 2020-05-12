@@ -60,12 +60,12 @@ public class LoginController {
             Token token = new Token();
             token.setPhone(phoneEncryptedData.getPhoneNumber());
             String authorization = Utils.createJWT("1977.work", Utils.toJson(token), session.get("openid"), null, key);
-            return Work.builder(authorization).code("fail.notfound.store").msg("您尚未成为特约商户，请申请入驻！").build();
+            return Work.message("fail.notfound.store", "您尚未成为特约商户，请申请入驻！", authorization);
         }
 
         String[] ids = stores.stream().map(Store::getId).toArray(String[]::new);
         String authorization = Utils.createJWT("1977.work", null, session.get("openid"), ids, key);
-        return Work.builder(authorization).code("success").msg("授权成功").build();
+        return Work.success("授权成功", authorization);
     }
 
 

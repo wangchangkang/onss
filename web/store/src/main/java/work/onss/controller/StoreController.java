@@ -45,7 +45,7 @@ public class StoreController {
     public Work<List<Store>> register(@RequestHeader(name = "openid") String openid) {
         Query query = Query.query(Criteria.where("contacts.openid").is(openid));
         List<Store> stores = mongoTemplate.find(query, Store.class);
-        return Work.builder(stores).code("success").msg("加载成功").build();
+        return Work.success("加载成功", stores);
     }
 
     /**
@@ -67,7 +67,7 @@ public class StoreController {
             String msg = String.format("编号: %s 已申请,请立刻截图,再联系客服", store.getLicense().getNumber());
             throw new ServiceException("fail", msg);
         }
-        return Work.builder(store).code("success").msg("请耐心等待审核结果，感谢您的支持").build();
+        return Work.success("更新成功", store);
     }
 
     /**
@@ -79,7 +79,7 @@ public class StoreController {
     public Work<Store> detail(@RequestHeader(name = "openid") String openid, @PathVariable String id) {
         Query query = Query.query(Criteria.where("id").is(id).and("contacts.openid").is(openid));
         Store store = mongoTemplate.findOne(query, Store.class);
-        return Work.builder(store).code("success").msg("加载成功").build();
+        return Work.success("加载成功", store);
     }
 
     /**
@@ -97,12 +97,12 @@ public class StoreController {
             throw new ServiceException("fail", "该已商户不存在，请联系客服!");
         }
         if (store.getSubMchId().equals(store.getLicense().getNumber())) {
-            return Work.builder("").code("fail").msg("正在审核中，请耐心等待。").build();
+            return Work.fail("正在审核中，请耐心等待。");
         } else {
             Contact contact = store.getContacts().stream().filter(item -> item.getOpenid().equals(openid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
             Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber());
             String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, aud, key);
-            return Work.builder(authorization).code("success").msg("登陆成功").build();
+            return Work.success("登陆成功", authorization);
         }
     }
 
@@ -117,7 +117,7 @@ public class StoreController {
     public Work<Boolean> updateStatus(@RequestHeader(name = "openid") String openid, @PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id).and("contacts.openid").is(openid));
         mongoTemplate.updateFirst(query, Update.update("status", !status), Store.class);
-        return Work.builder(!status).code("success").msg("更新成功").build();
+        return Work.success("更新成功", !status);
     }
 
     /**
@@ -142,7 +142,7 @@ public class StoreController {
                 .set("pictures", storeInfo.getPictures())
                 .set("videos", storeInfo.getVideos());
         mongoTemplate.updateFirst(query, update, Store.class);
-        return Work.builder(storeInfo).code("success").msg("更新成功").build();
+        return Work.success("更新成功", storeInfo);
     }
 }
 

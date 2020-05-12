@@ -28,8 +28,7 @@ public class AddressController {
     public Work<Address> saveOrInsert(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @RequestBody @Validated Address address) throws ServiceException {
         address.setUid(decodedJWT.getSubject());
         addressService.saveOrInsert(address);
-        return Work.builder(address).code("success").msg("编辑成功").build();
-
+        return Work.success("授权成功", address);
     }
 
     /**
@@ -40,7 +39,7 @@ public class AddressController {
     @DeleteMapping(value = {"address/{id}"})
     public Work<Boolean> delete(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @PathVariable String id) {
         addressService.delete(id, decodedJWT.getSubject(), Address.class);
-        return Work.builder(true).code("success").msg("删除成功").build();
+        return Work.success("删除成功", true);
 
     }
 
@@ -52,8 +51,7 @@ public class AddressController {
     @GetMapping(value = {"address/{id}"})
     public Work<Address> findOne(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @PathVariable String id) {
         Address address = addressService.findOne(id, decodedJWT.getSubject(), Address.class);
-        return Work.builder(address).code("success").msg("加载成功").build();
-
+        return Work.success("加载成功", address);
     }
 
     /**
@@ -63,7 +61,6 @@ public class AddressController {
     @GetMapping(value = {"address"})
     public Work<List<Address>> findAll(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT) {
         List<Address> addresses = addressService.findAll(decodedJWT.getSubject(), Address.class);
-        return Work.builder(addresses).code("success").msg("加载成功").build();
-
+        return Work.success("加载成功", addresses);
     }
 }

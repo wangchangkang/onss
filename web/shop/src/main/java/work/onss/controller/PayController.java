@@ -98,7 +98,7 @@ public class PayController {
         score.setPrepayId1(prepayId);
         scoreService.insert(score);
         cartService.delete(uid, carts.keySet());
-        return Work.builder(miniPayment).code("success").msg("生成订单成功").build();
+        return Work.success("生成订单成功", miniPayment);
     }
 
     @GetMapping(value = {"miniPayment1"})
@@ -106,7 +106,7 @@ public class PayController {
             @RequestParam(value = "appId") String appId,
             @RequestParam(value = "prepayId") String prepayId) throws Exception {
         Map<String, String> signMap = wxPayService.miniPayment(appId, prepayId);
-        return Work.builder(signMap).code("success").msg("生成订单成功").build();
+        return Work.success("生成订单成功", signMap);
     }
 
     @GetMapping(value = {"miniPayment2"})
@@ -152,7 +152,7 @@ public class PayController {
             } else {
                 miniPayment = wxPayService.miniPayment(score.getPrepayId2(), score.getOutTradeNo2());
             }
-            return Work.builder(miniPayment).code("success").msg("创建二次订单成功").build();
+            return Work.success("创建二次订单成功", miniPayment);
         } else {
             String format = MessageFormat.format("该订单差价信息为{0}元", score.getDifference());
             throw new ServiceException("fail", format);

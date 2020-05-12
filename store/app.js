@@ -1,7 +1,7 @@
 const { auth, authorization, token } = wx.getStorageSync('data');
 const { windowWidth } = wx.getSystemInfoSync();
 const appId = "wx095ba1a3f9396476";
-const domain = 'http://wangchanghao.local:8001/store';
+const domain = 'http://wangchanghao.local:8002/store';
 const prefix = 'http://wangchanghao.local/picture';
 
 const qualification = {
@@ -100,13 +100,14 @@ const types = [
   { id: 7, title: '母婴' },
   { id: 8, title: '书店' },
 ];
+
 App({
   globalData: {
     auth, authorization, token, windowWidth, appId, domain, prefix, types, bankes, qualification
   },
 
   chooseImages: function ({ count }) {
-    return new Promise((resolve, reject)=> {
+    return new Promise((resolve, reject) => {
       wx.chooseImage({
         count,
         sizeType: ['original', 'compressed'],
@@ -189,9 +190,34 @@ App({
     });
   },
 
+  onShow: function (e) {
+    if (e.path != '/pages/login/login') {
+      if (!this.globalData.authorization) {
+        wx.reLaunch({
+          url: '/pages/login/login'
+        })
+        return false;
+      }
+    }
+    if (e.path != '/pages/login/stores') {
+      if (!this.globalData.token || !this.globalData.token.id) {
+        wx.reLaunch({
+          url: '/pages/login/stores'
+        })
+        return false;
+      }
+    }
+  },
+
   request: function ({ url, method, data, header }) {
     return new Promise((resolve, reject) => {
-      if (!this.globalData.token.id) {
+      if (!this.globalData.auth) {
+        wx.reLaunch({
+          url: '/pages/login/login'
+        })
+        return false;
+      }
+      if (!this.globalData.token) {
         wx.reLaunch({
           url: '/pages/login/stores'
         })

@@ -36,7 +36,6 @@ public class IndexController {
 //            Map<String, Integer> num = cartList.stream().collect(Collectors.toMap(Cart::getGoodsId, Cart::getNum));
 //            index.put("num", num);
 //        }
-        return Work.builder(index).code("success").msg("加载成功").build();
-
+        return Work.success("加载成功", index);
     }
 }

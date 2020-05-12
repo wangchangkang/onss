@@ -46,12 +46,6 @@ Page({
   },
 
   onShow: function (options) {
-    if (!appInstance.globalData.authorization) {
-      wx.reLaunch({
-        url: '/pages/login/login'
-      })
-      return false;
-    }
     wx.request({
       url: `${domain}/store`,
       method: 'GET',

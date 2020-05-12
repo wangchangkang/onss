@@ -27,7 +27,7 @@ public class StoreController {
     @GetMapping(value = {"store/{id}"})
     public Work<Store> store(@PathVariable String id) {
         Store store = storeService.findById(id, Store.class);
-        return Work.builder(store).code("success").msg("加载成功").build();
+        return Work.success("加载成功", store);
     }
 
     /**
@@ -39,7 +39,7 @@ public class StoreController {
     @GetMapping(path = "store/{x}-{y}")
     public Work<Page<Store>> store(@PathVariable(name = "x") Double x, @PathVariable(name = "y") Double y, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Store> page = storeService.store(x, y, pageable);
-        return Work.builder(page).code("success").msg("加载成功").build();
+        return Work.success("加载成功", page);
     }
 
     /**
@@ -51,7 +51,7 @@ public class StoreController {
     @GetMapping(path = "store/{x}-{y}/{type}")
     public Work<Page<Store>> store(@RequestParam(name = "x") Double x, @RequestParam(name = "y") Double y, @PathVariable Integer type, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Store> page = storeService.store(x, y, type, pageable);
-        return Work.builder(page).code("success").msg("加载成功").build();
+        return Work.success("加载成功", page);
     }
 
     /**
@@ -61,7 +61,7 @@ public class StoreController {
     @PostMapping(value = {"store"})
     public Work<Store> store(@RequestBody Store store) throws ServiceException {
         storeService.store(store);
-        return Work.builder(store).code("success").msg("申请成功,请等待客服审核").build();
+        return Work.success("申请成功,请等待客服审核", store);
     }
 
 }

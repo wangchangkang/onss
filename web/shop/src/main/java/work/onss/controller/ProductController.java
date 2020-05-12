@@ -27,7 +27,7 @@ public class ProductController {
     @GetMapping(value = {"product/{id}"})
     public Work<Product> product(@PathVariable String id) {
         Product product = productService.findById(id, Product.class);
-        return Work.builder(product).code("success").msg("加载成功").build();
+        return Work.success("加载成功", product);
     }
 
     /**
@@ -37,7 +37,7 @@ public class ProductController {
     @GetMapping(value = {"product"})
     public Work<List<Product>> product(@RequestParam(name = "ids") Collection<String> ids) {
         List<Product> products = productService.findById(ids,Product.class);
-        return Work.builder(products).code("success").msg("加载成功").build();
+        return Work.success("加载成功", products);
     }
 
 

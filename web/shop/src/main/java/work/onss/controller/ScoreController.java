@@ -31,7 +31,7 @@ public class ScoreController {
     @GetMapping(value = {"score/{id}"})
     public Work<Score> score(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @PathVariable String id) {
         Score score = scoreService.findOne(id, decodedJWT.getSubject(), Score.class);
-        return Work.builder(score).code("success").msg("加载成功").build();
+        return Work.success("加载成功", score);
     }
 
     /**
@@ -42,6 +42,6 @@ public class ScoreController {
     @GetMapping(value = {"score"})
     public Work<Page<Score>> all(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<Score> scores = scoreService.findAll(decodedJWT.getSubject(), pageable, Score.class);
-        return Work.builder(scores).code("success").msg("加载成功").build();
+        return Work.success("加载成功", scores);
     }
 }

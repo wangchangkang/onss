@@ -53,6 +53,6 @@ public class PictureController {
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
-        return Work.builder(path.toString().substring(dir.length())).code("success").msg("上传成功").build();
+        return Work.success("上传成功", path.toString().substring(dir.length()));
     }
 }

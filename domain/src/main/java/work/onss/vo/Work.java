@@ -14,39 +14,46 @@ public class Work<T> implements Serializable {
     private String msg;
     private T content;
 
-    private Work(Builder<T> builder) {
-        this.code = builder.code;
-        this.msg = builder.msg;
-        this.content = builder.content;
+    public Work(String code, String msg, T t) {
+        this.code = code;
+        this.msg = msg;
+        this.content = t;
     }
 
-    public static <T> Work.Builder<T> builder(T t) {
-        return new Work.Builder<>(t);
+    public static <T> Work<T> success() {
+        return new Work<>("success", "操作成功", null);
     }
 
-    public static class Builder<T> {
-        private String code;
-        private String msg;
-        private final T content;
-
-        public Builder(T content) {
-            this.content = content;
-        }
-
-        public Builder<T> code(String code) {
-            this.code = code;
-            return this;
-        }
-
-        public Builder<T> msg(String msg) {
-            this.msg = msg;
-            return this;
-        }
-
-        public Work<T> build() {
-            return new Work<>(this);
-        }
+    public static <T> Work<T> success(T t) {
+        return new Work<>("success", "操作成功", t);
     }
 
+    public static <T> Work<T> success(String msg, T t) {
+        return new Work<>("success", msg, t);
+    }
+
+    public static <T> Work<T> fail() {
+        return new Work<>("fail", "操作失败", null);
+    }
+
+    public static <T> Work<T> fail(String msg) {
+        return new Work<>("fail", msg, null);
+    }
+
+    public static <T> Work<T> fail(String code,String msg) {
+        return new Work<>(code, msg, null);
+    }
+
+    public static <T> Work<T> fail(T t) {
+        return new Work<>("fail", "操作失败", t);
+    }
+
+    public static <T> Work<T> fail(String msg, T t) {
+        return new Work<>("fail", msg, t);
+    }
+
+    public static <T> Work<T> message(String code, String msg, T t) {
+        return new Work<>(code, msg, t);
+    }
 
 }

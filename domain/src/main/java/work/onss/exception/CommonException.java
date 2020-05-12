@@ -18,33 +18,34 @@ import java.util.StringJoiner;
 @ControllerAdvice
 @ResponseBody
 public class CommonException {
+
     @ExceptionHandler(ServiceException.class)
-    public Work<Object> handleServiceException(ServiceException e) {
-        return Work.builder(e.getData()).code(e.getCode()).msg(e.getMsg()).build();
+    public Work<Object> serviceException(ServiceException e) {
+        return Work.fail(e.getCode(), e.getMsg());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Work<Object> handleBindException1(MethodArgumentNotValidException e) {
+    public Work<Object> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         StringJoiner msg = new StringJoiner(",", "[", "]");
         e.getBindingResult().getAllErrors().forEach(item -> {
             msg.add(item.getDefaultMessage());
         });
-        return Work.builder(null).code("fail").msg(msg.toString()).build();
+        return Work.fail(msg.toString());
     }
 
     @ExceptionHandler(JWTVerificationException.class)
-    public Work<Object> handleException(JWTVerificationException e) {
-        return Work.builder(null).code("fail.login").msg("请重新登录").build();
+    public Work<Object> jwtVerificationException(JWTVerificationException e) {
+        return Work.fail("fail.login", "请重新登录");
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public Work<Object> handleException(MaxUploadSizeExceededException e) {
-        return Work.builder(null).code("fail").msg("文件大小上限为1M").build();
+    public Work<Object> maxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        return Work.fail("文件大小上限为1M");
     }
 
     @ExceptionHandler(Exception.class)
-    public Work<Object> handleException(Exception e) {
+    public Work<Object> exception(Exception e) {
         e.printStackTrace();
-        return Work.builder(null).code("fail").msg(e.getMessage() != null ? e.getMessage() : "服务器发生错误!").build();
+        return Work.fail(e.getMessage() != null ? e.getMessage() : "服务器发生错误!");
     }
 }

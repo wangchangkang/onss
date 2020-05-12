@@ -17,6 +17,6 @@ public class BaseController implements ErrorController {
 
     @RequestMapping(value = {"error"})
     public Work<String> error() {
-        return Work.builder("").code("fail").msg("请求失败！").build();
+        return Work.fail("请求失败！");
     }
 }

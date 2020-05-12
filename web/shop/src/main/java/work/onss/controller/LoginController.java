@@ -77,7 +77,7 @@ public class LoginController {
 
         result.put("authorization", null);
         result.put("pidnum", pidnum);
-        return Work.builder(result).code("success").msg("登录成功").build();
+        return Work.success("登录成功", result);
     }
 }
 

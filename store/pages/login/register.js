@@ -9,8 +9,6 @@ Page({
     focus: { license: { number: false } }
   },
 
-
-
   bindInput: function (e) {
     this.setData({
       [e.currentTarget.id]: e.detail.value
@@ -95,7 +93,6 @@ Page({
     })
   },
   saveStore: function (e) {
-
     wx.request({
       url: `${domain}/store`,
       method: 'POST',

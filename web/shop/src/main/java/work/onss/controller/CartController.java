@@ -24,7 +24,7 @@ public class CartController {
     public Work<Cart> cart(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @RequestBody Cart cart) throws ServiceException {
         cart.setUid(decodedJWT.getSubject());
         cartService.cart(cart);
-        return Work.builder(cart).code("success").msg("加入购物车成功").build();
+        return Work.success("加入购物车成功", cart);
 
     }
 
@@ -37,9 +37,7 @@ public class CartController {
     @DeleteMapping(value = {"cart/{gid}"})
     public Work<Boolean> delete(@RequestAttribute(name = "decodedJWT") DecodedJWT decodedJWT, @PathVariable String gid) {
         cartService.delete(decodedJWT.getSubject(), gid);
-        return Work.builder(true).code("success").msg("删除成功").build();
-
-
+        return Work.success("删除成功", true);
     }
 
 }
