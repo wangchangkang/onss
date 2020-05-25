@@ -356,4 +356,151 @@
     "/91371523MA3PU9M467/9a63726e0505721f68e920b0f8741c15.PNG"
   ],
   "sid": "5eb4017e7a6b0c05a0ac8781"
+},{
+  "_id": {
+    "$oid": "5ec9c9a5224f2f2583a32d31"
+  },
+  "name": "苹果",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": true,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca2c224f2f2583a32d32"
+  },
+  "name": "苹果",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": true,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca31224f2f2583a32d33"
+  },
+  "name": "香蕉",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": false,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca5f224f2f2583a32d34"
+  },
+  "name": "皇冠梨",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": false,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca71224f2f2583a32d35"
+  },
+  "name": "荔枝",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": true,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca85224f2f2583a32d36"
+  },
+  "name": "柚子",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": false,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
+},{
+  "_id": {
+    "$oid": "5ec9ca94224f2f2583a32d37"
+  },
+  "name": "小米",
+  "description": "香甜可口",
+  "remarks": "此商品在配送时，需要多图少补",
+  "price": "10",
+  "average": "1.20",
+  "quality": true,
+  "total": 100,
+  "min": 1,
+  "max": 10,
+  "label": "水果",
+  "vid": "l09179f499o",
+  "rough": 1,
+  "status": true,
+  "pictures": [
+    "/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"
+  ],
+  "sid": "5ebbe34ebc5d0527504b55b1"
 }]
