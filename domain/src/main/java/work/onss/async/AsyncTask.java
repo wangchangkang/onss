@@ -44,7 +44,7 @@ public class AsyncTask {
                 updateTotal.inc("total", -item.getNum());
                 UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(item.getPid()).and("total").gte(item.getNum())), updateTotal, Product.class);
                 if (result.getMatchedCount() == 0) {
-                    carts.put(item.getPid(), item.getName().concat(":").concat(item.getPrice()).concat("×").concat(item.getNum().toString()));
+                    carts.put(item.getPid(), item.getName().concat(":").concat(item.getPrice().toPlainString()).concat("×").concat(item.getNum().toString()));
                 }
             });
             if (carts.size() > 0) {

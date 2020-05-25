@@ -115,7 +115,7 @@
 				<view class="weui-label">法人姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="legal.username" value="{{legal.username}}" class="weui-input" placeholder="法人姓名" maxlength="8" />
+				<input name="legal.name" value="{{legal.name}}" class="weui-input" placeholder="法人姓名" maxlength="8" />
 			</view>
 		</view>
 
@@ -164,7 +164,7 @@
 					<view class="weui-uploader__hd">
 						<view class="weui-uploader__overview">
 							<view class="weui-uploader__title">小程序截图</view>
-							<view class="weui-uploader__info">{{xcxPictures?xcxPictures.length:0}}/5 <icon bindtap="clearPictues" id="xcxPictures" type="clear" size="21"></icon>
+							<view class="weui-uploader__info">{{xcxPictures.length}}/5 <icon bindtap="clearPictues" id="xcxPictures" type="clear" size="21"></icon>
 							</view>
 						</view>
 					</view>
@@ -177,7 +177,7 @@
 								</view>
 							</block>
 						</view>
-						<view wx:if="{{!xcxPictures||xcxPictures.length<5}}" class="weui-uploader__input-box">
+						<view wx:if="{{xcxPictures.length<5}}" class="weui-uploader__input-box">
 							<view class="weui-uploader__input" bindtap="chooseImages" id="xcxPictures" data-count="5"></view>
 						</view>
 					</view>
@@ -191,7 +191,7 @@
 					<view class="weui-uploader__hd">
 						<view class="weui-uploader__overview">
 							<view class="weui-uploader__title">特殊资质图片</view>
-							<view class="weui-uploader__info">{{specialPictures?specialPictures.length:0}}/5 <icon bindtap="clearPictues" id="specialPictures" type="clear" size="21"></icon>
+							<view class="weui-uploader__info">{{specialPictures.length}}/5 <icon bindtap="clearPictues" id="specialPictures" type="clear" size="21"></icon>
 							</view>
 						</view>
 					</view>
@@ -204,7 +204,7 @@
 								</view>
 							</block>
 						</view>
-						<view wx:if="{{!specialPictures||specialPictures.length<5}}" class="weui-uploader__input-box">
+						<view wx:if="{{specialPictures.length<5}}" class="weui-uploader__input-box">
 							<view class="weui-uploader__input" bindtap="chooseImages" id="specialPictures" data-count="5"></view>
 						</view>
 					</view>
@@ -246,15 +246,6 @@
 			</view>
 			<view class="weui-cell__bd">
 				<input name="contacts[0].email" value="{{contacts[0].email}}" class="weui-input" placeholder="请输入常用邮箱" />
-			</view>
-		</view>
-
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">客服电话</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input name="license.phone" value="{{license.phone}}" type="number" class="weui-input" placeholder="请输入客服电话" maxlength="11" type="number" />
 			</view>
 		</view>
 	</view>

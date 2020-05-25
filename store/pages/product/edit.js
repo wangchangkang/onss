@@ -10,7 +10,7 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages(count).then((data) => {
+    appInstance.chooseImages({count}).then((data) => {
       this.setData({
         [`${id}[${length}]`]: data
       })

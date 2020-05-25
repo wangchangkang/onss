@@ -29,6 +29,7 @@ public class WxPayServiceImpl implements WxPayService {
         return wxPay.unifiedOrder(data);
     }
 
+    @Override
     public Map<String, String> miniPayment(String appId, String prepayId) throws Exception {
         Map<String, String> signMap = new HashMap<>();
         signMap.put("appId", appId);

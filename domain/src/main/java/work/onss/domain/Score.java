@@ -10,9 +10,13 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author wangchanghao
+ */
 @NoArgsConstructor
 @Data
 @Document
@@ -22,9 +26,12 @@ public class Score implements Serializable {
     private String id;
     private String uid;
     private String sid;
+    /**
+     * 待支付 待配货 待补价 待发货 待签收 完成
+     */
     private Integer status;
     private String total;
-    private String difference;
+    private BigDecimal difference;
     private List<Item> items;
     @Indexed(unique = true)
     private String outTradeNo1;
@@ -73,7 +80,7 @@ public class Score implements Serializable {
         this.point = address.getPoint();
 
         this.status = 0;
-        this.difference = "0.00";
+        this.difference = BigDecimal.ZERO;
         this.prepayId1 = null;
         this.prepayId2 = null;
         this.payTime1 = null;

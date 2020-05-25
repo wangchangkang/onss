@@ -18,7 +18,6 @@ import work.onss.vo.Token;
 import work.onss.vo.Work;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static work.onss.domain.Store.Contact;
 
@@ -33,6 +32,8 @@ public class StoreController {
 
     @Value("${shop-weachat.key}")
     private String key;
+    @Value("${file.dir}")
+    private String dir;
     @Autowired
     protected MongoTemplate mongoTemplate;
 
@@ -55,8 +56,11 @@ public class StoreController {
      * @param store  商户信息
      */
     @PostMapping(value = {"store"})
-    public Work<Store> register(@RequestHeader(name = "openid") String openid, @RequestBody Store store) throws ServiceException {
-        store.getContacts().get(0).setOpenid(openid);
+    public Work<Store> register(@RequestHeader(name = "openid") String openid, @Validated @RequestBody Store store) throws ServiceException {
+        Contact contact = store.getContacts().get(0);
+        contact.setOpenid(openid);
+        contact.setRole(0);
+        store.setSubMchId(store.getLicense().getNumber());
         try {
             if (store.getId() == null) {
                 mongoTemplate.insert(store);
@@ -67,7 +71,7 @@ public class StoreController {
             String msg = String.format("编号: %s 已申请,请立刻截图,再联系客服", store.getLicense().getNumber());
             throw new ServiceException("fail", msg);
         }
-        return Work.success("更新成功", store);
+        return Work.success("欢迎您的加入,请耐心等待我们的审核！", store);
     }
 
     /**
@@ -109,13 +113,16 @@ public class StoreController {
     /**
      * 营业中 or 休息中
      *
-     * @param openid 微信OPENID
+     * @param role   用户权限
      * @param id     商户ID
      * @param status 营业中 or 休息中
      */
     @PutMapping(value = {"store/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@RequestHeader(name = "openid") String openid, @PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) {
-        Query query = Query.query(Criteria.where("id").is(id).and("contacts.openid").is(openid));
+    public Work<Boolean> updateStatus(@RequestHeader(name = "role") Integer role, @PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) throws ServiceException {
+        if (0 == role) {
+            throw new ServiceException("fail", "仅限管理员操作!");
+        }
+        Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("status", !status), Store.class);
         return Work.success("更新成功", !status);
     }
@@ -123,13 +130,15 @@ public class StoreController {
     /**
      * 更新商户基本信息
      *
-     * @param openid    微信OPENID
      * @param id        商户ID
      * @param storeInfo 商户信息
      */
     @PutMapping(value = {"store/{id}"})
-    public Work<StoreInfo> updateStatus(@RequestHeader(name = "openid") String openid, @PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) {
-        Query query = Query.query(Criteria.where("id").is(id).and("contacts.openid").is(openid));
+    public Work<StoreInfo> updateStatus(@RequestHeader(name = "role") Integer role, @PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) throws ServiceException {
+        if (0 == role) {
+            throw new ServiceException("fail", "仅限管理员操作!");
+        }
+        Query query = Query.query(Criteria.where("id").is(id));
         Update update = Update
                 .update("name", storeInfo.getName())
                 .set("description", storeInfo.getDescription())

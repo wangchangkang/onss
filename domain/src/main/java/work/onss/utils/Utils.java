@@ -9,7 +9,9 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.log4j.Log4j2;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
 
@@ -17,10 +19,14 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.text.DecimalFormat;
@@ -152,12 +158,9 @@ public class Utils {
             if (StringUtils.hasLength(product.getRemarks()) && !StringUtils.hasLength(cart.getRemarks())) {
                 throw new ServiceException("fail", product.getRemarks());
             }
-            String price = product.getAverage().replaceFirst("\u5143/[^\\x00-\\xff]|\u5143/[a-z]+", "");
-            BigDecimal PRICE = new BigDecimal(price);
-            BigDecimal NUM = BigDecimal.valueOf(cart.getNum());
-            BigDecimal SUM = PRICE.multiply(NUM);
-            total = total.add(SUM);
-            Item item = new Item(product.getName(), cart.getRemarks(), cart.getNum(), product.getAverage(), decimalFormat.format(SUM), product.getPrice(), product.getQuality(), product.getPictures().get(0), product.getId());
+            Item item = new Item(product);
+            item.setNum(cart.getNum());
+            item.setTotal(product.getAverage().multiply(BigDecimal.valueOf(cart.getNum())));
             items.add(item);
         }
 
@@ -218,6 +221,33 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String upload(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
+
+        String filename = file.getOriginalFilename();
+
+        if (filename == null) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+
+        int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            throw new ServiceException("fail", "文件格式错误!");
+        }
+
+        filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
+        Arrays.fill(more, more.length, more.length + 1, filename);
+        Path path = Paths.get(dir, more);
+        Path folder = path.getParent();
+        if (!Files.exists(folder) && !folder.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+
+        if (!Files.exists(path)) {
+            file.transferTo(path);
+        }
+        return path.toString().substring(dir.length());
     }
 
 }

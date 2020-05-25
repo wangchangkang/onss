@@ -37,7 +37,10 @@
 				<view class="weui-label">单价</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input class="weui-input" name="price" value="10.00元/公斤" placeholder="请输入单价" maxlength="10" />
+				<input class="weui-input" name="price" value="10" placeholder="请输入单价" maxlength="10" />
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="priceUnit" value="元/公斤" placeholder="请输入单价" maxlength="10" />
 			</view>
 		</view>
 
@@ -46,7 +49,10 @@
 				<view class="weui-label">均价</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input class="weui-input" name="average" value="1.20元/个" placeholder="请输入均价" maxlength="10" />
+				<input class="weui-input" name="average" value="1.20" placeholder="请输入均价" maxlength="10" />
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="averageUnit" value="元/个" placeholder="请输入均价" maxlength="10" />
 			</view>
 		</view>
 

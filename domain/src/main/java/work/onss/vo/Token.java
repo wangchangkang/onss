@@ -17,7 +17,7 @@ public class Token implements Serializable {
     private String id;
     private String subMchId;
     private Boolean status;
-    private String role;
+    private Integer role;
     private String phone;
     private String idCard;
     private String email;

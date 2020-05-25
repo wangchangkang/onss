@@ -9,8 +9,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
+/**
+ * 商品
+ *
+ * @author wangchanghao
+ */
 @Log4j2
 @Data
 @NoArgsConstructor
@@ -24,10 +31,14 @@ public class Product implements Serializable {
     private String description;
     @NotBlank(message = "请填写商品购买须知")
     private String remarks;
-    @Pattern(regexp = "^\\d+.\\d{2}元/.*", message = "单价格式错误")
-    private String price;
-    @Pattern(regexp = "^\\d+.\\d{2}元/.*", message = "均价格式错误")
-    private String average;
+    @NotBlank(message = "单位不能为空")
+    private String priceUnit;
+    @NotNull(message = "单价不能为空")
+    private BigDecimal price;
+    @NotBlank(message = "单位不能为空")
+    private String averageUnit;
+    @NotNull(message = "均价不能为空")
+    private BigDecimal average;
     @NotNull(message = "是否需要称重?")
     private Boolean quality;
     @NotNull(message = "请填写库存数量")

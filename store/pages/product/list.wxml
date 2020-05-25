@@ -16,9 +16,9 @@
 					</view>
 					<view class="weui-media-box__desc">
 						<block wx:if="{{product.quality}}">
-							均价:<label class="weui-cell_warn">{{product.average}}</label>
+							均价:<label class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label>
 						</block>
-						单价:<label class="weui-cell_warn">{{product.price}}</label>
+						单价:<label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label>
 					</view>
 				</view>
 			</navigator>

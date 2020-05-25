@@ -58,6 +58,7 @@ public class LoginController {
         List<Store> stores = mongoTemplate.find(query, Store.class);
         if (stores.size() == 0) {
             Token token = new Token();
+            token.setRole(0);
             token.setPhone(phoneEncryptedData.getPhoneNumber());
             String authorization = Utils.createJWT("1977.work", Utils.toJson(token), session.get("openid"), null, key);
             return Work.message("fail.notfound.store", "您尚未成为特约商户，请申请入驻！", authorization);

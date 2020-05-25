@@ -1,8 +1,8 @@
 const { auth, authorization, token } = wx.getStorageSync('data');
 const { windowWidth } = wx.getSystemInfoSync();
 const appId = "wx095ba1a3f9396476";
-const domain = 'http://wangchanghao.local:8002/store';
-const prefix = 'http://wangchanghao.local/picture';
+const domain = 'http://192.168.0.103:8002/store';
+const prefix = 'http://192.168.0.103/picture';
 
 const qualification = {
   "INDIVIDUAL": [
@@ -106,28 +106,86 @@ App({
     auth, authorization, token, windowWidth, appId, domain, prefix, types, bankes, qualification
   },
 
-  chooseImages: function ({ count }) {
+  chooseImages: function ({ header, count, number = this.globalData.token.number }) {
     return new Promise((resolve, reject) => {
-      wx.chooseImage({
-        count,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
-        success: res => {
-          wx.showLoading({
-            title: '加载中',
-            mask: true
-          })
-          for (let filePath of res.tempFilePaths) {
+      if (!number) {
+        wx.showModal({
+          title: '提示',
+          content: '缺少请求参数[社会信用代码]',
+          showCancel: false,
+        })
+      } else {
+        wx.chooseImage({
+          count,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success: res => {
+            wx.showLoading({
+              title: '加载中',
+              mask: true
+            })
+            for (let filePath of res.tempFilePaths) {
+              wx.uploadFile({
+                header: {
+                  ...header,
+                  authorization: this.globalData.authorization
+                },
+                url:`${domain}/store/${number}/picture`,
+                filePath: filePath,
+                name: 'file',
+                success: res => {
+                  const data = JSON.parse(res.data);
+                  if (data.code === "success") {
+                    resolve(data.content)
+                  } else {
+                    wx.showModal({
+                      title: '提示',
+                      content: data.msg,
+                      showCancel: false,
+                    })
+                  }
+                  wx.hideLoading()
+                },
+                fail: (res) => {
+                  wx.hideLoading()
+                }
+              })
+            }
+          }
+        })
+      }
+    })
+  },
+  chooseImage: function ({ header, number = this.globalData.token.number }) {
+    return new Promise((resolve, reject) => {
+      if (!number) {
+        wx.showModal({
+          title: '提示',
+          content: '缺少请求参数[社会信用代码]',
+          showCancel: false,
+        })
+      } else {
+        wx.chooseImage({
+          count: 1,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success: res => {
+            wx.showLoading({
+              title: '加载中',
+              mask: true
+            })
             wx.uploadFile({
               header: {
-                number: this.globalData.token.number,
+                  ...header,
                 authorization: this.globalData.authorization
               },
-              url: `${domain}/picture`,
-              filePath: filePath,
+              url:`${domain}/store/${number}/picture`,
+              filePath: res.tempFilePaths[0],
               name: 'file',
               success: res => {
                 const data = JSON.parse(res.data);
+                console.log(data)
+                wx.hideLoading()
                 if (data.code === "success") {
                   resolve(data.content)
                 } else {
@@ -137,60 +195,18 @@ App({
                     showCancel: false,
                   })
                 }
-                wx.hideLoading()
               },
               fail: (res) => {
                 wx.hideLoading()
               }
             })
           }
-        }
-      })
-    })
-
-  },
-  chooseImage: function () {
-    return new Promise((resolve, reject) => {
-      wx.chooseImage({
-        count: 1,
-        sizeType: ['original', 'compressed'],
-        sourceType: ['album', 'camera'],
-        success: res => {
-          wx.showLoading({
-            title: '加载中',
-            mask: true
-          })
-          wx.uploadFile({
-            header: {
-              number: this.globalData.token.number,
-              authorization: this.globalData.authorization
-            },
-            url: `${domain}/picture`,
-            filePath: res.tempFilePaths[0],
-            name: 'file',
-            success: res => {
-              const data = JSON.parse(res.data);
-              wx.hideLoading()
-              if (data.code === "success") {
-                resolve(data.content)
-              } else {
-                wx.showModal({
-                  title: '提示',
-                  content: data.msg,
-                  showCancel: false,
-                })
-              }
-            },
-            fail: (res) => {
-              wx.hideLoading()
-            }
-          })
-        }
-      })
+        })
+      }
     });
   },
 
-  onShow: function (e) {
+  onLaunch: function (e) {
     if (e.path != '/pages/login/login') {
       if (!this.globalData.authorization) {
         wx.reLaunch({
@@ -231,6 +247,7 @@ App({
         url, method, data,
         header: {
           ...header,
+          role: this.globalData.token.role,
           authorization: this.globalData.authorization,
           openid: this.globalData.auth.jti,
           sid: this.globalData.token.id

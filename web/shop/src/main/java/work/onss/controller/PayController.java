@@ -120,7 +120,7 @@ public class PayController {
 
         if (score == null) {
             throw new ServiceException("fail", "该订单不存在");
-        } else if (score.getDifference().startsWith("-")) {
+        } else if (score.getDifference().compareTo(BigDecimal.ZERO) < 0) {
             List<String> audience = decodedJWT.getAudience();
             if (!audience.contains(subAppId)) {
                 String format = String.format("小程序ID: %s 未授权,请立刻截图，再联系客服", subAppId);

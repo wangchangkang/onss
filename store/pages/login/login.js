@@ -8,11 +8,13 @@ Page({
     })
     wx.login({
       success: ({ code }) => {
+        console.log(code)
         wx.request({
           url: `${domain}/wxLogin`,
           method: "POST",
           data: { code, appId, ...detail },
           success: ({ data }) => {
+            console.log(data)
             const { code, msg, content } = data;
             if (code === 'success') {
               const playload = String.fromCharCode.apply(null, new Uint8Array(wx.base64ToArrayBuffer(content.split('.')[1])));

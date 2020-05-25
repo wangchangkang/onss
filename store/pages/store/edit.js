@@ -3,6 +3,18 @@ const { windowWidth, domain, prefix, types } = appInstance.globalData;
 Page({
   data: {
     prefix, domain, windowWidth, types,
+    name: '一九七七',
+    description: '计算机软件的研发、技术转让、技术服务、物联网技术；初级食用农产品销售配送服务。',
+    username: '王先生',
+    phone: '15063517240',
+    point: [100, 100],
+    address: '山东省聊城市茌平县胡屯乡马沙窝村',
+    type: 1,
+    trademark: '',
+    videos: [
+      'l09179f499o'
+    ]
+
   },
   bindPickerChange: function (e) {
     const id = e.currentTarget.id;
@@ -50,7 +62,7 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages(count).then((data) => {
+    appInstance.chooseImages({ header: appInstance.globalData.token.role, count }).then((data) => {
       this.setData({
         [`${id}[${length}]`]: data
       })
@@ -59,7 +71,8 @@ Page({
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    appInstance.chooseImage().then((data) => {
+    appInstance.chooseImage({ header: appInstance.globalData.token.role }).then((data) => {
+      console.log(data)
       this.setData({
         [`${id}`]: data
       })
@@ -126,7 +139,7 @@ Page({
         }
       })
       this.setData({
-        ...content, index, store: content
+        ...content,index, store: content
       })
     })
   },

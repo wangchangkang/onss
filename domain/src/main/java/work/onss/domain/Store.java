@@ -39,13 +39,10 @@ public class Store implements Serializable {
     private String username;
     private String phone;
     private Boolean status = false;
-    @Range(min = 0, max = 5, message = "服装 美食 果蔬 饮品 超市 书店")
     private Integer type;
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2D)
     private Double[] point = new Double[0];
-    @Size(min = 1, max = 5, message = "请填写宣传画册")
     private Collection<String> pictures = new ArrayList<>();
-    @Size(min = 1, max = 5, message = "请填写宣传视频")
     private Collection<String> videos = new ArrayList<>();
 
     @Indexed(unique = true)
@@ -58,7 +55,6 @@ public class Store implements Serializable {
     private Legal legal;
     @Valid
     private Bank bank;
-    @NotEmpty(message = "请上传小程序效果图")
     @Size(min = 1, max = 5, message = "最多只能上传5张小程序效果图")
     private Collection<String> xcxPictures = new TreeSet<>();
     @Size(min = 1, max = 5, message = "最多只能上传5张特殊资质图片")
@@ -99,18 +95,13 @@ public class Store implements Serializable {
         @Pattern(regexp = "[^_IOZSVa-z\\W]{2}\\d{6}[^_IOZSVa-z\\W]{10}", message = "营业执照编号格式错误")
         @Indexed(unique = true)
         private String number;
-        @NotBlank(message = "请填写客服手机号")
-        @Pattern(regexp = "^[1][34578][0-9]{9}$", message = "客服手机号格式错误")
-        private String phone;
-        @NotEmpty(message = "请填写经营场所")
-        private String address;
     }
 
     @Data
     @NoArgsConstructor
     public static class Contact {
         private String openid;
-        private String role;
+        private Integer role;
         @NotBlank(message = "请填写管理员手机号")
         @Pattern(regexp = "^[1][34578][0-9]{9}$", message = "管理员手机号格式错误")
         private String phone;
@@ -127,11 +118,13 @@ public class Store implements Serializable {
     @Data
     @NoArgsConstructor
     public static class Bank {
-        @NotBlank(message = "请填写开户银行")
+        @NotNull(message = "请填写开户银行")
         private Integer title;
         @NotBlank(message = "请填写银行账号")
         private String number;
+        @NotNull(message = "请填账户类型")
         private BankEnum type;
+        @NotBlank(message = "请填写银行全称")
         private String name;
         @Valid
         private Address address;
