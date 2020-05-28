@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import work.onss.config.WechatConfig;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
@@ -22,9 +23,9 @@ import work.onss.vo.Work;
 @Log4j2
 @RestController
 public class PictureController {
+    @Autowired
+    private WechatConfig wechatConfig;
 
-    @Value("${file.dir}")
-    private String dir;
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -46,7 +47,7 @@ public class PictureController {
             throw new ServiceException("fail", msg);
         }
 
-        String path = Utils.upload(file, dir, number);
+        String path = Utils.upload(file, wechatConfig.getFilePath(), number);
         return Work.success("上传成功", path);
     }
 
@@ -62,7 +63,7 @@ public class PictureController {
         if (0 == role) {
             throw new ServiceException("fail", "仅限管理员操作!");
         }
-        String path = Utils.upload(file, dir, number);
+        String path = Utils.upload(file, wechatConfig.getFilePath(), number);
         return Work.success("上传成功", path);
     }
 

@@ -1,8 +1,8 @@
 const { auth, authorization, token } = wx.getStorageSync('data');
 const { windowWidth } = wx.getSystemInfoSync();
 const appId = "wx095ba1a3f9396476";
-const domain = 'http://192.168.0.103:8002/store';
-const prefix = 'http://192.168.0.103/picture';
+const domain = 'http://127.0.0.1:8001/manage';
+const prefix = 'http://127.0.0.1/picture';
 
 const qualification = {
   "INDIVIDUAL": [

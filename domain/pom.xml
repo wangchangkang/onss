@@ -40,14 +40,6 @@
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
-        <!--        mvn install:install-file -Dfile=wxpay-sdk-3.0.9.jar -DgroupId=com.github.wxpay -DartifactId=wxpay-sdk -Dversion=3.0.9 -Dpackaging=jar-->
-        <dependency>
-            <groupId>com.github.wxpay</groupId>
-            <artifactId>wxpay-sdk</artifactId>
-            <version>3.0.9</version>
-<!--            <scope>system</scope>-->
-<!--            <systemPath>/Users/wangchanghao/Desktop/work/wxpay-sdk-3.0.9.jar</systemPath>-->
-        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

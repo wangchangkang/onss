@@ -1,7 +1,6 @@
 package work.onss.config;
 
-import com.github.wxpay.sdk.IWXPayDomain;
-import com.github.wxpay.sdk.WXPayConfig;
+import com.ijpay.wxpay.WxPayApiConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.log4j.Log4j2;
@@ -9,8 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-import java.io.InputStream;
 import java.util.Map;
 
 @Log4j2
@@ -19,19 +16,9 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "wechat")
 @EnableConfigurationProperties(WechatConfig.class)
 @Configuration
-public class WechatConfig extends WXPayConfig {
+public class WechatConfig extends WxPayApiConfig {
 
-    @Resource
-    private IWXPayDomain WXPayDomain;
-    private String appID;
-    private String mchID;
-    private String key;
-    private InputStream certStream;
-    private String url;
-    private String subAppID;
     private Map<String,String> keys;
-
-    public WechatConfig() {
-
-    }
+    private String filePath;
+    private String sign;
 }

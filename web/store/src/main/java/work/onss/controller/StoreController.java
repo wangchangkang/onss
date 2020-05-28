@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import work.onss.config.WechatConfig;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
@@ -30,10 +31,8 @@ import static work.onss.domain.Store.Contact;
 @RestController
 public class StoreController {
 
-    @Value("${shop-weachat.key}")
-    private String key;
-    @Value("${file.dir}")
-    private String dir;
+    @Autowired
+    private WechatConfig wechatConfig;
     @Autowired
     protected MongoTemplate mongoTemplate;
 
@@ -105,7 +104,7 @@ public class StoreController {
         } else {
             Contact contact = store.getContacts().stream().filter(item -> item.getOpenid().equals(openid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
             Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber());
-            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, aud, key);
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, aud, wechatConfig.getSign());
             return Work.success("登陆成功", authorization);
         }
     }
