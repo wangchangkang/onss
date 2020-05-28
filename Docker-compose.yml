@@ -7,7 +7,7 @@ services:
       - 5672:5672
       - 15672:15672
     environment:
-      - RABBITMQ_DEFAULT_VHOST=life
+      - RABBITMQ_DEFAULT_VHOST=onss
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=123456
     restart: always
@@ -24,8 +24,8 @@ services:
     ports:
       - 80:80
     volumes:
-      - /Users/wangchanghao/Desktop/work/life/nginx/conf.d:/etc/nginx/conf.d
-      - /Users/wangchanghao/Desktop/work/life/picture:/picture
+      - /Users/wangchanghao/Desktop/work/onss/nginx/conf.d:/etc/nginx/conf.d
+      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
   mongo:
     image: "mongo:latest"
     container_name: mongo
@@ -39,9 +39,9 @@ services:
     ports:
       - 8001:8001
     volumes:
-      - /Users/wangchanghao/Desktop/work/life/picture:/picture
-      - /Users/wangchanghao/Desktop/work/life/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/life/store-service-0.0.1-SNAPSHOT.jar
+      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
+      - /Users/wangchanghao/Desktop/work/onss/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/onss/store-service-0.0.1-SNAPSHOT.jar
     depends_on:
       - nginx
       - mongo
-    entrypoint: ["java","-jar","/life/store-service-0.0.1-SNAPSHOT.jar"]
+    entrypoint: ["java","-jar","/onss/store-service-0.0.1-SNAPSHOT.jar"]
