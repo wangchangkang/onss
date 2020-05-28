@@ -1,5 +1,5 @@
 const app = getApp()
-const domain = 'https://1977.work/life'
+const domain = 'https://1977.work/onss'
 let lock = true
 
 const formatTime = date => {
