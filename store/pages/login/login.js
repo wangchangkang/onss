@@ -1,8 +1,9 @@
-let appInstance = getApp();
-const { domain, appId } = appInstance.globalData;
+
 Page({
   data: {},
   wxLogin: function ({ detail }) {
+    let appInstance = getApp();
+    const { domain, appId } = appInstance.globalData;
     wx.showLoading({
       mask: true
     })

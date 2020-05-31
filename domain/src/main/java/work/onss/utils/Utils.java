@@ -9,7 +9,6 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.log4j.Log4j2;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.domain.*;
@@ -18,11 +17,9 @@ import work.onss.exception.ServiceException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
-import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +36,7 @@ import java.util.*;
 @Log4j2
 public class Utils {
 
-    private static Gson gson;
+    private static final Gson gson;
 
     static {
         gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC).create();
@@ -96,53 +93,20 @@ public class Utils {
      * @param iss 发行者
      * @param sub 用户身份标识
      * @param jti 分配JWT的ID
-     * @param aud 用户单位
      * @param key 密钥
      * @return JWT
      */
-    public static String createJWT(String iss, String sub, String jti, String[] aud, String key) {
+    public static String createJWT(String iss, String sub, String jti, String key) {
 
         Instant now = Instant.now();
-        Date nbf = Date.from(now);
-        Date exp = Date.from(now.plusSeconds(7100000));
         JWTCreator.Builder builder = JWT.create()
                 .withIssuer(iss)
                 .withSubject(sub)
-                .withExpiresAt(exp)
-                .withNotBefore(nbf)
-                .withJWTId(jti)
-                .withAudience(aud);
+                .withNotBefore( Date.from(now))
+                .withExpiresAt(Date.from(now.plusSeconds(7100000)))
+                .withJWTId(jti);
 
         return builder.sign(Algorithm.HMAC256(key));
-    }
-
-    public static String getIpAddr(HttpServletRequest request) {
-        String ipAddress;
-        try {
-            ipAddress = request.getHeader("x-forwarded-for");
-            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-                ipAddress = request.getHeader("Proxy-Client-IP");
-            }
-            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-                ipAddress = request.getHeader("WL-Proxy-Client-IP");
-            }
-            if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-                ipAddress = request.getRemoteAddr();
-                if (ipAddress.equals("127.0.0.1")) {
-                    InetAddress inet = InetAddress.getLocalHost();
-                    ipAddress = inet.getHostAddress();
-                }
-            }
-            // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-            if (ipAddress != null && ipAddress.length() > 15) {
-                if (ipAddress.indexOf(",") > 0) {
-                    ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
-                }
-            }
-        } catch (Exception e) {
-            ipAddress = "";
-        }
-        return ipAddress;
     }
 
     public static Score getItems(String uid, String sid, Map<String, Cart> carts, List<Product> products, Address address) throws ServiceException {
@@ -168,21 +132,6 @@ public class Utils {
         String outTradeNo = MessageFormat.format("WX{0}{1}", now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")), "number.toString()");
         return new Score(uid, sid, decimalFormat.format(total), items, outTradeNo, outTradeNo, now, address);
     }
-
-    public static Map<String, String> reqData(String orderNo, String total, String body, String notifyUrl, String subOpenid, String subMchId, String subAppId) {
-        Map<String, String> data = new HashMap<>();
-        data.put("body", body);
-        data.put("out_trade_no", orderNo);
-        data.put("total_fee", total);
-        data.put("spbill_create_ip", "ipAddr");
-        data.put("notify_url", notifyUrl);
-        data.put("trade_type", "JSAPI");
-        data.put("sub_appid", subAppId);
-        data.put("sub_openid", subOpenid);
-        data.put("sub_mch_id", subMchId);
-        return data;
-    }
-
 
     public static String getEncryptedData(String encryptedData, String sessionKey, String iv) {
 
@@ -224,30 +173,15 @@ public class Utils {
     }
 
     public static String upload(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
-
-        String filename = file.getOriginalFilename();
-
-        if (filename == null) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-
-        int index = filename.lastIndexOf(".");
-        if (index == -1) {
-            throw new ServiceException("fail", "文件格式错误!");
-        }
-
-        filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        Arrays.fill(more, more.length, more.length + 1, filename);
         Path path = Paths.get(dir, more);
         Path folder = path.getParent();
         if (!Files.exists(folder) && !folder.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }
-
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
-        return path.toString().substring(dir.length());
+        return path.subpath(0,more.length+1).toString().replaceAll("\\\\","/");
     }
 
 }

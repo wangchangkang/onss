@@ -2,7 +2,7 @@ const { auth, authorization, token } = wx.getStorageSync('data');
 const { windowWidth } = wx.getSystemInfoSync();
 const appId = "wx095ba1a3f9396476";
 const domain = 'http://127.0.0.1:8001/manage';
-const prefix = 'http://127.0.0.1/picture';
+const prefix = 'http://127.0.0.1/';
 
 const qualification = {
   "INDIVIDUAL": [
@@ -128,9 +128,10 @@ App({
               wx.uploadFile({
                 header: {
                   ...header,
+                  number,
                   authorization: this.globalData.authorization
                 },
-                url:`${domain}/store/${number}/picture`,
+                url: `${domain}/picture`,
                 filePath: filePath,
                 name: 'file',
                 success: res => {
@@ -176,10 +177,11 @@ App({
             })
             wx.uploadFile({
               header: {
-                  ...header,
+                ...header,
+                number,
                 authorization: this.globalData.authorization
               },
-              url:`${domain}/store/${number}/picture`,
+              url: `${domain}/picture`,
               filePath: res.tempFilePaths[0],
               name: 'file',
               success: res => {

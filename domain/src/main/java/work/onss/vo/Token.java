@@ -22,5 +22,6 @@ public class Token implements Serializable {
     private String idCard;
     private String email;
     private String number;
+    private String openid;
 
 }

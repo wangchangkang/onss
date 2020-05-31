@@ -2,7 +2,6 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -58,12 +57,13 @@ public class LoginController {
             Token token = new Token();
             token.setRole(0);
             token.setPhone(phoneEncryptedData.getPhoneNumber());
-            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), session.get("openid"), null, wechatConfig.getSign());
+            token.setOpenid(session.get("openid"));
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), session.get("openid"), wechatConfig.getSign());
             return Work.message("fail.notfound.store", "您尚未成为特约商户，请申请入驻！", authorization);
         }
 
         String[] ids = stores.stream().map(Store::getId).toArray(String[]::new);
-        String authorization = Utils.createJWT("1977.work", null, session.get("openid"), ids, wechatConfig.getSign());
+        String authorization = Utils.createJWT("1977.work", null, session.get("openid"), wechatConfig.getSign());
         return Work.success("授权成功", authorization);
     }
 

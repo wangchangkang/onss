@@ -2,7 +2,6 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -90,10 +89,9 @@ public class StoreController {
      *
      * @param openid 微信OPENID
      * @param id     主键
-     * @param aud    所有店铺ID
      */
     @PostMapping(value = {"store/{id}/bind"})
-    public Work<String> bind(@RequestHeader(name = "openid") String openid, @PathVariable String id, @RequestHeader(name = "aud") String... aud) throws ServiceException {
+    public Work<String> bind(@RequestHeader(name = "openid") String openid, @PathVariable String id) throws ServiceException {
         Query query = Query.query(Criteria.where("id").is(id));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
@@ -103,8 +101,8 @@ public class StoreController {
             return Work.fail("正在审核中，请耐心等待。");
         } else {
             Contact contact = store.getContacts().stream().filter(item -> item.getOpenid().equals(openid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
-            Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber());
-            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, aud, wechatConfig.getSign());
+            Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber(),contact.getOpenid());
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, wechatConfig.getSign());
             return Work.success("登陆成功", authorization);
         }
     }

@@ -6,13 +6,14 @@ Page({
     prefix,
     bankes,
     qualification,
+    trademark:'picture/logo2.png',
     license: {
       name: '茌平壹玖柒柒软件有限公司',
       number: '91371523MA3PU9M466',
       title: '茌平壹玖柒柒',
       type: 'ENTERPRISE',
       industry: 23,
-      picture: '/91371523MA3PU9M466/3992e50f173dbe8b0c3b90b579a8f938.jpg'
+      picture: 'picture/91371523MA3PU9M466/3992e50f173dbe8b0c3b90b579a8f938.jpg'
     },
     bank: {
       type: 'CORPORATE',
@@ -139,12 +140,14 @@ Page({
     console.log(this.data)
   },
   saveStore: function (e) {
+    const { auth, authorization, token } = wx.getStorageSync('data');
+    console.log(appInstance.globalData)
     wx.request({
       url: `${domain}/store`,
       method: 'POST',
       header: {
-        authorization: appInstance.globalData.authorization,
-        openid: appInstance.globalData.auth.jti
+        openid: token.openid,
+        authorization
       },
       data: { ...this.data, ...e.detail.value },
       success: ({ data }) => {

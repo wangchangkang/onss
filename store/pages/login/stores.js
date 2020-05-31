@@ -11,7 +11,6 @@ Page({
       url: `${domain}/store/${e.currentTarget.id}/bind`,
       method: 'POST',
       header: {
-        aud: appInstance.globalData.auth.aud,
         openid: appInstance.globalData.auth.jti
       },
       success: ({ data }) => {
