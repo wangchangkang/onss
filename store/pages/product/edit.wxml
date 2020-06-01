@@ -40,6 +40,9 @@
 			<view class="weui-cell__bd">
 				<input class="weui-input" name="price" value="{{price}}" placeholder="请输入单价" maxlength="10" />
 			</view>
+			<view class="weui-cell__bd">
+                <input class="weui-input" name="priceUnit" value="{{priceUnit}}" placeholder="请输入单价" maxlength="10" />
+            </view>
 		</view>
 
 		<view class="weui-cell ">
@@ -49,6 +52,9 @@
 			<view class="weui-cell__bd">
 				<input class="weui-input" name="average" value="{{average}}" placeholder="请输入均价" maxlength="10" />
 			</view>
+			<view class="weui-cell__bd">
+                <input class="weui-input" name="averageUnit" value="{{averageUnit}}" placeholder="请输入均价" maxlength="10" />
+            </view>
 		</view>
 
 		<view class="weui-cell ">

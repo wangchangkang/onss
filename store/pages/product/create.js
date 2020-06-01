@@ -4,10 +4,9 @@ Page({
   data: {
     prefix,
     windowWidth,
-    pictures: ["picture/91371523MA3PU9M466/75b8a0538acf4369fb3bed99158967c1.png"],
-    vid: 'l09179f499o',
-    remarks: '此商品在配送时，需要多图少补',
-    description: '香甜可口'
+    pictures: [],
+    remarks: '',
+    description: ''
   },
 
   chooseImages: function (e) {
@@ -25,7 +24,7 @@ Page({
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    appInstance.chooseImage().then((data) => {
+    appInstance.chooseImage({url:'product/uploadPicture'}).then((data) => {
       this.setData({
         [`${id}`]: data
       })
@@ -86,6 +85,9 @@ Page({
       prevPage.setData({
         products: [data.content, ...prevPage.data.products]
       });
+      wx.navigateBack({
+        delta: 1
+      })
     })
   },
   resetForm: function (e) {

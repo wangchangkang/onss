@@ -7,8 +7,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.WechatConfig;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
@@ -142,6 +144,27 @@ public class StoreController {
                 .set("videos", storeInfo.getVideos());
         mongoTemplate.updateFirst(query, update, Store.class);
         return Work.success("更新成功", storeInfo);
+    }
+
+    /**
+     * 商品图片
+     *
+     * @param file 文件
+     * @return 图片地址
+     */
+    @PostMapping("store/uploadPicture")
+    public Work<String> upload(@RequestHeader(name = "number") String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
+        String filename = file.getOriginalFilename();
+        if (filename == null) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            throw new ServiceException("fail", "文件格式错误!");
+        }
+        filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
+        String path = Utils.upload(file, wechatConfig.getFilePath(), number, filename);
+        return Work.success("上传成功", path);
     }
 }
 
