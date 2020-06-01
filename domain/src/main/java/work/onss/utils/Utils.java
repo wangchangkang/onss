@@ -174,7 +174,7 @@ public class Utils {
 
     public static String upload(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
         Path path = Paths.get(dir, more);
-        Path folder = path.getParent();
+        Path folder = path.subpath(0,more.length);
         if (!Files.exists(folder) && !folder.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }

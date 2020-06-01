@@ -4,7 +4,7 @@ Page({
   data: {
     prefix,
     windowWidth,
-    pictures: ["/91371523MA3PU9M466/9a63726e0505721f68e920b0f8741c15.PNG"],
+    pictures: ["picture/91371523MA3PU9M466/75b8a0538acf4369fb3bed99158967c1.png"],
     vid: 'l09179f499o',
     remarks: '此商品在配送时，需要多图少补',
     description: '香甜可口'
@@ -15,7 +15,8 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages({count}).then((data) => {
+    appInstance.chooseImages({count,url:'product/uploadPicture'}).then((data) => {
+      console.log(data)
       this.setData({
         [`${id}[${length}]`]: data
       })

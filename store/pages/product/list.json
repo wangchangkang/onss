@@ -1,5 +1,5 @@
 {
   "usingComponents": {
-    "mp-slideview": "../components/slideview/slideview"
+    "mp-slideview": "/components/slideview/slideview"
   }
 }

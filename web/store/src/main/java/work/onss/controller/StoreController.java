@@ -101,7 +101,7 @@ public class StoreController {
             return Work.fail("正在审核中，请耐心等待。");
         } else {
             Contact contact = store.getContacts().stream().filter(item -> item.getOpenid().equals(openid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
-            Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber(),contact.getOpenid());
+            Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber(), contact.getOpenid());
             String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, wechatConfig.getSign());
             return Work.success("登陆成功", authorization);
         }
@@ -110,15 +110,11 @@ public class StoreController {
     /**
      * 营业中 or 休息中
      *
-     * @param role   用户权限
      * @param id     商户ID
      * @param status 营业中 or 休息中
      */
     @PutMapping(value = {"store/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@RequestHeader(name = "role") Integer role, @PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) throws ServiceException {
-        if (0 == role) {
-            throw new ServiceException("fail", "仅限管理员操作!");
-        }
+    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("status", !status), Store.class);
         return Work.success("更新成功", !status);
@@ -131,10 +127,7 @@ public class StoreController {
      * @param storeInfo 商户信息
      */
     @PutMapping(value = {"store/{id}"})
-    public Work<StoreInfo> updateStatus(@RequestHeader(name = "role") Integer role, @PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) throws ServiceException {
-        if (0 == role) {
-            throw new ServiceException("fail", "仅限管理员操作!");
-        }
+    public Work<StoreInfo> updateStatus(@PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) {
         Query query = Query.query(Criteria.where("id").is(id));
         Update update = Update
                 .update("name", storeInfo.getName())

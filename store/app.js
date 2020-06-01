@@ -106,7 +106,7 @@ App({
     auth, authorization, token, windowWidth, appId, domain, prefix, types, bankes, qualification
   },
 
-  chooseImages: function ({ header, count, number = this.globalData.token.number }) {
+  chooseImages: function ({ header, url = "picture", count, number = this.globalData.token.number }) {
     return new Promise((resolve, reject) => {
       if (!number) {
         wx.showModal({
@@ -131,7 +131,7 @@ App({
                   number,
                   authorization: this.globalData.authorization
                 },
-                url: `${domain}/picture`,
+                url: `${domain}/${url}`,
                 filePath: filePath,
                 name: 'file',
                 success: res => {

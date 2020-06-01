@@ -63,20 +63,6 @@ public class PictureController {
         return Work.success("上传成功", path);
     }
 
-    /**
-     * 91371523MA3PU9M466
-     * 防止重复上传图片
-     *
-     * @param file 文件
-     * @return 图片地址
-     */
-    @PostMapping("pictures")
-    public Work<String> upload(@RequestHeader(name = "role") Integer role, @RequestHeader(name = "number") String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
-        if (0 == role) {
-            throw new ServiceException("fail", "仅限管理员操作!");
-        }
-        String path = Utils.upload(file, wechatConfig.getFilePath(), number);
-        return Work.success("上传成功", path);
-    }
+
 
 }
