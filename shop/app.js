@@ -1,35 +1,77 @@
-//app.js
+
+
 App({
-  onLaunch: function () {
-    // 展示本地存储能力
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 获取用户信息
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-          wx.getUserInfo({
-            success: res => {
-              // 可以将 res 发送给后台解码出 unionId
-              this.globalData.userInfo = res.userInfo
-
-              // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-              // 所以此处加入 callback 以防止这种情况
-              if (this.userInfoReadyCallback) {
-                this.userInfoReadyCallback(res)
-              }
-            }
-          })
-        }
-      }
-    })
-  },
   globalData: {
-    userInfo: null,
+    authorization: wx.getStorageSync('authorization'),
+    user: wx.getStorageSync('user'),
+    windowWidth: wx.getSystemInfoSync().windowWidth,
     appId: "wxe78290c2a5313de3",
-    windowWidth: wx.getSystemInfoSync().windowWidth
+    domain: 'http://127.0.0.1:8001/shop',
+    prefix: 'http://127.0.0.1/',
+    types: [
+      { id: 1, title: '生鲜' },
+      { id: 2, title: '酒店' },
+      { id: 3, title: '超市' },
+      { id: 4, title: '美食' },
+      { id: 5, title: '饮品' },
+      { id: 6, title: '服装' },
+      { id: 7, title: '母婴' },
+      { id: 8, title: '书店' },
+    ]
+  },
+  onLaunch: function () { },
+
+  request: function ({ url, method, data, header }) {
+    return new Promise((resolve, reject) => {
+      wx.showLoading({
+        mask: true
+      })
+      wx.request({
+        url, method, data, header,
+        success: ({ data }) => {
+          wx.hideLoading()
+          const { code, msg } = data;
+          switch (code) {
+            case 'success':
+              if (msg) {
+                wx.showToast({
+                  title: msg,
+                  icon: 'success',
+                  duration: 2000,
+                  success: (res) => {
+                    resolve(data)
+                  }
+                })
+              } else {
+                resolve(data)
+              }
+              break;
+            case 'fail.login':
+              wx.redirectTo({
+                url: '/pages/login/login',
+              })
+              break;
+            default:
+              wx.showModal({
+                title: '警告',
+                content: msg,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+              break;
+          }
+        },
+        fail: (res) => {
+          wx.hideLoading()
+          wx.showModal({
+            title: '警告',
+            content: '加载失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    });
   }
+
 })

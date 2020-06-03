@@ -4,20 +4,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.util.StringUtils;
 import work.onss.enums.BankEnum;
 import work.onss.enums.LicenseEnum;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * @author wangchanghao
@@ -59,6 +61,9 @@ public class Store implements Serializable {
     private Collection<String> xcxPictures = new TreeSet<>();
     @Size(min = 1, max = 5, message = "最多只能上传5张特殊资质图片")
     private Collection<String> specialPictures = new TreeSet<>();
+
+    @Transient
+    private List<Product> products;
 
     @Data
     @NoArgsConstructor

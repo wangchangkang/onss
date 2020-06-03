@@ -22,16 +22,8 @@ public class User implements Serializable {
     private String id;
     @Indexed(unique = true)
     private String phone;
-    private String email;
-
-    private String name;
     @Indexed(unique = true)
-    private String idCard;
-    private String idCardA;
-    private String idCardB;
-
-    private Map<String, String> data;
-
+    private String openId;
     private LocalDateTime loginTime;
 
 }
