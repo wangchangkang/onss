@@ -4,44 +4,100 @@
 			<image class="weui-media-box__thumb" src="/images/logo2.png" />
 		</view>
 		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-			<view class="weui-media-box__title weui-cell__ft_in-access">华盛超市</view>
-			<view class="weui-media-box__desc">果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食</view>
+			<view class="weui-media-box__title weui-cell__ft_in-access">{{store.name}}</view>
+			<view class="weui-media-box__desc">{{store.description}}</view>
 		</view>
 	</navigator>
 </view>
-
 <view class="weui-panel weui-media-box">
-	<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
-		<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-			<view class="weui-badge">1</view>
-			<image class="weui-media-box__thumb" src="/images/水果.png" />
+	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-badge">1</view>
+				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+			</view>
+			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+				<view class="weui-media-box__title">{{product.name}}</view>
+				<view class="weui-media-box__desc">{{product.description}}</view>
+				<view class="weui-media-box__desc"><label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label></view>
+			</view>
+		</navigator>
+		<view class="weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
 		</view>
-		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-			<view class="weui-media-box__title">猕猴桃</view>
-			<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
-			<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
+	</block>
+	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-badge">1</view>
+				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+			</view>
+			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+				<view class="weui-media-box__title">{{product.name}}</view>
+				<view class="weui-media-box__desc">{{product.description}}</view>
+				<view class="weui-media-box__desc"><label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label></view>
+			</view>
+		</navigator>
+		<view class="weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
 		</view>
-	</navigator>
-	<view class="weui-cell__ft">
-		<button type="default" size="mini">减</button>
-		<button type="default" size="mini" disabled="true">1</button>
-		<button type="default" size="mini">加</button>
-	</view>
-	<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
-		<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-			<view class="weui-badge">1</view>
-			<image class="weui-media-box__thumb" src="/images/水果.png" />
+	</block>
+	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-badge">1</view>
+				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+			</view>
+			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+				<view class="weui-media-box__title">{{product.name}}</view>
+				<view class="weui-media-box__desc">{{product.description}}</view>
+				<view class="weui-media-box__desc"><label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label></view>
+			</view>
+		</navigator>
+		<view class="weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
 		</view>
-		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-			<view class="weui-media-box__title">红富士</view>
-			<view class="weui-media-box__desc">苹果是一种低热量食物，每100克产生60千卡热量。苹果中营养成分可溶性大，易被人体吸收，故有“活水”之称。它有利于溶解硫元素，使皮肤润滑柔嫩。</view>
-			<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
+	</block>
+	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-badge">1</view>
+				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+			</view>
+			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+				<view class="weui-media-box__title">{{product.name}}</view>
+				<view class="weui-media-box__desc">{{product.description}}</view>
+				<view class="weui-media-box__desc"><label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label></view>
+			</view>
+		</navigator>
+		<view class="weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
 		</view>
-	</navigator>
-	<view class="weui-cell__ft">
-		<button type="default" size="mini">减</button>
-		<button type="default" size="mini" disabled="true">1</button>
-		<button type="default" size="mini">加</button>
-	</view>
-
+	</block>
+	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-badge">1</view>
+				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+			</view>
+			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+				<view class="weui-media-box__title">{{product.name}}</view>
+				<view class="weui-media-box__desc">{{product.description}}</view>
+				<view class="weui-media-box__desc"><label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label></view>
+			</view>
+		</navigator>
+		<view class="weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
+		</view>
+	</block>
 </view>
