@@ -21,21 +21,7 @@ Page({
       name: "书店",
       icon: "/images/图书馆.png"
     },],
-    stores: [{
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    },
-    {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }, {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }
-    ],
+    stores: [],
   },
   //事件处理函数
   bindViewTap: function () {
@@ -79,6 +65,5 @@ Page({
         wx.stopPullDownRefresh()
       })
     }
-
   },
 })

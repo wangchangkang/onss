@@ -10,7 +10,7 @@
 	</navigator>
 </view>
 <view class="weui-panel weui-media-box">
-	<block wx:for="{{store.products}}" wx:for-item='product' wx:key="index">
+	<block wx:for="{{pagination.content}}" wx:for-item='product' wx:key="index">
 		<navigator url="/pages/store/detail" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<view class="weui-badge">1</view>

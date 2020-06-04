@@ -20,7 +20,9 @@ import work.onss.service.StoreService;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @RestController
@@ -48,11 +50,11 @@ public class StoreController {
      * @return 店铺分页
      */
     @GetMapping(path = "store/{x}-{y}/near")
-    public Work<Page<Store>> store(@PathVariable(name = "x") Double x, @PathVariable(name = "y") Double y,@RequestParam(defaultValue = "100") Double r, @PageableDefault Pageable pageable) {
+    public Work<Page<Store>> store(@PathVariable(name = "x") Double x, @PathVariable(name = "y") Double y, @RequestParam(defaultValue = "100") Double r, @PageableDefault Pageable pageable) {
         Point point = new Point(x, y);
         Query query = Query.query(Criteria.where("point").near(point).maxDistance(r)).with(pageable);
         List<Store> stores = mongoTemplate.find(query, Store.class);
-        Page<Store> page= new PageImpl<>(stores);
+        Page<Store> page = new PageImpl<>(stores);
         return Work.success(null, page);
     }
 
@@ -62,13 +64,17 @@ public class StoreController {
      * @return 店铺信息
      */
     @GetMapping(value = {"store/{id}/products"})
-    public Work<Store> products(@PathVariable String id) {
-        Store store =  mongoTemplate.findOne(Query.query(Criteria.where("id").is(id)),Store.class);
+    public Work<Map<String, ?>> products(@PathVariable String id, @PageableDefault Pageable pageable) {
+        Store store = mongoTemplate.findOne(Query.query(Criteria.where("id").is(id)), Store.class);
+        Map<String, Object> data = new HashMap<>();
+        data.put("store", store);
         if (store != null) {
-            List<Product> products = mongoTemplate.find(Query.query(Criteria.where("sid").is(id).and("status").is(true)), Product.class);
+            List<Product> products = mongoTemplate.find(Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable), Product.class);
+            Page<Product> page = new PageImpl<>(products);
             store.setProducts(products);
+            data.put("pagination", page);
         }
-        return Work.success(null, store);
+        return Work.success(null, data);
     }
 
 }
