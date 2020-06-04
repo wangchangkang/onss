@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.BankEnum;
 import work.onss.enums.LicenseEnum;
@@ -34,7 +35,9 @@ public class Store implements Serializable {
     @Id
     private String id;
 
+    @TextIndexed
     private String name;
+    @TextIndexed
     private String description;
     private String address;
     private String trademark;

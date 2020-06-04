@@ -9,6 +9,7 @@ import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,26 @@ public class StoreController {
     public Work<Page<Store>> store(@PathVariable(name = "x") Double x, @PathVariable(name = "y") Double y, @RequestParam(defaultValue = "100") Double r, @PageableDefault Pageable pageable) {
         Point point = new Point(x, y);
         Query query = Query.query(Criteria.where("point").near(point).maxDistance(r)).with(pageable);
+        List<Store> stores = mongoTemplate.find(query, Store.class);
+        Page<Store> page = new PageImpl<>(stores);
+        return Work.success(null, page);
+    }
+
+    /**
+     * @param x        经度
+     * @param y        纬度
+     * @param pageable 分页参数
+     * @return 店铺分页
+     */
+    @GetMapping(path = "store/{x}-{y}/search")
+    public Work<Page<Store>> search(@PathVariable(name = "x") Double x, @PathVariable(name = "y") Double y, @RequestParam(defaultValue = "100") Double r, @RequestParam String key, @PageableDefault Pageable pageable) {
+        Point point = new Point(x, y);
+        Query query = Query.query(Criteria.where("point").near(point).maxDistance(r)).with(pageable);
+        if (key != null) {
+            TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(key);
+            Criteria criteria = Criteria.where("source").in(1, 2);
+            query.addCriteria(textCriteria).addCriteria(criteria);
+        }
         List<Store> stores = mongoTemplate.find(query, Store.class);
         Page<Store> page = new PageImpl<>(stores);
         return Work.success(null, page);
