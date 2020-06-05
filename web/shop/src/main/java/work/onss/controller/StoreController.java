@@ -58,7 +58,7 @@ public class StoreController {
                                    @RequestParam(required = false) String keyword,
                                    @PageableDefault Pageable pageable) {
         Point point = new Point(x, y);
-        Query query = Query.query(Criteria.where("point").and("status").is(true).near(point)).with(pageable);
+        Query query = Query.query(Criteria.where("point").near(point).and("status").is(true)).with(pageable);
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
         }
