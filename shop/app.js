@@ -23,13 +23,9 @@ App({
 
   request: function ({ url, method, data, header }) {
     return new Promise((resolve, reject) => {
-      wx.showLoading({
-        mask: true
-      })
       wx.request({
         url, method, data, header,
         success: ({ data }) => {
-          wx.hideLoading()
           const { code, msg } = data;
           switch (code) {
             case 'success':
@@ -62,7 +58,6 @@ App({
           }
         },
         fail: (res) => {
-          wx.hideLoading()
           wx.showModal({
             title: '警告',
             content: '加载失败',

@@ -22,7 +22,7 @@
     "pages/category/detail"
   ],
   "window": {
-    "backgroundTextStyle": "light",
+    "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "一九七七",
     "navigationBarTextStyle": "black"

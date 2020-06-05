@@ -1,7 +1,7 @@
 const app = getApp()
 Page({
   data: {
-    prefix:'http://127.0.0.1/',
+    prefix: 'http://127.0.0.1/',
     types: [{
       name: "服装",
       icon: "/images/服装店.png"
@@ -20,22 +20,8 @@ Page({
     }, {
       name: "书店",
       icon: "/images/图书馆.png"
-    }, ],
-    stores: [{
-        name: "华盛超市-星美城市广场",
-        description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-        pictures: ["/images/pic_160.png"]
-      },
-      {
-        name: "华盛超市-星美城市广场",
-        description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-        pictures: ["/images/pic_160.png"]
-      }, {
-        name: "华盛超市-星美城市广场",
-        description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-        pictures: ["/images/pic_160.png"]
-      }
-    ],
+    },],
+    stores: [],
   },
   //事件处理函数
   bindViewTap: function () {
@@ -45,11 +31,39 @@ Page({
   },
   onLoad: function () {
     app.request({
-      url:'http://127.0.0.1:8000/shop/index',
-    }).then((res)=>{
+      url: 'http://127.0.0.1:8000/shop/store/30-20/near',
+    }).then((res) => {
+      console.log(res)
       this.setData({
-        stores:res.content
+        pagination: res.content
       })
     })
+  },
+  onPullDownRefresh: function () {
+    app.request({
+      url: 'http://127.0.0.1:8000/shop/store/30-20/near',
+    }).then((res) => {
+      console.log(res)
+      this.setData({
+        pagination: res.content
+      })
+      wx.stopPullDownRefresh()
+    })
+  },
+  onReachBottom: function () {
+    if (this.data.pagination.last) {
+      console.log(this.data.pagination)
+
+    } else {
+      app.request({
+        url: `http://127.0.0.1:8000/shop/store/30-20/near?page=${this.data.pagination.number+1}`,
+      }).then((res) => {
+        console.log(res)
+        this.setData({
+          pagination: res.content
+        })
+        wx.stopPullDownRefresh()
+      })
+    }
   },
 })
