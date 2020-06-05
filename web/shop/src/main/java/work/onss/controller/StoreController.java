@@ -58,7 +58,7 @@ public class StoreController {
                                    @RequestParam(required = false) String keyword,
                                    @PageableDefault Pageable pageable) {
         Point point = new Point(x, y);
-        Query query = Query.query(Criteria.where("point").near(point)).with(pageable);
+        Query query = Query.query(Criteria.where("point").and("status").is(true).near(point)).with(pageable);
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
         }
@@ -82,7 +82,8 @@ public class StoreController {
         Map<String, Object> data = new HashMap<>();
         data.put("store", store);
         if (store != null) {
-            List<Product> products = mongoTemplate.find(Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable), Product.class);
+            Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
+            List<Product> products = mongoTemplate.find(query, Product.class);
             Page<Product> pagination = new PageImpl<>(products);
             store.setProducts(products);
             data.put("pagination", pagination);
