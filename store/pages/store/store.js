@@ -18,9 +18,11 @@ Page({
   },
 
   getLocation: function (e) {
-    const latitude = e.currentTarget.dataset.latitude;
-    const longitude = e.currentTarget.dataset.longitude;
+    const x = e.currentTarget.dataset.x;
+    const y = e.currentTarget.dataset.y;
     const name = e.currentTarget.dataset.name;
+    console.log(x)
+    console.log(y)
     wx.openLocation({
       latitude: parseFloat(latitude),
       longitude: parseFloat(longitude),
@@ -33,6 +35,7 @@ Page({
       url: `${domain}/store/${appInstance.globalData.token.id}`,
       method: 'GET'
     }).then(({ content }) => {
+      console.log(content)
       this.setData({
         ...content
       })

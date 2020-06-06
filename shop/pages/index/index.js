@@ -31,7 +31,7 @@ Page({
   },
   onLoad: function () {
     app.request({
-      url: 'http://127.0.0.1:8000/shop/store/30-20/near',
+      url: 'http://127.0.0.1:8000/shop/store/36-91/near',
     }).then((res) => {
       console.log(res)
       this.setData({

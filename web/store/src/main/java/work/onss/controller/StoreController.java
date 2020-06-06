@@ -139,7 +139,7 @@ public class StoreController {
                 .set("username", storeInfo.getUsername())
                 .set("phone", storeInfo.getPhone())
                 .set("type", storeInfo.getType())
-                .set("point", storeInfo.getPoint())
+                .set("location", storeInfo.getLocation())
                 .set("pictures", storeInfo.getPictures())
                 .set("videos", storeInfo.getVideos());
         mongoTemplate.updateFirst(query, update, Store.class);

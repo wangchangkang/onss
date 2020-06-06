@@ -1,7 +1,5 @@
 package work.onss.controller;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -9,22 +7,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Cart;
-import work.onss.domain.Product;
-import work.onss.exception.ServiceException;
-import work.onss.service.CartService;
 import work.onss.vo.Work;
-
-import javax.annotation.Resource;
-import java.text.MessageFormat;
 
 @RestController
 public class CartController {
 
     @Autowired
     protected MongoTemplate mongoTemplate;
-
-
-
 
     /**
      * @param uid 用户ID
@@ -42,7 +31,8 @@ public class CartController {
     /**
      * @param uid 用户ID
      * @param id  主键
-     * @return 删除购物车商品
+     * @param num 商品数量
+     * @return 更新购车商品数量
      */
     @PutMapping(value = {"cart/{id}-{num}/updateNum"})
     public Work<Boolean> updateNum(@RequestHeader(name = "uid") String uid, @PathVariable String id, @PathVariable Integer num) {

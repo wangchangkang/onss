@@ -1,9 +1,12 @@
 package work.onss.vo;
 
+import com.google.gson.Gson;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,8 +39,7 @@ public class StoreInfo implements Serializable {
     private String phone;
     @NotNull(message = "分类不能为空")
     private Integer type;
-    @Size(min = 2,max = 2,message = "坐标不能为空")
-    private double[] point = new double[0];
+    private GeoJsonPoint location;
     @Size(min = 1, max = 5, message = "图片数量限制{min}-{max}之间")
     private Collection<String> pictures = new ArrayList<>();
     @Size(min = 1, max = 5, message = "视频数量限制{min}-{max}之间")
@@ -52,7 +54,7 @@ public class StoreInfo implements Serializable {
         this.videos = Arrays.asList(videos.split(","));
     }
 
-    public void setPoint(String point) {
-        this.point = Arrays.stream(point.split(",")).mapToDouble(Double::parseDouble).toArray();
+    public void setLocation(String location) {
+        this.location = new Gson().fromJson(location,GeoJsonPoint.class);
     }
 }

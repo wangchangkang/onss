@@ -5,9 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
 import org.springframework.data.web.PageableDefault;
@@ -57,8 +61,8 @@ public class StoreController {
                                    @RequestParam(required = false) Integer type,
                                    @RequestParam(required = false) String keyword,
                                    @PageableDefault Pageable pageable) {
+        Query query = new Query();
         Point point = new Point(x, y);
-        Query query = Query.query(Criteria.where("point").near(point).and("status").is(true)).with(pageable);
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
         }
@@ -67,6 +71,8 @@ public class StoreController {
             Criteria criteria = Criteria.where("source").in(1, 2);
             query.addCriteria(textCriteria).addCriteria(criteria);
         }
+//        NearQuery nearQuery = NearQuery.near(point,Metrics.MILES);
+        query.addCriteria(Criteria.where("location").nearSphere(point));
         List<Store> stores = mongoTemplate.find(query, Store.class);
         Page<Store> page = new PageImpl<>(stores);
         return Work.success(null, page);

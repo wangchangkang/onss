@@ -6,6 +6,8 @@ import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -45,8 +47,8 @@ public class Store implements Serializable {
     private String phone;
     private Boolean status = false;
     private Integer type;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2D)
-    private Double[] point = new Double[0];
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
+    private Point location;
     private Collection<String> pictures = new ArrayList<>();
     private Collection<String> videos = new ArrayList<>();
 

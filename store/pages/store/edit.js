@@ -17,28 +17,31 @@ Page({
     })
   },
   getLocation: function (e) {
-    const latitude = e.currentTarget.dataset.latitude;
-    const longitude = e.currentTarget.dataset.longitude;
+    const x = e.currentTarget.dataset.latitude;
+    const y = e.currentTarget.dataset.longitude;
     const name = e.currentTarget.dataset.name;
-    if (!latitude || !longitude) {
+    if (!x || !y) {
       wx.getLocation({
+        type: 'gcj02',
         success: (res) => {
+          console.log(res)
           wx.chooseLocation({
             latitude: parseFloat(res.latitude),
             longitude: parseFloat(res.longitude),
             success: (res) => {
-              this.setData({ point: [res.latitude, res.longitude] })
+              console.log(res)
+              this.setData({ location: {x:res.latitude, y:res.longitude} })
             }
           })
         }
       })
     } else {
       wx.chooseLocation({
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
+        latitude: parseFloat(x),
+        longitude: parseFloat(y),
         name: name,
         success: (res) => {
-          this.setData({ point: [res.latitude, res.longitude] })
+          this.setData({ location: {x:res.latitude, y:res.longitude} })
         }
       })
     }
@@ -97,6 +100,7 @@ Page({
   },
 
   updateStore: function (e) {
+    console.log(e.detail.value)
     appInstance.request({
       url: `${domain}/store/${appInstance.globalData.token.id}`,
       data: JSON.stringify(e.detail.value),
