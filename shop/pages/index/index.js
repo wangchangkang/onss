@@ -30,18 +30,25 @@ Page({
     })
   },
   onLoad: function () {
-    app.request({
-      url: 'http://127.0.0.1:8000/shop/store/36-91/near',
-    }).then((res) => {
-      console.log(res)
-      this.setData({
-        pagination: res.content
-      })
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        console.log(res)
+        app.request({
+          url: `http://127.0.0.1:8000/shop/store/${res.longitude}-${res.latitude}/near`,
+          // url: `http://127.0.0.1:8000/shop/store/0-90/near`,
+        }).then((res) => {
+          console.log(res)
+          this.setData({
+            pagination: res.content
+          })
+        })
+      }
     })
   },
   onPullDownRefresh: function () {
     app.request({
-      url: 'http://127.0.0.1:8000/shop/store/30-20/near',
+      url: 'http://127.0.0.1:8000/shop/store/0-0/near',
     }).then((res) => {
       console.log(res)
       this.setData({

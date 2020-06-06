@@ -10,6 +10,7 @@ import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
@@ -62,7 +63,7 @@ public class StoreController {
                                    @RequestParam(required = false) String keyword,
                                    @PageableDefault Pageable pageable) {
         Query query = new Query();
-        Point point = new Point(x, y);
+        Point point = new GeoJsonPoint(x, y);
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
         }

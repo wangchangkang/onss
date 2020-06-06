@@ -21,11 +21,12 @@ Page({
     const x = e.currentTarget.dataset.x;
     const y = e.currentTarget.dataset.y;
     const name = e.currentTarget.dataset.name;
-    console.log(x)
     console.log(y)
+    console.log(x)
+
     wx.openLocation({
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
+      latitude: parseFloat(y),
+      longitude: parseFloat(x),
       name: name,
     })
   },

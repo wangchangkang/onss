@@ -39,7 +39,7 @@ public class StoreInfo implements Serializable {
     private String phone;
     @NotNull(message = "分类不能为空")
     private Integer type;
-    private GeoJsonPoint location;
+    private Point location;
     @Size(min = 1, max = 5, message = "图片数量限制{min}-{max}之间")
     private Collection<String> pictures = new ArrayList<>();
     @Size(min = 1, max = 5, message = "视频数量限制{min}-{max}之间")
@@ -55,6 +55,7 @@ public class StoreInfo implements Serializable {
     }
 
     public void setLocation(String location) {
-        this.location = new Gson().fromJson(location,GeoJsonPoint.class);
+        double[] doubles = Arrays.stream(location.split(",")).mapToDouble(Double::parseDouble).toArray();
+        this.location = new GeoJsonPoint(doubles[0], doubles[1]);
     }
 }
