@@ -27,12 +27,9 @@ public class Cart implements Serializable {
     private Integer num;
     private String remarks;
 
-
-    public Cart(String uid, String sid, String pid, Integer num, String remarks) {
+    public Cart(String uid, String sid, String pid) {
         this.uid = uid;
         this.sid = sid;
         this.pid = pid;
-        this.num = num;
-        this.remarks = remarks;
     }
 }
