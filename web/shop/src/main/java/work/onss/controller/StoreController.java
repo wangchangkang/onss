@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.geo.GeoResult;
-import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Metrics;
-import org.springframework.data.geo.Point;
+import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -57,13 +54,14 @@ public class StoreController {
      * @return 店铺分页
      */
     @GetMapping(path = "store/{x}-{y}/near")
-    public Work<Page<Store>> store(@PathVariable(name = "x") Double x,
-                                   @PathVariable(name = "y") Double y,
-                                   @RequestParam(required = false) Integer type,
-                                   @RequestParam(required = false) String keyword,
-                                   @PageableDefault Pageable pageable) {
+    public Work<Page<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
+                                              @PathVariable(name = "y") Double y,
+                                              @RequestParam(name = "r",defaultValue = "35") Double r,
+                                              @RequestParam(required = false) Integer type,
+                                              @RequestParam(required = false) String keyword,
+                                              @PageableDefault Pageable pageable) {
         Query query = new Query();
-        Point point = new GeoJsonPoint(x, y);
+        query.with(pageable);
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
         }
@@ -72,10 +70,11 @@ public class StoreController {
             Criteria criteria = Criteria.where("source").in(1, 2);
             query.addCriteria(textCriteria).addCriteria(criteria);
         }
-//        NearQuery nearQuery = NearQuery.near(point,Metrics.MILES);
-        query.addCriteria(Criteria.where("location").nearSphere(point));
-        List<Store> stores = mongoTemplate.find(query, Store.class);
-        Page<Store> page = new PageImpl<>(stores);
+        Point point = new GeoJsonPoint(x, y);
+        NearQuery nearQuery = NearQuery.near(point, Metrics.KILOMETERS).maxDistance(new Distance(r, Metrics.KILOMETERS));
+        nearQuery.query(query);
+        GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
+        Page<GeoResult<Store>> page = new PageImpl<>(storeGeoResults.getContent());
         return Work.success(null, page);
     }
 
