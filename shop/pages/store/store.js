@@ -1,4 +1,4 @@
-// pages/store/store.js
+const app = getApp()
 Page({
 
   /**
@@ -8,6 +8,14 @@ Page({
 
   },
 
+  onReady: function () {
+    let pages = getCurrentPages();//当前页面栈
+    let prevPage = pages[pages.length - 2];//上一页面
+    this.setData({
+     ...prevPage.data
+    })
+    console.log(this.data)
+  },
   openGallery: function () {
     this.setData({
       istrue: true
