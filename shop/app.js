@@ -29,18 +29,7 @@ App({
           const { code, msg } = data;
           switch (code) {
             case 'success':
-              if (msg) {
-                wx.showToast({
-                  title: msg,
-                  icon: 'success',
-                  duration: 2000,
-                  success: (res) => {
-                    resolve(data)
-                  }
-                })
-              } else {
-                resolve(data)
-              }
+              resolve(data)
               break;
             case 'fail.login':
               wx.redirectTo({
@@ -68,5 +57,4 @@ App({
       })
     });
   }
-
 })

@@ -28,7 +28,7 @@ public class AddressController {
      * @param address 编辑内容
      * @return 最新收货地址内容
      */
-    @PutMapping(value = {"address"})
+    @PostMapping(value = {"address"})
     public Work<Address> saveOrInsert(@RequestHeader(name = "uid") String uid, @RequestBody @Validated Address address) throws ServiceException {
         address.setUid(uid);
         if (StringUtils.hasLength(address.getId())) {

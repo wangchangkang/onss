@@ -23,13 +23,13 @@ public class User implements Serializable {
     @Indexed(unique = true)
     private String phone;
     @Indexed(unique = true)
-    private String openId;
+    private String openid;
     private LocalDateTime lastTime;
 
 
-    public User(String phone, String openId, LocalDateTime lastTime) {
+    public User(String phone, String openid, LocalDateTime lastTime) {
         this.phone = phone;
-        this.openId = openId;
+        this.openid = openid;
         this.lastTime = lastTime;
     }
 }

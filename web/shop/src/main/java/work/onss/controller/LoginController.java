@@ -58,7 +58,7 @@ public class LoginController {
         PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //更新或新增用户
-        Query query = Query.query(Criteria.where("openId").is(session.get("openid")).and("phone").is(phoneEncryptedData.getPhoneNumber()));
+        Query query = Query.query(Criteria.where("openid").is(session.get("openid")).and("phone").is(phoneEncryptedData.getPhoneNumber()));
         User user = mongoTemplate.findOne(query, User.class);
         if (user == null) {
             user = new User(phoneEncryptedData.getPhoneNumber(), session.get("openid"), LocalDateTime.now());
@@ -74,6 +74,7 @@ public class LoginController {
         String authorization = Utils.createJWT("1977.work", Utils.toJson(user), session.get("openid"), wechatConfig.getSign());
 
         result.put("authorization", authorization);
+        result.put("user",user);
         result.put("pidNum", pidNum);
         return Work.success("登录成功", result);
     }

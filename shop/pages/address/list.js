@@ -6,8 +6,21 @@ Page({
     scrollLeft: 0,
   },
 
-  onLoad: function(options) {
-  
+  onLoad: function (options) {
+    if (app.globalData.user.id) {
+      app.request({
+        url: `http://127.0.0.1:8000/shop/address`, header: { uid: app.globalData.user.id }
+      }).then((res) => {
+        console.log(res)
+        this.setData({
+          ...res.content
+        })
+      })
+    } else {
+      wx.reLaunch({
+        url: '/pages/login'
+      })
+    }
   },
 
   // 删除开始

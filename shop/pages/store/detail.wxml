@@ -1,27 +1,32 @@
 <swiper style="height:{{windowWidth}}px;">
 	<swiper-item>
-		<txv vid="e0354z3cqjp" playerid="txv1" height="100%"></txv>
+		<txv vid="{{vid}}" playerid="{{vid}}" height="100%"></txv>
 	</swiper-item>
-	<swiper-item>
-		<image mode="aspectFit" src="/images/logo2.png" class="weui-media-box__thumb" />
+	<swiper-item wx:for="{{pictures}}" wx:for-item='picture' wx:key="index">
+		<image mode="aspectFit" src="{{prefix}}{{picture}}" class="weui-media-box__thumb" />
 	</swiper-item>
 </swiper>
 <view class="weui-panel weui-media-box">
 	<view class=" weui-media-box_appmsg">
 		<view class="weui-media-box__bd">
 			<view class="weui-flex">
-				<view class="weui-media-box__desc">单价:<label class="weui-cell_warn">¥0.01元/斤</label></view>
-				<view class="weui-flex__item weui-cell__ft">
+				<view class="weui-media-box__title">{{name}}</view>
+				<view class="weui-cell__ft">
 					<button type="default" size="mini">减</button>
 					<button type="default" size="mini" disabled="true">1</button>
 					<button type="default" size="mini">加</button>
 				</view>
 			</view>
-
-			<view class="weui-media-box__title">猕猴桃</view>
-			<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
+			<view class="weui-media-box__desc">
+				单价:<label class="weui-cell_warn">¥{{price}}{{priceUnit}}</label>
+				<block wx:if="{{quality}}">
+					均价:<label class="weui-cell_warn">¥{{price}}{{priceUnit}}</label>
+				</block>
+			</view>
+			<view class="weui-media-box__desc">{{description}}</view>
 		</view>
 	</view>
+
 </view>
 <view style="min-height:150rpx"></view>
 <view class="weui-flex weui-footer_fixed-bottom">
