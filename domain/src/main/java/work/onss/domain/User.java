@@ -24,6 +24,12 @@ public class User implements Serializable {
     private String phone;
     @Indexed(unique = true)
     private String openId;
-    private LocalDateTime loginTime;
+    private LocalDateTime lastTime;
 
+
+    public User(String phone, String openId, LocalDateTime lastTime) {
+        this.phone = phone;
+        this.openId = openId;
+        this.lastTime = lastTime;
+    }
 }

@@ -1,11 +1,13 @@
 package work.onss.controller;
 
+import com.mongodb.client.result.UpdateResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,15 +43,13 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
-    @Value("${shop-weachat.key}")
-    private String key;
 
     /**
      * @param data {"code":"","appid":"","encryptedData":"","iv":""}
      * @return 密钥
      */
     @PostMapping(value = {"wxLogin"})
-    public Work<Map<String, Object>> wxLogin(@RequestBody Map<String, String> data) throws ServiceException {
+    public Work<Map<String, Object>> wxLogin(@RequestBody Map<String, String> data) {
         //微信用户session
         Map<String, String> session = miniProgramService.jscode2session(data.get("appid"), wechatConfig.getKeys().get(data.get("appid")), data.get("code"));
 
@@ -57,26 +58,23 @@ public class LoginController {
         PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //更新或新增用户
-        User user = userService.user(phoneEncryptedData.getPurePhoneNumber(), data.get("appid"), session.toString());
-
+        Query query = Query.query(Criteria.where("openId").is(session.get("openid")).and("phone").is(phoneEncryptedData.getPhoneNumber()));
+        User user = mongoTemplate.findOne(query, User.class);
         if (user == null) {
-            throw new ServiceException("fail", "登录失败");
+            user = new User(phoneEncryptedData.getPhoneNumber(), session.get("openid"), LocalDateTime.now());
+            mongoTemplate.insert(user);
+        } else {
+            query.addCriteria(Criteria.where("id").is(user.getId()));
+            mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
         }
-
-        //统计用户购物车
         List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
-        Map<String, Integer> pidnum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
+        Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
 
-        //生成 JSON WEB TOKEN
         Map<String, Object> result = new HashMap<>();
-        long nowMillis = System.currentTimeMillis();
-        Date exp = new Date(nowMillis + 7100000);
-        Date iat = new Date(nowMillis);
-//        String authorization = Utils.createJWT("1977.work", user.getId(), exp, iat, iat, data.get("code"), user.getData().keySet().toArray(new String[0]), key, null);
+        String authorization = Utils.createJWT("1977.work", Utils.toJson(user), session.get("openid"), wechatConfig.getSign());
 
-
-        result.put("authorization", null);
-        result.put("pidnum", pidnum);
+        result.put("authorization", authorization);
+        result.put("pidNum", pidNum);
         return Work.success("登录成功", result);
     }
 }
