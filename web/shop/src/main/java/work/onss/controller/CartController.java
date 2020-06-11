@@ -7,7 +7,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Cart;
+import work.onss.domain.Store;
 import work.onss.vo.Work;
+
+import java.util.List;
 
 @RestController
 public class CartController {
@@ -41,5 +44,18 @@ public class CartController {
         mongoTemplate.updateFirst(query, update, Cart.class);
         return Work.success("更新购车数量成功", true);
     }
+
+    /**
+     * @param uid 用户ID
+     * @return 购物车商户
+     */
+    @DeleteMapping(value = {"cart"})
+    public Work<List<Store>> getStores(@RequestHeader(name = "uid") String uid) {
+        Query query = Query.query(Criteria.where("uid").is(uid));
+        List<String> sids = mongoTemplate.findDistinct(query, "sid", Cart.class, String.class);
+        List<Store> stores = mongoTemplate.find(Query.query(Criteria.where("id").in(sids)), Store.class);
+        return Work.success("加载成功", stores);
+    }
+
 
 }
