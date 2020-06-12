@@ -37,7 +37,7 @@ public class CartController {
      * @param uid 用户ID
      * @return 更新购车商品数量
      */
-    @PutMapping(value = {"cart/{pid}-{num}/setNum"})
+    @PutMapping(value = {"cart/setNum"})
     public Work<Cart> updateNum(@RequestHeader(name = "uid") String uid, @RequestBody Cart cart) {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
         Product product = mongoTemplate.findOne(queryProduct, Product.class);
