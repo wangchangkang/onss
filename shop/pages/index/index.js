@@ -1,7 +1,8 @@
-const app = getApp()
+const appInstance = getApp()
+const { windowWidth, domain, prefix } = appInstance.globalData;
 Page({
   data: {
-    prefix: 'http://127.0.0.1/',
+    windowWidth, prefix,
     types: [{
       name: "服装",
       icon: "/images/服装店.png"
@@ -23,20 +24,13 @@ Page({
     },],
     stores: [],
   },
-  //事件处理函数
-  bindViewTap: function () {
-    wx.navigateTo({
-      url: '../logs/logs'
-    })
-  },
   onLoad: function () {
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
         console.log(res)
-        app.request({
-          url: `http://127.0.0.1:8000/shop/store/${res.longitude}-${res.latitude}/near`,
-          // url: `http://127.0.0.1:8000/shop/store/0-90/near`,
+        appInstance.request({
+          url: `${domain}/store/${res.longitude}-${res.latitude}/near`,
         }).then((res) => {
           console.log(res)
           this.setData({
@@ -47,29 +41,39 @@ Page({
     })
   },
   onPullDownRefresh: function () {
-    app.request({
-      url: 'http://127.0.0.1:8000/shop/store/0-0/near',
-    }).then((res) => {
-      console.log(res)
-      this.setData({
-        pagination: res.content
-      })
-      wx.stopPullDownRefresh()
+    wx.getLocation({
+      type: 'gcj02',
+      success: (res) => {
+        console.log(res)
+        appInstance.request({
+          url: `${domain}/store/${res.longitude}-${res.latitude}/near`,
+        }).then((res) => {
+          console.log(res)
+          this.setData({
+            pagination: res.content
+          })
+          wx.stopPullDownRefresh()
+        })
+      }
     })
   },
   onReachBottom: function () {
     if (this.data.pagination.last) {
       console.log(this.data.pagination)
-
     } else {
-      app.request({
-        url: `http://127.0.0.1:8000/shop/store/30-20/near?page=${this.data.pagination.number+1}`,
-      }).then((res) => {
-        console.log(res)
-        this.setData({
-          pagination: res.content
-        })
-        wx.stopPullDownRefresh()
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          console.log(res)
+          appInstance.request({
+            url: `${domain}/store/${res.longitude}-${res.latitude}/near?page=${this.data.pagination.number+1}`,
+          }).then((res) => {
+            console.log(res)
+            this.setData({
+              pagination: res.content
+            })
+          })
+        }
       })
     }
   },
