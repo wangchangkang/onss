@@ -1,6 +1,7 @@
 package work.onss.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,7 +13,10 @@ import work.onss.domain.Store;
 import work.onss.vo.Work;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class CartController {
@@ -85,10 +89,16 @@ public class CartController {
      * @return 购物车
      */
     @DeleteMapping(value = {"cart/{sid}/getCarts"})
-    public Work<List<Cart>> getCarts(@RequestHeader(name = "uid") String uid, @PathVariable String sid) {
-        Query query = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
-        List<Cart> carts = mongoTemplate.find(query, Cart.class);
-        return Work.success("加载成功", carts);
+    public Work<Map<String, Object>> getCarts(@RequestHeader(name = "uid") String uid, @PathVariable String sid) {
+        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("pid"));
+        List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+        Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet())).with(Sort.by("id"));
+        List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        Map<String, Object> data = new HashMap<>();
+        data.put("cartMap", cartMap);
+        data.put("products", products);
+        return Work.success("加载成功", data);
     }
 
 
