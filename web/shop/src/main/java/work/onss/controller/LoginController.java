@@ -1,9 +1,7 @@
 package work.onss.controller;
 
-import com.mongodb.client.result.UpdateResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.WechatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.User;
-import work.onss.exception.ServiceException;
 import work.onss.service.MiniProgramService;
 import work.onss.service.UserService;
 import work.onss.utils.Utils;
@@ -23,7 +20,6 @@ import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
