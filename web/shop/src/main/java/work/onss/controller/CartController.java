@@ -46,7 +46,9 @@ public class CartController {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
         Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
-            if (cart.getNum() > product.getMax() || cart.getNum() < product.getMin()) {
+            if (cart.getNum() > product.getTotal()) {
+                return Work.fail("库存不足");
+            } else if (cart.getNum() > product.getMax() || cart.getNum() < product.getMin()) {
                 String msg = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
                 return Work.fail(msg);
             } else if (!product.getStatus()) {
