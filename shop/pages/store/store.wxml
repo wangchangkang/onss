@@ -10,7 +10,7 @@
 	</view>
 </view>
 <view class="weui-cells weui-cells_after-title storeInfo">
-	<view class="weui-cell" bindtap="getLocation" data-latitude="36.46227529413415" data-longitude="116.06162917523524" data-name="星美城市广场二期">
+	<view class="weui-cell" bindtap="openLocation">
 		<view class="weui-cell__hd">店铺地址：</view>
 		<view class="weui-cell__bd">{{store.address}}</view>
 		<view class="weui-cell__ft">

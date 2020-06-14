@@ -1,11 +1,10 @@
 const appInstance = getApp()
-const { windowWidth, domain, prefix, types } = appInstance.globalData;
+const {  domain, prefix } = appInstance.globalData;
 Page({
   data: {
-    windowWidth, prefix
+     prefix
   },
   onLoad: function (options) {
-    console.log(options)
     appInstance.request({
       url: `${domain}/store/${options.sid}/products`,
     }).then((res) => {
@@ -19,7 +18,6 @@ Page({
     appInstance.request({
       url: `${domain}/store/${this.data.store.id}/products`,
     }).then((res) => {
-      console.log(res)
       this.setData({
         ...res.content
       })

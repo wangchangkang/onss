@@ -6,8 +6,8 @@ App({
     user: wx.getStorageSync('user'),
     windowWidth: wx.getSystemInfoSync().windowWidth,
     appId: "wxe78290c2a5313de3",
-    domain: 'http://192.168.0.116:8000/shop',
-    prefix: 'http://192.168.0.116/',
+    domain: 'http://127.0.0.1:8000/shop',
+    prefix: 'http://127.0.0.1/',
     types: [
       { id: 1, title: '生鲜' },
       { id: 2, title: '酒店' },

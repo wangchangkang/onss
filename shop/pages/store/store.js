@@ -1,18 +1,12 @@
-const app = getApp()
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
   },
 
   onReady: function () {
     let pages = getCurrentPages();//当前页面栈
     let prevPage = pages[pages.length - 2];//上一页面
     this.setData({
-     ...prevPage.data
+      ...prevPage.data
     })
     console.log(this.data)
   },
@@ -26,18 +20,15 @@ Page({
       istrue: false
     })
   },
-
-  getLocation: function (e) {
-    const latitude = e.currentTarget.dataset.latitude;
-    const longitude = e.currentTarget.dataset.longitude;
-    const name = e.currentTarget.dataset.name;
+  openLocation: function (e) {
+    const { location,address } = this.data.store;
     wx.openLocation({
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-      name: name,
+      latitude: parseFloat(location.y),
+      longitude: parseFloat(location.x),
+      name: address,
       success(res) {
         console.log(res)
       }
     })
-  },
+  }
 })
