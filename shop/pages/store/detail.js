@@ -1,12 +1,12 @@
-const app = getApp()
+const appInstance = getApp()
+const { windowWidth, domain, prefix, types } = appInstance.globalData;
 Page({
   data: {
-    windowWidth:app.globalData.windowWidth,
-    prefix:app.globalData.prefix
+    windowWidth,domain,prefix
   },
   onLoad: function (options) {
-    app.request({
-      url: `http://127.0.0.1:8000/shop/product/${options.id}`,
+    appInstance.request({
+      url: `${domain}/product/${options.id}`,
     }).then((res) => {
       console.log(res)
       this.setData({

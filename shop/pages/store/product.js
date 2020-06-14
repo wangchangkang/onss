@@ -1,12 +1,13 @@
-const app = getApp()
+const appInstance = getApp()
+const { windowWidth, domain, prefix, types } = appInstance.globalData;
 Page({
   data: {
-    prefix: 'http://127.0.0.1/',
+    windowWidth, prefix
   },
   onLoad: function (options) {
     console.log(options)
-    app.request({
-      url: `http://127.0.0.1:8000/shop/store/${options.sid}/products`,
+    appInstance.request({
+      url: `${domain}/store/${options.sid}/products`,
     }).then((res) => {
       console.log(res)
       this.setData({
@@ -15,8 +16,8 @@ Page({
     })
   },
   onPullDownRefresh: function () {
-    app.request({
-      url: `http://127.0.0.1:8000/shop/store/${this.data.store.id}/products`,
+    appInstance.request({
+      url: `${domain}/store/${this.data.store.id}/products`,
     }).then((res) => {
       console.log(res)
       this.setData({
@@ -29,8 +30,8 @@ Page({
     if (this.data.pagination.last) {
       console.log(this.data.pagination)
     } else {
-      app.request({
-        url: `http://127.0.0.1:8000/shop/store/${this.data.store.id}/products?page=${this.data.pagination.number + 1}`,
+      appInstance.request({
+        url: `${domain}/store/${this.data.store.id}/products?page=${this.data.pagination.number + 1}`,
       }).then((res) => {
         console.log(res)
         this.setData({

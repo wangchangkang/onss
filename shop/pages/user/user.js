@@ -1,4 +1,5 @@
-// pages/user/user.js
+const appInstance = getApp()
+const { windowWidth, domain, prefix,authorization, types,user } = appInstance.globalData;
 Page({
 
   /**
