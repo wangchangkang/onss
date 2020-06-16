@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 /**

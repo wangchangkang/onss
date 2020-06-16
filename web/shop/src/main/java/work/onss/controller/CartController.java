@@ -92,7 +92,7 @@ public class CartController {
      */
     @DeleteMapping(value = {"cart/{sid}/getCarts"})
     public Work<Map<String, Object>> getCarts(@RequestHeader(name = "uid") String uid, @PathVariable String sid) {
-        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("pid"));
+        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("id"));
         List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
         Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet())).with(Sort.by("id"));

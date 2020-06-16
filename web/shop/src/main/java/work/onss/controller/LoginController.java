@@ -13,7 +13,6 @@ import work.onss.config.WechatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
-import work.onss.service.UserService;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.Work;
@@ -36,9 +35,6 @@ public class LoginController {
     private WechatConfig wechatConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-
-    @Autowired
-    private UserService userService;
 
     /**
      * @param data {"code":"","appid":"","encryptedData":"","iv":""}
