@@ -20,19 +20,56 @@ App({
     ]
   },
   onLaunch: function () {
+    return new Promise((resolve, reject) => {
+      const { domain, user, appId } = this.globalData;
+      if (user.phone) {
 
-  //  const authorization =  wx.getStorageSync('authorization')
-  //   if(this.globalData.authorization){
-      
-  //   }else{
-  //     wx.login({
-  //     complete: (res) => {
-  //       this.globalData.code = res.code
-  //     },
-  //   })
-  //   }
-    
-   },
+      } else {
+        wx.login({
+          complete: (res) => {
+            wx.request({
+              url: `${domain}/wxLogin`, method: 'POST', data: { appid: appId, code: res.code },
+              success: ({ data }) => {
+
+                const { code, msg, content } = data;
+                console.log(data)
+                switch (code) {
+                  case 'success':
+                    wx.setStorageSync('user', content.user);
+                    wx.setStorageSync('authorization', content.authorization);
+                    wx.setStorageSync('pidNum', content.pidNum);
+                    this.globalData.authorization = content.authorization;
+                    this.globalData.user = content.user;
+                    this.globalData.pidNum = content.pidNum;
+                    break;
+                  case '1977.user.nofund':
+                    wx.setStorageSync('user', content.user);
+                    this.globalData.user = content.user;
+                    break;
+                  default:
+                    wx.showModal({
+                      title: '警告',
+                      content: msg,
+                      confirmColor: '#e64340',
+                      showCancel: false,
+                    })
+                    break;
+                }
+              },
+              fail: (res) => {
+                wx.showModal({
+                  title: '警告',
+                  content: '登陆失败',
+                  confirmColor: '#e64340',
+                  showCancel: false,
+                })
+              },
+            })
+          },
+        })
+      }
+    })
+  },
 
   request: function ({ url, method, data, header }) {
     return new Promise((resolve, reject) => {

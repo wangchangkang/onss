@@ -1,5 +1,5 @@
 const appInstance = getApp()
-const { windowWidth, domain, prefix, types,user,appid } = appInstance.globalData;
+const {  domain,user,appid } = appInstance.globalData;
 Page({
   data: {},
   getAuthorization: function (e) {

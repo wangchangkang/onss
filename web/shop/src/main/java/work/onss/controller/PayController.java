@@ -26,20 +26,6 @@
 //public class PayController {
 //
 //    @Autowired
-//    private UserService userService;
-//    @Autowired
-//    private AddressService addressService;
-//    @Autowired
-//    private ProductService productService;
-//    @Autowired
-//    private WxPayService wxPayService;
-//    @Autowired
-//    private StoreService storeService;
-//    @Autowired
-//    private ScoreService scoreService;
-//    @Autowired
-//    private CartService cartService;
-//    @Autowired
 //    private AsyncTask asyncTask;
 //
 //

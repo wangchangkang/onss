@@ -8,6 +8,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
+import work.onss.vo.WXSession;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,15 +33,14 @@ public class MiniProgramServiceImpl implements MiniProgramService {
     }
 
     @Override
-    public Map<String, String> jscode2session(String appid, String secret, String code) {
+    public WXSession jscode2session(String appid, String secret, String code) {
         Map<String, String> map = new HashMap<>();
         map.put("appid", appid);
         map.put("secret", secret);
         map.put("js_code", code);
         map.put("grant_type", "authorization_code");
         String seesion = restTemplate.getForObject("https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}", String.class, map);
-        Map<String, String> data = Utils.fromJson(seesion);
-        return data;
+        return Utils.fromJson(seesion, WXSession.class);
     }
 
     @Override

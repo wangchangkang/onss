@@ -22,6 +22,8 @@ public class User implements Serializable {
     private String phone;
     @Indexed(unique = true)
     private String openid;
+    private String appid;
+    private String session_key;
     private LocalDateTime lastTime;
 
 

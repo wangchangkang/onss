@@ -14,8 +14,7 @@ import work.onss.domain.Cart;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
-import work.onss.vo.PhoneEncryptedData;
-import work.onss.vo.Work;
+import work.onss.vo.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -37,38 +36,65 @@ public class LoginController {
     private MongoTemplate mongoTemplate;
 
     /**
-     * @param data {"code":"","appid":"","encryptedData":"","iv":""}
+     * @param wxLogin 微信登陆信息
      * @return 密钥
      */
     @PostMapping(value = {"wxLogin"})
-    public Work<Map<String, Object>> wxLogin(@RequestBody Map<String, String> data) {
-        //微信用户session
-        Map<String, String> session = miniProgramService.jscode2session(data.get("appid"), wechatConfig.getKeys().get(data.get("appid")), data.get("code"));
+    public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
+        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), wechatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
 
-        //微信用户手机号
-        String encryptedData = Utils.getEncryptedData(data.get("encryptedData"), session.get("session_key"), data.get("iv"));
-        PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
-
-        //更新或新增用户
-        Query query = Query.query(Criteria.where("openid").is(session.get("openid")).and("phone").is(phoneEncryptedData.getPhoneNumber()));
+        Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
-        if (user == null) {
-            user = new User(phoneEncryptedData.getPhoneNumber(), session.get("openid"), LocalDateTime.now());
-            mongoTemplate.insert(user);
+
+        Map<String, Object> result = new HashMap<>();
+        if (user == null || user.getPhone() == null) {
+            user = new User();
+            user.setOpenid(wxSession.getOpenid());
+            user.setSession_key(wxSession.getSession_key());
+            user.setLastTime(LocalDateTime.now());
+            user.setAppid(wxLogin.getAppid());
+            user = mongoTemplate.insert(user);
+            result.put("user", user);
+            return Work.message("1977.user.nofund", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
+            List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
+            Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(user), wxSession.getOpenid(), wechatConfig.getSign());
+            result.put("authorization", authorization);
+            result.put("user", user);
+            result.put("pidNum", pidNum);
+            return Work.success("登录成功", result);
         }
-        List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
-        Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
+    }
+
+    /**
+     * @param wxRegister 注册信息
+     * @return 密钥及用户信息
+     */
+    @PostMapping(value = {"register"})
+    public Work<Map<String, Object>> register(@RequestBody WXRegister wxRegister) {
+        if (wxRegister.getLastTime().isBefore(LocalDateTime.now())) {
+            return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
+        }
+
+        //微信用户手机号
+        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), wxRegister.getSession_key(), wxRegister.getIv());
+        PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
+
+        //添加用户手机号
+        Query query = Query.query(Criteria.where("id").is(wxRegister.getUid()));
+        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), User.class);
+
+        User user = mongoTemplate.findById(wxRegister.getUid(), User.class);
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(user), session.get("openid"), wechatConfig.getSign());
+        String authorization = Utils.createJWT("1977.work", Utils.toJson(user), wxRegister.getOpenid(), wechatConfig.getSign());
 
         result.put("authorization", authorization);
-        result.put("user",user);
-        result.put("pidNum", pidNum);
-        return Work.success("登录成功", result);
+        result.put("user", user);
+        return Work.success("注册成功", result);
     }
 }
 
