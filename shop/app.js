@@ -42,7 +42,7 @@ App({
                     this.globalData.user = content.user;
                     this.globalData.pidNum = content.pidNum;
                     break;
-                  case '1977.user.nofund':
+                  case '1977.user.notfound':
                     wx.setStorageSync('user', content.user);
                     this.globalData.user = content.user;
                     break;

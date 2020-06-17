@@ -55,7 +55,7 @@ public class LoginController {
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
             result.put("user", user);
-            return Work.message("1977.user.nofund", "请绑定手机号", result);
+            return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
@@ -75,7 +75,7 @@ public class LoginController {
      */
     @PostMapping(value = {"register"})
     public Work<Map<String, Object>> register(@RequestBody WXRegister wxRegister) {
-        if (wxRegister.getLastTime().isBefore(LocalDateTime.now())) {
+        if (wxRegister.getLastTime().plusSeconds(6000).isBefore(LocalDateTime.now())) {
             return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
         }
 
