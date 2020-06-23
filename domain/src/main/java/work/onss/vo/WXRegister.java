@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class WXRegister {
 
-    private String uid;
+    private String id;
     private String openid;
     private LocalDateTime lastTime;
     private String encryptedData;

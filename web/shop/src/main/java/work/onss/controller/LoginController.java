@@ -84,10 +84,10 @@ public class LoginController {
         PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号
-        Query query = Query.query(Criteria.where("id").is(wxRegister.getUid()));
+        Query query = Query.query(Criteria.where("id").is(wxRegister.getId()));
         mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), User.class);
 
-        User user = mongoTemplate.findById(wxRegister.getUid(), User.class);
+        User user = mongoTemplate.findById(wxRegister.getId(), User.class);
 
         Map<String, Object> result = new HashMap<>();
         String authorization = Utils.createJWT("1977.work", Utils.toJson(user), wxRegister.getOpenid(), wechatConfig.getSign());

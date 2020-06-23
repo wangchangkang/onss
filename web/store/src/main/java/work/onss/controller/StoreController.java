@@ -2,7 +2,6 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,16 +11,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.WechatConfig;
+import work.onss.domain.Customer;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.StoreInfo;
-import work.onss.vo.Token;
 import work.onss.vo.Work;
 
 import java.util.List;
 
-import static work.onss.domain.Store.Contact;
 
 /**
  * 店铺管理
@@ -40,38 +38,13 @@ public class StoreController {
     /**
      * 查询微信用户下的所有特约商户
      *
-     * @param openid 微信OPENID
+     * @param cid 客户ID
      */
-    @GetMapping(value = {"store"})
-    public Work<List<Store>> register(@RequestHeader(name = "openid") String openid) {
-        Query query = Query.query(Criteria.where("contacts.openid").is(openid));
+    @GetMapping(value = {"stores"})
+    public Work<List<Store>> stores(@RequestHeader(name = "cid") String cid) {
+        Query query = Query.query(Criteria.where("customers.id").is(cid));
         List<Store> stores = mongoTemplate.find(query, Store.class);
         return Work.success("加载成功", stores);
-    }
-
-    /**
-     * 入驻
-     *
-     * @param openid 微信OPENID
-     * @param store  商户信息
-     */
-    @PostMapping(value = {"store"})
-    public Work<Store> register(@RequestHeader(name = "openid") String openid, @Validated @RequestBody Store store) throws ServiceException {
-        Contact contact = store.getContacts().get(0);
-        contact.setOpenid(openid);
-        contact.setRole(0);
-        store.setSubMchId(store.getLicense().getNumber());
-        try {
-            if (store.getId() == null) {
-                mongoTemplate.insert(store);
-            } else {
-                mongoTemplate.save(store);
-            }
-        } catch (DuplicateKeyException e) {
-            String msg = String.format("编号: %s 已申请,请立刻截图,再联系客服", store.getLicense().getNumber());
-            throw new ServiceException("fail", msg);
-        }
-        return Work.success("欢迎您的加入,请耐心等待我们的审核！", store);
     }
 
     /**
@@ -79,9 +52,9 @@ public class StoreController {
      *
      * @param id 主键
      */
-    @GetMapping(value = {"store/{id}"})
-    public Work<Store> detail(@RequestHeader(name = "openid") String openid, @PathVariable String id) {
-        Query query = Query.query(Criteria.where("id").is(id).and("contacts.openid").is(openid));
+    @GetMapping(value = {"stores/{id}"})
+    public Work<Store> detail(@RequestHeader(name = "cid") String cid, @PathVariable String id) {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.cid").is(cid));
         Store store = mongoTemplate.findOne(query, Store.class);
         return Work.success("加载成功", store);
     }
@@ -89,24 +62,20 @@ public class StoreController {
     /**
      * 店铺授权
      *
-     * @param openid 微信OPENID
-     * @param id     主键
+     * @param cid 客户Id
+     * @param id  主键
      */
-    @PostMapping(value = {"store/{id}/bind"})
-    public Work<String> bind(@RequestHeader(name = "openid") String openid, @PathVariable String id) throws ServiceException {
+    @PostMapping(value = {"stores/{id}/bind"})
+    public Work<String> bind(@RequestHeader(name = "cid") String cid, @PathVariable String id) throws ServiceException {
         Query query = Query.query(Criteria.where("id").is(id));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
             throw new ServiceException("fail", "该已商户不存在，请联系客服!");
         }
-        if (store.getSubMchId().equals(store.getLicense().getNumber())) {
-            return Work.fail("正在审核中，请耐心等待。");
-        } else {
-            Contact contact = store.getContacts().stream().filter(item -> item.getOpenid().equals(openid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
-            Token token = new Token(store.getId(), store.getSubMchId(), store.getStatus(), contact.getRole(), contact.getPhone(), contact.getIdCard(), contact.getEmail(), store.getLicense().getNumber(), contact.getOpenid());
-            String authorization = Utils.createJWT("1977.work", Utils.toJson(token), openid, wechatConfig.getSign());
-            return Work.success("登陆成功", authorization);
-        }
+        Customer customer = store.getCustomers().stream().filter(item -> item.getOpenid().equals(cid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
+        customer.setStore(store);
+        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), cid, wechatConfig.getSign());
+        return Work.success("登陆成功", authorization);
     }
 
     /**
@@ -115,7 +84,7 @@ public class StoreController {
      * @param id     商户ID
      * @param status 营业中 or 休息中
      */
-    @PutMapping(value = {"store/{id}/updateStatus"})
+    @PutMapping(value = {"stores/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("status", !status), Store.class);
@@ -128,7 +97,7 @@ public class StoreController {
      * @param id        商户ID
      * @param storeInfo 商户信息
      */
-    @PutMapping(value = {"store/{id}"})
+    @PutMapping(value = {"stores/{id}"})
     public Work<StoreInfo> updateStatus(@PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) {
         Query query = Query.query(Criteria.where("id").is(id));
         Update update = Update
@@ -152,7 +121,7 @@ public class StoreController {
      * @param file 文件
      * @return 图片地址
      */
-    @PostMapping("store/uploadPicture")
+    @PostMapping("stores/uploadPicture")
     public Work<String> upload(@RequestHeader(name = "number") String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
