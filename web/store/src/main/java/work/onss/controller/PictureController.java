@@ -37,7 +37,7 @@ public class PictureController {
      * @return 图片地址
      */
     @PostMapping("picture")
-    public Work<String> upload(@RequestHeader String licenseNumber, @RequestParam(value = "file") MultipartFile file) throws Exception {
+    public Work<String> upload( @RequestParam(value = "file") MultipartFile file,@RequestParam String licenseNumber) throws Exception {
 
         Query query = Query.query(Criteria.where("licenseNumber").is(licenseNumber));
         Store store = mongoTemplate.findOne(query, Store.class);

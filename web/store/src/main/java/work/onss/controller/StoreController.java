@@ -65,8 +65,8 @@ public class StoreController {
      * @param id       主键
      */
     @PostMapping(value = {"stores/{id}/bind"})
-    public Work<String> bind(@PathVariable String id, @RequestBody Customer customer) throws ServiceException {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(customer.getId()));
+    public Work<String> bind(@PathVariable String id, @RequestParam(name = "cid") String cid, @RequestBody Customer customer) throws ServiceException {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
             throw new ServiceException("fail", "该已商户不存在，请联系客服!");
@@ -79,14 +79,14 @@ public class StoreController {
     /**
      * 营业中 or 休息中
      *
-     * @param id    商户ID
-     * @param store 商户信息
+     * @param id     商户ID
+     * @param status 商户信息
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestBody Store store) {
+    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestParam(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("status", store.getStatus()), Store.class);
-        return Work.success("更新成功", store.getStatus());
+        mongoTemplate.updateFirst(query, Update.update("status", status), Store.class);
+        return Work.success("更新成功", status);
     }
 
     /**
@@ -96,8 +96,8 @@ public class StoreController {
      * @param store 商户信息
      */
     @PutMapping(value = {"stores/{id}"})
-    public Work<Store> update(@PathVariable(name = "id") String id, @Validated @RequestBody Store store) {
-        Query query = Query.query(Criteria.where("id").is(id));
+    public Work<Store> update(@PathVariable(name = "id") String id,@RequestParam(name = "cid") String cid, @Validated @RequestBody Store store) {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         Update update = Update
                 .update("name", store.getName())
                 .set("description", store.getDescription())

@@ -36,8 +36,8 @@ public class ProductController {
      *
      * @param id 主键
      */
-    @GetMapping(value = {"product/{id}"})
-    public Work<Product> product(@RequestHeader(name = "sid") String sid, @PathVariable String id) {
+    @GetMapping(value = {"products/{id}"})
+    public Work<Product> product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         Product product = mongoTemplate.findOne(query, Product.class);
         return Work.success("加载成功", product);
@@ -48,8 +48,8 @@ public class ProductController {
      *
      * @param sid 店铺ID
      */
-    @GetMapping(value = {"product"})
-    public Work<List<Product>> products(@RequestHeader(name = "sid") String sid) {
+    @GetMapping(value = {"products"})
+    public Work<List<Product>> products(@RequestParam(name = "sid") String sid) {
         Query query = Query.query(Criteria.where("sid").is(sid));
         List<Product> products = mongoTemplate.find(query, Product.class);
         return Work.success("加载成功", products);
@@ -59,17 +59,16 @@ public class ProductController {
     /**
      * 新增
      *
-     * @param sid     商品ID
      * @param product 商品信息
      */
-    @PostMapping(value = {"product"})
-    public Work<Product> insert(@RequestHeader(name = "sid") String sid, @Validated @RequestBody Product product) {
-        product.setSid(sid);
+    @PostMapping(value = {"products"})
+    public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         if (product.getId() == null) {
             product = mongoTemplate.insert(product);
             return Work.success("创建成功", product);
         } else {
-            product = mongoTemplate.save(product);
+            Query query = Query.query(Criteria.where("id").is(product.getId()).and("sid").is(sid));
+            mongoTemplate.findAndReplace(query, product);
             return Work.success("编辑成功", product);
         }
     }
@@ -80,10 +79,9 @@ public class ProductController {
      * @param id      主键
      * @param product 商品信息
      */
-    @PutMapping(value = {"product/{id}"})
-    public Work<Product> update(@RequestHeader(name = "sid") String sid, @PathVariable String id, @Validated @RequestBody Product product) {
+    @PutMapping(value = {"products/{id}"})
+    public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        product.setSid(sid);
         mongoTemplate.findAndReplace(query, product);
         return Work.success("编辑成功", product);
     }
@@ -91,14 +89,13 @@ public class ProductController {
     /**
      * 上/下架商品
      *
-     * @param id     主键
-     * @param status 状态 0 下架 1 上架
+     * @param status 商品状态
      */
-    @PutMapping(value = {"product/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@RequestHeader(name = "sid") String sid, @RequestHeader(name = "status") Boolean status, @PathVariable String id) {
+    @PutMapping(value = {"products/{id}/updateStatus"})
+    public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        mongoTemplate.updateFirst(query, Update.update("status", !status), Product.class);
-        return Work.success("操作成功", !status);
+        mongoTemplate.updateFirst(query, Update.update("status", status), Product.class);
+        return Work.success("操作成功", status);
     }
 
     /**
@@ -106,8 +103,8 @@ public class ProductController {
      *
      * @param id 主键
      */
-    @DeleteMapping(value = {"product/{id}"})
-    public Work<Boolean> delete(@RequestHeader(name = "sid") String sid, @PathVariable String id) {
+    @DeleteMapping(value = {"products/{id}"})
+    public Work<Boolean> delete(@PathVariable String id, @RequestParam(name = "sid") String sid) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
         return Work.success("删除成功", true);
@@ -119,8 +116,8 @@ public class ProductController {
      * @param file 文件
      * @return 图片地址
      */
-    @PostMapping("product/uploadPicture")
-    public Work<String> upload(@RequestHeader(name = "number") String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
+    @PostMapping("products/uploadPicture")
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "number") String number) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
