@@ -37,13 +37,13 @@ public class PictureController {
      * @return 图片地址
      */
     @PostMapping("picture")
-    public Work<String> upload(@RequestHeader String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
+    public Work<String> upload(@RequestHeader String licenseNumber, @RequestParam(value = "file") MultipartFile file) throws Exception {
 
-        Query query = Query.query(Criteria.where("license.number").is(number));
+        Query query = Query.query(Criteria.where("licenseNumber").is(licenseNumber));
         Store store = mongoTemplate.findOne(query, Store.class);
 
         if (store != null) {
-            String msg = String.format("编号: %s 已申请,请立刻截图,再联系客服", store.getLicense().getNumber());
+            String msg = String.format("编号: %s 已申请,请立刻截图,再联系客服",licenseNumber);
             throw new ServiceException("fail", msg);
         }
         String filename = file.getOriginalFilename();
@@ -59,7 +59,7 @@ public class PictureController {
 
         filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
 
-        String path = Utils.upload(file, wechatConfig.getFilePath(), number,filename);
+        String path = Utils.upload(file, wechatConfig.getFilePath(), licenseNumber,filename);
         return Work.success("上传成功", path);
     }
 

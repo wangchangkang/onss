@@ -15,7 +15,6 @@ import work.onss.domain.Customer;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
-import work.onss.vo.StoreInfo;
 import work.onss.vo.Work;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class StoreController {
      * @param cid 客户ID
      */
     @GetMapping(value = {"stores"})
-    public Work<List<Store>> stores(@RequestHeader(name = "cid") String cid) {
+    public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
         Query query = Query.query(Criteria.where("customers.id").is(cid));
         List<Store> stores = mongoTemplate.find(query, Store.class);
         return Work.success("加载成功", stores);
@@ -53,8 +52,8 @@ public class StoreController {
      * @param id 主键
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> detail(@RequestHeader(name = "cid") String cid, @PathVariable String id) {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.cid").is(cid));
+    public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         Store store = mongoTemplate.findOne(query, Store.class);
         return Work.success("加载成功", store);
     }
@@ -62,57 +61,56 @@ public class StoreController {
     /**
      * 店铺授权
      *
-     * @param cid 客户Id
-     * @param id  主键
+     * @param customer 营业员信息
+     * @param id       主键
      */
     @PostMapping(value = {"stores/{id}/bind"})
-    public Work<String> bind(@RequestHeader(name = "cid") String cid, @PathVariable String id) throws ServiceException {
-        Query query = Query.query(Criteria.where("id").is(id));
+    public Work<String> bind(@PathVariable String id, @RequestBody Customer customer) throws ServiceException {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(customer.getId()));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
             throw new ServiceException("fail", "该已商户不存在，请联系客服!");
         }
-        Customer customer = store.getCustomers().stream().filter(item -> item.getOpenid().equals(cid)).findAny().orElseThrow(() -> new ServiceException("fail", "登陆失败"));
         customer.setStore(store);
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), cid, wechatConfig.getSign());
+        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), customer.getId(), wechatConfig.getSign());
         return Work.success("登陆成功", authorization);
     }
 
     /**
      * 营业中 or 休息中
      *
-     * @param id     商户ID
-     * @param status 营业中 or 休息中
+     * @param id    商户ID
+     * @param store 商户信息
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestHeader(name = "status") Boolean status) {
+    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("status", !status), Store.class);
-        return Work.success("更新成功", !status);
+        mongoTemplate.updateFirst(query, Update.update("status", store.getStatus()), Store.class);
+        return Work.success("更新成功", store.getStatus());
     }
 
     /**
      * 更新商户基本信息
      *
-     * @param id        商户ID
-     * @param storeInfo 商户信息
+     * @param id    商户ID
+     * @param store 商户信息
      */
     @PutMapping(value = {"stores/{id}"})
-    public Work<StoreInfo> updateStatus(@PathVariable(name = "id") String id, @Validated @RequestBody StoreInfo storeInfo) {
+    public Work<Store> update(@PathVariable(name = "id") String id, @Validated @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id));
         Update update = Update
-                .update("name", storeInfo.getName())
-                .set("description", storeInfo.getDescription())
-                .set("address", storeInfo.getAddress())
-                .set("trademark", storeInfo.getTrademark())
-                .set("username", storeInfo.getUsername())
-                .set("phone", storeInfo.getPhone())
-                .set("type", storeInfo.getType())
-                .set("location", storeInfo.getLocation())
-                .set("pictures", storeInfo.getPictures())
-                .set("videos", storeInfo.getVideos());
+                .update("name", store.getName())
+                .set("description", store.getDescription())
+                .set("address", store.getAddress())
+                .set("trademark", store.getTrademark())
+                .set("username", store.getUsername())
+                .set("phone", store.getPhone())
+                .set("type", store.getType())
+                .set("location", store.getLocation())
+                .set("pictures", store.getPictures())
+                .set("videos", store.getVideos());
         mongoTemplate.updateFirst(query, update, Store.class);
-        return Work.success("更新成功", storeInfo);
+        return Work.success("更新成功", store);
     }
 
     /**
@@ -122,7 +120,7 @@ public class StoreController {
      * @return 图片地址
      */
     @PostMapping("stores/uploadPicture")
-    public Work<String> upload(@RequestHeader(name = "number") String number, @RequestParam(value = "file") MultipartFile file) throws Exception {
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "licenseNumber") String licenseNumber) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
@@ -132,7 +130,7 @@ public class StoreController {
             throw new ServiceException("fail", "文件格式错误!");
         }
         filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        String path = Utils.upload(file, wechatConfig.getFilePath(), number, filename);
+        String path = Utils.upload(file, wechatConfig.getFilePath(), licenseNumber, filename);
         return Work.success("上传成功", path);
     }
 }
