@@ -46,13 +46,23 @@ public class LoginController {
         Customer customer = mongoTemplate.findOne(query, Customer.class);
 
         Map<String, Object> result = new HashMap<>();
-        if (customer == null || customer.getPhone() == null) {
+        if (customer == null) {
             customer = new Customer();
             customer.setOpenid(wxSession.getOpenid());
             customer.setSession_key(wxSession.getSession_key());
             customer.setLastTime(LocalDateTime.now());
             customer.setAppid(wxLogin.getAppid());
             customer = mongoTemplate.insert(customer);
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), wxSession.getOpenid(), wechatConfig.getSign());
+            result.put("authorization", authorization);
+            result.put("customer", customer);
+            return Work.message("1977.customer.notfound", "请绑定手机号", result);
+        } else if (customer.getPhone() == null) {
+            query.addCriteria(Criteria.where("id").is(customer.getId()));
+            Update update = Update.update("lastTime", LocalDateTime.now());
+            mongoTemplate.updateFirst(query, update, Customer.class);
+            String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), wxSession.getOpenid(), wechatConfig.getSign());
+            result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else {
