@@ -35,8 +35,8 @@ public class ScoreController {
      * @param sid 商户ID
      * @param id  订单ID
      */
-    @GetMapping(value = {"score/{id}"})
-    public Work<Score> score(@RequestHeader(name = "sid") String sid, @PathVariable String id) {
+    @GetMapping(value = {"scores/{id}"})
+    public Work<Score> score(@PathVariable String id, @RequestParam(name = "sid") String sid) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         Score score = mongoTemplate.findOne(query, Score.class);
         return Work.success("加载成功", score);
@@ -48,8 +48,8 @@ public class ScoreController {
      *
      * @param sid 商户ID
      */
-    @GetMapping(value = {"score"})
-    public Work<List<Score>> scores(@RequestHeader(name = "sid") String sid, @RequestHeader(name = "status") List<Integer> status) {
+    @GetMapping(value = {"scores"})
+    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<Integer> status) {
         Query query = Query.query(Criteria.where("sid").is(sid).and("status").in(status));
         List<Score> scores = mongoTemplate.find(query, Score.class);
         return Work.success("加载成功", scores);
@@ -64,12 +64,12 @@ public class ScoreController {
      * @param id      订单ID
      * @param weights 商品重量 {商品ID:重量,商品ID:重量,商品ID:重量,}
      */
-    @PutMapping(value = {"score/{id}/updateStatus"})
-    public Work<Score> updateStatus(@RequestHeader(name = "sid") String sid, @PathVariable String id, @RequestBody(required = false) Map<String, BigDecimal> weights) throws ServiceException {
+    @PutMapping(value = {"scores/{id}/updateStatus"})
+    public Work<Score> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestBody(required = false) Map<String, BigDecimal> weights) throws ServiceException {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
         Score score = mongoTemplate.findOne(query, Score.class);
         if (score == null) {
-            throw new ServiceException("fail", "订单丢失，请离开截图，再联系客服");
+            throw new ServiceException("fail", "订单丢失，请立刻截图，再联系客服");
         }
         if (score.getStatus() == 1) {
             List<Item> items = score.getItems();
