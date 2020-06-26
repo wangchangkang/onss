@@ -61,7 +61,7 @@ App({
       }
     })
   },
-  chooseImage: function ({ header,url = "picture", number = this.globalData.token.number }) {
+  chooseImage: function ({ header, url = "picture", number = this.globalData.token.number }) {
     return new Promise((resolve, reject) => {
       if (!number) {
         wx.showModal({
@@ -113,6 +113,10 @@ App({
   },
 
   onLaunch: function (e) {
+    this.wxLogin();
+  },
+
+  wxLogin:function(){
     wx.login({
       success: ({ code }) => {
         console.log(code)
@@ -121,6 +125,27 @@ App({
           method: "POST",
           data: { code, appid },
           success: ({ data }) => {
+            const { code, msg, content } = data;
+            if (code === '1977.customer.notfound') {
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('customer', content.customer);
+              wx.reLaunch({
+                url: '/pages/login/login'
+              })
+            } else if (code === 'success') {
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('customer', content.customer);
+              wx.reLaunch({
+                url: '/pages/login/stores'
+              })
+            } else {
+              wx.showModal({
+                title: '警告',
+                content: msg,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+            }
             console.log(data)
           },
           fail: (res) => {
@@ -146,32 +171,15 @@ App({
     })
   },
 
-  request: function ({ url, method, data, header }) {
+  request: function ({ url, method, data,authorization }) {
     return new Promise((resolve, reject) => {
-      if (!this.globalData.auth) {
-        wx.reLaunch({
-          url: '/pages/login/login'
-        })
-        return false;
-      }
-      if (!this.globalData.token) {
-        wx.reLaunch({
-          url: '/pages/login/stores'
-        })
-        return false;
-      }
-
       wx.showLoading({
         mask: true
       })
       wx.request({
         url, method, data,
         header: {
-          ...header,
-          role: this.globalData.token.role,
-          authorization: this.globalData.authorization,
-          openid: this.globalData.auth.jti,
-          sid: this.globalData.token.id
+          authorization,
         },
         success: ({ data }) => {
           wx.hideLoading()

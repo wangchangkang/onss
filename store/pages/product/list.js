@@ -22,14 +22,14 @@ Page({
   },
 
   onLoad: function () {
-    appInstance.request({
-      url: `${domain}/product`,
-      method: "GET",
-    }).then(({ content }) => {
-      this.setData({
-        products: content
-      })
-    })
+    // appInstance.request({
+    //   url: `${domain}/product`,
+    //   method: "GET",
+    // }).then(({ content }) => {
+    //   this.setData({
+    //     products: content
+    //   })
+    // })
   },
 
   bindShow: function (e) {

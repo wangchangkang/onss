@@ -1,72 +1,46 @@
-
+let appInstance = getApp();
+const { domain } = appInstance.globalData;
 Page({
   data: {},
   wxLogin: function ({ detail }) {
-    let appInstance = getApp();
-    const { domain, appId } = appInstance.globalData;
-    wx.showLoading({
-      mask: true
-    })
-    wx.login({
-      success: ({ code }) => {
-        console.log(code)
-        wx.request({
-          url: `${domain}/wxLogin`,
-          method: "POST",
-          data: { code, appId, ...detail },
-          success: ({ data }) => {
-            console.log(data)
-            const { code, msg, content } = data;
-            if (code === 'success') {
-              const playload = String.fromCharCode.apply(null, new Uint8Array(wx.base64ToArrayBuffer(content.split('.')[1])));
-              const auth = JSON.parse(playload);
-              appInstance.globalData.authorization = content
-              appInstance.globalData.auth = auth
-              wx.setStorageSync('data', { authorization: content, auth });
-              wx.reLaunch({
-                url: '/pages/login/stores'
-              })
-            } else if (code === 'fail.notfound.store') {
-              const playload = String.fromCharCode.apply(null, new Uint8Array(wx.base64ToArrayBuffer(content.split('.')[1])));
-              const auth = JSON.parse(playload);
-              const token = JSON.parse(auth.sub);
-              appInstance.globalData.authorization = content
-              appInstance.globalData.auth = auth
-              appInstance.globalData.auth = token
-              wx.setStorageSync('data', { authorization: content, auth, token })
-              wx.reLaunch({
-                url: '/pages/login/register'
-              })
-            } else {
-              wx.hideLoading()
-              wx.showModal({
-                title: '警告',
-                content: msg,
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-            }
-          },
-          fail: (res) => {
-            wx.hideLoading()
-            wx.showModal({
-              title: '警告',
-              content: '登陆失败',
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-          }
-        })
+
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/customers/${customer.id}/setPhone`,
+      header:{authorization},
+      method: "POST",
+      data: { openid: customer.openid, lastTime: customer.lastTime, encryptedData: detail.encryptedData, iv: detail.iv },
+      success: ({ data }) => {
+        console.log(data)
+        const { code, msg, content } = data;
+        if (code === 'success') {
+          wx.setStorageSync('authorization', content.authorization);
+          wx.setStorageSync('customer', content.customer);
+          wx.reLaunch({
+            url: '/pages/login/stores'
+          })
+        } else if (code === '1977.session.expire') {
+          appInstance.wxLogin();
+        } else {
+          wx.hideLoading()
+          wx.showModal({
+            title: '警告',
+            content: msg,
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        }
       },
       fail: (res) => {
         wx.hideLoading()
         wx.showModal({
           title: '警告',
-          content: '获取微信code失败',
+          content: '登陆失败',
           confirmColor: '#e64340',
           showCancel: false,
         })
-      },
+      }
     })
   },
 })

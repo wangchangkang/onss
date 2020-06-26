@@ -17,7 +17,9 @@ import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -65,7 +67,7 @@ public class StoreController {
      * @param id       主键
      */
     @PostMapping(value = {"stores/{id}/bind"})
-    public Work<String> bind(@PathVariable String id, @RequestParam(name = "cid") String cid, @RequestBody Customer customer) throws ServiceException {
+    public Work<Map<String, Object>> bind(@PathVariable String id, @RequestParam(name = "cid") String cid, @RequestBody Customer customer) throws ServiceException {
         Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
@@ -73,7 +75,10 @@ public class StoreController {
         }
         customer.setStore(store);
         String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), customer.getId(), wechatConfig.getSign());
-        return Work.success("登陆成功", authorization);
+        Map<String, Object> result = new HashMap<>();
+        result.put("authorization", authorization);
+        result.put("customer", customer);
+        return Work.success("登陆成功", result);
     }
 
     /**

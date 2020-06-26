@@ -7,31 +7,22 @@ Page({
   },
 
   bindStore: function (e) {
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
     wx.request({
-      url: `${domain}/store/${e.currentTarget.id}/bind`,
+      url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${customer.id}`,
       method: 'POST',
       header: {
-        openid: appInstance.globalData.auth.jti
+        authorization
       },
       success: ({ data }) => {
         const { code, msg, content } = data;
         if (code === 'success') {
-          if (content.length > 0) {
-            const playload = String.fromCharCode.apply(null, new Uint8Array(wx.base64ToArrayBuffer(content.split('.')[1])));
-            const auth = JSON.parse(playload);
-            const token = JSON.parse(auth.sub);
-            appInstance.globalData.authorization = content
-            appInstance.globalData.auth = auth
-            appInstance.globalData.token = token
-            wx.setStorageSync('data', { authorization: content, auth, token });
-            wx.reLaunch({
-              url: '/pages/product/list'
-            })
-          } else {
-            wx.reLaunch({
-              url: '/pages/login/register'
-            })
-          }
+          wx.setStorageSync('authorization', content.authorization);
+          wx.setStorageSync('customer', content.customer);
+          wx.reLaunch({
+            url: '/pages/product/list'
+          })
         } else {
           wx.showModal({
             title: '警告',
@@ -44,35 +35,59 @@ Page({
     })
   },
 
-  onShow: function (options) {
+  onLoad: function (options) {
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
     wx.request({
-      url: `${domain}/store`,
-      method: 'GET',
+      url: `${domain}/stores?cid=${customer.id}`,
       header: {
-        authorization: appInstance.globalData.authorization,
-        openid: appInstance.globalData.auth.jti
+        authorization,
       },
       success: ({ data }) => {
-        const { code, msg, content } = data;
-        if (code === 'success') {
-          if (content.length > 0) {
-            this.setData({
-              stores: content
+        console.log(data)
+        const { code, msg,content } = data;
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                if (content.length > 0) {
+                  this.setData({
+                    stores: content
+                  })
+                } else {
+                  wx.reLaunch({
+                    url: '/pages/login/register'
+                  })
+                }
+              }
             })
-          } else {
-            wx.reLaunch({
-              url: '/pages/login/register'
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
             })
-          }
-        } else {
-          wx.showModal({
-            title: '警告',
-            content: msg,
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
         }
-      }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
-  }
+  },
 })

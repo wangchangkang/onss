@@ -75,32 +75,5 @@ public class LoginController {
         }
     }
 
-    /**
-     * @param wxRegister 注册信息
-     * @return 密钥及用户信息
-     */
-    @PostMapping(value = {"register"})
-    public Work<Map<String, Object>> register(@RequestBody WXRegister wxRegister) {
-        if (wxRegister.getLastTime().plusSeconds(6000).isBefore(LocalDateTime.now())) {
-            return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
-        }
-
-        //微信用户手机号
-        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), wxRegister.getSession_key(), wxRegister.getIv());
-        PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
-
-        //添加用户手机号
-        Query query = Query.query(Criteria.where("id").is(wxRegister.getId()));
-        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), Customer.class);
-
-        Customer customer = mongoTemplate.findById(wxRegister.getId(), Customer.class);
-
-        Map<String, Object> result = new HashMap<>();
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), wxRegister.getOpenid(), wechatConfig.getSign());
-
-        result.put("authorization", authorization);
-        result.put("user", customer);
-        return Work.success("注册成功", result);
-    }
 }
 
