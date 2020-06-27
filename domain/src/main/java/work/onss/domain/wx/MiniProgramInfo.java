@@ -11,7 +11,8 @@ import java.util.List;
 @Data
 public class MiniProgramInfo implements Serializable {
 
-    private String miniProgramAppid;
-    private List<String> miniProgramPics;
-    private String miniProgramSubAppid;
+    private String miniProgramAppid;//服务商小程序APPID
+    private String miniProgramSubAppid;//商家小程序APPID
+    private List<String> miniProgramPics;//小程序截图
+
 }

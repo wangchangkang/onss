@@ -118,6 +118,19 @@ public class StoreController {
         return Work.success("更新成功", store);
     }
 
+
+    /**
+     * 店铺授权
+     *
+     * @param customer 营业员信息
+     * @param id       主键
+     */
+    @PostMapping(value = {"stores"})
+    public Work<Map<String, Object>> create( @RequestParam(name = "cid") String cid, @RequestBody Customer customer) throws ServiceException {
+
+        return Work.success("登陆成功", null);
+    }
+
     /**
      * 商品图片
      *

@@ -10,7 +10,11 @@ import java.io.Serializable;
 @Data
 public class BusinessInfo implements Serializable {
 
-    private String merchantShortname;
-    private SalesInfo salesInfo;
-    private String servicePhone;
+    private String merchantShortname;//商户简称
+    private String servicePhone;//客服电话
+
+    private SalesInfo salesInfo;//经营场景
+
+
+
 }

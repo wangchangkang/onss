@@ -11,8 +11,9 @@ import java.util.List;
 @Data
 public class AdditionInfo implements Serializable {
 
-    private String businessAdditionMsg;
-    private List<String> businessAdditionPics;
     private String legalPersonCommitment;
     private String legalPersonVideo;
+    private List<String> businessAdditionPics;
+    private String businessAdditionMsg;
+
 }

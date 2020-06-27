@@ -10,10 +10,11 @@ import java.util.List;
 @Data
 public class SettlementInfo {
 
-    private List<String> activitiesAdditions;
-    private String activitiesId;
-    private String activitiesRate;
-    private String qualificationType;
-    private List<String> qualifications;
-    private String settlementId;
+    private String settlementId;//入驻结算规则ID
+    private String qualificationType;//所属行业
+    private List<String> qualifications;//特殊资质图片
+
+    private String activitiesId;//优惠费率活动ID
+    private String activitiesRate;//优惠费率活动值
+    private List<String> activitiesAdditions;//优惠费率活动补充材料
 }

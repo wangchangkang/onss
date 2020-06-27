@@ -13,5 +13,5 @@ public class IdentityInfo implements Serializable {
     private IdCardInfo idCardInfo;
     private IdDocInfo idDocInfo;
     private String idDocType;
-    private String owner;
+    private Boolean owner;
 }
