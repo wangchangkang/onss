@@ -13,7 +13,7 @@ Page({
       title: '茌平壹玖柒柒',
       type: 'ENTERPRISE',
       industry: 23,
-      picture: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
+      // picture: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     },
     bank: {
       type: 'CORPORATE',
@@ -29,17 +29,17 @@ Page({
     legal: {
       name: '王长浩',
       idCard: '371523199201251250',
-      idCardA: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
-      idCardB: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.pn',
+      // idCardA: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+      // idCardB: 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.pn',
       start: '2013-05-02',
       end: '2023-05-02'
     },
     xcxPictures: [
-      'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
-      'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
+      // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+      // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     ],
     specialPictures: [
-      'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
+      // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     ],
     contacts: [
       {

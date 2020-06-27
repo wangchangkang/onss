@@ -10,11 +10,9 @@ import java.io.Serializable;
 @Data
 public class SubjectInfo implements Serializable {
 
-    private BusinessLicenseInfo businessLicenseInfo;
-    private IdentityInfo identityInfo;
-    private String subjectType;
-
-
+    private Merchant.SubjectEnum subjectType;//主体类型
+    private BusinessLicenseInfo businessLicenseInfo;//营业执照
+    private IdentityInfo identityInfo;//经营者/法人身份证件
     private UboInfo uboInfo;//若经营者/法人不是最终受益所有人，则需提填写受益所有人信息。
 
     private String certificateLetterCopy;//主体类型为党政、机关及事业单位必填。

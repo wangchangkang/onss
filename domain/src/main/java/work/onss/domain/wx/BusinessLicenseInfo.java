@@ -10,8 +10,8 @@ import java.io.Serializable;
 @Data
 public class BusinessLicenseInfo implements Serializable {
 
-    private String legalPerson;
-    private String licenseCopy;
-    private String licenseNumber;
-    private String merchantName;
+    private String licenseCopy;//营业执照照片
+    private String licenseNumber;//注册号/统一社会信用代码
+    private String merchantName;//商户名称
+    private String legalPerson;//个体户经营者/法人姓名
 }

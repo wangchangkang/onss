@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 public class BankAccountInfo implements Serializable {
 
-    private bankAccountEnum bankAccountType;//账户类型
+    private Merchant.BankAccountEnum bankAccountType;//账户类型
     private String accountName;//开户名称
     private String accountBank;//开户银行
     private String bankAddressCode;//开户银行省市编码
@@ -20,15 +20,4 @@ public class BankAccountInfo implements Serializable {
     private String bankName;//开户银行全称（含支行) 17家直连银行无需填写，如为其他银行，则开户银行全称（含支行）和 开户银行联行号二选一。
 
     private String accountNumber;//银行账号
-
-
-
-    /**
-     * BANK_ACCOUNT_TYPE_CORPORATE：对公银行账户
-     * BANK_ACCOUNT_TYPE_PERSONAL：经营者个人银行卡
-     */
-    @Getter
-    public static enum bankAccountEnum {
-        BANK_ACCOUNT_TYPE_CORPORATE, BANK_ACCOUNT_TYPE_PERSONAL
-    }
 }

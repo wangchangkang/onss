@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 public class SalesInfo implements Serializable {
 
-    private salesScenesEnum salesScenesType = salesScenesEnum.SALES_SCENES_MINI_PROGRAM;
+    private Merchant.SalesScenesEnum salesScenesType = Merchant.SalesScenesEnum.SALES_SCENES_MINI_PROGRAM;
 
 
     private BizStoreInfo bizStoreInfo;//线下门店
@@ -23,16 +23,5 @@ public class SalesInfo implements Serializable {
     private WebInfo webInfo;//互联网网站
     private WeworkInfo weworkInfo;//企业微信
 
-    /**
-     * 线下门店：SALES_SCENES_STORE
-     * 公众号：SALES_SCENES_MP
-     * 小程序：SALES_SCENES_MINI_PROGRAM
-     * 互联网：SALES_SCENES_WEB
-     * APP：SALES_SCENES_APP
-     * 企业微信：SALES_SCENES_WEWORK
-     */
-    @Getter
-    public static enum salesScenesEnum {
-        SALES_SCENES_STORE,SALES_SCENES_MP,SALES_SCENES_MINI_PROGRAM,SALES_SCENES_WEB,SALES_SCENES_APP,SALES_SCENES_WEWORK
-    }
+
 }

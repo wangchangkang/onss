@@ -10,9 +10,9 @@ import java.io.Serializable;
 @Data
 public class IdDocInfo implements Serializable {
 
-    private String docPeriodBegin;
-    private String docPeriodEnd;
-    private String idDocCopy;
-    private String idDocName;
-    private String idDocNumber;
+    private String idDocCopy;//证件照片
+    private String idDocName;//证件姓名
+    private String idDocNumber;//证件号码
+    private String docPeriodBegin;//证件有效期开始时间
+    private String docPeriodEnd;//证件有效期结束时间
 }

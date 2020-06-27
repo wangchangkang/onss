@@ -10,10 +10,10 @@ import java.io.Serializable;
 @Data
 public class IdCardInfo implements Serializable {
 
-    private String cardPeriodBegin;
-    private String cardPeriodEnd;
-    private String idCardCopy;
-    private String idCardName;
-    private String idCardNational;
-    private String idCardNumber;
+    private String idCardCopy;//身份证人像面照片
+    private String idCardNational;//身份证国徽面照片
+    private String idCardName;//身份证姓名
+    private String idCardNumber;//身份证号码
+    private String cardPeriodBegin;//身份证有效期开始时间
+    private String cardPeriodEnd;//身份证有效期结束时间
 }
