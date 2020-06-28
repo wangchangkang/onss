@@ -48,9 +48,9 @@
 				</radio-group>
 			</view>
 		</view>
-		<image wx:if="{{license.picture == null}}" src="/images/五证合一.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="license.picture"></image>
-		<icon wx:if="{{license.picture!=null}}" type="cancel" bindtap="deletePicture" id="license.picture"></icon>
-		<image wx:if="{{license.picture!=null}}" src="{{prefix}}{{license.picture}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{licenseCopy == null}}" src="/images/五证合一.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="licenseCopy"></image>
+		<icon wx:if="{{licenseCopy!=null}}" type="cancel" bindtap="deletePicture" id="licenseCopy"></icon>
+		<image wx:if="{{licenseCopy!=null}}" src="{{prefix}}{{licenseCopy}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">社会信用代码</view>
