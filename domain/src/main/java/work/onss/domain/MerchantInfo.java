@@ -6,8 +6,8 @@ import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import work.onss.domain.wx.Merchant;
-import work.onss.domain.wx.UboInfo;
+import work.onss.vo.wx.Merchant;
+import work.onss.vo.wx.UboInfo;
 
 import java.util.Collection;
 

@@ -1,5 +1,5 @@
 
-package work.onss.domain.wx;
+package work.onss.vo.wx;
 
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;

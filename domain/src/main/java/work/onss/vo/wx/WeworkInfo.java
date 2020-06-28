@@ -1,5 +1,5 @@
 
-package work.onss.domain.wx;
+package work.onss.vo.wx;
 
 import java.io.Serializable;
 import java.util.List;
