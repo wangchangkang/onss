@@ -34,11 +34,11 @@ Page({
       start: '2013-05-02',
       end: '2023-05-02'
     },
-    xcxPictures: [
+    qualifications: [
       // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
       // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     ],
-    specialPictures: [
+    miniProgramPics: [
       // 'picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     ],
     contacts: [
