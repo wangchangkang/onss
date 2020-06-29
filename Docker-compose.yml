@@ -32,16 +32,23 @@ services:
     restart: always
     ports:
       - 27017:27017
-  store:
-    image: "java:8"
-    container_name: store
-    restart: always
+#  store:
+#    image: "java:8"
+#    container_name: store
+#    restart: always
+#    ports:
+#      - 8001:8001
+#    volumes:
+#      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
+#      - /Users/wangchanghao/Desktop/work/onss/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/onss/store-service-0.0.1-SNAPSHOT.jar
+#    depends_on:
+#      - nginx
+#      - mongo
+#    entrypoint: ["java","-jar","/onss/store-service-0.0.1-SNAPSHOT.jar"]
+
+  nifi:
+    container_name: nifi
+    image: "apache/nifi:latest"
     ports:
-      - 8001:8001
-    volumes:
-      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
-      - /Users/wangchanghao/Desktop/work/onss/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/onss/store-service-0.0.1-SNAPSHOT.jar
-    depends_on:
-      - nginx
-      - mongo
-    entrypoint: ["java","-jar","/onss/store-service-0.0.1-SNAPSHOT.jar"]
+      - 8080:8080
+    restart: always
