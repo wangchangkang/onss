@@ -1,7 +1,5 @@
 let appInstance = getApp();
 const { domain, banks, qualification } = appInstance.globalData;
-console.log(qualification)
-console.log(banks)
 
 Page({
   data: {
@@ -40,8 +38,6 @@ Page({
       'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
     ],
 
-    bankAccountType: '',
-
     settlementId: '',
     qualificationType: '1',
     qualifications: [
@@ -61,11 +57,11 @@ Page({
   },
 
 
-  saveMerchant: function(e){
+  /** 申请特约商户 */
+  saveMerchant: function (e) {
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
-    const data = { ...this.data, ...e.detail.value }
-    console.log(data)
+    const data = { ...this.data, ...e.detail.value };
     wx.request({
       url: `${domain}/merchants?cid=${customer.id}`,
       header: { authorization },
@@ -103,41 +99,38 @@ Page({
       }
     })
   },
-
+  /** 输入框 */
   bindInput: function (e) {
     this.setData({
       [e.currentTarget.id]: e.detail.value
     })
   },
-
+  /** 数组picker */
   pickerChange: function (e) {
     this.setData({
       [e.currentTarget.id]: e.detail.value
     })
   },
-
+  /** 单选框 */
   radioChange: function (e) {
     this.setData({
       [e.currentTarget.id]: e.detail.value
     })
   },
-
-  regionChange: function (e) {
-    const {
-      code,
-      postcode,
-      value
-    } = e.detail
+  /** 开关设置 */
+  switchChange: function (e) {
     this.setData({
-      [e.currentTarget.id]: {
-        code,
-        postcode,
-        value
-      }
+      [e.currentTarget.id]: e.detail.value
     })
-    console.log(this.data)
   },
-
+  /** 选择地址 */
+  regionChange: function (e) {
+    const { code, postcode, value } = e.detail
+    this.setData({
+      [e.currentTarget.id]: { code, postcode, value }
+    })
+  },
+  /** 选择多张图片 */
   chooseImages: function (e) {
     const id = e.currentTarget.id;
     let count = e.currentTarget.dataset.count
@@ -150,7 +143,7 @@ Page({
       })
     })
   },
-
+  /** 选择一张图片 */
   chooseImage: function (e) {
     const id = e.currentTarget.id;
     const number = this.data.license.number
@@ -160,7 +153,7 @@ Page({
       })
     })
   },
-
+  /** 移除图片 */
   deletePictures: function (e) {
     const id = e.currentTarget.id;
     const index = e.currentTarget.dataset.index;
@@ -170,54 +163,24 @@ Page({
       [id]: files
     })
   },
-
+  /** 删除图片 */
   deletePicture: function (e) {
     const id = e.currentTarget.id;
     this.setData({
       [id]: null
     })
   },
-
+  /** 清空图片 */
   clearPictues: function (e) {
     const id = e.currentTarget.id;
     this.setData({
       [id]: []
     })
   },
-
+  /** 日期 */
   datePickerChange: function (e) {
     this.setData({
       [e.currentTarget.id]: e.detail.value
     })
-    console.log(this.data)
   },
-  saveStore: function (e) {
-    const { auth, authorization, token } = wx.getStorageSync('data');
-    console.log(appInstance.globalData)
-    wx.request({
-      url: `${domain}/store`,
-      method: 'POST',
-      header: {
-        openid: token.openid,
-        authorization
-      },
-      data: { ...this.data, ...e.detail.value },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        if (code === 'success') {
-          this.setData({
-            ...content
-          })
-          console.log(content)
-        } else {
-          wx.showModal({
-            title: '警告',
-            content: msg,
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        }
-      }
-    })
-  }
 })

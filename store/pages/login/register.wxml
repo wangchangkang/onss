@@ -126,12 +126,12 @@
 				<view class="weui-label">是否是最终受益人</view>
 			</view>
 			<view class="weui-cell__ft">
-				<switch checked="{{owner}}" />
+				<switch id="owner" checked="{{owner}}" bindchange="switchChange" />
 			</view>
 		</view>
 	</view>
-	<view class="weui-cells__title">最终受益人 </view>
-	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
+	<view wx:if="{{!owner}}" class="weui-cells__title">最终受益人 </view>
+	<view wx:if="{{!owner}}" class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<image wx:if="{{idCardA == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardA"></image>
 		<icon wx:if="{{idCardA!=null}}" type="cancel" bindtap="deletePicture" id="idCardA"></icon>
 		<image wx:if="{{idCardA!=null}}" src="{{idCardA}}" mode="aspectFit" style="width:100%"></image>
