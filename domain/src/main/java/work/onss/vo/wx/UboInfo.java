@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 public class UboInfo implements Serializable {
 
-    private Merchant.CardEnum idType= Merchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//证件类型
+    private SpeciallyMerchant.CardEnum idType= SpeciallyMerchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//证件类型
     private String idCardCopy;//身份证人像面照片
     private String idCardNational;//身份证国徽面照片
     private String idDocCopy;//证件照片

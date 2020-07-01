@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
-public  class Address {
+public  class WXAddress {
     @NotEmpty(message = "缺少银行地址")
     @Size(min = 3, max = 3, message = "银行地址错误")
     private String[] value;

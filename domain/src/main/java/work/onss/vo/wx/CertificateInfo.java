@@ -12,7 +12,7 @@ public class CertificateInfo implements Serializable {
 
     private String certCopy;
     private String certNumber;
-    private Merchant.CertEnum certType;
+    private SpeciallyMerchant.CertEnum certType;
     private String companyAddress;
     private String legalPerson;
     private String merchantName;

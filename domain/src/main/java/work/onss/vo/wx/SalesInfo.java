@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 public class SalesInfo implements Serializable {
 
-    private Merchant.SalesScenesEnum salesScenesType = Merchant.SalesScenesEnum.SALES_SCENES_MINI_PROGRAM;
+    private SpeciallyMerchant.SalesScenesEnum salesScenesType = SpeciallyMerchant.SalesScenesEnum.SALES_SCENES_MINI_PROGRAM;
 
 
     private BizStoreInfo bizStoreInfo;//线下门店

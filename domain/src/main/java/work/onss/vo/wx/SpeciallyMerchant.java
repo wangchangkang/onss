@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Log4j2
 @Data
 @NoArgsConstructor
-public class Merchant implements Serializable {
+public class SpeciallyMerchant implements Serializable {
 
     private String businessCode;//业务申请编号
     private ContactInfo contactInfo;//超级管理员信息

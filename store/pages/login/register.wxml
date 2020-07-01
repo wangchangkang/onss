@@ -1,3 +1,4 @@
+<form bindsubmit='saveMerchant'>
 	<view class="weui-cells__title">超级管理员</view>
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<view class="weui-cell ">
@@ -131,15 +132,15 @@
 	</view>
 	<view class="weui-cells__title">最终受益人 </view>
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
-		<image wx:if="{{uboInfo.idCardCopy == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="uboInfo.idCardCopy"></image>
-		<icon wx:if="{{uboInfo.idCardCopy!=null}}" type="cancel" bindtap="deletePicture" id="uboInfo.idCardCopy"></icon>
-		<image wx:if="{{uboInfo.idCardCopy!=null}}" src="{{uboInfo.idCardCopy}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardA == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardA"></image>
+		<icon wx:if="{{idCardA!=null}}" type="cancel" bindtap="deletePicture" id="idCardA"></icon>
+		<image wx:if="{{idCardA!=null}}" src="{{idCardA}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">法人证件号</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="uboInfo.idNumber" value="{{uboInfo.idNumber}}" class="weui-input" placeholder="法人18位身份证号" maxlength="18" />
+				<input name="idNumber" value="{{idNumber}}" class="weui-input" placeholder="法人18位身份证号" maxlength="18" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -147,19 +148,19 @@
 				<view class="weui-label">法人姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="uboInfo.name" value="{{uboInfo.name}}" class="weui-input" placeholder="法人18位身份证号" maxlength="18" />
+				<input name="beneficiary" value="{{beneficiary}}" class="weui-input" placeholder="请输入姓名" maxlength="18" />
 			</view>
 		</view>
-		<image wx:if="{{uboInfo.idCardNational == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="uboInfo.idCardNational"></image>
-		<icon wx:if="{{uboInfo.idCardNational!=null}}" type="cancel" bindtap="deletePicture" id="uboInfo.idCardNational"></icon>
-		<image wx:if="{{uboInfo.idCardNational!=null}}" src="{{uboInfo.idCardNational}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardB == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardB"></image>
+		<icon wx:if="{{idCardB!=null}}" type="cancel" bindtap="deletePicture" id="idCardB"></icon>
+		<image wx:if="{{idCardB!=null}}" src="{{idCardB}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">开始时间</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker mode="date" bindchange="datePickerChange" id="uboInfo.idPeriodBegin">
-					<input name="uboInfo.idPeriodBegin" value="{{uboInfo.idPeriodBegin}}" class="weui-input" placeholder="身份证登记时间" disabled="true" />
+				<picker mode="date" bindchange="datePickerChange" id="idPeriodBegin">
+					<input name="idPeriodBegin" value="{{idPeriodBegin}}" class="weui-input" placeholder="身份证登记时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -168,8 +169,8 @@
 				<view class="weui-label">结束时间</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker mode="date" bindchange="datePickerChange" id="uboInfo.idPeriodEnd">
-					<input name="uboInfo.idPeriodEnd" value="{{uboInfo.idPeriodEnd}}" class="weui-input" placeholder="身份证有效截止时间" disabled="true" />
+				<picker mode="date" bindchange="datePickerChange" id="idPeriodEnd">
+					<input name="idPeriodEnd" value="{{idPeriodEnd}}" class="weui-input" placeholder="身份证有效截止时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -326,3 +327,8 @@
 			</view>
 		</view>
 	</view>
+	<view class="weui-cell">
+		<button style="weui-btn" type="default" formType="reset">重置</button>
+		<button style="weui-btn" type="primary" formType="submit">保存</button>
+	</view>
+</form>

@@ -27,14 +27,12 @@ Page({
     cardPeriodEnd: '2023-05-02',
     owner: true,
 
-    uboInfo: {
-      idCardCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
-      idNumber: '371523199201251250',
-      name: '王先生',
-      idCardNational: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
-      idPeriodBegin: '2013-05-02',
-      idPeriodEnd: '2023-05-02'
-    },
+    idCardA: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idNumber: '371523199201251250',
+    beneficiary: '王先生',
+    idCardB: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idPeriodBegin: '2013-05-02',
+    idPeriodEnd: '2023-05-02',
 
     merchantShortname: '茌平壹玖柒柒',
     servicePhone: '15063517240',
@@ -60,6 +58,50 @@ Page({
     },
     accountNumber: '2830051304205000010114',
     bankName: '山东茌平农村商业银行胡屯支行',
+  },
+
+
+  saveMerchant: function(e){
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    const data = { ...this.data, ...e.detail.value }
+    console.log(data)
+    wx.request({
+      url: `${domain}/merchants?cid=${customer.id}`,
+      header: { authorization },
+      method: 'POST',
+      data: data,
+      success: ({ data }) => {
+        console.log(data)
+        const { code, msg, content } = data;
+        if (code === 'success') {
+          wx.setStorageSync('authorization', content.authorization);
+          wx.setStorageSync('customer', content.customer);
+          wx.reLaunch({
+            url: '/pages/login/stores'
+          })
+        } else if (code === '1977.session.expire') {
+          appInstance.wxLogin();
+        } else {
+          wx.hideLoading()
+          wx.showModal({
+            title: '警告',
+            content: msg,
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        }
+      },
+      fail: (res) => {
+        wx.hideLoading()
+        wx.showModal({
+          title: '警告',
+          content: '登陆失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      }
+    })
   },
 
   bindInput: function (e) {

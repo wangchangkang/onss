@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 public class BankAccountInfo implements Serializable {
 
-    private Merchant.BankAccountEnum bankAccountType;//账户类型
+    private SpeciallyMerchant.BankAccountEnum bankAccountType;//账户类型
     private String accountName;//开户名称
     private String accountBank;//开户银行
     private String bankAddressCode;//开户银行省市编码
