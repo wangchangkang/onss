@@ -224,14 +224,6 @@
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
-				<view class="weui-label">入驻结算规则ID</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input name="settlementId" value="{{settlementId}}" class="weui-input" placeholder="请输入入驻结算规则ID" maxlength="8" />
-			</view>
-		</view>
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
 				<view class="weui-label">所属行业</view>
 			</view>
 			<view class="weui-cell__bd">

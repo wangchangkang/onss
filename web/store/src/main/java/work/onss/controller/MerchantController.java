@@ -3,6 +3,7 @@ package work.onss.controller;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +29,8 @@ public class MerchantController {
      * @return 密钥及用户信息
      */
     @PostMapping(value = {"merchants"})
-    public Work<Map<String, Object>> register(@RequestParam String cid, @RequestBody Merchant merchant) {
+    public Work<Map<String, Object>> register(@RequestParam String cid, @RequestBody @Validated Merchant merchant) {
+        mongoTemplate.insert(merchant);
         log.info(merchant);
         return Work.success("授权成功", null);
     }
