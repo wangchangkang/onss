@@ -12,36 +12,36 @@ Page({
     contactEmail: 'for_ccc@qq.com',
 
     subjectType: 'SUBJECT_TYPE_ENTERPRISE',
-    licenseCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    licenseCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png',
     licenseNumber: '91371523MA3PU9M466',
     merchantName: '茌平壹玖柒柒软件有限公司',
     legalPerson: '王先生',
 
-    idCardCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idCardCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idCardNumber: '371523199201251250',
     idCardName: '王先生',
-    idCardNational: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idCardNational: 'http://127.0.0.1/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     cardPeriodBegin: '2013-05-02',
     cardPeriodEnd: '2023-05-02',
     owner: true,
 
-    idCardA: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idCardA: 'http://127.0.0.1/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idNumber: '371523199201251250',
     beneficiary: '王先生',
-    idCardB: 'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png',
+    idCardB: 'http://127.0.0.1/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     idPeriodBegin: '2013-05-02',
     idPeriodEnd: '2023-05-02',
 
     merchantShortname: '茌平壹玖柒柒',
     servicePhone: '15063517240',
     miniProgramPics: [
-      'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
+      'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
     ],
 
     settlementId: '',
     qualificationType: '1',
     qualifications: [
-      'http://127.0.0.1/picture/91371523MA3PU9M466/d2d52a61266b38187993a3b8971a91dc.png'
+      'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
     ],
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_CORPORATE',
