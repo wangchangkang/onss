@@ -5,68 +5,68 @@ const domain = 'http://127.0.0.1:8001/manage';
 const prefix = 'http://127.0.0.1/';
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
-    "餐饮",
-    "食品生鲜",
-    "私立/民营医院/诊所",
-    "保健器械/医疗器械/非处方药品",
-    "游艺厅/KTV/网吧",
-    "机票/机票代理",
-    "宠物医院",
-    "培训机构",
-    "零售批发/生活娱乐/其他",
-    "话费通讯",
-    "门户论坛/网络广告及推广/软件开发/其他",
-    "游戏",
-    "加油"
+    { settlementId: "719", name: "餐饮" },
+    { settlementId: "719", name: "食品生鲜" },
+    { settlementId: "719", name: "私立/民营医院/诊所" },
+    { settlementId: "719", name: "保健器械/医疗器械/非处方药品" },
+    { settlementId: "719", name: "游艺厅/KTV/网吧" },
+    { settlementId: "719", name: "机票/机票代理" },
+    { settlementId: "719", name: "宠物医院" },
+    { settlementId: "719", name: "培训机构" },
+    { settlementId: "719", name: "零售批发/生活娱乐/其他" },
+    { settlementId: "720", name: "话费通讯" },
+    { settlementId: "746", name: "门户论坛/网络广告及推广/软件开发/其他" },
+    { settlementId: "746", name: "游戏" },
+    { settlementId: "721", name: "加油" }
   ],
   "SUBJECT_TYPE_ENTERPRISE": [
-    "餐饮",
-    "食品生鲜",
-    "私立/民营医院/诊所",
-    "保健器械/医疗器械/非处方药品",
-    "游艺厅/KTV/网吧",
-    "机票/机票代理",
-    "宠物医院",
-    "培训机构",
-    "零售批发/生活娱乐/其他",
-    "电信运营商/宽带收费",
-    "旅行社",
-    "宗教组织",
-    "房地产/房产中介",
-    "共享服务",
-    "文物经营/文物复制品销售",
-    "拍卖典当",
-    "保险业务",
-    "众筹",
-    "财经/股票类资讯",
-    "话费通讯",
-    "婚介平台/就业信息平台/其他",
-    "在线图书/视频/音乐/网络直播",
-    "游戏",
-    "门户论坛/网络广告及推广/软件开发/其他",
-    "物流/快递",
-    "加油",
-    "民办中小学及幼儿园",
-    "公共事业（水电煤气）",
-    "信用还款",
-    "民办大学及院校"
+    { "settlementId": "716", name: "餐饮" },
+    { "settlementId": "716", name: "食品生鲜" },
+    { "settlementId": "716", name: "私立/民营医院/诊所" },
+    { "settlementId": "716", name: "保健器械/医疗器械/非处方药品" },
+    { "settlementId": "716", name: "游艺厅/KTV/网吧" },
+    { "settlementId": "716", name: "机票/机票代理" },
+    { "settlementId": "716", name: "宠物医院" },
+    { "settlementId": "716", name: "培训机构" },
+    { "settlementId": "716", name: "零售批发/生活娱乐/其他" },
+    { "settlementId": "716", name: "电信运营商/宽带收费" },
+    { "settlementId": "716", name: "旅行社" },
+    { "settlementId": "716", name: "宗教组织" },
+    { "settlementId": "716", name: "房地产/房产中介" },
+    { "settlementId": "716", name: "共享服务" },
+    { "settlementId": "716", name: "文物经营/文物复制品销售" },
+    { "settlementId": "716", name: "拍卖典当" },
+    { "settlementId": "715", name: "保险业务" },
+    { "settlementId": "714", name: "众筹" },
+    { "settlementId": "713", name: "财经/股票类资讯" },
+    { "settlementId": "728", name: "话费通讯" },
+    { "settlementId": "728", name: "婚介平台/就业信息平台/其他" },
+    { "settlementId": "711", name: "在线图书/视频/音乐/网络直播" },
+    { "settlementId": "711", name: "游戏" },
+    { "settlementId": "711", name: "门户论坛/网络广告及推广/软件开发/其他" },
+    { "settlementId": "717", name: "物流/快递" },
+    { "settlementId": "717", name: "加油" },
+    { "settlementId": "717", name: "民办中小学及幼儿园" },
+    { "settlementId": "730", name: "公共事业（水电煤气）" },
+    { "settlementId": "718", name: "信用还款" },
+    { "settlementId": "739", name: "民办大学及院校" },
   ],
   "SUBJECT_TYPE_INSTITUTIONS": [
-    "其他缴费",
-    "公共事业（水电煤气）",
-    "交通罚款",
-    "公立医院",
-    "公立学校",
-    "挂号平台"
+    { "settlementId": "725", name: "其他缴费" },
+    { "settlementId": "722", name: "公共事业（水电煤气）" },
+    { "settlementId": "723", name: "交通罚款" },
+    { "settlementId": "724", name: "公立医院" },
+    { "settlementId": "724", name: "公立学校" },
+    { "settlementId": "724", name: "挂号平台" },
   ],
   "SUBJECT_TYPE_OTHERS": [
-    "宗教组织",
-    "机票/机票代理",
-    "私立/民营医院/诊所",
-    "咨询/娱乐票务/其他",
-    "民办中小学及幼儿园",
-    "民办大学及院校",
-    "公益"
+    { "settlementId": "727", name: "宗教组织" },
+    { "settlementId": "727", name: "机票/机票代理" },
+    { "settlementId": "727", name: "私立/民营医院/诊所" },
+    { "settlementId": "727", name: "咨询/娱乐票务/其他" },
+    { "settlementId": "738", name: "民办中小学及幼儿园" },
+    { "settlementId": "726", name: "民办大学及院校" },
+    { "settlementId": "726", name: "公益" }
   ]
 };
 const banks = [
@@ -212,7 +212,7 @@ App({
     this.wxLogin();
   },
 
-  wxLogin:function(){
+  wxLogin: function () {
     wx.login({
       success: ({ code }) => {
         console.log(code)
@@ -267,7 +267,7 @@ App({
     })
   },
 
-  request: function ({ url, method, data,authorization }) {
+  request: function ({ url, method, data, authorization }) {
     return new Promise((resolve, reject) => {
       wx.showLoading({
         mask: true

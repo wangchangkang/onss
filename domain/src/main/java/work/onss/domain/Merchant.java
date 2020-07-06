@@ -85,7 +85,7 @@ public class Merchant {
     //结算规则
     private String settlementId;//入驻结算规则ID
     @NotNull(message = "请选择所属行业")
-    private Integer qualificationType;//所属行业
+    private String qualificationType;//所属行业
     @Size(min = 1, max = 5, message = "请上传1~5张特殊资质图片")
     private Collection<String> qualifications;//特殊资质图片
 
