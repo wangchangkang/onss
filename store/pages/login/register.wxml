@@ -288,7 +288,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker bindchange="pickerChange" range="{{banks}}" id="accountBank" value="{{accountBank}}">
-					<view>{{accountBank?banks[accountBank]:'请选择开户行'}}</view>
+					<view>{{accountBank?accountBank:'请选择开户行'}}</view>
 				</picker>
 			</view>
 		</view>

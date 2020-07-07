@@ -95,7 +95,7 @@ public class Merchant {
     @NotBlank(message = "请填写开户名称")
     private String accountName;//开户名称
     @NotNull(message = "请选择开户银行")
-    private Integer accountBank;//开户银行 0-17
+    private String accountBank;//开户银行
     @Valid
     private WXAddress bankAddress;//开户地址
     @NotBlank(message = "请填写银行账号")

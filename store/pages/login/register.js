@@ -46,7 +46,7 @@ Page({
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_CORPORATE',
     accountName: '茌平壹玖柒柒软件有限公司',
-    accountBank: 11,
+    accountBank: '招商银行',
     bankAddress: {
       code: ["110000", "110100", "110101"],
       postcode: "100010",
