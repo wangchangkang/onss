@@ -30,6 +30,7 @@ public class MerchantController {
      */
     @PostMapping(value = {"merchants"})
     public Work<Map<String, Object>> register(@RequestParam String cid, @RequestBody @Validated Merchant merchant) {
+        merchant.setCustomerId(cid);
         mongoTemplate.insert(merchant);
         log.info(merchant);
         return Work.success("授权成功", null);

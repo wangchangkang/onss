@@ -21,6 +21,8 @@ import java.util.Collection;
 public class Merchant {
     @Id
     private String id;
+    private String customerId;
+
     //超级管理员
     @NotBlank(message = "请填写管理员姓名")
     private String contactName;//姓名

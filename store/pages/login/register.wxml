@@ -227,8 +227,8 @@
 				<view class="weui-label">所属行业</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker bindchange="pickerChange" range="{{qualification[subjectType]}}" id="qualificationType" value="{{qualificationType}}" range-key="name">
-					<view>{{qualificationType?qualification[subjectType][qualificationType].name:'请选择所属行业'}}</view>
+				<picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}" range-key="value">
+					<view>{{qualificationType?qualificationType:'请选择所属行业'}}</view>
 				</picker>
 			</view>
 		</view>
@@ -287,7 +287,7 @@
 				<view class="weui-label">开户银行</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker bindchange="pickerChange" range="{{banks}}" id="accountBank" value="{{accountBank}}">
+				<picker bindchange="accountBankChange" range="{{banks}}">
 					<view>{{accountBank?accountBank:'请选择开户行'}}</view>
 				</picker>
 			</view>

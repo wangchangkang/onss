@@ -183,4 +183,19 @@ Page({
       [e.currentTarget.id]: e.detail.value
     })
   },
+
+   /** 所属行业 */
+  qualificationTypeChange: function (e) {
+    this.setData({
+      settlementId: qualification[this.data.subjectType][e.detail.value].key,
+      qualificationType: qualification[this.data.subjectType][e.detail.value].value
+    })
+  },
+
+   /** 开户银行 */
+  accountBankChange: function (e) {
+    this.setData({
+      accountBank: banks[e.detail.value]
+    })
+  }
 })
