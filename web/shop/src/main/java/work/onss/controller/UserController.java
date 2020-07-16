@@ -1,11 +1,14 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.SM2;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,7 +61,7 @@ public class UserController {
         user.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(user), id, wechatConfig.getSign());
+        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
 
         result.put("authorization", authorization);
         result.put("user", user);

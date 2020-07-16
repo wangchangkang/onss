@@ -1,11 +1,14 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.SM2;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,7 +64,7 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
-            String authorization = Utils.createJWT("1977.work", Utils.toJson(user), wxSession.getOpenid(), wechatConfig.getSign());
+            String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
             result.put("pidNum", pidNum);

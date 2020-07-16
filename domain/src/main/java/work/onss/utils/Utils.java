@@ -1,8 +1,5 @@
 package work.onss.utils;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -28,13 +25,15 @@ import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Log4j2
 public class Utils {
+
+    public static String publicKeyStr = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaCvuaqC/MGSlbYvwEhXMiCnQR5QJIg263eOU7x9cZxmpLqsZm9BEgLxMgRi9xdejmjQzhrq54YvpgUBB404YjA==";
+    public static String privateKeyStr = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgjlzi4z7iSDJQjjrNydCoeGmKEnerGOyCEZyDDbE2eQigCgYIKoEcz1UBgi2hRANCAARoK+5qoL8wZKVti/ASFcyIKdBHlAkiDbrd45TvH1xnGakuqxmb0ESAvEyBGL3F16OaNDOGurnhi+mBQEHjThiM";
 
     public static List<String> banks = Arrays.asList("工商银行", "交通银行", "招商银行", "民生银行", "中信银行", "浦发银行", "兴业银行", "光大银行", "广发银行",
             "平安银行", "北京银行", "华夏银行", "农业银行", "建设银行", "邮政储蓄银行", "中国银行", "宁波银行", "其他银行");
@@ -107,26 +106,6 @@ public class Utils {
             }.getType());
         }
         return map;
-    }
-
-    /**
-     * @param iss 发行者
-     * @param sub 用户身份标识
-     * @param jti 分配JWT的ID
-     * @param key 密钥
-     * @return JWT
-     */
-    public static String createJWT(String iss, String sub, String jti, String key) {
-
-        Instant now = Instant.now();
-        JWTCreator.Builder builder = JWT.create()
-                .withIssuer(iss)
-                .withSubject(sub)
-                .withNotBefore(Date.from(now))
-                .withExpiresAt(Date.from(now.plusSeconds(7100000)))
-                .withJWTId(jti);
-
-        return builder.sign(Algorithm.HMAC256(key));
     }
 
     public static Score getItems(String uid, String sid, Map<String, Cart> carts, List<Product> products, Address address) throws ServiceException {

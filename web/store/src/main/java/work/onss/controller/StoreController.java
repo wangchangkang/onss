@@ -1,5 +1,7 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.SM2;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -7,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -74,7 +77,8 @@ public class StoreController {
             throw new ServiceException("fail", "该已商户不存在，请联系客服!");
         }
         customer.setStore(store);
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), customer.getId(), wechatConfig.getSign());
+
+        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("customer", customer);

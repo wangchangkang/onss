@@ -1,6 +1,5 @@
 package work.onss.exception;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -33,10 +32,6 @@ public class CommonException {
         return Work.fail(msg.toString());
     }
 
-    @ExceptionHandler(JWTVerificationException.class)
-    public Work<Object> jwtVerificationException(JWTVerificationException e) {
-        return Work.fail("fail.login", "请重新登录");
-    }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public Work<Object> maxUploadSizeExceededException(MaxUploadSizeExceededException e) {

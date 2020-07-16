@@ -51,4 +51,13 @@ public class Store implements Serializable {
     private List<Customer> customers;//营业员
     @Transient
     private List<Product> products;//销售产品
+
+    public Store( Merchant merchant) {
+        this.name = merchant.getMerchantShortname();
+        this.description = merchant.getQualificationType();
+        this.username = merchant.getContactName();
+        this.phone = merchant.getMobilePhone();
+        this.status = false;
+        this.licenseNumber = merchant.getLicenseNumber();
+    }
 }

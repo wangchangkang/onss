@@ -59,6 +59,9 @@ Page({
 
   /** 申请特约商户 */
   saveMerchant: function (e) {
+    wx.showLoading({
+      title: '加载中。。。',
+    })
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
     const data = { ...this.data, ...e.detail.value };
@@ -69,12 +72,22 @@ Page({
       data: data,
       success: ({ data }) => {
         console.log(data)
-        const { code, msg, content } = data;
+        const { code, msg } = data;
         if (code === 'success') {
-          wx.setStorageSync('authorization', content.authorization);
-          wx.setStorageSync('customer', content.customer);
-          wx.reLaunch({
-            url: '/pages/login/stores'
+          wx.hideLoading()
+          wx.showModal({
+            title: '温馨提示',
+            content: msg,
+            confirmColor: '#e64340',
+            showCancel: false,
+            success (res) {
+              if (res.confirm) {
+                wx.reLaunch({
+                  url: '/pages/login/stores'
+                })
+                console.log('用户点击确定')
+              } 
+            }
           })
         } else if (code === '1977.session.expire') {
           appInstance.wxLogin();

@@ -1,11 +1,14 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.SM2;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +51,9 @@ public class CustomerController {
 
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSession_key(), wxRegister.getIv());
+        if (encryptedData== null){
+            return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
+        }
         PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号
@@ -57,8 +63,7 @@ public class CustomerController {
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = Utils.createJWT("1977.work", Utils.toJson(customer), id, wechatConfig.getSign());
-
+        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         result.put("authorization", authorization);
         result.put("customer", customer);
         return Work.success("授权成功", result);
