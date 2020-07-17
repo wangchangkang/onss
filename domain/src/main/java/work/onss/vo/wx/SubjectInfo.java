@@ -18,4 +18,10 @@ public class SubjectInfo implements Serializable {
     private String certificateLetterCopy;//主体类型为党政、机关及事业单位必填。
     private OrganizationInfo organizationInfo;//主体为企业/党政、机关及事业单位/其他组织，且证件号码不是18位时必填。组织机构代码证
     private CertificateInfo certificateInfo;//主体为党政、机关及事业单位/其他组织，必填。登记证书
+
+    public SubjectInfo(SpeciallyMerchant.SubjectEnum subjectType, BusinessLicenseInfo businessLicenseInfo, IdentityInfo identityInfo) {
+        this.subjectType = subjectType;
+        this.businessLicenseInfo = businessLicenseInfo;
+        this.identityInfo = identityInfo;
+    }
 }

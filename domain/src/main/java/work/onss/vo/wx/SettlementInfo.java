@@ -17,4 +17,10 @@ public class SettlementInfo {
     private String activitiesId;//优惠费率活动ID
     private String activitiesRate;//优惠费率活动值
     private List<String> activitiesAdditions;//优惠费率活动补充材料
+
+    public SettlementInfo(String settlementId, String qualificationType, List<String> qualifications) {
+        this.settlementId = settlementId;
+        this.qualificationType = qualificationType;
+        this.qualifications = qualifications;
+    }
 }

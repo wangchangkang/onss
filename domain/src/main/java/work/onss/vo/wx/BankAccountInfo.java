@@ -19,4 +19,14 @@ public class BankAccountInfo implements Serializable {
     private String bankName;//开户银行全称（含支行) 17家直连银行无需填写，如为其他银行，则开户银行全称（含支行）和 开户银行联行号二选一。
 
     private String accountNumber;//银行账号
+
+    public BankAccountInfo(SpeciallyMerchant.BankAccountEnum bankAccountType, String accountName,
+                           String accountBank, String bankAddressCode, String bankName, String accountNumber) {
+        this.bankAccountType = bankAccountType;
+        this.accountName = accountName;
+        this.accountBank = accountBank;
+        this.bankAddressCode = bankAddressCode;
+        this.bankName = accountBank.equals("其它银行") ? bankName : null;
+        this.accountNumber = accountNumber;
+    }
 }

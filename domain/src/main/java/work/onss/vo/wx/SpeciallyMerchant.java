@@ -27,6 +27,14 @@ public class SpeciallyMerchant implements Serializable {
     private BankAccountInfo bankAccountInfo;//结算银行账户
     private AdditionInfo additionInfo;//补充材料
 
+    public SpeciallyMerchant(String businessCode, ContactInfo contactInfo, SubjectInfo subjectInfo, BusinessInfo businessInfo, SettlementInfo settlementInfo, BankAccountInfo bankAccountInfo) {
+        this.businessCode = businessCode;
+        this.contactInfo = contactInfo;
+        this.subjectInfo = subjectInfo;
+        this.businessInfo = businessInfo;
+        this.settlementInfo = settlementInfo;
+        this.bankAccountInfo = bankAccountInfo;
+    }
 
     /**
      * SUBJECT_TYPE_INDIVIDUAL（个体户）：营业执照上的主体类型一般为个体户、个体工商户、个体经营；

@@ -12,6 +12,7 @@ import work.onss.vo.wx.SpeciallyMerchant;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.Collection;
+import java.util.List;
 
 @Log4j2
 @Data
@@ -21,7 +22,9 @@ import java.util.Collection;
 public class Merchant {
     @Id
     private String id;
+
     private String customerId;
+    private Long applymentId;
 
     //超级管理员
     @NotBlank(message = "请填写管理员姓名")
@@ -82,14 +85,14 @@ public class Merchant {
     @NotBlank(message = "请填写客服电话")
     private String servicePhone;//客服电话
     @Size(min = 1, max = 5, message = "请上传1~5张小程序效果图")
-    private Collection<String> miniProgramPics;//小程序截图
+    private List<String> miniProgramPics;//小程序截图
 
     //结算规则
     private String settlementId;//入驻结算规则ID
     @NotNull(message = "请选择所属行业")
     private String qualificationType;//所属行业
     @Size(min = 1, max = 5, message = "请上传1~5张特殊资质图片")
-    private Collection<String> qualifications;//特殊资质图片
+    private List<String> qualifications;//特殊资质图片
 
     //结算银行账户
     @NotNull(message = "请填写账户类型")

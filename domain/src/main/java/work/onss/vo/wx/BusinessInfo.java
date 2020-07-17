@@ -14,6 +14,9 @@ public class BusinessInfo implements Serializable {
     private String servicePhone;//客服电话
     private SalesInfo salesInfo;//经营场景
 
-
-
+    public BusinessInfo(String merchantShortname, String servicePhone, SalesInfo salesInfo) {
+        this.merchantShortname = merchantShortname;
+        this.servicePhone = servicePhone;
+        this.salesInfo = salesInfo;
+    }
 }

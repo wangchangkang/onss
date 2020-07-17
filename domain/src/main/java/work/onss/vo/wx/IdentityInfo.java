@@ -14,4 +14,9 @@ public class IdentityInfo implements Serializable {
     private IdCardInfo idCardInfo;//身份证信息
     private IdDocInfo idDocInfo;//其他类型证件信息
     private Boolean owner;//是否是最终受益人
+
+    public IdentityInfo(IdCardInfo idCardInfo, Boolean owner) {
+        this.idCardInfo = idCardInfo;
+        this.owner = owner;
+    }
 }

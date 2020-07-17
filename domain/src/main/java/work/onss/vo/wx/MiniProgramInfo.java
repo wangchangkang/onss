@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Log4j2
@@ -15,4 +16,9 @@ public class MiniProgramInfo implements Serializable {
     private String miniProgramSubAppid;//商家小程序APPID
     private List<String> miniProgramPics;//小程序截图
 
+    public MiniProgramInfo(String miniProgramAppid, String miniProgramSubAppid, List<String> miniProgramPics) {
+        this.miniProgramAppid = miniProgramAppid;
+        this.miniProgramSubAppid = miniProgramSubAppid;
+        this.miniProgramPics = miniProgramPics;
+    }
 }

@@ -18,4 +18,13 @@ public class UboInfo implements Serializable {
     private String idNumber;//证件号码
     private String idPeriodBegin;//证件有效期开始时间
     private String idPeriodEnd;//证件有效期结束时间
+
+    public UboInfo(String idCardCopy, String idCardNational,  String name, String idNumber, String idPeriodBegin, String idPeriodEnd) {
+        this.idCardCopy = idCardCopy;
+        this.idCardNational = idCardNational;
+        this.name = name;
+        this.idNumber = idNumber;
+        this.idPeriodBegin = idPeriodBegin;
+        this.idPeriodEnd = idPeriodEnd;
+    }
 }

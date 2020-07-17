@@ -22,5 +22,7 @@ public class SalesInfo implements Serializable {
     private WebInfo webInfo;//互联网网站
     private WeworkInfo weworkInfo;//企业微信
 
-
+    public SalesInfo(MiniProgramInfo miniProgramInfo) {
+        this.miniProgramInfo = miniProgramInfo;
+    }
 }

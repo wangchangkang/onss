@@ -16,4 +16,13 @@ public class IdCardInfo implements Serializable {
     private String idCardNumber;//身份证号码
     private String cardPeriodBegin;//身份证有效期开始时间
     private String cardPeriodEnd;//身份证有效期结束时间
+
+    public IdCardInfo(String idCardCopy, String idCardNational, String idCardName, String idCardNumber, String cardPeriodBegin, String cardPeriodEnd) {
+        this.idCardCopy = idCardCopy;
+        this.idCardNational = idCardNational;
+        this.idCardName = idCardName;
+        this.idCardNumber = idCardNumber;
+        this.cardPeriodBegin = cardPeriodBegin;
+        this.cardPeriodEnd = cardPeriodEnd;
+    }
 }
