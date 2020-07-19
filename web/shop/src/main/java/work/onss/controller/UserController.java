@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.User;
 import work.onss.utils.Utils;
@@ -30,11 +30,10 @@ import java.util.Map;
 @RestController
 public class UserController {
 
-    @Autowired
-    private WechatConfig wechatConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * @param wxRegister 注册信息
      * @return 密钥及用户信息
@@ -61,7 +60,7 @@ public class UserController {
         user.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
 
         result.put("authorization", authorization);
         result.put("user", user);

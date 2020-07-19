@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
+import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Merchant;
 import work.onss.domain.Store;
@@ -39,7 +40,9 @@ import java.util.Map;
 public class MerchantController {
 
     @Autowired
-    private WechatConfig wechatConfig;
+    private WeChatConfig weChatConfig;
+    @Autowired
+    private SystemConfig systemConfig;
     @Resource
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -56,10 +59,10 @@ public class MerchantController {
         merchant.setCustomerId(cid);
         mongoTemplate.insert(merchant);
         Store store = new Store(merchant);
-        store.setBusinessCode(wechatConfig.getMchId().concat("_").concat(merchant.getId()));
+        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(merchant.getId()));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         store.setCustomers(Collections.singletonList(customer));
-        store.setTrademark("/images/logo2.png");
+        store.setTrademark(systemConfig.getLogo());
         mongoTemplate.insert(store);
 
         // 超级管理员信息
@@ -76,7 +79,7 @@ public class MerchantController {
             subjectInfo.setUboInfo(uboInfo);
         }
         // 小程序 微信服务号 appID 小程序 appID
-        MiniProgramInfo miniProgramInfo = new MiniProgramInfo("wxb7dc92a3570afc3e", "wxa75efa648b60994b", merchant.getMiniProgramPics());
+        MiniProgramInfo miniProgramInfo = new MiniProgramInfo(weChatConfig.getAppId(), merchant.getMiniProgramSubAppid(), merchant.getMiniProgramPics());
         // 经营场景
         SalesInfo salesInfo = new SalesInfo(miniProgramInfo);
         // 经营资料:商户简称、客服电话、经营场景(小程序)
@@ -90,10 +93,9 @@ public class MerchantController {
         // 特约商户信息
         SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(store.getBusinessCode(), contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
 
-        String keyPath = "/Users/Javen/cert/apiclient_key.pem";// 私钥证书
-        X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream("apiclient_cert.pem 证书路径"));
+        X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getCertPath()));
         String serialNo = certificate.getSerialNumber().toString(16).toUpperCase();
-        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.toString(), WxApiType.APPLY_4_SUB.toString(), "1573972751", serialNo, keyPath, Utils.toJson(speciallyMerchant));
+        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.toString(), WxApiType.APPLY_4_SUB.toString(), weChatConfig.getMchId(), serialNo, weChatConfig.getKeyPemPath(), Utils.toJson(speciallyMerchant));
         merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
         Query query = Query.query(Criteria.where("id").is(merchant.getId()));
         mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);

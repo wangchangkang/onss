@@ -7,11 +7,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
@@ -24,11 +23,9 @@ import work.onss.vo.Work;
 @RestController
 public class PictureController {
     @Autowired
-    private WechatConfig wechatConfig;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * 91371523MA3PU9M466
      * 防止重复上传图片
@@ -59,7 +56,7 @@ public class PictureController {
 
         filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
 
-        String path = Utils.upload(file, wechatConfig.getFilePath(), licenseNumber,filename);
+        String path = Utils.upload(file, systemConfig.getFilePath(), licenseNumber,filename);
         return Work.success("上传成功", path);
     }
 

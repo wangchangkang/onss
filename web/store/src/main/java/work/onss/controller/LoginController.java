@@ -12,7 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
+import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
@@ -32,10 +33,11 @@ public class LoginController {
     @Resource
     private MiniProgramService miniProgramService;
     @Autowired
-    private WechatConfig wechatConfig;
+    private WeChatConfig weChatConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;    
     /**
      * @param wxLogin 微信登陆信息
      * @return 密钥
@@ -44,7 +46,7 @@ public class LoginController {
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
 
         //微信用户session
-        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), wechatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
+        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), weChatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
 
         Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
         Customer customer = mongoTemplate.findOne(query, Customer.class);
@@ -57,7 +59,7 @@ public class LoginController {
             customer.setLastTime(LocalDateTime.now());
             customer.setAppid(wxLogin.getAppid());
             customer = mongoTemplate.insert(customer);
-            String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
@@ -65,14 +67,14 @@ public class LoginController {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
             Update update = Update.update("lastTime", LocalDateTime.now()).set("session_key",wxSession.getSession_key());
             mongoTemplate.updateFirst(query, update, Customer.class);
-            String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), Customer.class);
-            String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.success("登录成功", result);

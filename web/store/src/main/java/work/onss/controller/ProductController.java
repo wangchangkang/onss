@@ -10,7 +10,8 @@ import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
+import work.onss.config.WeChatConfig;
 import work.onss.domain.Product;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
@@ -27,10 +28,9 @@ import java.util.List;
 @RestController
 public class ProductController {
     @Autowired
-    private WechatConfig wechatConfig;
-    @Autowired
     protected MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * 详情
      *
@@ -127,7 +127,7 @@ public class ProductController {
             throw new ServiceException("fail", "文件格式错误!");
         }
         filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        String path = Utils.upload(file, wechatConfig.getFilePath(), number, "product", filename);
+        String path = Utils.upload(file,systemConfig.getFilePath(), number, "product", filename);
         return Work.success("上传成功", path);
     }
 }

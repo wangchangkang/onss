@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
@@ -35,7 +36,8 @@ public class StoreController {
 
     @Autowired
     protected MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * 查询微信用户下的所有特约商户
      *
@@ -80,7 +82,7 @@ public class StoreController {
             return Work.fail("特约商户资质正在审核中,请耐心等待!");
         }
         customer.setStore(store);
-        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("customer", customer);
@@ -142,7 +144,7 @@ public class StoreController {
             return Work.fail("文件格式错误!");
         }
         filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        String path = Utils.upload(file, "picture", licenseNumber, filename);
+        String path = Utils.upload(file, systemConfig.getFilePath(), licenseNumber, filename);
         return Work.success("上传成功", path);
     }
 }

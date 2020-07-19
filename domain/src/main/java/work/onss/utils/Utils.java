@@ -32,29 +32,6 @@ import java.util.*;
 @Log4j2
 public class Utils {
 
-    public static String publicKeyStr = "MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaCvuaqC/MGSlbYvwEhXMiCnQR5QJIg263eOU7x9cZxmpLqsZm9BEgLxMgRi9xdejmjQzhrq54YvpgUBB404YjA==";
-    public static String privateKeyStr = "MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgjlzi4z7iSDJQjjrNydCoeGmKEnerGOyCEZyDDbE2eQigCgYIKoEcz1UBgi2hRANCAARoK+5qoL8wZKVti/ASFcyIKdBHlAkiDbrd45TvH1xnGakuqxmb0ESAvEyBGL3F16OaNDOGurnhi+mBQEHjThiM";
-
-    public static List<String> banks = Arrays.asList("工商银行", "交通银行", "招商银行", "民生银行", "中信银行", "浦发银行", "兴业银行", "光大银行", "广发银行",
-            "平安银行", "北京银行", "华夏银行", "农业银行", "建设银行", "邮政储蓄银行", "中国银行", "宁波银行", "其他银行");
-
-    HashMap<String, List<String>> map = new HashMap<String, List<String>>() {
-        {
-            map.put("SUBJECT_TYPE_INDIVIDUAL",
-                    Arrays.asList("餐饮", "食品生鲜", "私立/民营医院/诊所", "保健器械/医疗器械/非处方药品", "游艺厅/KTV/网吧", "机票/机票代理",
-                            "宠物医院", "培训机构", "零售批发/生活娱乐/其他", "话费通讯", "门户论坛/网络广告及推广/软件开发/其他", "游戏", "加油"));
-            map.put("SUBJECT_TYPE_ENTERPRISE",
-                    Arrays.asList("餐饮", "食品生鲜", "私立/民营医院/诊所", "保健器械/医疗器械/非处方药品", "游艺厅/KTV/网吧", "机票/机票代理", "宠物医院",
-                            "培训机构", "零售批发/生活娱乐/其他", "电信运营商/宽带收费", "旅行社", "宗教组织", "房地产/房产中介", "共享服务", "文物经营/文物复制品销售",
-                            "拍卖典当", "保险业务", "众筹", "财经/股票类资讯", "话费通讯", "婚介平台/就业信息平台/其他", "在线图书/视频/音乐/网络直播", "游戏",
-                            "门户论坛/网络广告及推广/软件开发/其他", "物流/快递", "加油", "民办中小学及幼儿园", "公共事业（水电煤气）", "信用还款", "民办大学及院校"));
-            map.put("SUBJECT_TYPE_INSTITUTIONS",
-                    Arrays.asList("其他缴费", "公共事业（水电煤气）", "交通罚款", "公立医院", "公立学校", "挂号平台"));
-            map.put("SUBJECT_TYPE_OTHERS",
-                    Arrays.asList("宗教组织", "机票/机票代理", "私立/民营医院/诊所", "咨询/娱乐票务/其他", "民办中小学及幼儿园", "民办大学及院校", "公益"));
-        }
-    };
-
     private static final Gson gson;
 
     static {

@@ -12,7 +12,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
+import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
@@ -34,17 +35,18 @@ public class LoginController {
     private MiniProgramService miniProgramService;
 
     @Autowired
-    private WechatConfig wechatConfig;
+    private WeChatConfig weChatConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * @param wxLogin 微信登陆信息
      * @return 密钥
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
-        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), wechatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
+        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), weChatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
 
         Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
@@ -64,7 +66,7 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
-            String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
             result.put("pidNum", pidNum);

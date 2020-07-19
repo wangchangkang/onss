@@ -7,20 +7,20 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
+
 
 @Log4j2
 @Data
-@ConfigurationProperties(prefix = "wechat")
-@EnableConfigurationProperties(WeChatConfig.class)
+@ConfigurationProperties(prefix = "system")
+@EnableConfigurationProperties(SystemConfig.class)
 @Configuration
-public class WeChatConfig implements Serializable {
-
-    private String appId;
-    private String apiKey;
-    private String mchId;
-    private String certPath;
-    private String keyPemPath;
-    private String certPemPath;
-    private Map<String,String> keys;
+public class SystemConfig implements Serializable {
+    private String filePath;
+    private String logo;
+    private String publicKeyStr;
+    private String privateKeyStr;
+    private List<String> banks;
+    private Map<String, List<String>> subjectTypes;
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.config.WechatConfig;
+import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
@@ -29,11 +29,10 @@ import java.util.Map;
 @RestController
 public class CustomerController {
 
-    @Autowired
-    private WechatConfig wechatConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private SystemConfig systemConfig;
     /**
      * @param wxRegister 注册信息
      * @return 密钥及用户信息
@@ -63,7 +62,7 @@ public class CustomerController {
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = new SM2(null, Utils.publicKeyStr).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         result.put("authorization", authorization);
         result.put("customer", customer);
         return Work.success("授权成功", result);

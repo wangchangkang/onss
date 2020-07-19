@@ -24,6 +24,7 @@ public class Merchant {
     private String id;
 
     private String customerId;
+    private String miniProgramSubAppid;
     private Long applymentId;
 
     //超级管理员
