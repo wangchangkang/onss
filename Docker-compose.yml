@@ -41,7 +41,8 @@ services:
     ports:
       - 27018:27017
     command: mongod --replSet mongos
-#  store:
+
+  #  store:
 #    image: "java:8"
 #    container_name: store
 #    restart: always
