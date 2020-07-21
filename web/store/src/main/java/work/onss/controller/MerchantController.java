@@ -45,8 +45,6 @@ public class MerchantController {
     private SystemConfig systemConfig;
     @Resource
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private RestTemplate restTemplate;
 
     /**
      * @param merchant 注册信息
@@ -95,7 +93,7 @@ public class MerchantController {
 
         X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getCertPath()));
         String serialNo = certificate.getSerialNumber().toString(16).toUpperCase();
-        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.toString(), WxApiType.APPLY_4_SUB.toString(), weChatConfig.getMchId(), serialNo, weChatConfig.getKeyPemPath(), Utils.toJson(speciallyMerchant));
+        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.toString(), WxApiType.APPLY_4_SUB.getType(), weChatConfig.getMchId(), serialNo, weChatConfig.getKeyPemPath(), Utils.toJson(speciallyMerchant));
         merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
         Query query = Query.query(Criteria.where("id").is(merchant.getId()));
         mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);

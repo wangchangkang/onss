@@ -32,8 +32,6 @@ services:
     restart: always
     ports:
       - 27017:27017
-    volumes:
-      - /Users/wangchanghao/Desktop/work/onss/mongodb/mongodb.key:/data/mongodb.key
     command: mongod --replSet mongos
 
   mongo-27018:
@@ -42,16 +40,7 @@ services:
     restart: always
     ports:
       - 27018:27017
-    volumes:
-      - /Users/wangchanghao/Desktop/work/onss/mongodb/mongodb.key:/data/mongodb.key
     command: mongod --replSet mongos
-  mongo-init:
-    image: mongo:latest
-    command:
-      - mongo
-      - mongodb://mongo-27018/admin
-      - --eval
-      - 'rs.initiate({ _id: "mongos", members: [{_id:1,host:"127.0.0.1:27017"},{_id:2,host:"127.0.0.1:27018"}]});rs.status()'
 #  store:
 #    image: "java:8"
 #    container_name: store
