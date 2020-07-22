@@ -8,7 +8,9 @@ import com.ijpay.wxpay.WxPayApi;
 import com.ijpay.wxpay.enums.WxApiType;
 import com.ijpay.wxpay.enums.WxDomain;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -29,7 +31,9 @@ import work.onss.vo.Work;
 import work.onss.vo.wx.*;
 
 import javax.annotation.Resource;
-import java.security.cert.X509Certificate;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.security.cert.*;
 import java.util.Collections;
 import java.util.Map;
 
@@ -52,31 +56,21 @@ public class MerchantController {
     @Transactional
     @PostMapping(value = {"merchants"})
     public Work<Map<String, Object>> register(@RequestParam String cid, @RequestBody @Validated Merchant merchant) throws Exception {
-        merchant.setCustomerId(cid);
-        mongoTemplate.insert(merchant);
-        Store store = new Store(merchant);
-        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(merchant.getId()));
-        Customer customer = mongoTemplate.findById(cid, Customer.class);
-        store.setCustomers(Collections.singletonList(customer));
-        store.setTrademark(systemConfig.getLogo());
-        mongoTemplate.insert(store);
+//        merchant.setCustomerId(cid);
+//        mongoTemplate.insert(merchant);
+//        Store store = new Store(merchant);
+//        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(merchant.getId()));
+//        Customer customer = mongoTemplate.findById(cid, Customer.class);
+//        store.setCustomers(Collections.singletonList(customer));
+//        store.setTrademark(systemConfig.getLogo());
+//        mongoTemplate.insert(store);
+        X509Certificate certificate =  PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getV3CertPemPath()));
+        String serialNo = certificate.getSerialNumber().toString();
+        log.info(serialNo);
 
-        X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getCertPath()));
-        String serialNo = certificate.getSerialNumber().toString(16).toUpperCase();
-
-        Map<String, Object> serial = WxPayApi.v3Execution(
-                RequestMethod.GET,
-                WxDomain.CHINA.getType(),
-                WxApiType.GET_CERTIFICATES.getType(),
-                weChatConfig.getMchId(),
-                serialNo,
-                weChatConfig.getCertPath(),
-                ""
-        );
-        String serialNumber = MapUtil.getStr(serial, "serialNumber");
 
         // 超级管理员信息
-        ContactInfo contactInfo = new ContactInfo(merchant.getContactIdNumber(), merchant.getContactName(), merchant.getMobilePhone(), merchant.getContactEmail(), certificate);
+        ContactInfo contactInfo = new ContactInfo(merchant.getContactIdNumber(), merchant.getContactName(), merchant.getMobilePhone(), merchant.getContactEmail());
         // 主体资料
         // 营业执照
         BusinessLicenseInfo businessLicenseInfo = new BusinessLicenseInfo(merchant.getLicenseCopy(), merchant.getLicenseNumber(), merchant.getMerchantName(), merchant.getLegalPerson());
@@ -101,9 +95,9 @@ public class MerchantController {
                 merchant.getBankAddress().getCode()[2], merchant.getBankName(), merchant.getAccountNumber());
 
         // 特约商户信息
-        SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(store.getBusinessCode(), contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
+//        SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(store.getBusinessCode(), contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
 
-        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(), weChatConfig.getMchId(), serialNo, weChatConfig.getKeyPemPath(), Utils.toJson(speciallyMerchant));
+        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(), weChatConfig.getMchId(), serialNo, weChatConfig.getKeyPemPath(), Utils.toJson("speciallyMerchant"));
         merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
         Query query = Query.query(Criteria.where("id").is(merchant.getId()));
         mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);
