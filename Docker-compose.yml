@@ -1,64 +1,55 @@
-version: "3"                                   # compose-file的语法版本
+version: "3"
 services:
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:management-alpine
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - RABBITMQ_DEFAULT_VHOST=onss
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=123456
-    restart: always
-  nexus:
-    container_name: nexus
-    image: "sonatype/nexus3:latest"
-    restart: always
-    ports:
-      - 8181:8181
   nginx:
     container_name: nginx
     image: nginx:latest
     restart: always
     ports:
       - 80:80
+      - 443:443
     volumes:
-      - /Users/wangchanghao/Desktop/work/onss/nginx/conf.d:/etc/nginx/conf.d
-      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./picture:/picture
   mongo-27017:
-    image: "mongo:latest"
+    image: mongo:latest
     container_name: mongo-27017
     restart: always
     ports:
       - 27017:27017
-    command: mongod --replSet mongos
-
+    command: mongod --replSet onss --oplogSize 128 --port 27017
+    environment:
+      MONGODB_APPLICATION_DATABASE: test
   mongo-27018:
-    image: "mongo:latest"
+    image: mongo:latest
     container_name: mongo-27018
     restart: always
     ports:
-      - 27018:27017
-    command: mongod --replSet mongos
-
-  #  store:
-#    image: "java:8"
-#    container_name: store
-#    restart: always
-#    ports:
-#      - 8001:8001
-#    volumes:
-#      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
-#      - /Users/wangchanghao/Desktop/work/onss/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/onss/store-service-0.0.1-SNAPSHOT.jar
-#    depends_on:
-#      - nginx
-#      - mongo
-#    entrypoint: ["java","-jar","/onss/store-service-0.0.1-SNAPSHOT.jar"]
-
-  nifi:
-    container_name: nifi
-    image: "apache/nifi:latest"
-    ports:
-      - 8080:8080
+      - 27018:27018
+    command: mongod --replSet onss --oplogSize 128 --port 27018
+    environment:
+      MONGODB_APPLICATION_DATABASE: test
+  mongo-init:
+    image: mongo:latest
+    depends_on:
+      - mongo-27017
+      - mongo-27018
+    restart: on-failure:5
+    command:
+      - mongo
+      - mongodb://mongo-27017:27017/admin
+      - --eval
+      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"mongo-27017:27017"},{_id:2,host:"mongo-27018:27018"}]})'
+  store:
+    image: "java:8"
+    container_name: store
     restart: always
+    depends_on:
+      - mongo-27017
+      - mongo-27018
+      - nginx
+    ports:
+      - 8001:8001
+    volumes:
+      - /Users/wangchanghao/Desktop/work/onss/picture:/picture
+      - /Users/wangchanghao/Desktop/work/onss/web/store/target/store-service-0.0.1-SNAPSHOT.jar:/onss/store-service-0.0.1-SNAPSHOT.jar
+    entrypoint: ["java","-jar","/onss/store-service-0.0.1-SNAPSHOT.jar"]
