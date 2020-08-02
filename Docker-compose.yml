@@ -8,17 +8,17 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./picture:/picture
+      - ./nginx/conf.d:/etc/nginx/conf.d  # 配置文件
+      - ./picture:/picture # 图片路径
   mongo-27017:
     image: mongo:latest
     container_name: mongo-27017
     restart: always
     ports:
       - 27017:27017
-    command: mongod --replSet onss --oplogSize 128 --port 27017
+    command: mongod --replSet onss --oplogSize 128 --port 27017 # replSet 使用副本集功能
     environment:
-      MONGODB_APPLICATION_DATABASE: test
+      MONGODB_APPLICATION_DATABASE: test # 初始化DATABASE
   mongo-27018:
     image: mongo:latest
     container_name: mongo-27018
@@ -38,7 +38,7 @@ services:
       - mongo
       - mongodb://mongo-27017:27017/admin
       - --eval
-      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"mongo-27017:27017"},{_id:2,host:"mongo-27018:27018"}]})'
+      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"mongo-27017:27017"},{_id:2,host:"mongo-27018:27018"}]})' # 初始化副本集群
   store:
     image: "java:8"
     container_name: store
