@@ -95,7 +95,7 @@ public class MerchantController {
      * @return 图片地址
      */
     @PostMapping("merchants/upload")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid, @RequestParam String type) throws Exception {
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid, @RequestParam String type, @RequestParam String i) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
@@ -109,8 +109,8 @@ public class MerchantController {
         Map<String, String> data = new HashMap<>();
         data.put("filename", file.getName());
         data.put("sha256", sha256);
-        // pictures/cid/sha256.png
-        Path path = Paths.get(systemConfig.getFilePath(), cid, type, sha256, filename.substring(index));
+        // pictures/cid/type/i/sha256.png
+        Path path = Paths.get(systemConfig.getFilePath(), cid, type, i, sha256, filename.substring(index));
         if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }
