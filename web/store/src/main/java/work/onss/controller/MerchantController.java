@@ -26,9 +26,9 @@ import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
-import work.onss.vo.wx.*;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,34 +79,6 @@ public class MerchantController {
         log.info(serialNo);
 
 
-        // 超级管理员信息
-        ContactInfo contactInfo = new ContactInfo(merchant.getContactIdNumber(), merchant.getContactName(), merchant.getMobilePhone(), merchant.getContactEmail());
-        // 主体资料
-        // 营业执照
-        BusinessLicenseInfo businessLicenseInfo = new BusinessLicenseInfo(merchant.getLicenseCopy(), merchant.getLicenseNumber(), merchant.getMerchantName(), merchant.getLegalPerson());
-        IdCardInfo idCardInfo = new IdCardInfo(merchant.getIdCardCopy(), merchant.getIdCardNational(), merchant.getIdCardName(), merchant.getIdCardNumber(), merchant.getCardPeriodBegin(), merchant.getCardPeriodEnd());
-        IdentityInfo identityInfo = new IdentityInfo(idCardInfo, merchant.getOwner());
-        SubjectInfo subjectInfo = new SubjectInfo(merchant.getSubjectType(), businessLicenseInfo, identityInfo);
-        if (!merchant.getOwner()) {
-            // 最终受益人
-            UboInfo uboInfo = new UboInfo(merchant.getIdCardA(), merchant.getIdCardB(), merchant.getBeneficiary(), merchant.getIdNumber(), merchant.getIdPeriodEnd(), merchant.getIdPeriodEnd());
-            subjectInfo.setUboInfo(uboInfo);
-        }
-        // 小程序 微信服务号 appID 小程序 appID
-        MiniProgramInfo miniProgramInfo = new MiniProgramInfo(weChatConfig.getAppId(), merchant.getMiniProgramSubAppid(), merchant.getMiniProgramPics());
-        // 经营场景
-        SalesInfo salesInfo = new SalesInfo(miniProgramInfo);
-        // 经营资料:商户简称、客服电话、经营场景(小程序)
-        BusinessInfo businessInfo = new BusinessInfo(merchant.getMerchantShortname(), merchant.getServicePhone(), salesInfo);
-        // 结算规则
-        SettlementInfo settlementInfo = new SettlementInfo(merchant.getSettlementId(), merchant.getQualificationType(), merchant.getQualifications());
-        // 结算银行
-        BankAccountInfo bankAccountInfo = new BankAccountInfo(merchant.getBankAccountType(), merchant.getAccountName(), merchant.getAccountBank(),
-                merchant.getBankAddress().getCode()[2], merchant.getBankName(), merchant.getAccountNumber());
-
-        // 特约商户信息
-        SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(store.getBusinessCode(), contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
-
         Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(),
                 weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), Utils.toJson("speciallyMerchant"));
         merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
@@ -117,14 +89,13 @@ public class MerchantController {
 
 
     /**
-     *
      * 图片上传到微信平台
      *
      * @param file 文件
      * @return 图片地址
      */
     @PostMapping("merchants/upload")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid) throws Exception {
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid, @RequestParam String type) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
@@ -139,12 +110,18 @@ public class MerchantController {
         data.put("filename", file.getName());
         data.put("sha256", sha256);
         // pictures/cid/sha256.png
-        Path path = Paths.get(systemConfig.getFilePath(), cid, sha256, filename.substring(index));
+        Path path = Paths.get(systemConfig.getFilePath(), cid, type, sha256, filename.substring(index));
         if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }
         // 判断文件是否存在
         if (!Files.exists(path)) {
+            File[] files = path.getParent().toFile().listFiles();
+            if (files != null) {
+                for (File value : files) {
+                    Files.delete(value.toPath());
+                }
+            }
             file.transferTo(path);
         }
         Map<String, Object> stringObjectMap = WxPayApi.v3Upload(WxDomain.CHINA.getType(),
