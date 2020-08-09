@@ -1,17 +1,13 @@
 package work.onss.controller;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.ijpay.core.enums.RequestMethod;
-import com.ijpay.core.kit.PayKit;
 import com.ijpay.wxpay.WxPayApi;
 import com.ijpay.wxpay.enums.WxApiType;
 import com.ijpay.wxpay.enums.WxDomain;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
-import work.onss.domain.Customer;
 import work.onss.domain.Merchant;
-import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
@@ -32,8 +26,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,24 +57,25 @@ public class MerchantController {
                 weChatConfig.getKeyPemPath(),
                 ""
         );
-        merchant.setCustomerId(cid);
-        mongoTemplate.insert(merchant);
-        Store store = new Store(merchant);
-        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(merchant.getId()));
-        Customer customer = mongoTemplate.findById(cid, Customer.class);
-        store.setCustomers(Collections.singletonList(customer));
-        store.setTrademark(systemConfig.getLogo());
-        mongoTemplate.insert(store);
 
-        X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getV3CertPemPath()));
-        String serialNo = certificate.getSerialNumber().toString();
-        log.info(serialNo);
-
-
-        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(),
-                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), Utils.toJson("speciallyMerchant"));
-        merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
-        Query query = Query.query(Criteria.where("id").is(merchant.getId()));
+        log.info(certificates.get("body"));
+//        merchant.setCustomerId(cid);
+//        mongoTemplate.insert(merchant);
+//        Store store = new Store(merchant);
+//        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(merchant.getId()));
+//        Customer customer = mongoTemplate.findById(cid, Customer.class);
+//        store.setCustomers(Collections.singletonList(customer));
+//        store.setTrademark(systemConfig.getLogo());
+//        mongoTemplate.insert(store);
+//        X509Certificate certificate = PayKit.getCertificate(new ByteArrayInputStream(certificates.get("boy").toString().getBytes()));
+//        String serialNo = certificate.getSerialNumber().toString();
+//        log.info(serialNo);
+//
+//
+//        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(),
+//                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), Utils.toJson("speciallyMerchant"));
+//        merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
+//        Query query = Query.query(Criteria.where("id").is(merchant.getId()));
 //        mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);
         return Work.success("申请成功，请等待审核结果", null);
     }
@@ -124,11 +117,12 @@ public class MerchantController {
             }
             file.transferTo(path);
         }
-        Map<String, Object> stringObjectMap = WxPayApi.v3Upload(WxDomain.CHINA.getType(),
+        Map<String, Object> stringObjectMap = WxPayApi.v3Upload(
+                WxDomain.CHINA.getType(),
                 WxApiType.MERCHANT_UPLOAD_MEDIA.getType(),
                 weChatConfig.getMchId(),
                 weChatConfig.getSerialNo(),
-                weChatConfig.getKeyPemPath(),
+                weChatConfig.getV3CertPemPath(),
                 Utils.toJson(data),
                 path.toFile());
         return Work.success("上传成功", path.toString());

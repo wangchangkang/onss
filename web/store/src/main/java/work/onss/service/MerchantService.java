@@ -1,9 +1,35 @@
 package work.onss.service;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import com.ijpay.core.enums.RequestMethod;
+import com.ijpay.core.kit.AesUtil;
+import com.ijpay.core.kit.PayKit;
+import com.ijpay.wxpay.WxPayApi;
+import com.ijpay.wxpay.enums.WxApiType;
+import com.ijpay.wxpay.enums.WxDomain;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+import work.onss.config.WeChatConfig;
 import work.onss.domain.Merchant;
+import work.onss.vo.V3Certificate;
 import work.onss.vo.wx.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.util.Map;
+
+@Service
 public class MerchantService {
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public void create(Merchant merchant, String appId, String businessCode) {
         // 超级管理员信息
@@ -33,5 +59,36 @@ public class MerchantService {
 
         // 特约商户信息
         SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(businessCode, contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
+    }
+
+    public void getCertificate(WeChatConfig weChatConfig) throws Exception {
+        Query query = Query.query(Criteria.where("id").is(weChatConfig.getMchId().concat(weChatConfig.getSerialNo())).and("expireTime").gt(LocalDate.now().plusDays(5)));
+        V3Certificate v3Certificate = mongoTemplate.findOne(query, V3Certificate.class);
+        if (v3Certificate == null) {
+            Map<String, Object> certificates = WxPayApi.v3Execution(
+                    RequestMethod.GET,
+                    WxDomain.CHINA.toString(),
+                    WxApiType.GET_CERTIFICATES.toString(),
+                    weChatConfig.getMchId(),
+                    weChatConfig.getSerialNo(),
+                    weChatConfig.getKeyPemPath(),
+                    ""
+            );
+
+            JSON body = new JSONObject(certificates.get("body"));
+            String associatedData = body.getByPath("data[0].encrypt_certificate.associated_data", String.class);
+            String nonce = body.getByPath("data[0].encrypt_certificate.nonce", String.class);
+            String ciphertext = body.getByPath("data[0].encrypt_certificate.ciphertext", String.class);
+            AesUtil aesUtil = new AesUtil(weChatConfig.getApiKey().getBytes(StandardCharsets.UTF_8));
+            // 平台证书密文解密
+            String publicKey = aesUtil.decryptToString(associatedData.getBytes(StandardCharsets.UTF_8), nonce.getBytes(StandardCharsets.UTF_8), ciphertext);
+            System.out.println("平台证书公钥明文：" + publicKey);
+            // 保存证书
+            FileWriter writer = new FileWriter(weChatConfig.getV3CertPemPath());
+            writer.write(publicKey);
+            // 获取平台证书序列号
+            X509Certificate certificate = PayKit.getCertificate(new ByteArrayInputStream(publicKey.getBytes()));
+            System.out.println(certificate.getSerialNumber().toString(16).toUpperCase());
+        }
     }
 }
