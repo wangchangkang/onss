@@ -1,5 +1,6 @@
 package work.onss.service;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import com.ijpay.core.enums.RequestMethod;
@@ -8,6 +9,7 @@ import com.ijpay.core.kit.PayKit;
 import com.ijpay.wxpay.WxPayApi;
 import com.ijpay.wxpay.enums.WxApiType;
 import com.ijpay.wxpay.enums.WxDomain;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,8 +25,10 @@ import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
+@Log4j2
 @Service
 public class MerchantService {
 
@@ -61,8 +65,11 @@ public class MerchantService {
         SpeciallyMerchant speciallyMerchant = new SpeciallyMerchant(businessCode, contactInfo, subjectInfo, businessInfo, settlementInfo, bankAccountInfo);
     }
 
-    public void getCertificate(WeChatConfig weChatConfig) throws Exception {
-        Query query = Query.query(Criteria.where("id").is(weChatConfig.getMchId().concat(weChatConfig.getSerialNo())).and("expireTime").gt(LocalDate.now().plusDays(5)));
+    public String getSerialNumber(WeChatConfig weChatConfig) throws Exception {
+        Query query = Query
+                .query(Criteria.where("id")
+                        .is(weChatConfig.getMchId().concat(weChatConfig.getSerialNo()))
+                        .and("expireTime").gt(LocalDate.now().plusDays(5)));
         V3Certificate v3Certificate = mongoTemplate.findOne(query, V3Certificate.class);
         if (v3Certificate == null) {
             Map<String, Object> certificates = WxPayApi.v3Execution(
@@ -76,19 +83,29 @@ public class MerchantService {
             );
 
             JSON body = new JSONObject(certificates.get("body"));
-            String associatedData = body.getByPath("data[0].encrypt_certificate.associated_data", String.class);
-            String nonce = body.getByPath("data[0].encrypt_certificate.nonce", String.class);
-            String ciphertext = body.getByPath("data[0].encrypt_certificate.ciphertext", String.class);
+            v3Certificate = body.getByPath("data[0]", V3Certificate.class);
+
             AesUtil aesUtil = new AesUtil(weChatConfig.getApiKey().getBytes(StandardCharsets.UTF_8));
             // 平台证书密文解密
-            String publicKey = aesUtil.decryptToString(associatedData.getBytes(StandardCharsets.UTF_8), nonce.getBytes(StandardCharsets.UTF_8), ciphertext);
-            System.out.println("平台证书公钥明文：" + publicKey);
+            String publicKey = aesUtil.decryptToString(
+                    v3Certificate.getEncrypt_certificate().getAssociated_data().getBytes(StandardCharsets.UTF_8),
+                    v3Certificate.getEncrypt_certificate().getNonce().getBytes(StandardCharsets.UTF_8),
+                    v3Certificate.getEncrypt_certificate().getCiphertext());
             // 保存证书
             FileWriter writer = new FileWriter(weChatConfig.getV3CertPemPath());
             writer.write(publicKey);
             // 获取平台证书序列号
             X509Certificate certificate = PayKit.getCertificate(new ByteArrayInputStream(publicKey.getBytes()));
-            System.out.println(certificate.getSerialNumber().toString(16).toUpperCase());
+            mongoTemplate.insert(v3Certificate);
+
+            log.info("平台证书公钥明文：{}", publicKey);
+            log.info("v3Certificate:{}", v3Certificate.toString());
+            log.info("平台证书序列号：{}", certificate.getSerialNumber().toString(16).toUpperCase());
+
+            return certificate.getSerialNumber().toString(16).toUpperCase();
+        } else {
+            X509Certificate certificate = PayKit.getCertificate(FileUtil.getInputStream(weChatConfig.getV3CertPemPath()));
+            return certificate.getSerialNumber().toString(16).toUpperCase();
         }
     }
 }
