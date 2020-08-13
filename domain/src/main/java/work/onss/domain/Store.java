@@ -52,6 +52,8 @@ public class Store implements Serializable {
     @Transient
     private List<Product> products;//销售产品
 
+    private Merchant merchant;// 申请资料
+
     public Store( Merchant merchant) {
         this.name = merchant.getMerchantShortname();
         this.description = merchant.getQualificationType();

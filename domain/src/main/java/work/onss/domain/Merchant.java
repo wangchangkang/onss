@@ -4,27 +4,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.vo.WXAddress;
 import work.onss.vo.wx.SpeciallyMerchant;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.util.Collection;
 import java.util.List;
 
 @Log4j2
 @Data
 @NoArgsConstructor
 @ToString
-@Document
 public class Merchant {
-    @Id
-    private String id;
 
-    private String customerId;
     private String miniProgramSubAppid;
+    private String businessCode;
     private Long applymentId;
 
     //超级管理员
@@ -71,7 +65,7 @@ public class Merchant {
     @NotNull(message = "法人是否是最终受益人")
     private Boolean owner;//是否是最终受益人
 
-    private SpeciallyMerchant.CardEnum idType= SpeciallyMerchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//证件类型
+    private SpeciallyMerchant.CardEnum idType = SpeciallyMerchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//证件类型
     private String idCardA;//身份证人像面照片
     private String idCardB;//身份证国徽面照片
     private String idDocCopy;//证件照片
