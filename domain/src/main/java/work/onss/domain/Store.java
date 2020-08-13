@@ -45,12 +45,12 @@ public class Store implements Serializable {
     private Collection<String> pictures = new ArrayList<>();//宣传册
     private Collection<String> videos = new ArrayList<>();//小视频
     @Indexed(unique = true)
-    private String subMchId;//商户号
     private String licenseNumber;//营业执照编号
-    private String businessCode;//商户业务编号
     private List<Customer> customers;//营业员
     @Transient
     private List<Product> products;//销售产品
+
+    private String subMchId;//商户号
 
     private Merchant merchant;// 申请资料
 

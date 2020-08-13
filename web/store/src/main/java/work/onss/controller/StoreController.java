@@ -71,16 +71,21 @@ public class StoreController {
     public Work<Map<String, Object>> bind(@PathVariable String id, @RequestParam(name = "cid") String cid) {
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         if (customer == null) {
-            return Work.fail("该已用户不存在，请联系客服");
+            return Work.fail("该用户已不存在，请联系客服");
         }
         Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
-            return Work.fail("该已商户不存在，请联系客服!");
+            return Work.fail("该商户已不存在，请联系客服!");
         }
         if (store.getSubMchId() == null) {
             return Work.fail("特约商户资质正在审核中,请耐心等待!");
         }
+        store.setPictures(null);
+        store.setVideos(null);
+        store.setProducts(null);
+        store.setCustomers(null);
+        store.setMerchant(null);
         customer.setStore(store);
         String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
