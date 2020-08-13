@@ -80,7 +80,7 @@ public class Merchant implements Serializable {
     private String merchantShortname;//商户简称
     @NotBlank(message = "请填写客服电话")
     private String servicePhone;//客服电话
-    @Size(min = 1, max = 5, message = "请上传1~5张小程序效果图")
+
     private List<String> miniProgramPics;//小程序截图
 
     //结算规则

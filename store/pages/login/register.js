@@ -34,12 +34,8 @@ Page({
 
     merchantShortname: '茌平壹玖柒柒',
     servicePhone: '15063517240',
-    miniProgramPics: [
-      'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
-    ],
 
-    settlementId: '',
-    qualificationType: '1',
+    qualificationType: '餐饮',
     qualifications: [
       'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
     ],
@@ -200,8 +196,7 @@ Page({
    /** 所属行业 */
   qualificationTypeChange: function (e) {
     this.setData({
-      settlementId: qualification[this.data.subjectType][e.detail.value].key,
-      qualificationType: qualification[this.data.subjectType][e.detail.value].value
+      qualificationType: qualification[this.data.subjectType][e.detail.value]
     })
   },
 

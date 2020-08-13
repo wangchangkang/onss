@@ -62,6 +62,15 @@
 		</view>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
+				<view class="weui-label">商户简称</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="merchantShortname" value="{{merchantShortname}}" class="weui-input" placeholder="请输入商户简称" maxlength="8" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
 				<view class="weui-label">商户全称</view>
 			</view>
 			<view class="weui-cell__bd">
@@ -74,6 +83,14 @@
 			</view>
 			<view class="weui-cell__bd">
 				<input name="legalPerson" value="{{legalPerson}}" class="weui-input" placeholder="法人姓名" maxlength="8" />
+			</view>
+		</view>
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">客服电话</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input name="servicePhone" value="{{servicePhone}}" class="weui-input" placeholder="请输入客服电话" maxlength="8" />
 			</view>
 		</view>
 	</view>
@@ -175,25 +192,10 @@
 			</view>
 		</view>
 	</view>
-	<view class="weui-cells__title">经营资料</view>
-	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">商户简称</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input name="merchantShortname" value="{{merchantShortname}}" class="weui-input" placeholder="请输入商户简称" maxlength="8" />
-			</view>
-		</view>
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">客服电话</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input name="servicePhone" value="{{servicePhone}}" class="weui-input" placeholder="请输入客服电话" maxlength="8" />
-			</view>
-		</view>
-		<view class="weui-cell">
+	<!-- <view class="weui-cells__title">经营资料</view> -->
+	<!-- <view class="weui-cells weui-cells_after-title" style="font-size:27rpx"> -->
+
+	<!-- <view class="weui-cell">
 			<view class="weui-cell__bd">
 				<view class="weui-uploader">
 					<view class="weui-uploader__hd">
@@ -218,8 +220,8 @@
 					</view>
 				</view>
 			</view>
-		</view>
-	</view>
+		</view> -->
+	<!-- </view> -->
 	<view class="weui-cells__title">结算规则</view>
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<view class="weui-cell ">
@@ -227,7 +229,7 @@
 				<view class="weui-label">所属行业</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}" range-key="value">
+				<picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}">
 					<view>{{qualificationType?qualificationType:'请选择所属行业'}}</view>
 				</picker>
 			</view>

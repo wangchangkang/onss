@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
@@ -46,7 +47,7 @@ public class MerchantController {
 
     @Transactional
     @PostMapping(value = {"merchants"})
-    public Work<Map<String, Object>> register(@RequestParam String cid, @RequestBody Merchant merchant) {
+    public Work<Map<String, Object>> register(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
         merchant.setBusinessCode(weChatConfig.getMchId().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
         Store store = new Store(merchant);
         Customer customer = mongoTemplate.findById(cid, Customer.class);

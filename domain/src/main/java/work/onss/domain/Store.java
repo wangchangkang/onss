@@ -54,12 +54,13 @@ public class Store implements Serializable {
 
     private Merchant merchant;// 申请资料
 
-    public Store( Merchant merchant) {
+    public Store(Merchant merchant) {
         this.name = merchant.getMerchantShortname();
         this.description = merchant.getQualificationType();
         this.username = merchant.getContactName();
         this.phone = merchant.getMobilePhone();
         this.status = false;
         this.licenseNumber = merchant.getLicenseNumber();
+        this.merchant = merchant;
     }
 }
