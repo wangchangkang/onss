@@ -9,13 +9,14 @@ import work.onss.vo.wx.SpeciallyMerchant;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Log4j2
 @Data
 @NoArgsConstructor
 @ToString
-public class Merchant {
+public class Merchant implements Serializable {
 
     private String miniProgramSubAppid;
     private String businessCode;
