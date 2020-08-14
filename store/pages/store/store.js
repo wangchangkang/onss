@@ -31,16 +31,17 @@ Page({
     })
   },
 
-  onLoad: function (options) {
+  onShow: function (options) {
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
     wx.request({
-      url: `${domain}/stores?cid=${customer.id}`,
+      url: `${domain}/stores/${customer.store.id}`,
       header: {
         authorization,
       },
       success: ({ data }) => {
-        const { code, msg } = data;
+        const { code, msg,content } = data;
+        console.log(data)
         switch (code) {
           case 'success':
             wx.showToast({

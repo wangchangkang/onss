@@ -1,5 +1,6 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
 import lombok.extern.log4j.Log4j2;
@@ -8,7 +9,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,9 @@ import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +60,10 @@ public class StoreController {
      * @param id 主键
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
+    public Work<Store> detail(@PathVariable String id) {
+        Query query = Query.query(Criteria.where("id").is(id));
+        query.fields().exclude("merchant");
+        query.fields().exclude("customers");
         Store store = mongoTemplate.findOne(query, Store.class);
         return Work.success("加载成功", store);
     }
@@ -75,11 +80,20 @@ public class StoreController {
             return Work.fail("该用户已不存在，请联系客服");
         }
         Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
+        query.fields().exclude("description");
+        query.fields().exclude("address");
+        query.fields().exclude("trademark");
+        query.fields().exclude("pictures");
+        query.fields().exclude("videos");
+        query.fields().exclude("customers");
+        query.fields().exclude("products");
+        query.fields().exclude("merchant");
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
             return Work.fail("该商户已不存在，请联系客服!");
         }
-        customer.setStore(store.getBindStore());
+        log.info(store.toString());
+        customer.setStore(store);
         String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
@@ -141,9 +155,18 @@ public class StoreController {
         if (index == -1) {
             return Work.fail("文件格式错误!");
         }
-        filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        String path = Utils.upload(file, systemConfig.getFilePath(), licenseNumber, filename);
-        return Work.success("上传成功", path);
+        String sha256 = SecureUtil.sha256(file.getInputStream());
+
+        Path path = Paths.get(systemConfig.getFilePath(), licenseNumber, sha256, filename.substring(index));
+        if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        // 判断文件是否存在
+        if (!Files.exists(path)) {
+            file.transferTo(path);
+        }
+
+        return Work.success("上传成功", path.toString());
     }
 }
 

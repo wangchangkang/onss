@@ -65,15 +65,4 @@ public class Store implements Serializable {
         this.merchant = merchant;
     }
 
-    public Store getBindStore() {
-        this.description = null;
-        this.address = null;
-        this.trademark = null;
-        this.pictures = null;
-        this.videos = null;
-        this.customers = null;
-        this.products = null;
-        this.merchant = null;
-        return this;
-    }
 }

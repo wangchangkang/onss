@@ -1,22 +1,23 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
-import work.onss.config.WeChatConfig;
 import work.onss.domain.Product;
 import work.onss.exception.ServiceException;
-import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -31,6 +32,7 @@ public class ProductController {
     protected MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
+
     /**
      * 详情
      *
@@ -117,17 +119,25 @@ public class ProductController {
      * @return 图片地址
      */
     @PostMapping("products/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "number") String number) throws Exception {
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
-            throw new ServiceException("fail", "上传失败!");
+            return Work.fail("上传失败!");
         }
         int index = filename.lastIndexOf(".");
         if (index == -1) {
-            throw new ServiceException("fail", "文件格式错误!");
+            return Work.fail("文件格式错误!");
         }
-        filename = DigestUtils.md5DigestAsHex(file.getInputStream()).concat(filename.substring(index));
-        String path = Utils.upload(file,systemConfig.getFilePath(), number, "product", filename);
-        return Work.success("上传成功", path);
+        String sha256 = SecureUtil.sha256(file.getInputStream());
+
+        Path path = Paths.get(systemConfig.getFilePath(), sid, "products", sha256.concat(filename.substring(index)));
+        if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        // 判断文件是否存在
+        if (!Files.exists(path)) {
+            file.transferTo(path);
+        }
+        return Work.success("上传成功", path.toString());
     }
 }
