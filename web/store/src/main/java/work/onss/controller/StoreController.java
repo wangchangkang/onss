@@ -38,6 +38,7 @@ public class StoreController {
     protected MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
+
     /**
      * 查询微信用户下的所有特约商户
      *
@@ -78,15 +79,7 @@ public class StoreController {
         if (store == null) {
             return Work.fail("该商户已不存在，请联系客服!");
         }
-        if (store.getSubMchId() == null) {
-            return Work.fail("特约商户资质正在审核中,请耐心等待!");
-        }
-        store.setPictures(null);
-        store.setVideos(null);
-        store.setProducts(null);
-        store.setCustomers(null);
-        store.setMerchant(null);
-        customer.setStore(store);
+        customer.setStore(store.getBindStore());
         String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
