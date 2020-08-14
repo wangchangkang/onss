@@ -19,8 +19,6 @@ import java.util.List;
 public class Merchant implements Serializable {
 
     private String miniProgramSubAppid;
-    private String businessCode;
-    private Long applymentId;
 
     //超级管理员
     @NotBlank(message = "请填写管理员姓名")

@@ -51,7 +51,8 @@ public class Store implements Serializable {
     private List<Product> products;//销售产品
 
     private String subMchId;//商户号
-
+    private String businessCode; // 业务编号
+    private Long applymentId; // 业务ID
     private Merchant merchant;// 申请资料
 
     public Store(Merchant merchant) {

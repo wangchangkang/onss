@@ -48,8 +48,8 @@ public class MerchantController {
     @Transactional
     @PostMapping(value = {"merchants"})
     public Work<Map<String, Object>> register(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
-        merchant.setBusinessCode(weChatConfig.getMchId().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
         Store store = new Store(merchant);
+        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         store.setCustomers(Collections.singletonList(customer));
         store.setTrademark(systemConfig.getLogo());
@@ -72,8 +72,6 @@ public class MerchantController {
         if (store == null) {
             return Work.fail("该商户不存在");
         }
-        merchant.setBusinessCode(store.getMerchant().getBusinessCode());
-        merchant.setApplymentId(store.getMerchant().getApplymentId());
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("merchant", merchant), Store.class);
         return Work.success("申请成功，请等待审核结果", null);
