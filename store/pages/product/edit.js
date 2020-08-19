@@ -10,7 +10,7 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages({count,url:'product/uploadPicture'}).then((data) => {
+    appInstance.chooseImages({ count, url: 'product/uploadPicture' }).then((data) => {
       this.setData({
         [`${id}[${length}]`]: data
       })
@@ -19,7 +19,7 @@ Page({
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    appInstance.chooseImage({url:'product/uploadPicture'}).then((data) => {
+    appInstance.chooseImage({ url: 'product/uploadPicture' }).then((data) => {
       this.setData({
         [`${id}`]: data
       })
@@ -82,32 +82,120 @@ Page({
   },
 
   updateProduct: function (e) {
-    const { index,remarks, description, pictures, id } = this.data;
+    const { index, remarks, description, pictures, id } = this.data;
     const product = { ...e.detail.value, remarks, description, pictures, id }
-    appInstance.request({ url: `${domain}/product/${id}`, data: product, method: "PUT" }).then(({ content }) => {
-      this.setData({
-        ...content,
-        product: content
-      })
-      let pages = getCurrentPages();//当前页面栈
-      let detail = pages[pages.length - 2];//详情页面
-      detail.setData({
-        product: content
-      });
-      let list = pages[pages.length - 3];//列表页面
-      list.data.products[index] = content;
-      list.setData({
-        products: list.data.products
-      });
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/products/${id}?sid=${customer.store.id}`,
+      method: "PUT",
+      data: product,
+      header: {
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                this.setData({
+                  ...content,
+                  product: content
+                })
+                let pages = getCurrentPages();//当前页面栈
+                let detail = pages[pages.length - 2];//详情页面
+                detail.setData({
+                  product: content
+                });
+                let list = pages[pages.length - 3];//列表页面
+                list.data.products[index] = content;
+                list.setData({
+                  products: list.data.products
+                });
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
   },
+
   onLoad: function (options) {
-    appInstance.request({ url: `${domain}/product/${options.id}`, method: "GET" }).then(({ content }) => {
-      this.setData({
-        index: options.index,
-        ...content,
-        product: content
-      })
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/products/${options.id}?sid=${customer.store.id}`,
+      method: "GET",
+      header: {
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                this.setData({
+                  index: options.index,
+                  ...content,
+                  product: content
+                })
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
   },
 })

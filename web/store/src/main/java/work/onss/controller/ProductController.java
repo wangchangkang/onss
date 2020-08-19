@@ -86,6 +86,7 @@ public class ProductController {
     @PutMapping(value = {"products/{id}"})
     public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+        product.setSid(sid);
         mongoTemplate.findAndReplace(query, product);
         return Work.success("编辑成功", product);
     }
