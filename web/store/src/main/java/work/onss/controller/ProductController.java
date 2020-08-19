@@ -66,9 +66,11 @@ public class ProductController {
     @PostMapping(value = {"products"})
     public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         if (product.getId() == null) {
+            product.setSid(sid);
             product = mongoTemplate.insert(product);
             return Work.success("创建成功", product);
         } else {
+            product.setSid(sid);
             Query query = Query.query(Criteria.where("id").is(product.getId()).and("sid").is(sid));
             mongoTemplate.findAndReplace(query, product);
             return Work.success("编辑成功", product);

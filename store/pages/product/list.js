@@ -22,14 +22,54 @@ Page({
   },
 
   onLoad: function () {
-    // appInstance.request({
-    //   url: `${domain}/product`,
-    //   method: "GET",
-    // }).then(({ content }) => {
-    //   this.setData({
-    //     products: content
-    //   })
-    // })
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/products?sid=${customer.store.id}`,
+      method: "GET",
+      header: {
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                this.setData({
+                  products: content
+                })
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
+    })
   },
 
   bindShow: function (e) {
@@ -51,10 +91,53 @@ Page({
         if (res.confirm) {
           const index = e.currentTarget.id;
           const { id, status } = this.data.products[index];
-          appInstance.request({ url: `${domain}/product/${id}/updateStatus`, method: 'PUT', header: { status: status.toString() } }).then(({ content }) => {
-            this.setData({
-              [`products[${index}].status`]: content
-            })
+          const customer = wx.getStorageSync('customer');
+          const authorization = wx.getStorageSync('authorization');
+          wx.request({
+            url: `${domain}/products/${id}/updateStatus?sid=${customer.store.id}&status=${!status}`,
+            method: 'PUT',
+            header: {
+              authorization,
+            },
+            success: ({ data }) => {
+              const { code, msg, content } = data;
+              console.log(data)
+              switch (code) {
+                case 'success':
+                  wx.showToast({
+                    title: msg,
+                    icon: 'success',
+                    duration: 2000,
+                    success: (res) => {
+                      this.setData({
+                        [`products[${index}].status`]: content
+                      })
+                    }
+                  })
+                  break;
+                case 'fail.login':
+                  wx.redirectTo({
+                    url: '/pages/login/login',
+                  })
+                  break;
+                default:
+                  wx.showModal({
+                    title: '警告',
+                    content: msg,
+                    confirmColor: '#e64340',
+                    showCancel: false,
+                  })
+                  break;
+              }
+            },
+            fail: (res) => {
+              wx.showModal({
+                title: '警告',
+                content: '加载失败',
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+            },
           })
         }
       }
@@ -69,11 +152,54 @@ Page({
         if (res.confirm) {
           const index = e.currentTarget.id;
           const { id } = this.data.products[index];
-          appInstance.request({ url: `${domain}/product/${id}`, method: 'DELETE' }).then((res) => {
-            this.data.products.splice(index, 1)
-            this.setData({
-              products: this.data.products
-            })
+          const customer = wx.getStorageSync('customer');
+          const authorization = wx.getStorageSync('authorization');
+          wx.request({
+            url: `${domain}/products/${id}?sid=${customer.store.id}`,
+            method: 'DELETE',
+            header: {
+              authorization,
+            },
+            success: ({ data }) => {
+              const { code, msg } = data;
+              console.log(data)
+              switch (code) {
+                case 'success':
+                  wx.showToast({
+                    title: msg,
+                    icon: 'success',
+                    duration: 2000,
+                    success: (res) => {
+                      this.data.products.splice(index, 1)
+                      this.setData({
+                        products: this.data.products
+                      })
+                    }
+                  })
+                  break;
+                case 'fail.login':
+                  wx.redirectTo({
+                    url: '/pages/login/login',
+                  })
+                  break;
+                default:
+                  wx.showModal({
+                    title: '警告',
+                    content: msg,
+                    confirmColor: '#e64340',
+                    showCancel: false,
+                  })
+                  break;
+              }
+            },
+            fail: (res) => {
+              wx.showModal({
+                title: '警告',
+                content: '加载失败',
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+            },
           })
         }
       }
