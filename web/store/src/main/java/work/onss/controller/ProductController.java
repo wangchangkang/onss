@@ -134,7 +134,8 @@ public class ProductController {
         String sha256 = SecureUtil.sha256(file.getInputStream());
 
         Path path = Paths.get(systemConfig.getFilePath(), sid, "products", sha256.concat(filename.substring(index)));
-        if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
+        Path parent = path.getParent();
+        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }
         // 判断文件是否存在

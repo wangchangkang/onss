@@ -10,7 +10,7 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages({ count, url: 'product/uploadPicture' }).then((data) => {
+    appInstance.chooseImages({ count, url: 'products/uploadPicture' }).then((data) => {
       this.setData({
         [`${id}[${length}]`]: data
       })
@@ -19,7 +19,7 @@ Page({
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    appInstance.chooseImage({ url: 'product/uploadPicture' }).then((data) => {
+    appInstance.chooseImage({ url: 'products/uploadPicture' }).then((data) => {
       this.setData({
         [`${id}`]: data
       })
