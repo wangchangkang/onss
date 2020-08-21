@@ -98,12 +98,13 @@ public class MerchantController {
         String sha256 = SecureUtil.sha256(file.getInputStream());
         // pictures/cid/type/i/sha256.png
         Path path = Paths.get(systemConfig.getFilePath(), cid, type, i, sha256, filename.substring(index));
-        if (!Files.exists(path.getParent()) && !path.toFile().mkdirs()) {
+        Path parent = path.getParent();
+        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
         }
         // 判断文件是否存在
         if (!Files.exists(path)) {
-            File[] files = path.getParent().toFile().listFiles();
+            File[] files = parent.toFile().listFiles();
             if (files != null) {
                 for (File value : files) {
                     Files.delete(value.toPath());

@@ -86,7 +86,7 @@ Page({
   bindButtonTap: function (e) {
     wx.showModal({
       title: '警示',
-      content: '请仔细审核商品上下架！',
+      content: '请仔细审核商品信息！',
       success: (res) => {
         if (res.confirm) {
           const index = e.currentTarget.id;
