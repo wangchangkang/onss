@@ -2,6 +2,8 @@ package work.onss.controller;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -62,7 +64,8 @@ public class CustomerController {
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
         result.put("authorization", authorization);
         result.put("customer", customer);
         return Work.success("授权成功", result);

@@ -2,6 +2,8 @@ package work.onss.controller;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,7 +18,6 @@ import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
 import work.onss.service.MiniProgramService;
-import work.onss.utils.Utils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.WXSession;
 import work.onss.vo.Work;
@@ -37,7 +38,8 @@ public class LoginController {
     @Resource
     private MongoTemplate mongoTemplate;
     @Autowired
-    private SystemConfig systemConfig;    
+    private SystemConfig systemConfig;
+
     /**
      * @param wxLogin 微信登陆信息
      * @return 密钥
@@ -50,7 +52,7 @@ public class LoginController {
 
         Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
         Customer customer = mongoTemplate.findOne(query, Customer.class);
-
+        Gson gson = new GsonBuilder().serializeNulls().create();
         Map<String, Object> result = new HashMap<>();
         if (customer == null) {
             customer = new Customer();
@@ -59,22 +61,22 @@ public class LoginController {
             customer.setLastTime(LocalDateTime.now());
             customer.setAppid(wxLogin.getAppid());
             customer = mongoTemplate.insert(customer);
-            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else if (customer.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
-            Update update = Update.update("lastTime", LocalDateTime.now()).set("session_key",wxSession.getSession_key());
+            Update update = Update.update("lastTime", LocalDateTime.now()).set("session_key", wxSession.getSession_key());
             mongoTemplate.updateFirst(query, update, Customer.class);
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), Customer.class);
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("customer", customer);
             return Work.success("登录成功", result);

@@ -3,6 +3,8 @@ package work.onss.controller;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,7 +19,6 @@ import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
-import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
 import java.nio.file.Files;
@@ -94,7 +95,8 @@ public class StoreController {
         }
         log.info(store.toString());
         customer.setStore(store);
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(customer)), KeyType.PublicKey);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("customer", customer);
