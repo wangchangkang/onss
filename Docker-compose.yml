@@ -16,7 +16,7 @@ services:
     restart: always
     ports:
       - 27017:27017
-    command: mongod --replSet onss --oplogSize 128 --port 27017 # replSet 使用副本集功能
+    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27017 # replSet 使用副本集功能
     environment:
       MONGODB_APPLICATION_DATABASE: test # 初始化DATABASE
   mongo-27018:
@@ -25,7 +25,7 @@ services:
     restart: always
     ports:
       - 27018:27018
-    command: mongod --replSet onss --oplogSize 128 --port 27018
+    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27018
     environment:
       MONGODB_APPLICATION_DATABASE: test
   mongo-init:
@@ -36,9 +36,9 @@ services:
     restart: on-failure:5
     command:
       - mongo
-      - mongodb://192.168.103.184:27017/admin
+      - mongodb://192.168.0.100:27017/admin
       - --eval
-      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"192.168.103.184:27017"},{_id:2,host:"192.168.103.184:27018"}]})' # 初始化副本集群
+      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"192.168.0.100:27017"},{_id:2,host:"192.168.0.100:27018"}]})' # 初始化副本集群
   store:
     image: "java:8"
     container_name: store

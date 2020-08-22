@@ -35,7 +35,6 @@
 		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}" data-name="{{address}}">
 			<view class="weui-cell__hd">
 				<view class="weui-label">坐标</view>
-				<input id="location" name="location" value="{{location.coordinates}}" hidden></input>
 			</view>
 			<view class="weui-cell__bd">
 				<view>{{location.x}}</view>
@@ -76,7 +75,6 @@
 					<view class="weui-uploader__hd">
 						<view class="weui-uploader__overview">
 							<view class="weui-uploader__title">图片上传</view>
-							<input id="pictures" name="pictures" value="{{pictures}}" hidden></input>
 							<view class="weui-uploader__info">{{pictures.length}}/5 <icon bindtap="clearPictues" id="pictures" type="clear" size="21"></icon>
 							</view>
 						</view>

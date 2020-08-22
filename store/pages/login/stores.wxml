@@ -3,7 +3,7 @@
 	<view class="weui-panel__bd">
 		<view wx:for="{{stores}}" wx:for-item='store' wx:key="index" id="{{store.id}}" bindtap="bindStore" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-				<image class="weui-media-box__thumb" src="{{store.trademark}}" />
+				<image class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
 			</view>
 			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 				<view class="weui-media-box__title">{{store.name}}</view>

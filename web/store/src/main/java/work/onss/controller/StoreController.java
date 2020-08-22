@@ -61,8 +61,8 @@ public class StoreController {
      * @param id 主键
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> detail(@PathVariable String id) {
-        Query query = Query.query(Criteria.where("id").is(id));
+    public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
+        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
         query.fields().exclude("merchant");
         query.fields().exclude("customers");
         Store store = mongoTemplate.findOne(query, Store.class);
@@ -110,7 +110,7 @@ public class StoreController {
      * @param status 商户信息
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestParam(name = "status") Boolean status) {
+    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("status", status), Store.class);
         return Work.success("更新成功", status);
@@ -148,7 +148,7 @@ public class StoreController {
      * @return 图片地址
      */
     @PostMapping("stores/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "licenseNumber") String licenseNumber) throws Exception {
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             return Work.fail("上传失败!");
@@ -159,7 +159,7 @@ public class StoreController {
         }
         String sha256 = SecureUtil.sha256(file.getInputStream());
 
-        Path path = Paths.get(systemConfig.getFilePath(), licenseNumber, sha256, filename.substring(index));
+        Path path = Paths.get(systemConfig.getFilePath(), sid, sha256, filename.substring(index));
         Path parent = path.getParent();
         if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");

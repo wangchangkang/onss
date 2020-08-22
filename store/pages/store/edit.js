@@ -25,7 +25,7 @@ Page({
         latitude: y,
         name: name,
         success: (res) => {
-          this.setData({ location: {x:res.longitude, y:res.latitude,coordinates:[res.longitude,res.latitude]} })
+          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
         }
       })
     } else {
@@ -36,7 +36,7 @@ Page({
             longitude: parseFloat(res.longitude),
             latitude: parseFloat(res.latitude),
             success: (res) => {
-              this.setData({ location: {x:res.longitude, y:res.latitude,coordinates:[res.longitude,res.latitude]} })
+              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
             }
           })
         }
@@ -50,16 +50,28 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    appInstance.chooseImages({ url:'store/uploadPicture', count }).then((data) => {
-      this.setData({
-        [`${id}[${length}]`]: data
-      })
+    const customer = wx.getStorageSync('customer');
+    appInstance.chooseImages({ url: `stores/uploadPicture?sid=${customer.store.id}`, count }).then((data) => {
+      const pictures = this.data[id];
+      if (pictures.includes(data)) {
+        wx.showModal({
+          title: '警告',
+          content: "图片重复上传",
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      } else {
+        this.setData({
+          [`${id}[${length}]`]: data
+        })
+      }
     })
   },
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    appInstance.chooseImage({ url:'store/uploadPicture' }).then((data) => {
+    const customer = wx.getStorageSync('customer');
+    appInstance.chooseImage({ url: `stores/uploadPicture?sid=${customer.store.id}` }).then((data) => {
       this.setData({
         [`${id}`]: data
       })
@@ -96,37 +108,126 @@ Page({
   },
 
   updateStore: function (e) {
-    appInstance.request({
-      url: `${domain}/store/${appInstance.globalData.token.id}`,
-      data: JSON.stringify(e.detail.value),
-      method: 'PUT'
-    }).then(({ content }) => {
-      const store = { ...this.data.store, ...content }
-      this.setData({
-        store
-      })
-      let pages = getCurrentPages();//当前页面栈
-      let detail = pages[pages.length - 2];//详情页面
-      detail.setData({
-        ...store
-      });
+    console.log(e.detail.value)
+    const store = {
+      ...e.detail.value,
+      location: this.data.location,
+      pictures: this.data.pictures,
+      videos: this.data.videos
+    }
+    console.log(store);
+
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+      data: store,
+      method: "PUT",
+      header: {
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                const store = { ...this.data.store, ...content }
+                this.setData({
+                  store
+                })
+                let pages = getCurrentPages();//当前页面栈
+                let detail = pages[pages.length - 2];//详情页面
+                detail.setData({
+                  ...store
+                });
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
   },
 
   onLoad: function (options) {
-    appInstance.request({
-      url: `${domain}/store/${appInstance.globalData.token.id}`,
-      method: 'GET'
-    }).then(({ content }) => {
-      let index = -1;
-      types.find((value, key, array) => {
-        if (value.id === content.type) {
-          index = key;
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+      method: "GET",
+      header: {
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                let index = -1;
+                types.find((value, key, array) => {
+                  if (value.id === content.type) {
+                    index = key;
+                  }
+                })
+                this.setData({
+                  ...content, index, store: content
+                })
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
         }
-      })
-      this.setData({
-        ...content,index, store: content
-      })
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
   },
 

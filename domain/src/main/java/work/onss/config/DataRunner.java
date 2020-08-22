@@ -16,11 +16,23 @@ public class DataRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        mongoTemplate.createCollection(Store.class);
-        mongoTemplate.createCollection(Address.class);
-        mongoTemplate.createCollection(Cart.class);
-        mongoTemplate.createCollection(Product.class);
-        mongoTemplate.createCollection(Score.class);
-        mongoTemplate.createCollection(User.class);
+        if (!mongoTemplate.collectionExists(Store.class)){
+            mongoTemplate.createCollection(Store.class);
+        }
+        if (!mongoTemplate.collectionExists(Address.class)){
+            mongoTemplate.createCollection(Address.class);
+        }
+        if (!mongoTemplate.collectionExists(Cart.class)){
+            mongoTemplate.createCollection(Cart.class);
+        }
+        if (!mongoTemplate.collectionExists(Product.class)){
+            mongoTemplate.createCollection(Product.class);
+        }
+        if (!mongoTemplate.collectionExists(Score.class)){
+            mongoTemplate.createCollection(Score.class);
+        }
+        if (!mongoTemplate.collectionExists(User.class)){
+            mongoTemplate.createCollection(User.class);
+        }
     }
 }

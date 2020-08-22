@@ -5,15 +5,54 @@ Page({
     prefix, domain, windowWidth
   },
   updateStatus: function (e) {
-    const { status, id } = this.data;
-    appInstance.request({
-      url: `${domain}/store/${id}/updateStatus`,
-      header: { status: status.toString() },
-      method: 'PUT'
-    }).then(({ content }) => {
-      this.setData({
-        status: content
-      })
+    const customer = wx.getStorageSync('customer');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
+      method: "PUT",
+      header: {
+        status: !this.data.status.toString(),
+        authorization,
+      },
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            wx.showToast({
+              title: msg,
+              icon: 'success',
+              duration: 2000,
+              success: (res) => {
+                this.setData({
+                  status: content
+                });
+              }
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
     })
   },
 
@@ -35,12 +74,12 @@ Page({
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
     wx.request({
-      url: `${domain}/stores/${customer.store.id}`,
+      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
       header: {
         authorization,
       },
       success: ({ data }) => {
-        const { code, msg,content } = data;
+        const { code, msg, content } = data;
         console.log(data)
         switch (code) {
           case 'success':
