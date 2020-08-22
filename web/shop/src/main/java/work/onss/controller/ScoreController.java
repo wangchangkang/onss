@@ -10,10 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Score;
 import work.onss.vo.Work;
 
@@ -27,12 +24,12 @@ public class ScoreController {
     protected MongoTemplate mongoTemplate;
 
     /**
-     * @param uid 用户ID
      * @param id  主键
+     * @param uid 用户ID
      * @return 订单信息
      */
-    @GetMapping(value = {"score/{id}"})
-    public Work<Score> score(@RequestHeader(name = "uid") String uid, @PathVariable String id) {
+    @GetMapping(value = {"scores/{id}"})
+    public Work<Score> score(@PathVariable String id, @RequestParam(name = "uid") String uid) {
         Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
         Score score = mongoTemplate.findOne(query, Score.class);
         return Work.success("加载成功", score);
@@ -43,8 +40,8 @@ public class ScoreController {
      * @param pageable 默认创建时间排序并分页
      * @return 订单分页
      */
-    @GetMapping(value = {"score"})
-    public Work<Page<Score>> all(@RequestHeader(name = "uid") String uid,
+    @GetMapping(value = {"scores"})
+    public Work<Page<Score>> all(@RequestParam(name = "uid") String uid,
                                  @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Query query = Query.query(Criteria.where("uid").is(uid)).with(pageable);
         List<Score> scores = mongoTemplate.find(query, Score.class);

@@ -59,7 +59,9 @@ public class LoginController {
             user.setLastTime(LocalDateTime.now());
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
+            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("user", user);
+            result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));

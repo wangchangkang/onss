@@ -36,7 +36,7 @@ public class StoreController {
      * @param id 主键
      * @return 店铺信息
      */
-    @GetMapping(value = {"store/{id}"})
+    @GetMapping(value = {"stores/{id}"})
     public Work<Store> store(@PathVariable String id) {
         Store store = mongoTemplate.findById(id, Store.class);
         return Work.success("加载成功", store);
@@ -50,7 +50,7 @@ public class StoreController {
      * @param pageable 分页参数
      * @return 店铺分页
      */
-    @GetMapping(path = "store/{x}-{y}/near")
+    @GetMapping(path = "stores/{x}-{y}/near")
     public Work<Page<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
                                               @PathVariable(name = "y") Double y,
                                               @RequestParam(name = "r",defaultValue = "100") Double r,
@@ -79,7 +79,7 @@ public class StoreController {
      * @param id 主键
      * @return 店铺信息及所有商品
      */
-    @GetMapping(value = {"store/{id}/products"})
+    @GetMapping(value = {"stores/{id}/getProducts"})
     public Work<Map<String, ?>> products(@PathVariable String id, @PageableDefault Pageable pageable) {
         Store store = mongoTemplate.findById(id, Store.class);
         Map<String, Object> data = new HashMap<>();

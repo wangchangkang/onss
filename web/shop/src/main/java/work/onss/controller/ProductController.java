@@ -26,7 +26,7 @@ public class ProductController {
      * @param id 主键
      * @return 商品信息
      */
-    @GetMapping(value = {"product/{id}"})
+    @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id) {
         Product product = mongoTemplate.findById(id, Product.class);
         return Work.success("加载成功", product);
@@ -36,7 +36,7 @@ public class ProductController {
      * @param ids 商品主键
      * @return 商品列表
      */
-    @GetMapping(value = {"product"})
+    @GetMapping(value = {"products"})
     public Work<List<Product>> product(@RequestParam(name = "ids") Collection<String> ids) {
         Query queryProduct = Query.query(Criteria.where("id").in(ids));
         List<Product> products = mongoTemplate.find(queryProduct, Product.class);

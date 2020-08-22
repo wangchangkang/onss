@@ -7,11 +7,12 @@ Page({
   updateStatus: function (e) {
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
+    const status = !this.data.status;
     wx.request({
       url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
       method: "PUT",
       header: {
-        status: !this.data.status.toString(),
+        status: status.toString(),
         authorization,
       },
       success: ({ data }) => {

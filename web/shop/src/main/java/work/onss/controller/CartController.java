@@ -29,20 +29,20 @@ public class CartController {
      * @param id  主键
      * @return 删除购物车商品
      */
-    @DeleteMapping(value = {"cart/{id}"})
-    public Work<Boolean> delete(@RequestHeader(name = "uid") String uid, @PathVariable String id) {
+    @DeleteMapping(value = {"carts/{id}"})
+    public Work<Boolean> delete(@PathVariable String id, @RequestParam(name = "uid") String uid) {
         Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
         mongoTemplate.remove(query, Cart.class);
         return Work.success("删除成功", true);
     }
 
-
     /**
-     * @param uid 用户ID
+     * @param uid  用户ID
+     * @param cart 购物车
      * @return 更新购车商品数量
      */
-    @PutMapping(value = {"cart/setNum"})
-    public Work<Cart> updateNum(@RequestHeader(name = "uid") String uid, @RequestBody Cart cart) {
+    @PutMapping(value = {"carts/setNum"})
+    public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @RequestBody Cart cart) {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
         Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
@@ -78,8 +78,8 @@ public class CartController {
      * @param uid 用户ID
      * @return 购物车商户
      */
-    @DeleteMapping(value = {"cart/getStores"})
-    public Work<List<Store>> getStores(@RequestHeader(name = "uid") String uid) {
+    @GetMapping(value = {"carts/getStores"})
+    public Work<List<Store>> getStores(@RequestParam(name = "uid") String uid) {
         Query query = Query.query(Criteria.where("uid").is(uid));
         List<String> sids = mongoTemplate.findDistinct(query, "sid", Cart.class, String.class);
         List<Store> stores = mongoTemplate.find(Query.query(Criteria.where("id").in(sids)), Store.class);
@@ -88,10 +88,11 @@ public class CartController {
 
     /**
      * @param uid 用户ID
+     * @param sid 商户ID
      * @return 购物车
      */
-    @DeleteMapping(value = {"cart/{sid}/getCarts"})
-    public Work<Map<String, Object>> getCarts(@RequestHeader(name = "uid") String uid, @PathVariable String sid) {
+    @GetMapping(value = {"carts"})
+    public Work<Map<String, Object>> getCarts(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
         Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("id"));
         List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
         Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
@@ -102,6 +103,4 @@ public class CartController {
         data.put("products", products);
         return Work.success("加载成功", data);
     }
-
-
 }
