@@ -39,7 +39,7 @@ Page({
     }
   },
 
-  getStore: function (longitude, latitude, number = 0) {
+  getStore: function (longitude, latitude, number = -1) {
     wx.request({
       url: `${domain}/stores/${longitude}-${latitude}/near?page=${number + 1}`,
       method: "GET",

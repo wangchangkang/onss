@@ -1,16 +1,15 @@
 <view class="weui-panel" style="margin-top: 0px;">
+	<navigator class="weui-cell search " url="/pages/search/search">
+		<view class="weui-cell__bd">
+			<icon type="search"></icon> 搜索
+		</view>
+	</navigator>
 	<view class="weui-grids types weui-media-box">
 		<navigator wx:for="{{types}}" wx:for-item='type' wx:key="index" url="/pages/store/list" class="weui-grid" hover-class="weui-grid_active">
 			<image class="weui-grid__icon" src="{{type.icon}}" />
 			<view class="weui-grid__label">{{type.title}}</view>
 		</navigator>
 	</view>
-
-	<navigator class="weui-cell search " url="/pages/search/search">
-		<view class="weui-cell__bd">
-			<icon type="search"></icon> 搜索
-		</view>
-	</navigator>
 </view>
 
 <view class="weui-cells__title">附近商家</view>
