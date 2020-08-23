@@ -94,6 +94,9 @@ const types = [
   { id: 7, title: '母婴' },
   { id: 8, title: '书店' },
 ];
+const scoreStatus = [
+  '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
+]
 
 const appid = "wx095ba1a3f9396476";
 const domain = 'http://127.0.0.1:8002/manage';
@@ -103,7 +106,7 @@ const authorization = wx.getStorageSync('authorization');
 const { windowWidth } = wx.getSystemInfoSync();
 App({
   globalData: {
-    authorization, customer, windowWidth, appid, domain, prefix, types, banks, qualification
+    authorization, customer, windowWidth, appid, domain, prefix, types, banks, qualification,scoreStatus
   },
 
   chooseImages: function ({ url, count }) {
