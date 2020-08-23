@@ -1,4 +1,4 @@
-<view class="weui-cells__title ">团购商品</view>
+<view class="weui-cells__title ">分类</view>
 <view class="weui-panel">
 	<navigator url='/pages/category/detail' class="weui-media-box">
 		<view class=" weui-media-box_appmsg">

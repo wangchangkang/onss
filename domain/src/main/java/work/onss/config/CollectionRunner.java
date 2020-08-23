@@ -1,5 +1,6 @@
 package work.onss.config;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -7,15 +8,16 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 import work.onss.domain.*;
 
+@Log4j2
 @Component
 @Order(value=2)
-public class DataRunner implements CommandLineRunner {
+public class CollectionRunner implements CommandLineRunner {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (!mongoTemplate.collectionExists(Store.class)){
             mongoTemplate.createCollection(Store.class);
         }

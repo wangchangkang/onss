@@ -1,110 +1,85 @@
-
-
+const scoreStatus = [
+  '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
+]
+const types = [
+  { id: 1, title: '服装', icon: "/images/服装.png" },
+  { id: 2, title: '美食', icon: "/images/美食.png" },
+  { id: 3, title: '果蔬', icon: "/images/果蔬.png" },
+  { id: 4, title: '饮品', icon: "/images/饮品.png" },
+  { id: 5, title: '超市', icon: "/images/超市.png" },
+  { id: 6, title: '书店', icon: "/images/书店.png" },
+]
+const appid = "wx095ba1a3f9396476";
+const domain = 'http://127.0.0.1:8001/shop';
+const prefix = 'http://127.0.0.1/';
+const user = wx.getStorageSync('user');
+const authorization = wx.getStorageSync('authorization');
+const { windowWidth } = wx.getSystemInfoSync();
 App({
   globalData: {
-    authorization: wx.getStorageSync('authorization'),
-    user: wx.getStorageSync('user'),
-    windowWidth: wx.getSystemInfoSync().windowWidth,
-    appId: "wxe78290c2a5313de3",
-    domain: 'http://127.0.0.1:8000/shop',
-    prefix: 'http://127.0.0.1/',
-    types: [
-      { id: 1, title: '生鲜' },
-      { id: 2, title: '酒店' },
-      { id: 3, title: '超市' },
-      { id: 4, title: '美食' },
-      { id: 5, title: '饮品' },
-      { id: 6, title: '服装' },
-      { id: 7, title: '母婴' },
-      { id: 8, title: '书店' },
-    ]
-  },
-  onLaunch: function () {
-    return new Promise((resolve, reject) => {
-      const { domain, user, appId } = this.globalData;
-      if (user.phone) {
-
-      } else {
-        wx.login({
-          complete: (res) => {
-            wx.request({
-              url: `${domain}/wxLogin`, method: 'POST', data: { appid: appId, code: res.code },
-              success: ({ data }) => {
-
-                const { code, msg, content } = data;
-                console.log(data)
-                switch (code) {
-                  case 'success':
-                    wx.setStorageSync('user', content.user);
-                    wx.setStorageSync('authorization', content.authorization);
-                    wx.setStorageSync('pidNum', content.pidNum);
-                    this.globalData.authorization = content.authorization;
-                    this.globalData.user = content.user;
-                    this.globalData.pidNum = content.pidNum;
-                    break;
-                  case '1977.user.notfound':
-                    wx.setStorageSync('user', content.user);
-                    this.globalData.user = content.user;
-                    break;
-                  default:
-                    wx.showModal({
-                      title: '警告',
-                      content: msg,
-                      confirmColor: '#e64340',
-                      showCancel: false,
-                    })
-                    break;
-                }
-              },
-              fail: (res) => {
-                wx.showModal({
-                  title: '警告',
-                  content: '登陆失败',
-                  confirmColor: '#e64340',
-                  showCancel: false,
-                })
-              },
-            })
-          },
-        })
-      }
-    })
+    authorization, user, windowWidth, appid, domain, prefix, types, scoreStatus
   },
 
-  request: function ({ url, method, data, header }) {
-    return new Promise((resolve, reject) => {
-      wx.request({
-        url, method, data, header,
-        success: ({ data }) => {
-          const { code, msg } = data;
-          switch (code) {
-            case 'success':
-              resolve(data)
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login/login',
+  onLaunch: function (e) {
+    // this.wxLogin();
+  },
+
+  wxLogin: function () {
+    wx.login({
+      success: ({ code }) => {
+        console.log(code)
+        wx.request({
+          url: `${domain}/wxLogin`,
+          method: "POST",
+          data: { code, appid },
+          success: ({ data }) => {
+            const { code, msg, content } = data;
+            if (code === '1977.user.notfound') {
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('user', content.user);
+              wx.reLaunch({
+                url: '/pages/login/login'
               })
-              break;
-            default:
+            } else if (code === 'success') {
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('user', content.user);
+              wx.setStorageSync('pidNum', content.pidNum);
+              this.globalData.authorization = content.authorization;
+              this.globalData.user = content.user;
+              this.globalData.pidNum = content.pidNum;
+              wx.reLaunch({
+                url: '/pages/login/stores'
+              })
+            } else {
               wx.showModal({
                 title: '警告',
                 content: msg,
                 confirmColor: '#e64340',
                 showCancel: false,
               })
-              break;
+            }
+            console.log(data)
+          },
+          fail: (res) => {
+            wx.hideLoading()
+            wx.showModal({
+              title: '警告',
+              content: '登陆失败',
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
           }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
-      })
-    });
-  }
+        })
+      },
+      fail: (res) => {
+        wx.hideLoading()
+        wx.showModal({
+          title: '警告',
+          content: '获取微信code失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
+    })
+  },
 })

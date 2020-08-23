@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -68,8 +69,8 @@ public class Score implements Serializable {
     private String username;
     private String address;
     private Integer tag;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2D)
-    private double[] point;
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
+    private Point location;//坐标
 
     public Score(String uid, String sid, String total, List<Item> items, String outTradeNo1, String outTradeNo2, LocalDateTime insertTime, Address address) {
         this.uid = uid;
@@ -86,7 +87,7 @@ public class Score implements Serializable {
         this.username = address.getUsername();
         this.address = address.getDetail();
         this.tag = address.getTag();
-        this.point = address.getPoint();
+        this.location = address.getLocation();
 
         this.status = 0;
         this.difference = BigDecimal.ZERO;

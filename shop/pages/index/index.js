@@ -1,42 +1,18 @@
 const appInstance = getApp()
-const { windowWidth, domain, prefix } = appInstance.globalData;
+const { windowWidth, domain, prefix, types } = appInstance.globalData;
 Page({
   data: {
-    windowWidth, prefix,
-    types: [{
-      name: "服装",
-      icon: "/images/服装店.png"
-    }, {
-      name: "美食",
-      icon: "/images/美食.png"
-    }, {
-      name: "果蔬",
-      icon: "/images/水果.png"
-    }, {
-      name: "饮品",
-      icon: "/images/美食佳饮.png"
-    }, {
-      name: "超市",
-      icon: "/images/超市.png"
-    }, {
-      name: "书店",
-      icon: "/images/图书馆.png"
-    },],
+    windowWidth, prefix, types,
     stores: [],
+    pagination: {
+      number: -1
+    }
   },
   onLoad: function () {
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
-        console.log(res)
-        appInstance.request({
-          url: `${domain}/store/${res.longitude}-${res.latitude}/near`,
-        }).then((res) => {
-          console.log(res)
-          this.setData({
-            pagination: res.content
-          })
-        })
+        this.getStore(res.longitude, res.latitude);
       }
     })
   },
@@ -44,16 +20,9 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
-        console.log(res)
-        appInstance.request({
-          url: `${domain}/store/${res.longitude}-${res.latitude}/near`,
-        }).then((res) => {
-          console.log(res)
-          this.setData({
-            pagination: res.content
-          })
+        this.getStore(res.longitude, res.latitude).then(() => {
           wx.stopPullDownRefresh()
-        })
+        });
       }
     })
   },
@@ -64,17 +33,43 @@ Page({
       wx.getLocation({
         type: 'gcj02',
         success: (res) => {
-          console.log(res)
-          appInstance.request({
-            url: `${domain}/store/${res.longitude}-${res.latitude}/near?page=${this.data.pagination.number+1}`,
-          }).then((res) => {
-            console.log(res)
-            this.setData({
-              pagination: res.content
-            })
-          })
+          this.getStore(res.longitude, res.latitude, this.data.pagination.number)
         }
       })
     }
   },
+
+  getStore: function (longitude, latitude, number = 0) {
+    wx.request({
+      url: `${domain}/stores/${longitude}-${latitude}/near?page=${number + 1}`,
+      method: "GET",
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            this.setData({
+              pagination: content
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
+    })
+  }
 })

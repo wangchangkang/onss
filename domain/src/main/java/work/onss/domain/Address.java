@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,8 +32,8 @@ public class Address implements Serializable {
     private String detail;
     @Range(min = 0, max = 3, message = "地址类型格式错误")
     private Integer tag;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2D)
     @Size(min = 2, max = 2, message = "请重新定位坐标")
-    private double[] point;
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
+    private Point location;//坐标
     private String uid;
 }
