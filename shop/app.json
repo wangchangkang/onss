@@ -39,7 +39,7 @@
         "selectedIconPath": "/images/首页2.png"
       },
       {
-        "text": "团购",
+        "text": "分类",
         "pagePath": "pages/category/category",
         "iconPath": "/images/分类1.png",
         "selectedIconPath": "/images/分类2.png"
