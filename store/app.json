@@ -11,7 +11,8 @@
     "pages/product/detail",
     "pages/product/edit",
     "pages/product/create",
-    "pages/store/edit"
+    "pages/store/edit",
+    "pages/score/score"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -34,7 +35,7 @@
       },
       {
         "text": "订单",
-        "pagePath": "pages/score/list",
+        "pagePath": "pages/score/score",
         "iconPath": "/images/logo1.png",
         "selectedIconPath": "/images/logo2.png"
       },

@@ -1,6 +1,6 @@
 <swiper style="height:100vh">
 	<swiper-item>
-	<view class="weui-cells__title">待配货订单</view>
+		<view class="weui-cells__title">待配货</view>
 		<view class="weui-panel">
 			<navigator url='/pages/score/detail' class="weui-media-box">
 				<view class=" weui-media-box_appmsg">
@@ -43,8 +43,9 @@
 			</navigator>
 		</view>
 	</swiper-item>
+
 	<swiper-item>
-	<view class="weui-cells__title">待配送订单</view>
+		<view class="weui-cells__title">待补价</view>
 		<view class="weui-panel">
 			<navigator url='/pages/score/detail' class="weui-media-box">
 				<view class=" weui-media-box_appmsg">
@@ -59,7 +60,8 @@
 						</swiper-item>
 					</swiper>
 					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-						<view class="weui-media-box__title">王先生 15063517240 <icon type="warn" class='fr' size="16"></icon></view>
+						<view class="weui-media-box__title">王先生 15063517240 <icon type="warn" class='fr' size="16"></icon>
+						</view>
 						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
 						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
 					</view>
@@ -79,7 +81,143 @@
 						</swiper-item>
 					</swiper>
 					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-						<view class="weui-media-box__title">王先生 15063517240 <icon type="warn" class='fr' size="16"></icon></view>
+						<view class="weui-media-box__title">王先生 15063517240 <icon type="warn" class='fr' size="16"></icon>
+						</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+		</view>
+	</swiper-item>
+
+	<swiper-item>
+		<view class="weui-cells__title">待发货</view>
+		<view class="weui-panel">
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+		</view>
+	</swiper-item>
+
+	<swiper-item>
+		<view class="weui-cells__title">待签收</view>
+		<view class="weui-panel">
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+		</view>
+	</swiper-item>
+
+	<swiper-item>
+		<view class="weui-cells__title">已完成</view>
+		<view class="weui-panel">
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
+						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
+					</view>
+				</view>
+			</navigator>
+
+			<navigator url='/pages/score/detail' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">1</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+						<swiper-item class="weui-media-box__thumb">
+							<view class="weui-badge">2</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="/images/logo2.png" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">王先生 15063517240</view>
 						<view class="weui-media-box__desc">星美城市广场二期22#281</view>
 						<view class="weui-media-box__desc">2020.1.22 12:12:12 <label class='fr'>合计:0.01元</label></view>
 					</view>
