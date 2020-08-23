@@ -80,7 +80,7 @@ public class StoreController {
      * @return 店铺信息及所有商品
      */
     @GetMapping(value = {"stores/{id}/getProducts"})
-    public Work<Map<String, ?>> products(@PathVariable String id, @PageableDefault Pageable pageable) {
+    public Work<Map<String, ?>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
         Store store = mongoTemplate.findById(id, Store.class);
         Map<String, Object> data = new HashMap<>();
         data.put("store", store);
@@ -88,7 +88,6 @@ public class StoreController {
             Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
             List<Product> products = mongoTemplate.find(query, Product.class);
             Page<Product> pagination = new PageImpl<>(products);
-            store.setProducts(products);
             data.put("pagination", pagination);
         }
         return Work.success(null, data);
