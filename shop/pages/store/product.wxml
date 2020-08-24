@@ -10,7 +10,8 @@
 	</navigator>
 </view>
 <view class="weui-panel weui-media-box">
-		<navigator wx:for="{{products}}" wx:for-item='product' wx:key="index" url="/pages/store/detail?id={{product.id}}" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
+	<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
+		<navigator url="/pages/store/detail?id={{product.id}}" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<view class="weui-badge">1</view>
 				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
@@ -26,4 +27,5 @@
 			<button type="default" size="mini" disabled="true">1</button>
 			<button type="default" size="mini">加</button>
 		</view>
+	</block>
 </view>

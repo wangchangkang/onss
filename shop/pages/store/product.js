@@ -36,6 +36,8 @@ Page({
                 products: [...products, ...content.pagination.content],
                 pageable: content.pagination.pageable,
               });
+              console.log(this.data.products);
+              
               resolve(data);
               break;
             default:
@@ -58,6 +60,5 @@ Page({
         },
       })
     });
-
   }
 })

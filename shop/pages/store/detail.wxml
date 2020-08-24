@@ -7,15 +7,19 @@
 	</swiper-item>
 </swiper>
 <view class="weui-panel weui-media-box">
+
+	<view class="weui-flex">
+		<switch type="checkbox" checked="{{isLike}}" bindchange="switch2Change" /><text class="weui-cell_warn">喜欢</text>
+		<view class="weui-flex__item weui-cell__ft">
+			<button type="default" size="mini">减</button>
+			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini">加</button>
+		</view>
+	</view>
 	<view class=" weui-media-box_appmsg">
 		<view class="weui-media-box__bd">
 			<view class="weui-flex">
 				<view class="weui-media-box__title">{{name}}</view>
-				<view class="weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">1</button>
-					<button type="default" size="mini">加</button>
-				</view>
 			</view>
 			<view class="weui-media-box__desc">
 				单价:<label class="weui-cell_warn">¥{{price}}{{priceUnit}}</label>
@@ -28,8 +32,21 @@
 	</view>
 
 </view>
-<view style="min-height:150rpx"></view>
-<view class="weui-flex weui-footer_fixed-bottom">
-	<navigator class="weui-flex__item" url="/pages/score/confirm"><button type="default">立即购买</button></navigator>
-	<navigator class="weui-flex__item" url="/pages/cart/product"><button type="primary">购物车(<text class="weui-cell_warn">0</text>)</button></navigator>
+<view style="height:230rpx">
+
 </view>
+
+<view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom">
+	<view class='weui-flex__item weui-cell'>
+		<navigator class="weui-cell__hd"  url='/pages/index/index' open-type="reLaunch" >
+			<image src="/images/首页2.png" style="height:2em;width:2em;"></image>
+		</navigator>
+	</view>
+	<navigator class="weui-cell" url='/pages/cart/product'>
+		<button type="primary" size="mini">购物车(<text class="weui-cell_warn">0</text>)</button>
+	</navigator>
+</view>
+<!-- <view class=" weui-flex  weui-footer weui-footer_fixed-bottom">
+	<navigator class="" url="/pages/cart/product"><button type="primary" size="mini">首页</button></navigator>
+	<navigator class="weui-flex__item " url=""><button type="primary">购物车(<text class="weui-cell_warn">0</text>)</button></navigator>
+</view> -->
