@@ -12,23 +12,23 @@ Page({
     contactEmail: 'for_ccc@qq.com',
 
     subjectType: 'SUBJECT_TYPE_ENTERPRISE',
-    licenseCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png',
+    licenseCopy: 'http://192.168.103.184/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png',
     licenseNumber: '91371523MA3PU9M466',
     merchantName: '茌平壹玖柒柒软件有限公司',
     legalPerson: '王先生',
 
-    idCardCopy: 'http://127.0.0.1/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
+    idCardCopy: 'http://192.168.103.184/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idCardNumber: '371523199201251250',
     idCardName: '王先生',
-    idCardNational: 'http://127.0.0.1/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
+    idCardNational: 'http://192.168.103.184/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     cardPeriodBegin: '2013-05-02',
     cardPeriodEnd: '2023-05-02',
     owner: true,
 
-    idCardA: 'http://127.0.0.1/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
+    idCardA: 'http://192.168.103.184/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idNumber: '371523199201251250',
     beneficiary: '王先生',
-    idCardB: 'http://127.0.0.1/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
+    idCardB: 'http://192.168.103.184/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     idPeriodBegin: '2013-05-02',
     idPeriodEnd: '2023-05-02',
 
@@ -37,7 +37,7 @@ Page({
 
     qualificationType: '餐饮',
     qualifications: [
-      'http://127.0.0.1/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
+      'http://192.168.103.184/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
     ],
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_CORPORATE',

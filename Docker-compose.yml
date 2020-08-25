@@ -17,19 +17,29 @@ services:
     restart: always
     ports:
       - 27017:27017
-    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27017 # replSet 使用副本集功能
+    command: mongod --replSet onss1 --oplogSize 128 --bind_ip 0.0.0.0 --port 27017 # replSet 使用副本集功能
     environment:
       MONGODB_APPLICATION_DATABASE: test # 初始化DATABASE
-
   mongo-27018:
     image: mongo:latest
     container_name: mongo-27018
     restart: always
     ports:
       - 27018:27018
-    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27018
+    command: mongod --replSet onss1 --oplogSize 128 --bind_ip 0.0.0.0 --port 27018
     environment:
       MONGODB_APPLICATION_DATABASE: test
+  mongo-init-200:
+    image: mongo:latest
+    depends_on:
+      - mongo-27017
+      - mongo-27018
+    restart: on-failure:5
+    command:
+      - mongo
+      - mongodb://192.168.0.200:27017/admin
+      - --eval
+      - 'rs.initiate({ _id: "onss1", members: [{_id:0,host:"192.168.0.200:27017"},{_id:1,host:"192.168.0.200:27018"}]})' # 初始化副本集群
 
 
 
@@ -39,35 +49,31 @@ services:
     restart: always
     ports:
       - 27117:27117
-    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27117 # replSet 使用副本集功能
+    command: mongod --replSet onss2 --oplogSize 128 --bind_ip 0.0.0.0 --port 27117 # replSet 使用副本集功能
     environment:
       MONGODB_APPLICATION_DATABASE: test # 初始化DATABASE
-
   mongo-27118:
     image: mongo:latest
     container_name: mongo-27118
     restart: always
     ports:
       - 27118:27118
-    command: mongod --replSet onss --oplogSize 128 --bind_ip 0.0.0.0 --port 27118
+    command: mongod --replSet onss2 --oplogSize 128 --bind_ip 0.0.0.0 --port 27118
     environment:
       MONGODB_APPLICATION_DATABASE: test
-
-  mongo-init:
+  mongo-init-184:
     image: mongo:latest
     depends_on:
-#      - mongo-27117
-#      - mongo-27118
-      - mongo-27017
-      - mongo-27018
+      - mongo-27117
+      - mongo-27118
     restart: on-failure:5
     command:
       - mongo
-#      - mongodb://192.168.103.184:27117/admin
-      - mongodb://192.168.0.200:27017/admin
+      - mongodb://192.168.103.184:27117/admin
       - --eval
-#      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"192.168.103.184:27117"},{_id:1,host:"192.168.103.184:27118"}]})' # 初始化副本集群
-      - 'rs.initiate({ _id: "onss", members: [{_id:0,host:"192.168.0.200:27017"},{_id:1,host:"192.168.0.200:27018"}]})' # 初始化副本集群
+      - 'rs.initiate({ _id: "onss2", members: [{_id:0,host:"192.168.103.184:27117"},{_id:1,host:"192.168.103.184:27118"}]})' # 初始化副本集群
+
+
   store:
     image: "java:8"
     container_name: store

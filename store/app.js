@@ -99,8 +99,8 @@ const scoreStatus = [
 ]
 
 const appid = "wx095ba1a3f9396476";
-const domain = 'http://127.0.0.1:8002/manage';
-const prefix = 'http://127.0.0.1/';
+const domain = 'http://192.168.103.184:8002/manage';
+const prefix = 'http://192.168.103.184/';
 const customer = wx.getStorageSync('customer');
 const authorization = wx.getStorageSync('authorization');
 const { windowWidth } = wx.getSystemInfoSync();

@@ -7,8 +7,8 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://192.168.0.100:27117,192.168.103.184:27118/test?replicaSet=onss
-#      uri: mongodb://192.168.0.100:27017,192.168.0.100:27018/test?replicaSet=onss
+#      uri: mongodb://192.168.0.200:27017,192.168.0.200:27018/test?replicaSet=onss1
+      uri: mongodb://192.168.103.184:27117,192.168.103.184:27118/test?replicaSet=onss2
   main:
     lazy-initialization: true
 logging:
