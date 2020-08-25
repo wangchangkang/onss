@@ -10,8 +10,10 @@ const types = [
   { id: 6, title: '书店', icon: "/images/书店.png" },
 ]
 const appid = "wx095ba1a3f9396476";
-const domain = 'http://192.168.103.184:8001/shop';
-const prefix = 'http://192.168.103.184/';
+const domain = 'http://192.168.0.200:8001/shop';
+// const domain = 'http://192.168.103.184:8001/shop';
+const prefix = 'http://192.168.0.200/';
+// const prefix = 'http://192.168.103.184/';
 const user = wx.getStorageSync('user');
 const authorization = wx.getStorageSync('authorization');
 const { windowWidth } = wx.getSystemInfoSync();
