@@ -93,12 +93,20 @@ public class CartController {
      */
     @GetMapping(value = {"carts"})
     public Work<Map<String, Object>> getCarts(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
+        Query storeQuery = Query.query(Criteria.where("id").is(sid));
+        storeQuery.fields().exclude("pictures");
+        storeQuery.fields().exclude("videos");
+        storeQuery.fields().exclude("customers");
+        storeQuery.fields().exclude("products");
+        storeQuery.fields().exclude("merchant");
+        Store store = mongoTemplate.findOne(storeQuery, Store.class);
         Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("id"));
         List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
         Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet())).with(Sort.by("id"));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
         Map<String, Object> data = new HashMap<>();
+        data.put("store", store);
         data.put("cartMap", cartMap);
         data.put("products", products);
         return Work.success("加载成功", data);

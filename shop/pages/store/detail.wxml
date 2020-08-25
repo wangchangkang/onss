@@ -38,15 +38,15 @@
 
 <view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom">
 	<view class='weui-flex__item weui-cell'>
-		<navigator class="weui-cell__hd"  url='/pages/index/index' open-type="reLaunch" >
+		<navigator class="weui-cell__hd" url='/pages/index/index' open-type="reLaunch">
 			<image src="/images/首页2.png" style="height:2em;width:2em;"></image>
 		</navigator>
+		<navigator class="weui-cell__bd" url='/pages/cart/product?sid={{sid}}'>
+			<image src="/images/购物车2.png" style="height:2em;width:2em;"></image>
+		</navigator>
 	</view>
-	<navigator class="weui-cell" url='/pages/cart/product'>
-		<button type="primary" size="mini">购物车(<text class="weui-cell_warn">0</text>)</button>
-	</navigator>
+
+	<view class="weui-cell weui-flex__item">
+		<button type="primary" size="mini">加入购物车(<text class="weui-cell_warn">0</text>)</button>
+	</view>
 </view>
-<!-- <view class=" weui-flex  weui-footer weui-footer_fixed-bottom">
-	<navigator class="" url="/pages/cart/product"><button type="primary" size="mini">首页</button></navigator>
-	<navigator class="weui-flex__item " url=""><button type="primary">购物车(<text class="weui-cell_warn">0</text>)</button></navigator>
-</view> -->
