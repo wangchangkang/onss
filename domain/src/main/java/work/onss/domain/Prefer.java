@@ -28,5 +28,4 @@ public class Prefer implements Serializable {
     private String pid;
     private String uid;
     private LocalDateTime lastTime;
-
 }
