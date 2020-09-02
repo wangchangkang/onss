@@ -9,10 +9,10 @@
 <view class="weui-panel weui-media-box">
 
 	<view class="weui-flex">
-		<switch type="checkbox" checked="{{isLike}}" bindchange="switch2Change" /><text class="weui-cell_warn">喜欢</text>
+		<switch type="checkbox" checked="{{prefersPid[id]?true:false}}" bindchange="switch2Change" /><text class="weui-cell_warn">喜欢</text>
 		<view class="weui-flex__item weui-cell__ft">
 			<button type="default" size="mini">减</button>
-			<button type="default" size="mini" disabled="true">1</button>
+			<button type="default" size="mini" disabled="true"><text class="weui-cell_warn">{{cartsPid[id]?cartsPid[id]:0}}</text></button>
 			<button type="default" size="mini">加</button>
 		</view>
 	</view>
@@ -47,6 +47,6 @@
 	</view>
 
 	<view class="weui-cell weui-flex__item">
-		<button type="primary" size="mini">加入购物车(<text class="weui-cell_warn">0</text>)</button>
+		<button type="primary" size="mini">加入购物车(<text class="weui-cell_warn">{{cartsPid[id]?cartsPid[id].num:0}}</text>)</button>
 	</view>
 </view>

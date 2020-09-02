@@ -11,6 +11,7 @@ import work.onss.domain.Prefer;
 import work.onss.domain.Product;
 import work.onss.vo.Work;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +28,11 @@ public class PreferController {
      * @return 新增收藏
      */
     @PostMapping(value = {"prefers"})
-    public Work<Prefer> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Prefer prefer) {
+    public Work<String> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Prefer prefer) {
         prefer.setUid(uid);
+        prefer.setLastTime(LocalDateTime.now());
         mongoTemplate.insert(prefer);
-        return Work.success("新增成功", prefer);
+        return Work.success("新增成功", prefer.getId());
     }
 
     /**

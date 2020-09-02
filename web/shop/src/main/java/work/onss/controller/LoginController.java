@@ -69,7 +69,7 @@ public class LoginController {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
-            Map<String, Integer> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
+            Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
 
             List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
