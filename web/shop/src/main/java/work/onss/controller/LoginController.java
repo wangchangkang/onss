@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
+import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
@@ -40,6 +41,7 @@ public class LoginController {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
+
     /**
      * @param wxLogin 微信登陆信息
      * @return 密钥
@@ -59,7 +61,7 @@ public class LoginController {
             user.setLastTime(LocalDateTime.now());
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
-            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("user", user);
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -67,11 +69,16 @@ public class LoginController {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
-            Map<String, Integer> pidNum = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
-            String authorization = new SM2(null,systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            Map<String, Integer> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, Cart::getNum));
+            Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
+
+            List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
+            Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
-            result.put("pidNum", pidNum);
+            result.put("cartsPid", cartsPid);
+            result.put("prefersPid", prefersPid);
             return Work.success("登录成功", result);
         }
     }

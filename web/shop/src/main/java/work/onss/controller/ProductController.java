@@ -38,24 +38,6 @@ public class ProductController {
     }
 
     /**
-     * @param id 主键
-     * @return 商品信息
-     */
-    @GetMapping(value = {"products/{id}"})
-    public Work<Map<String, Object>> product(@PathVariable String id,@RequestParam(name = "uid") String uid) {
-        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("pid").is(id));
-        Cart cart = mongoTemplate.findOne(cartQuery, Cart.class);
-        Product product = mongoTemplate.findById(id, Product.class);
-        Query preferQuery = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
-        Prefer prefer = mongoTemplate.findOne(preferQuery, Prefer.class);
-        Map<String, Object> data = new HashMap<>();
-        data.put("cart", cart);
-        data.put("prefer", prefer);
-        data.put("product", product);
-        return Work.success("加载成功", data);
-    }
-
-    /**
      * @param ids 商品主键
      * @return 商品列表
      */
