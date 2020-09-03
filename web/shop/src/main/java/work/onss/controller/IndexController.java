@@ -25,11 +25,12 @@ public class IndexController {
     public Work<List<Store>> index() {
         Circle circle = new Circle(30, 20, 20);
         Query storeQuery = new Query(Criteria.where("point").within(circle));;
-        storeQuery.fields().exclude("pictures");
-        storeQuery.fields().exclude("videos");
-        storeQuery.fields().exclude("customers");
-        storeQuery.fields().exclude("products");
-        storeQuery.fields().exclude("merchant");
+        storeQuery.fields()
+                .exclude("pictures")
+                .exclude("videos")
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
         List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
         return Work.success(null, stores);
     }

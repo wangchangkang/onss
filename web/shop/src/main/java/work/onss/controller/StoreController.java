@@ -39,8 +39,10 @@ public class StoreController {
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> store(@PathVariable String id) {
         Query storeQuery = Query.query(Criteria.where("id").is(id));
-        storeQuery.fields().exclude("videos");
-        storeQuery.fields().exclude("merchant");
+        storeQuery.fields()
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
         Store store = mongoTemplate.findOne(storeQuery, Store.class);
         return Work.success("加载成功", store);
     }
@@ -72,11 +74,10 @@ public class StoreController {
         }
         Point point = new GeoJsonPoint(x, y);
         NearQuery nearQuery = NearQuery.near(point, Metrics.KILOMETERS).maxDistance(new Distance(r, Metrics.KILOMETERS));
-        query.fields().exclude("pictures");
-        query.fields().exclude("videos");
-        query.fields().exclude("customers");
-        query.fields().exclude("products");
-        query.fields().exclude("merchant");
+        query.fields()
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
         nearQuery.query(query);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         Page<GeoResult<Store>> page = new PageImpl<>(storeGeoResults.getContent());
@@ -90,11 +91,10 @@ public class StoreController {
     @GetMapping(value = {"stores/{id}/getProducts"})
     public Work<Map<String, ?>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
         Query storeQuery = Query.query(Criteria.where("id").is(id));
-        storeQuery.fields().exclude("pictures");
-        storeQuery.fields().exclude("videos");
-        storeQuery.fields().exclude("customers");
-        storeQuery.fields().exclude("products");
-        storeQuery.fields().exclude("merchant");
+        storeQuery.fields()
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
         Store store = mongoTemplate.findOne(storeQuery, Store.class);
         Map<String, Object> data = new HashMap<>();
         data.put("store", store);

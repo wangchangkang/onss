@@ -89,11 +89,10 @@ public class CartController {
             return Work.success("加载成功", null);
         } else {
             Query storeQuery = Query.query(Criteria.where("id").in(sids));
-            storeQuery.fields().exclude("pictures");
-            storeQuery.fields().exclude("videos");
-            storeQuery.fields().exclude("customers");
-            storeQuery.fields().exclude("products");
-            storeQuery.fields().exclude("merchant");
+            storeQuery.fields()
+                    .exclude("customers")
+                    .exclude("products")
+                    .exclude("merchant");
             List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
             return Work.success("加载成功", stores);
         }
@@ -107,11 +106,10 @@ public class CartController {
     @GetMapping(value = {"carts"})
     public Work<Map<String, Object>> getCarts(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
         Query storeQuery = Query.query(Criteria.where("id").is(sid));
-        storeQuery.fields().exclude("pictures");
-        storeQuery.fields().exclude("videos");
-        storeQuery.fields().exclude("customers");
-        storeQuery.fields().exclude("products");
-        storeQuery.fields().exclude("merchant");
+        storeQuery.fields()
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
         Store store = mongoTemplate.findOne(storeQuery, Store.class);
         Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("id"));
         List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
