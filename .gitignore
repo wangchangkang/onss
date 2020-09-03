@@ -42,4 +42,4 @@ build/
 .vscode/
 
 /picture/
-/web/store/src/main/resources/tessdata-4.0.0/
+tessdata-4.0.0/
