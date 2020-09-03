@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Cart;
 import work.onss.domain.Product;
@@ -41,8 +42,8 @@ public class CartController {
      * @param cart 购物车
      * @return 更新购车商品数量
      */
-    @PutMapping(value = {"carts/setNum"})
-    public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @RequestBody Cart cart) {
+    @PostMapping(value = {"carts"})
+    public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
         Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
@@ -57,15 +58,17 @@ public class CartController {
                 return Work.fail(product.getRemarks());
             }
             Query cartQuery = Query.query(Criteria.where("pid").is(cart.getPid()).and("uid").is(uid));
+            if (null != cart.getId()) {
+                cartQuery.addCriteria(Criteria.where("id").is(cart.getId()));
+            }
             Cart oldCart = mongoTemplate.findOne(cartQuery, Cart.class);
             if (oldCart != null) {
                 oldCart.setNum(cart.getNum());
-                oldCart.setRemarks(cart.getRemarks());
                 Update updateCart = Update.update("num", cart.getNum()).set("remarks", cart.getRemarks());
                 mongoTemplate.updateFirst(cartQuery, updateCart, Cart.class);
                 return Work.success("更新购物车成功", oldCart);
             } else {
-                cart = new Cart(uid, product.getSid(), cart.getPid());
+                cart.setUid(uid);
                 mongoTemplate.insert(cart);
                 return Work.success("加入购物车成功", cart);
             }

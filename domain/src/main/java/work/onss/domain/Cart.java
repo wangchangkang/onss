@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Log4j2
@@ -22,8 +24,11 @@ public class Cart implements Serializable {
     @Id
     private String id;
     private String uid;
+    @NotBlank(message = "商户ID不能为空")
     private String sid;
+    @NotBlank(message = "商品ID不能为空")
     private String pid;
+    @Min(value = 1, message = "购买数量不能小于0")
     private Integer num;
     private String remarks;
 
@@ -31,5 +36,13 @@ public class Cart implements Serializable {
         this.uid = uid;
         this.sid = sid;
         this.pid = pid;
+    }
+
+    public Cart(String uid, String sid, String pid, Integer num, String remarks) {
+        this.uid = uid;
+        this.sid = sid;
+        this.pid = pid;
+        this.num = num;
+        this.remarks = remarks;
     }
 }

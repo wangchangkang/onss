@@ -41,5 +41,5 @@ build/
 ### VS Code ###
 .vscode/
 
-/picture/
+picture/
 tessdata-4.0.0/
