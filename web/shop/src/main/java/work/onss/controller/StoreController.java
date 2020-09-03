@@ -38,7 +38,10 @@ public class StoreController {
      */
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> store(@PathVariable String id) {
-        Store store = mongoTemplate.findById(id, Store.class);
+        Query storeQuery = Query.query(Criteria.where("id").is(id));
+        storeQuery.fields().exclude("videos");
+        storeQuery.fields().exclude("merchant");
+        Store store = mongoTemplate.findOne(storeQuery, Store.class);
         return Work.success("加载成功", store);
     }
 
@@ -53,7 +56,7 @@ public class StoreController {
     @GetMapping(path = "stores/{x}-{y}/near")
     public Work<Page<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
                                               @PathVariable(name = "y") Double y,
-                                              @RequestParam(name = "r",defaultValue = "100") Double r,
+                                              @RequestParam(name = "r", defaultValue = "100") Double r,
                                               @RequestParam(required = false) Integer type,
                                               @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
@@ -69,6 +72,11 @@ public class StoreController {
         }
         Point point = new GeoJsonPoint(x, y);
         NearQuery nearQuery = NearQuery.near(point, Metrics.KILOMETERS).maxDistance(new Distance(r, Metrics.KILOMETERS));
+        query.fields().exclude("pictures");
+        query.fields().exclude("videos");
+        query.fields().exclude("customers");
+        query.fields().exclude("products");
+        query.fields().exclude("merchant");
         nearQuery.query(query);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         Page<GeoResult<Store>> page = new PageImpl<>(storeGeoResults.getContent());
@@ -81,7 +89,13 @@ public class StoreController {
      */
     @GetMapping(value = {"stores/{id}/getProducts"})
     public Work<Map<String, ?>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
-        Store store = mongoTemplate.findById(id, Store.class);
+        Query storeQuery = Query.query(Criteria.where("id").is(id));
+        storeQuery.fields().exclude("pictures");
+        storeQuery.fields().exclude("videos");
+        storeQuery.fields().exclude("customers");
+        storeQuery.fields().exclude("products");
+        storeQuery.fields().exclude("merchant");
+        Store store = mongoTemplate.findOne(storeQuery, Store.class);
         Map<String, Object> data = new HashMap<>();
         data.put("store", store);
         if (store != null) {

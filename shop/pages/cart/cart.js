@@ -3,23 +3,49 @@ const { domain, prefix, authorization, user } = appInstance.globalData;
 Page({
   data: {
     prefix,
-    stores: [{
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    },
-    {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }, {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }
-    ]
   },
 
   onLoad: function (options) {
+    const user = wx.getStorageSync('user');
+    const authorization = wx.getStorageSync('authorization');
+    wx.request({
+      url: `${domain}/carts/getStores?uid=${user.id}`,
+      header: {
+        authorization,
+      },
+      method: "GET",
+      success: ({ data }) => {
+        const { code, msg, content } = data;
+        console.log(data)
+        switch (code) {
+          case 'success':
+            this.setData({
+              stores: content
+            })
+            break;
+          case 'fail.login':
+            wx.redirectTo({
+              url: '/pages/login/login',
+            })
+            break;
+          default:
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+            break;
+        }
+      },
+      fail: (res) => {
+        wx.showModal({
+          title: '警告',
+          content: '加载失败',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      },
+    })
   },
 })

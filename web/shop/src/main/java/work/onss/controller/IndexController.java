@@ -24,7 +24,13 @@ public class IndexController {
     @GetMapping(value = {"index"})
     public Work<List<Store>> index() {
         Circle circle = new Circle(30, 20, 20);
-        List<Store> stores = mongoTemplate.find(new Query(Criteria.where("point").within(circle)), Store.class);
+        Query storeQuery = new Query(Criteria.where("point").within(circle));;
+        storeQuery.fields().exclude("pictures");
+        storeQuery.fields().exclude("videos");
+        storeQuery.fields().exclude("customers");
+        storeQuery.fields().exclude("products");
+        storeQuery.fields().exclude("merchant");
+        List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
         return Work.success(null, stores);
     }
 }

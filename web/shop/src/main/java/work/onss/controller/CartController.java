@@ -85,8 +85,18 @@ public class CartController {
     public Work<List<Store>> getStores(@RequestParam(name = "uid") String uid) {
         Query query = Query.query(Criteria.where("uid").is(uid));
         List<String> sids = mongoTemplate.findDistinct(query, "sid", Cart.class, String.class);
-        List<Store> stores = mongoTemplate.find(Query.query(Criteria.where("id").in(sids)), Store.class);
-        return Work.success("加载成功", stores);
+        if (sids.size() == 0) {
+            return Work.success("加载成功", null);
+        } else {
+            Query storeQuery = Query.query(Criteria.where("id").in(sids));
+            storeQuery.fields().exclude("pictures");
+            storeQuery.fields().exclude("videos");
+            storeQuery.fields().exclude("customers");
+            storeQuery.fields().exclude("products");
+            storeQuery.fields().exclude("merchant");
+            List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
+            return Work.success("加载成功", stores);
+        }
     }
 
     /**
