@@ -32,7 +32,7 @@ public class PreferController {
         prefer.setUid(uid);
         prefer.setLastTime(LocalDateTime.now());
         mongoTemplate.insert(prefer);
-        return Work.success("新增成功", prefer.getId());
+        return Work.success("收藏成功", prefer.getId());
     }
 
     /**

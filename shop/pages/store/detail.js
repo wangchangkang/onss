@@ -70,16 +70,9 @@ Page({
           console.log(data)
           switch (code) {
             case 'success':
-              wx.showToast({
-                title: msg,
-                icon: 'success',
-                duration: 2000,
-                success: (res) => {
-                  this.setData({
-                    prefersPid: { ...this.data.prefersPid, [id]: content }
-                  });
-                }
-              })
+              this.setData({
+                prefersPid: { ...this.data.prefersPid, [id]: content }
+              });
               break;
             case 'fail.login':
               wx.redirectTo({
@@ -117,19 +110,12 @@ Page({
           console.log(data)
           switch (code) {
             case 'success':
-              wx.showToast({
-                title: msg,
-                icon: 'success',
-                duration: 2000,
-                success: (res) => {
-                  let prefersPid = this.data.prefersPid;
-                  delete prefersPid[id];
-                  this.setData({
-                    prefersPid
-                  });
-                  console.log(this.data);
-                }
-              })
+              let prefersPid = this.data.prefersPid;
+              delete prefersPid[id];
+              this.setData({
+                prefersPid
+              });
+              console.log(this.data);
               break;
             case 'fail.login':
               wx.redirectTo({

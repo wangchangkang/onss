@@ -131,9 +131,9 @@ public class ProductController {
         if (index == -1) {
             return Work.fail("文件格式错误!");
         }
-        String sha256 = SecureUtil.sha256(file.getInputStream());
+        String md5 = SecureUtil.md5(file.getInputStream());
 
-        Path path = Paths.get(systemConfig.getFilePath(), sid, "products", sha256.concat(filename.substring(index)));
+        Path path = Paths.get(systemConfig.getFilePath(), sid, "products", md5.concat(filename.substring(index)));
         Path parent = path.getParent();
         if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");

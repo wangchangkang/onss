@@ -1,7 +1,7 @@
 <view class="weui-panel weui-media-box">
 	<view class=" weui-media-box_appmsg">
 		<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-			<image class="weui-media-box__thumb" src="/images/logo2.png" />
+			<image class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
 		</view>
 		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 			<view class="weui-media-box__title">{{store.name}}</view>
@@ -19,11 +19,11 @@
 	</view>
 	<view class="weui-cell" bindtap="openGallery">
 		<view class="weui-cell__hd">营业执照：</view>
-		<view class="weui-cell__bd weui-cell__ft_in-access">{{store.license.number}}</view>
+		<view class="weui-cell__bd weui-cell__ft_in-access">{{store.licenseNumber}}</view>
 	</view>
 	<view class="weui-gallery {{istrue ? 'weui-gallery_show' : ''}}" bindtap="closeGallery">
 		<view class="weui-gallery__img__wrp">
-			<image mode="aspectFit" class="weui-gallery__img" src="{{prefix}}{{store.license.picture}}"></image>
+			<image mode="aspectFit" class="weui-gallery__img" src="{{prefix}}{{store.licenseCopy}}"></image>
 		</view>
 	</view>
 	<view class="weui-media-box">

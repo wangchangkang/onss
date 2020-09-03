@@ -46,6 +46,7 @@ public class Store implements Serializable {
     private Collection<String> videos = new ArrayList<>();//小视频
     @Indexed(unique = true)
     private String licenseNumber;//营业执照编号
+    private String licenseCopy;//营业执照
     private List<Customer> customers;//营业员
     @Transient
     private List<Product> products;//销售产品
@@ -62,6 +63,7 @@ public class Store implements Serializable {
         this.phone = merchant.getMobilePhone();
         this.status = false;
         this.licenseNumber = merchant.getLicenseNumber();
+        this.licenseCopy = merchant.getLicenseCopy();
         this.merchant = merchant;
     }
 

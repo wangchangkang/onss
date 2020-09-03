@@ -94,10 +94,10 @@ public class MerchantController {
         if (index == -1) {
             throw new ServiceException("fail", "文件格式错误!");
         }
-        // 图片摘要sha256加密
-        String sha256 = SecureUtil.sha256(file.getInputStream());
-        // pictures/cid/type/i/sha256.png
-        Path path = Paths.get(systemConfig.getFilePath(), cid, type, i, sha256, filename.substring(index));
+        // 图片摘要md5加密
+        String md5 = SecureUtil.md5(file.getInputStream());
+        // pictures/cid/type/i/md5.png
+        Path path = Paths.get(systemConfig.getFilePath(), cid, type, i, md5, filename.substring(index));
         Path parent = path.getParent();
         if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");
@@ -118,7 +118,7 @@ public class MerchantController {
 
 //    Map<String, String> data = new HashMap<>();
 //        data.put("filename", file.getName());
-//        data.put("sha256", sha256);
+//        data.put("md5", md5);
 //        Map<String, Object> stringObjectMap = WxPayApi.v3Upload(
 //                WxDomain.CHINA.getType(),
 //                WxApiType.MERCHANT_UPLOAD_MEDIA.getType(),
