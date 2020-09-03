@@ -76,7 +76,7 @@ Page({
               break;
             case 'fail.login':
               wx.redirectTo({
-                url: '/pages/login/login',
+                url: '/pages/login',
               })
               break;
             default:
@@ -119,7 +119,7 @@ Page({
               break;
             case 'fail.login':
               wx.redirectTo({
-                url: '/pages/login/login',
+                url: '/pages/login',
               })
               break;
             default:
@@ -186,7 +186,7 @@ Page({
               break;
             case 'fail.login':
               wx.redirectTo({
-                url: '/pages/login/login',
+                url: '/pages/login',
               })
               break;
             default:
@@ -234,7 +234,7 @@ Page({
               break;
             case 'fail.login':
               wx.redirectTo({
-                url: '/pages/login/login',
+                url: '/pages/login',
               })
               break;
             default:

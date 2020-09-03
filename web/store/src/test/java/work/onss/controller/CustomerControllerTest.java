@@ -25,15 +25,11 @@ import java.nio.file.Paths;
 @SpringBootTest
 class CustomerControllerTest {
 
-    @Autowired
-    private TestService testService;
 
-    @Test
     public void test() throws TesseractException, IOException {
-        testService.test();
+//        testService.test();
     }
 
-    @Test
     public void getPointX() throws IOException, TesseractException {
 //        Path path = Paths.get("/Users/wangchanghao/Desktop/work/onss/picture/idCard.jpg");
 //        File file = new File(String.valueOf(path));
@@ -98,15 +94,14 @@ class CustomerControllerTest {
     }
 
 
-    @Test
     public void getPointY() throws IOException {
-        Path path = Paths.get("/Users/wangchanghao/Desktop/work/onss/picture/idCard.jpg");
-        File file = new File(String.valueOf(path));
-        BufferedImage image = ImageIO.read(file);
-        BufferedImage bufferedImage = ImageHelper.invertImageColor(image);
-        image = ImageHelper.convertImageToBinary(bufferedImage);
-        Point pointY = testService.getPointY(image, image.getHeight() / 2, image.getWidth());
-        log.info(pointY.toString());
+//        Path path = Paths.get("/Users/wangchanghao/Desktop/work/onss/picture/idCard.jpg");
+//        File file = new File(String.valueOf(path));
+//        BufferedImage image = ImageIO.read(file);
+//        BufferedImage bufferedImage = ImageHelper.invertImageColor(image);
+//        image = ImageHelper.convertImageToBinary(bufferedImage);
+//        Point pointY = testService.getPointY(image, image.getHeight() / 2, image.getWidth());
+//        log.info(pointY.toString());
     }
 
 }

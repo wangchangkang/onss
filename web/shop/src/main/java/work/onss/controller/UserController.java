@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
+import work.onss.domain.Cart;
 import work.onss.domain.Customer;
+import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
@@ -24,7 +26,9 @@ import work.onss.vo.Work;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -62,9 +66,18 @@ public class UserController {
         Map<String, Object> result = new HashMap<>();
         String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
 
+
+        List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
+        Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+        Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
+        List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
+        Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
+
+        result.put("cartsPid", cartsPid);
+        result.put("prefersPid", prefersPid);
         result.put("authorization", authorization);
         result.put("user", user);
-        return Work.success("授权成功", result);
+        return Work.success("登录成功", result);
     }
 }
 

@@ -25,61 +25,82 @@ App({
   },
 
   wxLogin: function () {
-    wx.login({
-      success: ({ code }) => {
-        console.log(code)
-        wx.request({
-          url: `${domain}/wxLogin`,
-          method: "POST",
-          data: { code, appid },
-          success: ({ data }) => {
-            const { code, msg, content } = data;
-            if (code === '1977.user.notfound') {
-              wx.setStorageSync('authorization', content.authorization);
-              wx.setStorageSync('user', content.user);
-              wx.reLaunch({
-                url: '/pages/login/login'
-              })
-            } else if (code === 'success') {
-              wx.setStorageSync('authorization', content.authorization);
-              wx.setStorageSync('user', content.user);
-              wx.setStorageSync('pidNum', content.pidNum);
-              this.globalData.authorization = content.authorization;
-              this.globalData.user = content.user;
-              this.globalData.pidNum = content.pidNum;
-              wx.reLaunch({
-                url: '/pages/login/stores'
-              })
-            } else {
+    const authorization = wx.getStorageSync('authorization');
+    const user = wx.getStorageSync('user');
+    if (authorization && user) {
+      if (user.lastTime) {
+        wx.removeStorageSync('authorization');
+        wx.removeStorageSync('user');
+        wx.removeStorageSync('cartsPid');
+        wx.removeStorageSync('prefersPid');
+        this.wxLogin();
+      } else {
+        if (user.phone) {
+          return { authorization, user }
+        } else {
+          wx.reLaunch({
+            url: '/pages/login'
+          })
+        }
+      }
+    } else {
+      wx.login({
+        success: ({ code }) => {
+          console.log(code)
+          wx.request({
+            url: `${domain}/wxLogin`,
+            method: "POST",
+            data: { code, appid },
+            success: ({ data }) => {
+              const { code, msg, content } = data;
+              switch (code) {
+                case 'success':
+                  wx.setStorageSync('authorization', content.authorization);
+                  wx.setStorageSync('user', content.user);
+                  wx.setStorageSync('cartsPid', content.cartsPid);
+                  wx.setStorageSync('prefersPid', content.prefersPid);
+                  wx.reLaunch({
+                    url: '/pages/index/index'
+                  })
+                  break;
+                case '1977.user.notfound':
+                  wx.setStorageSync('authorization', content.authorization);
+                  wx.setStorageSync('user', content.user);
+                  wx.reLaunch({
+                    url: '/pages/login'
+                  })
+                  break;
+                default:
+                  wx.showModal({
+                    title: '警告',
+                    content: msg,
+                    confirmColor: '#e64340',
+                    showCancel: false,
+                  })
+                  break;
+              }
+            },
+            fail: (res) => {
+              wx.hideLoading()
               wx.showModal({
                 title: '警告',
-                content: msg,
+                content: '登陆失败',
                 confirmColor: '#e64340',
                 showCancel: false,
               })
             }
-            console.log(data)
-          },
-          fail: (res) => {
-            wx.hideLoading()
-            wx.showModal({
-              title: '警告',
-              content: '登陆失败',
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-          }
-        })
-      },
-      fail: (res) => {
-        wx.hideLoading()
-        wx.showModal({
-          title: '警告',
-          content: '获取微信code失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
-    })
+          })
+        },
+        fail: (res) => {
+          wx.hideLoading()
+          wx.showModal({
+            title: '警告',
+            content: '获取微信code失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    }
   },
 })

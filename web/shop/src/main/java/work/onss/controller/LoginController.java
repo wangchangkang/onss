@@ -71,7 +71,6 @@ public class LoginController {
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
-
             List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
             Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
             String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
