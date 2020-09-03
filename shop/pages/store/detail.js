@@ -147,18 +147,27 @@ Page({
 
   },
 
-  updateCart: function (e) {
+
+  addCount: function () {
+    this.updateCart(1);
+  },
+
+  subtractCount: function () {
+    this.updateCart(-1);
+  },
+
+  updateCart: function (count) {
     const { sid, id, cartsPid } = this.data;
     const user = wx.getStorageSync('user');
     const authorization = wx.getStorageSync('authorization');
     if (cartsPid[id]) {
       wx.request({
-        url: `${domain}/carts/${cartsPid[id].id}?uid=${user.id}`,
-        method: 'PUT',
+        url: `${domain}/carts?uid=${user.id}`,
+        method: 'POST',
         header: {
           authorization,
         },
-        data: { sid: sid, pid: id },
+        data: { id: cartsPid[id].id, sid: sid, pid: id, num: cartsPid[id].num + count },
         success: ({ data }) => {
           const { code, msg, content } = data;
           console.log(data)
@@ -206,7 +215,7 @@ Page({
         header: {
           authorization,
         },
-        data: { sid: sid, pid: id },
+        data: { sid: sid, pid: id, num: 1 },
         success: ({ data }) => {
           const { code, msg, content } = data;
           console.log(data)

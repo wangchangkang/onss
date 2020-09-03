@@ -5,7 +5,7 @@ Page({
     prefix,
   },
 
-  onLoad: function (options) {
+  onshow: function (options) {
     const user = wx.getStorageSync('user');
     const authorization = wx.getStorageSync('authorization');
     wx.request({
