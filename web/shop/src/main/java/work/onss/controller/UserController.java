@@ -59,7 +59,7 @@ public class UserController {
 
         //添加用户手机号
         Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), Customer.class);
+        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), User.class);
 
         user.setPhone(phoneEncryptedData.getPhoneNumber());
 

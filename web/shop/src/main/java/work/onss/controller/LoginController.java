@@ -54,13 +54,22 @@ public class LoginController {
         User user = mongoTemplate.findOne(query, User.class);
 
         Map<String, Object> result = new HashMap<>();
-        if (user == null || user.getPhone() == null) {
+        if (user == null) {
             user = new User();
             user.setOpenid(wxSession.getOpenid());
             user.setSession_key(wxSession.getSession_key());
             user.setLastTime(LocalDateTime.now());
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            result.put("user", user);
+            result.put("authorization", authorization);
+            return Work.message("1977.user.notfound", "请绑定手机号", result);
+        } else if (user.getPhone() == null) {
+            query.addCriteria(Criteria.where("id").is(user.getId()));
+            user.setSession_key(wxSession.getSession_key());
+            user.setLastTime(LocalDateTime.now());
+            mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
             String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("user", user);
             result.put("authorization", authorization);

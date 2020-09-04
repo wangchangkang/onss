@@ -9,7 +9,7 @@ const types = [
   { id: 5, title: '超市', icon: "/images/超市.png" },
   { id: 6, title: '书店', icon: "/images/书店.png" },
 ]
-const appid = "wx095ba1a3f9396476";
+const appid = "wxe78290c2a5313de3";
 const domain = 'http://192.168.103.184:8001/shop';
 const prefix = 'http://192.168.103.184/';
 const user = wx.getStorageSync('user');
@@ -24,24 +24,16 @@ App({
     // this.wxLogin();
   },
 
-  wxLogin: function () {
+  wxLogin: async function () {
     const authorization = wx.getStorageSync('authorization');
     const user = wx.getStorageSync('user');
     if (authorization && user) {
-      if (user.lastTime) {
-        wx.removeStorageSync('authorization');
-        wx.removeStorageSync('user');
-        wx.removeStorageSync('cartsPid');
-        wx.removeStorageSync('prefersPid');
-        this.wxLogin();
+      if (user.phone) {
+        return { authorization, user }
       } else {
-        if (user.phone) {
-          return { authorization, user }
-        } else {
-          wx.reLaunch({
-            url: '/pages/login'
-          })
-        }
+        wx.reLaunch({
+          url: '/pages/login'
+        })
       }
     } else {
       wx.login({

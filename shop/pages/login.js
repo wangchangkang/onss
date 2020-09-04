@@ -1,22 +1,30 @@
 const appInstance = getApp()
-const {  domain,user,appid } = appInstance.globalData;
+const { domain, appid } = appInstance.globalData;
 Page({
   data: {},
   getAuthorization: function (e) {
-
-    if (res.code && e.detail.iv && e.detail.encryptedData) {
+    if (e.detail.iv && e.detail.encryptedData) {
+      const user = wx.getStorageSync('user');
+      const authorization = wx.getStorageSync('authorization');
       wx.request({
-        url: `${domain}/wxLogin`,
+        url: `${domain}/users/${user.id}/setPhone`,
         method: 'POST',
-        data: { appid, code: res.code, encryptedData: e.detail.encryptedData, iv: e.detail.iv },
+        data: { appid, encryptedData: e.detail.encryptedData, iv: e.detail.iv, lastTime: user.lastTime },
+        header: {
+          authorization,
+        },
         success: ({ data }) => {
           const { code, msg, content } = data;
           switch (code) {
             case 'success':
-              wx.setStorageSync('user', content.user)
-              wx.setStorageSync('authorization', content.authorization)
-              wx.setStorageSync('pidNum', content.pidNum)
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('user', content.user);
+              wx.setStorageSync('cartsPid', content.cartsPid);
+              wx.setStorageSync('prefersPid', content.prefersPid);
               console.log(data)
+              wx.reLaunch({
+                url: '/pages/index/index',
+              })
               break;
             default:
               wx.showModal({
@@ -39,7 +47,5 @@ Page({
         },
       })
     }
-    console.log(e)
-   
   },
 })
