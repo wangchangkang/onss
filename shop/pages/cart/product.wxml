@@ -18,9 +18,9 @@
 					<checkbox value="{{product.id}}" checked="{{product.checked}}" />
 				</label>
 				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini" bindtap="subtractCount" id="{{product.id}}">减</button>
+					<button type="default" size="mini" bindtap="subtractCount" id="{{index}}">减</button>
 					<button type="default" size="mini" disabled="true">{{cartsPid[product.id].num}}</button>
-					<button type="default" size="mini" bindtap="addCount" id="{{product.id}}">加</button>
+					<button type="default" size="mini" bindtap="addCount" id="{{index}}">加</button>
 				</view>
 			</view>
 		</view>
