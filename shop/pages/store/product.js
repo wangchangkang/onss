@@ -2,7 +2,7 @@ const appInstance = getApp()
 const { domain, prefix } = appInstance.globalData;
 Page({
   data: {
-    prefix, cartsPid: [], products: [], number: 0
+    prefix, cartsPid: [], products: [], number: 0,last:false
   },
   onLoad: function (options) {
     let pages = getCurrentPages();//当前页面栈

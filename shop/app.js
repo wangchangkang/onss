@@ -109,7 +109,7 @@ App({
           const { code, msg, content } = data;
           if (code === 'success') {
             console.log(content);
-            resolve(content)
+            resolve(content);
           } else {
             wx.showModal({
               title: '警告',
@@ -130,7 +130,40 @@ App({
       })
     })
 
-  }
+  },
 
-  ,
+  getStores: function (longitude, latitude, number = 0) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: `${domain}/stores/${longitude}-${latitude}/near?page=${number}`,
+        method: "GET",
+        success: ({ data }) => {
+          const { code, msg, content } = data;
+          console.log(data)
+          switch (code) {
+            case 'success':
+              console.log(content);
+              resolve(content)
+              break;
+            default:
+              wx.showModal({
+                title: '警告',
+                content: msg,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+              break;
+          }
+        },
+        fail: (res) => {
+          wx.showModal({
+            title: '警告',
+            content: '加载失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    });
+  }
 })

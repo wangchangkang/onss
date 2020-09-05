@@ -56,7 +56,7 @@ public class StoreController {
      * @return 店铺分页
      */
     @GetMapping(path = "stores/{x}-{y}/near")
-    public Work<Page<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
+    public Work<List<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
                                               @PathVariable(name = "y") Double y,
                                               @RequestParam(name = "r", defaultValue = "100") Double r,
                                               @RequestParam(required = false) Integer type,
@@ -80,8 +80,7 @@ public class StoreController {
                 .exclude("merchant");
         nearQuery.query(query);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
-        Page<GeoResult<Store>> page = new PageImpl<>(storeGeoResults.getContent());
-        return Work.success(null, page);
+        return Work.success(null, storeGeoResults.getContent());
     }
 
     /**
