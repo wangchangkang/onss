@@ -99,27 +99,13 @@ public class CartController {
     }
 
     /**
-     * @param uid 用户ID
      * @param sid 商户ID
      * @return 购物车
      */
     @GetMapping(value = {"carts"})
-    public Work<Map<String, Object>> getCarts(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
-        Query storeQuery = Query.query(Criteria.where("id").is(sid));
-        storeQuery.fields()
-                .exclude("customers")
-                .exclude("products")
-                .exclude("merchant");
-        Store store = mongoTemplate.findOne(storeQuery, Store.class);
-        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid)).with(Sort.by("id"));
-        List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
-        Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet())).with(Sort.by("id"));
+    public Work<List<Product>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "pids") List<String> pids) {
+        Query productQuery = Query.query(Criteria.where("id").in(pids).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
-        Map<String, Object> data = new HashMap<>();
-        data.put("store", store);
-        data.put("cartMap", cartMap);
-        data.put("products", products);
-        return Work.success("加载成功", data);
+        return Work.success("加载成功", products);
     }
 }

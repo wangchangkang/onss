@@ -1,7 +1,7 @@
 <view class="weui-cells__title ">请选择店铺购物车</view>
 <view class="weui-panel ">
 	<view class="weui-panel__bd">
-		<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url="/pages/cart/product?sid={{store.id}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+		<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url="/pages/cart/product?index={{index}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<image class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
 			</view>

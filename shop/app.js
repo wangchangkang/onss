@@ -27,9 +27,11 @@ App({
   wxLogin: async function () {
     const authorization = wx.getStorageSync('authorization');
     const user = wx.getStorageSync('user');
+    const cartsPid = wx.getStorageSync('cartsPid');
+    const prefersPid = wx.getStorageSync('prefersPid');
     if (authorization && user) {
       if (user.phone) {
-        return { authorization, user }
+        return { authorization, user, cartsPid, prefersPid }
       } else {
         wx.reLaunch({
           url: '/pages/login'

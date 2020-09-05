@@ -4,8 +4,8 @@
 		<view wx:for="{{products}}" wx:for-item='product' wx:key="index" class="weui-media-box">
 			<view class=" weui-media-box_appmsg">
 				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">{{cartMap[product.id].num}}</view>
-					<image class="weui-media-box__thumb" src="{{product.pictures[0]}}" />
+					<view class="weui-badge">{{cartsPid[product.id].num}}</view>
+					<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 				</view>
 				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 					<view class="weui-media-box__title">{{product.name}}</view>
@@ -18,101 +18,9 @@
 					<checkbox bindtap="cartSelect" />
 				</label>
 				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">{{cartMap[product.id].num}}</button>
-					<button type="default" size="mini">加</button>
-				</view>
-			</view>
-		</view>
-		<view class="weui-media-box">
-			<view class=" weui-media-box_appmsg">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">1</view>
-					<image class="weui-media-box__thumb" src="/images/水果.png" />
-				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">猕猴桃</view>
-					<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
-					<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
-				</view>
-			</view>
-			<view class="weui-flex">
-				<label class="checkbox">
-					<checkbox bindtap="cartSelect" />
-				</label>
-				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">1</button>
-					<button type="default" size="mini">加</button>
-				</view>
-			</view>
-		</view>
-		<view class="weui-media-box">
-			<view class=" weui-media-box_appmsg">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">1</view>
-					<image class="weui-media-box__thumb" src="/images/水果.png" />
-				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">猕猴桃</view>
-					<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
-					<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
-				</view>
-			</view>
-			<view class="weui-flex">
-				<label class="checkbox">
-					<checkbox bindtap="cartSelect" />
-				</label>
-				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">1</button>
-					<button type="default" size="mini">加</button>
-				</view>
-			</view>
-		</view>
-		<view class="weui-media-box">
-			<view class=" weui-media-box_appmsg">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">1</view>
-					<image class="weui-media-box__thumb" src="/images/水果.png" />
-				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">猕猴桃</view>
-					<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
-					<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
-				</view>
-			</view>
-			<view class="weui-flex">
-				<label class="checkbox">
-					<checkbox bindtap="cartSelect" />
-				</label>
-				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">1</button>
-					<button type="default" size="mini">加</button>
-				</view>
-			</view>
-		</view>
-		<view class="weui-media-box">
-			<view class=" weui-media-box_appmsg">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">1</view>
-					<image class="weui-media-box__thumb" src="/images/水果.png" />
-				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">猕猴桃</view>
-					<view class="weui-media-box__desc">猕猴桃含有丰富的矿物质，包括丰富的钙、磷、铁，还含有胡萝卜素和多种维生素，对保持人体健康具有重要的作用</view>
-					<view class="weui-media-box__desc"><label class="weui-cell_warn">0.01元/斤</label></view>
-				</view>
-			</view>
-			<view class="weui-flex">
-				<label class="checkbox">
-					<checkbox bindtap="cartSelect" />
-				</label>
-				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini">减</button>
-					<button type="default" size="mini" disabled="true">1</button>
-					<button type="default" size="mini">加</button>
+					<button type="default" size="mini" bindtap="subtractCount" id="{{product.id}}">减</button>
+					<button type="default" size="mini" disabled="true">{{cartsPid[product.id].num}}</button>
+					<button type="default" size="mini" bindtap="addCount" id="{{product.id}}">加</button>
 				</view>
 			</view>
 		</view>
