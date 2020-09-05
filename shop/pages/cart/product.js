@@ -5,7 +5,9 @@ Page({
     prefix,
     store: {},
     cartsPid: {},
-    products: []
+    products: [],
+    checkeds: [],
+    total: '0.00'
   },
   onLoad: function (options) {
     let pages = getCurrentPages();//当前页面栈
@@ -23,17 +25,10 @@ Page({
           console.log(data)
           switch (code) {
             case 'success':
-              wx.showToast({
-                title: msg,
-                icon: 'success',
-                duration: 2000,
-                success: (res) => {
-                  this.setData({
-                    store,
-                    cartsPid,
-                    products: content
-                  })
-                }
+              this.setData({
+                store,
+                cartsPid,
+                products: content
               })
               break;
             case 'fail.login':
@@ -120,6 +115,61 @@ Page({
   },
 
   cartChange: function (e) {
-    console.log(e);
+    const checkeds = e.detail.value;
+    const cartsPid = this.data.cartsPid;
+    let total = 0
+    this.data.products.forEach((product, index) => {
+      const checked = `products[${index}].checked`;
+      if (checkeds.includes(product.id)) {
+        const num = cartsPid[product.id].num;
+        total = total + product.average * 100 * num;
+        this.setData({
+          [checked]: true
+        });
+      } else {
+        this.setData({
+          [checked]: false
+        })
+      }
+    });
+
+    if (total != 0) {
+      let totalArr = total.toString().split('');
+      totalArr.splice(-2, 0, '.');
+      total = totalArr.join('');
+    } else {
+      total = '0.00'
+    }
+
+    this.setData({
+      checkeds,
+      total
+    })
+  },
+
+  checkAll: function (e) {
+    const checkAll = e.detail.value;
+    const cartsPid = this.data.cartsPid;
+    let checkeds = [];
+    let total = 0
+    this.data.products.forEach((product, index) => {
+      const num = cartsPid[product.id].num;
+      total = total + product.average * 100 * num;
+      checkeds.push(product.id)
+      const checked = `products[${index}].checked`;
+      this.setData({
+        [checked]: checkAll,
+        total
+      })
+    });
+    if (total != 0) {
+      let totalArr = total.toString().split('');
+      totalArr.splice(-2, 0, '.');
+      total = totalArr.join('');
+    }
+    this.setData({
+      checkeds: checkAll ? checkeds : [],
+      total: checkAll ? total : '0.00'
+    });
   }
 })

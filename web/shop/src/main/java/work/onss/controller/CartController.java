@@ -45,7 +45,7 @@ public class CartController {
     @PostMapping(value = {"carts"})
     public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
-        Product product = mongoTemplate.findOne(queryProduct, Product.class);
+         Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
             if (cart.getNum() > product.getTotal()) {
                 return Work.fail("库存不足");
