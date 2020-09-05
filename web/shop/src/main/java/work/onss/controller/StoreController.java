@@ -89,22 +89,10 @@ public class StoreController {
      * @return 店铺信息及所有商品
      */
     @GetMapping(value = {"stores/{id}/getProducts"})
-    public Work<Map<String, ?>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
-        Query storeQuery = Query.query(Criteria.where("id").is(id));
-        storeQuery.fields()
-                .exclude("customers")
-                .exclude("products")
-                .exclude("merchant");
-        Store store = mongoTemplate.findOne(storeQuery, Store.class);
-        Map<String, Object> data = new HashMap<>();
-        data.put("store", store);
-        if (store != null) {
-            Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
-            List<Product> products = mongoTemplate.find(query, Product.class);
-            Page<Product> pagination = new PageImpl<>(products);
-            data.put("pagination", pagination);
-        }
-        return Work.success(null, data);
+    public Work<List<Product>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
+        Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
+        List<Product> products = mongoTemplate.find(query, Product.class);
+        return Work.success(null, products);
     }
 
 }
