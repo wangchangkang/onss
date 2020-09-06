@@ -39,12 +39,12 @@ public class AsyncTask {
             log.error("订单丢失:{}-{}", transactionId, outTradeNo);
         } else {
             Map<String, String> carts = new HashMap<>();
-            score.getItems().forEach(item -> {
+            score.getProducts().forEach(product -> {
                 Update updateTotal = new Update();
-                updateTotal.inc("total", -item.getNum());
-                UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(item.getPid()).and("total").gte(item.getNum())), updateTotal, Product.class);
+                updateTotal.inc("total", -product.getNum());
+                UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(product.getId()).and("total").gte(product.getNum())), updateTotal, Product.class);
                 if (result.getMatchedCount() == 0) {
-                    carts.put(item.getPid(), item.getName().concat(":").concat(item.getPrice().toPlainString()).concat("×").concat(item.getNum().toString()));
+                    carts.put(product.getId(), product.getName().concat(":").concat(product.getPrice().toPlainString()).concat("×").concat(product.getNum().toString()));
                 }
             });
             if (carts.size() > 0) {

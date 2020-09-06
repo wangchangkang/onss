@@ -85,29 +85,6 @@ public class Utils {
         return map;
     }
 
-    public static Score getItems(String uid, String sid, Map<String, Cart> carts, List<Product> products, Address address) throws ServiceException {
-        BigDecimal total = new BigDecimal(0);
-        List<Item> items = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        for (Product product : products) {
-            Cart cart = carts.get(product.getId());
-            if (product.getTotal() < cart.getNum()) {
-                String msg = MessageFormat.format("【{0}】库存不足", product.getName());
-                throw new ServiceException("fail", msg);
-            }
-            if (StringUtils.hasLength(product.getRemarks()) && !StringUtils.hasLength(cart.getRemarks())) {
-                throw new ServiceException("fail", product.getRemarks());
-            }
-            Item item = new Item(product);
-            item.setNum(cart.getNum());
-            item.setTotal(product.getAverage().multiply(BigDecimal.valueOf(cart.getNum())));
-            items.add(item);
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        String outTradeNo = MessageFormat.format("WX{0}{1}", now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")), "number.toString()");
-        return new Score(uid, sid, decimalFormat.format(total), items, outTradeNo, outTradeNo, now, address);
-    }
 
     public static String getEncryptedData(String encryptedData, String sessionKey, String iv) {
 

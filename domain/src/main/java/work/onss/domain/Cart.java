@@ -30,7 +30,7 @@ public class Cart implements Serializable {
     private String pid;
     @Min(value = 0, message = "购买数量不能小于0")
     private Integer num;
-    private String remarks;
+    private Boolean checked = false;
 
     public Cart(String uid, String sid, String pid) {
         this.uid = uid;
@@ -38,11 +38,11 @@ public class Cart implements Serializable {
         this.pid = pid;
     }
 
-    public Cart(String uid, String sid, String pid, Integer num, String remarks) {
+    public Cart(String uid, String sid, String pid, Integer num, Boolean checked) {
         this.uid = uid;
         this.sid = sid;
         this.pid = pid;
         this.num = num;
-        this.remarks = remarks;
+        this.checked = checked;
     }
 }

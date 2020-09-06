@@ -69,7 +69,7 @@ Page({
   updateCart: function (index, count) {
     let product = this.data.products[index]
     appInstance.wxLogin().then(({ user, authorization }) => {
-      const { store, cartsPid } = this.data;
+      let { store, cartsPid } = this.data;
       wx.request({
         url: `${domain}/carts?uid=${user.id}`,
         method: 'POST',
@@ -82,20 +82,23 @@ Page({
           console.log(data)
           switch (code) {
             case 'success':
-              const cartsPid = { ...this.data.cartsPid, [product.id]: content };
-              wx.setStorageSync('cartsPid', cartsPid);
               let total = parseFloat(this.data.total);
-              const checked = `products[${index}].checked`;
               let checkeds = this.data.checkeds;
-              if (product.checked) {
+              content.checked = cartsPid[product.id].checked
+              if (cartsPid[product.id].checked) {
                 total = count * product.average + total;
                 if (content.num == 0) {
-                  product.checked = false;
+                  content.checked = false;
                   checkeds = checkeds.splice(checkeds.findIndex(item => item === product.id), 1);
                 }
               }
+              cartsPid = { ...this.data.cartsPid, [product.id]: content };
+              const key = `cartsPid.${product.id}`
+              wx.setStorageSync('cartsPid', cartsPid);
               this.setData({
-                cartsPid, total: total.toFixed(2), [checked]: product.checked, checkeds
+                [key]: content, 
+                total: total.toFixed(2), 
+                checkeds
               });
               break;
             case 'fail.login':
@@ -130,7 +133,7 @@ Page({
     const cartsPid = this.data.cartsPid;
     let total = 0.00;
     this.data.products.forEach((product, index) => {
-      const checked = `products[${index}].checked`;
+      const checked = `cartsPid.${product.id}.checked`;
       if (checkeds.includes(product.id)) {
         const num = cartsPid[product.id].num;
         total = total + product.average * num;
@@ -171,7 +174,7 @@ Page({
       const num = cartsPid[product.id].num;
       total = total + product.average * num;
       checkeds.push(product.id)
-      const checked = `products[${index}].checked`;
+      const checked = `cartsPid.${product.id}.checked`;
       this.setData({
         [checked]: checkAll,
       })

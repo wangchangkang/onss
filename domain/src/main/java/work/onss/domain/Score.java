@@ -42,7 +42,7 @@ public class Score implements Serializable {
     private Integer status;
     private String total;
     private BigDecimal difference;
-    private List<Item> items;
+    private List<Product> products;
     @Indexed(unique = true)
     private String outTradeNo1;
     @Indexed(unique = true)
@@ -72,11 +72,11 @@ public class Score implements Serializable {
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
     private Point location;//坐标
 
-    public Score(String uid, String sid, String total, List<Item> items, String outTradeNo1, String outTradeNo2, LocalDateTime insertTime, Address address) {
+    public Score(String uid, String sid, String total, List<Product> products, String outTradeNo1, String outTradeNo2, LocalDateTime insertTime, Address address) {
         this.uid = uid;
         this.sid = sid;
         this.total = total;
-        this.items = items;
+        this.products = products;
         this.outTradeNo1 = outTradeNo1;
         this.outTradeNo2 = outTradeNo2;
 

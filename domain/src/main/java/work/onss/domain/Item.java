@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 public class Item {
 
     private String name;
-    private String remarks;
     private Integer num;
     private String averageUnit;
     private BigDecimal average;
@@ -28,7 +27,6 @@ public class Item {
 
     /**
      * @param name        名称
-     * @param remarks     备注
      * @param num         购买数量
      * @param averageUnit 均价价格
      * @param average     均价价格
@@ -39,9 +37,8 @@ public class Item {
      * @param picture     图片
      * @param pid         商品ID
      */
-    public Item(String name, String remarks,Integer num, String averageUnit, BigDecimal average, String priceUnit, BigDecimal price, BigDecimal total, Boolean quality, String picture, String pid) {
+    public Item(String name,Integer num, String averageUnit, BigDecimal average, String priceUnit, BigDecimal price, BigDecimal total, Boolean quality, String picture, String pid) {
         this.name = name;
-        this.remarks = remarks;
         this.num = num;
         this.averageUnit = averageUnit;
         this.average = average;
@@ -55,7 +52,6 @@ public class Item {
 
     public Item(Product product) {
         this.name = product.getName();
-        this.remarks = product.getRemarks();
         this.averageUnit = product.getAverageUnit();
         this.average = product.getAverage();
         this.priceUnit = product.getPriceUnit();

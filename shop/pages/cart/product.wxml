@@ -15,7 +15,7 @@
 			</view>
 			<view class="weui-flex">
 				<label class="checkbox">
-					<checkbox value="{{product.id}}" checked="{{product.checked}}" />
+					<checkbox value="{{product.id}}" checked="{{cartsPid[product.id].checked}}" />
 				</label>
 				<view class="weui-flex__item weui-cell__ft">
 					<button type="default" size="mini" bindtap="subtractCount" id="{{index}}">减</button>

@@ -21,7 +21,7 @@
 
 	<view class="weui-cells__title ">购物清单(<text class="weui-cell_warn">预订商品最终以过秤为准</text>)</view>
 	<view class="weui-cells weui-cells_after-title">
-		<view wx:for="{{products}}" wx:for-item='product' wx:key="index" wx:if="{{product.checked}}" class="weui-cell">
+		<view wx:for="{{products}}" wx:for-item='product' wx:key="index" wx:if="{{cartsPid[product.id].checked}}" class="weui-cell">
 			<view class="weui-cell__hd">
 				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 					<view class="weui-media-box__thumb">

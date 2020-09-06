@@ -61,7 +61,7 @@
 				<view class="weui-label">库存</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input type="number" name="total" value="100" class="weui-input" placeholder="请输入库存" maxlength="9" />
+				<input type="number" name="stock" value="100" class="weui-input" placeholder="请输入库存" maxlength="9" />
 			</view>
 		</view>
 

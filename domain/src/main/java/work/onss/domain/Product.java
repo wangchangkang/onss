@@ -28,8 +28,6 @@ public class Product implements Serializable {
     private String name;
     @NotBlank(message = "商品描述不能为空")
     private String description;
-    @NotBlank(message = "请填写商品购买须知")
-    private String remarks;
     @NotBlank(message = "单位不能为空")
     private String priceUnit;
     @NotNull(message = "单价不能为空")
@@ -42,7 +40,7 @@ public class Product implements Serializable {
     private Boolean quality;
     @NotNull(message = "请填写库存数量")
     @Min(value = 1, message = "库存总数不能小于{value}")
-    private Integer total;
+    private Integer stock;
     @NotNull(message = "请填写最小购买数量")
     @Min(value = 1, message = "最小购买数量不能小于{value}")
     private Integer min;
@@ -60,5 +58,8 @@ public class Product implements Serializable {
     @Size(min = 1, max = 9, message = "商品图片数量为{min}-{max}")
     private List<String> pictures;
     private String sid;
+
+    private BigDecimal total;
+    private Integer num;
 
 }

@@ -47,15 +47,13 @@ public class CartController {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
          Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
-            if (cart.getNum() > product.getTotal()) {
+            if (cart.getNum() > product.getStock()) {
                 return Work.fail("库存不足");
             } else if (cart.getNum() > product.getMax()) {
                 String msg = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
                 return Work.fail(msg);
             } else if (!product.getStatus()) {
                 return Work.fail("该商品已下架");
-            } else if (product.getRemarks() != null && product.getRemarks() == null) {
-                return Work.fail(product.getRemarks());
             }
             Query cartQuery = Query.query(Criteria.where("pid").is(cart.getPid()).and("uid").is(uid));
             if (null != cart.getId()) {
@@ -64,7 +62,7 @@ public class CartController {
             Cart oldCart = mongoTemplate.findOne(cartQuery, Cart.class);
             if (oldCart != null) {
                 oldCart.setNum(cart.getNum());
-                Update updateCart = Update.update("num", cart.getNum()).set("remarks", cart.getRemarks());
+                Update updateCart = Update.update("num", cart.getNum());
                 mongoTemplate.updateFirst(cartQuery, updateCart, Cart.class);
                 return Work.success("更新购物车成功", oldCart);
             } else {

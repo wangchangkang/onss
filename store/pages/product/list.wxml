@@ -6,7 +6,7 @@
 		<mp-slideview buttons="{{[slideButtons[product.status]]}}" id="{{index}}" show="{{index==currentID}}" bindshow="bindShow" bindbuttontap="bindButtonTap">
 			<navigator url="/pages/product/detail?id={{product.id}}&index={{index}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
 				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">{{product.total}}</view>
+					<view class="weui-badge">{{product.stock}}</view>
 					<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 				</view>
 				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">

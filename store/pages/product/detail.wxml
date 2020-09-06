@@ -17,7 +17,7 @@
 					单价:<label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label>
 				</view>
 				<view class="weui-flex__item weui-cell__ft">
-					库存:<label class="weui-cell_warn">{{product.total}}</label>
+					库存:<label class="weui-cell_warn">{{product.stock}}</label>
 				</view>
 			</view>
 			<view class="weui-media-box__title">{{product.name}}</view>
