@@ -1,32 +1,15 @@
+<view class="weui-cells__title">
+	常用地址 <navigator url="/pages/address/detail" class="fr"><button size='mini' style="font-size:2rpx">+</button></navigator>
+</view>
 <view class="weui-panel">
-
-
 	<radio-group class="radio-group" bindchange="changeAddress">
-
-		<view class="weui-media-box weui-cell">
-			<view class="weui-cell__bd">常用地址</view>
-			<navigator class="weui-cell__ft" url='/pages/address/detail'>
-				<button class="weui-btn mini-btn" type="default" size="mini">+</button>
-			</navigator>
-		</view>
-
-		<view class="weui-media-box weui-media-box_appmsg">
+		<view wx:for="{{addresses}}" wx:for-item='address' wx:key="index" class="weui-media-box weui-media-box_appmsg">
 			<view class="weui-media-box__hd_in-appmsg">
-				<radio value="{{index}}" checked="{{addressId == address.id}}" />
+				<radio value="{{index}}" />
 			</view>
-			<navigator url="/pages/address/detail" class="weui-media-box__bd weui-media-box__bd_in-appmsg weui-cell__ft_in-access">
-				<view class="weui-media-box__title">王先生 15063517240</view>
-				<view class="weui-media-box__desc">星美城市广场二期22#281</view>
-			</navigator>
-		</view>
-
-		<view class="weui-media-box weui-media-box_appmsg">
-			<view class="weui-media-box__hd_in-appmsg">
-				<radio value="{{index}}" checked="{{addressId == address.id}}" />
-			</view>
-			<navigator url="/pages/address/detail" class="weui-media-box__bd weui-media-box__bd_in-appmsg weui-cell__ft_in-access">
-				<view class="weui-media-box__title">王先生 15063517240</view>
-				<view class="weui-media-box__desc">星美城市广场二期22#281</view>
+			<navigator url="/pages/address/detail?index={{index}}" class="weui-media-box__bd weui-media-box__bd_in-appmsg weui-cell__ft_in-access">
+				<view class="weui-media-box__title">{{address.username}} {{address.phone}}</view>
+				<view class="weui-media-box__desc">{{address.detail}}</view>
 			</navigator>
 		</view>
 	</radio-group>

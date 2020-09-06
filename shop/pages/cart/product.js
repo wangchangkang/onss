@@ -1,5 +1,5 @@
 const appInstance = getApp()
-const { domain, prefix, authorization, user } = appInstance.globalData;
+const { domain, prefix } = appInstance.globalData;
 Page({
   data: {
     prefix,

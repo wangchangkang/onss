@@ -1,5 +1,5 @@
 <view class="weui-cells__title">订单编号:WX202002051440174687622A <button type="primary" size='mini' style="font-size:13rpx" bindtap='copyNumber'>复制</button></view>
-<view class="weui-cells weui-cells_after-title userinfo">
+<view class="weui-panel weui-cells userinfo">
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">订单时间：</view>
 		<view class="weui-cell__bd">2020.12.12 12:12:12 </view>

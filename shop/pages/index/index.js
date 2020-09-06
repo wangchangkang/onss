@@ -48,7 +48,7 @@ Page({
             } else {
               this.setData({
                 number,
-                products: [...this.data.stores, ...stores],
+                stores: [...this.data.stores, ...stores],
               });
             }
           });

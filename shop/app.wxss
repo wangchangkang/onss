@@ -16,3 +16,6 @@ page {
 .weui-badge {
   position: absolute;
 }
+.fr {
+  float: right;
+}

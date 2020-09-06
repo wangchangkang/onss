@@ -11,10 +11,9 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Log4j2
 @Data
@@ -32,8 +31,9 @@ public class Address implements Serializable {
     private String detail;
     @Range(min = 0, max = 3, message = "地址类型格式错误")
     private Integer tag;
-    @Size(min = 2, max = 2, message = "请重新定位坐标")
+    @NotNull(message = "请重新定位坐标")
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
     private Point location;//坐标
     private String uid;
+    private LocalDateTime lastTime;
 }

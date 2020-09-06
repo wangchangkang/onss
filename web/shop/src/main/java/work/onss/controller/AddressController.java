@@ -2,6 +2,7 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Address;
 import work.onss.vo.Work;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Log4j2
@@ -28,6 +30,7 @@ public class AddressController {
     @PostMapping(value = {"addresses"})
     public Work<Address> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Address address) {
         address.setUid(uid);
+        address.setLastTime(LocalDateTime.now());
         if (StringUtils.hasLength(address.getId())) {
             Address oldAddress = mongoTemplate.findById(address.getId(), Address.class);
             if (oldAddress == null) {
@@ -75,7 +78,7 @@ public class AddressController {
      */
     @GetMapping(value = {"addresses"})
     public Work<List<Address>> findAll(@RequestParam(name = "uid") String uid) {
-        Query query = Query.query(Criteria.where("uid").is(uid));
+        Query query = Query.query(Criteria.where("uid").is(uid)).with(Sort.by(Sort.Order.desc("lastTime")));
         List<Address> addresses = mongoTemplate.find(query, Address.class);
         return Work.success("加载成功", addresses);
     }

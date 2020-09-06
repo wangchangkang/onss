@@ -39,6 +39,6 @@
 		<view class='weui-cell__ft'>预售：<text style='color:red'>{{total}}</text>元</view>
 	</view>
 	<navigator class="weui-cell" url='/pages/score/confirm'>
-		<button type="primary" size="mini">立即下单</button>
+		<button type="primary" size="mini" disabled="{{checkeds.length == 0}}">立即下单</button>
 	</navigator>
 </view>
