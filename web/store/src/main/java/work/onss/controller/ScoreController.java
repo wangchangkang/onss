@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.*;
-import work.onss.domain.Item;
+import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
@@ -72,24 +72,24 @@ public class ScoreController {
             throw new ServiceException("fail", "订单丢失，请立刻截图，再联系客服");
         }
         if (score.getStatus() == 1) {
-            List<Item> items = score.getItems();
+            List<Product> products = score.getProducts();
             BigDecimal total = BigDecimal.valueOf(0.00);
             Update update = new Update();
-            for (int i = 0; i < items.size(); i++) {
-                Item item = items.get(i);
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
                 // 商品重量
-                BigDecimal weight = weights.get(item.getPid());
+                BigDecimal weight = weights.get(product.getId());
                 // 销售价格
-                BigDecimal price = item.getPrice();
+                BigDecimal price = product.getPrice();
                 // 实际小计
                 BigDecimal realTotal = price.multiply(weight);
                 // 购买小计
-                BigDecimal littleTotal = item.getTotal();
+                BigDecimal littleTotal = product.getTotal();
                 // 差价
                 BigDecimal difference = littleTotal.subtract(realTotal);
-                if (item.getQuality()) {
-                    update.set("items.".concat(String.valueOf(i)).concat("difference"), difference);
-                    update.set("items.".concat(String.valueOf(i)).concat("weight"), weight);
+                if (product.getQuality()) {
+                    update.set("product.".concat(String.valueOf(i)).concat("difference"), difference);
+                    update.set("product.".concat(String.valueOf(i)).concat("weight"), weight);
                 }
                 // 汇总差价
                 total = total.add(difference);

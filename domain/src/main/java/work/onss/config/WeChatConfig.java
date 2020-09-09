@@ -24,5 +24,6 @@ public class WeChatConfig implements Serializable {
     private String certPemPath;
     private String v3CertPemPath;
     private String serialNo;
+    private String notifyUrl;
     private Map<String,String> keys;
 }

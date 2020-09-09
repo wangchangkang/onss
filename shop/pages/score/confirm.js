@@ -27,13 +27,51 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   saveScore: function (e) {
-
-    const {address,total}  = this.data.address;
-
-
-    console.log();
-    
+    appInstance.wxLogin().then(({ user, authorization }) => {
+      const { address, cartsPid, checkeds, store } = this.data;
+      const carts = {}
+      Object.keys(cartsPid).filter((key) => checkeds.includes(key)).forEach((key) => {
+        carts[key] = cartsPid[key]
+      });
+      wx.request({
+        url: `${domain}/scores?uid=${user.id}`,
+        header: {
+          authorization,
+        },
+        method: "POST",
+        data: { sid: store.id, address, carts, subAppId: appInstance.appid, openid: user.openid },
+        success: ({ data }) => {
+          const { code, msg, content } = data;
+          console.log(data)
+          switch (code) {
+            case 'success':
+              console.log(content);
+              break;
+            case 'fail.login':
+              wx.redirectTo({
+                url: '/pages/login/login',
+              })
+              break;
+            default:
+              wx.showModal({
+                title: '警告',
+                content: msg,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+              break;
+          }
+        },
+        fail: (res) => {
+          wx.showModal({
+            title: '警告',
+            content: '加载失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    })
 
   },
-
 })

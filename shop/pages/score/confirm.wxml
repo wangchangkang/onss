@@ -39,5 +39,5 @@
 	<view style="min-height:180rpx"></view>
 
 	<view class="weui-flex weui-footer_fixed-bottom">
-		<button class="weui-flex__item" type="primary" form-type="submit">微信支付</button>
+		<button class="weui-flex__item" type="primary" bindtap="saveScore">微信支付</button>
 	</view>

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,6 +48,10 @@ public class Store implements Serializable {
     @Indexed(unique = true)
     private String licenseNumber;//营业执照编号
     private String licenseCopy;//营业执照
+
+    private LocalTime openTime;
+    private LocalTime closeTime;
+
     private List<Customer> customers;//营业员
     @Transient
     private List<Product> products;//销售产品
