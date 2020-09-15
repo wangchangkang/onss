@@ -2,16 +2,16 @@ const scoreStatus = [
   '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
 ]
 const types = [
-  { id: 1, title: '服装', icon: "/images/服装.png" },
-  { id: 2, title: '美食', icon: "/images/美食.png" },
-  { id: 3, title: '果蔬', icon: "/images/果蔬.png" },
-  { id: 4, title: '饮品', icon: "/images/饮品.png" },
-  { id: 5, title: '超市', icon: "/images/超市.png" },
-  { id: 6, title: '书店', icon: "/images/书店.png" },
+  { id: 1, title: '服装', icon: "/images/clothing.png" },
+  { id: 2, title: '美食', icon: "/images/delicious.png" },
+  { id: 3, title: '果蔬', icon: "/images/fruits.png" },
+  { id: 4, title: '饮品', icon: "/images/drinks.png" },
+  { id: 5, title: '超市', icon: "/images/supermarkets.png" },
+  { id: 6, title: '书店', icon: "/images/bookstores.png" },
 ]
 const appid = "wxe78290c2a5313de3";
-const domain = 'http://192.168.103.184:8001/shop';
-const prefix = 'http://192.168.103.184/';
+const domain = 'https://1977.work/shop';
+const prefix = 'https://1977.work/';
 const user = wx.getStorageSync('user');
 const authorization = wx.getStorageSync('authorization');
 const { windowWidth } = wx.getSystemInfoSync();

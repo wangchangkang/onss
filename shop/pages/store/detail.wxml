@@ -39,10 +39,10 @@
 <view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom">
 	<view class='weui-flex__item weui-cell'>
 		<navigator class="weui-cell__hd" url='/pages/index/index' open-type="reLaunch">
-			<image src="/images/首页2.png" style="height:2em;width:2em;"></image>
+			<image src="/images/index1.png" style="height:2em;width:2em;"></image>
 		</navigator>
 		<navigator class="weui-cell__bd" url='/pages/cart/product?sid={{sid}}'>
-			<image src="/images/购物车2.png" style="height:2em;width:2em;"></image>
+			<image src="/images/cart1.png" style="height:2em;width:2em;"></image>
 		</navigator>
 	</view>
 
