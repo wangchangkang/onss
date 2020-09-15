@@ -48,8 +48,8 @@ public class AsyncTask {
                 }
             });
             if (carts.size() > 0) {
-                Update isStock = Update.update("status", 4).set("items.$.isStock", false);
-                mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(score.getId()).and("items.pid").in(carts.keySet())), isStock, Score.class);
+                Update isStock = Update.update("status", 4).set("products.$.isStock", false);
+                mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(score.getId()).and("products.id").in(carts.keySet())), isStock, Score.class);
 //                String token = companyService.getToken("ww14a26e89d715e5cd", "2lHKfmq1wGrLbiaYdV9JbuSltjnSB6Je2AYt9XuTP_U");
 //                MiniprogramNotice miniprogramNotice = new MiniprogramNotice("wx095ba1a3f9396476", "/pages/score/detail/detail?id=".concat(score.getId()), "订单异常通知", now.toString(), false, ContentItem.notifyMessage(data));
 //                companyService.messageSsend(null, "12", null, "miniprogram_notice", null, miniprogramNotice, token);
