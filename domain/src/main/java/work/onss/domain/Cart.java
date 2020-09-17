@@ -29,7 +29,7 @@ public class Cart implements Serializable {
     @NotBlank(message = "商品ID不能为空")
     private String pid;
     @Min(value = 0, message = "购买数量不能小于0")
-    private Integer num;
+    private Integer num = 0;
     private Boolean checked = false;
 
     public Cart(String uid, String sid, String pid) {

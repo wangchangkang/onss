@@ -47,6 +47,6 @@
 	</view>
 
 	<view class="weui-cell">
-		<button type="primary" size="mini" bindtap="updateCart" disabled="{{cartsPid[id]}}">加入购物车(<text class="weui-cell_warn">{{cartsPid[id]?cartsPid[id].num:0}}</text>)</button>
+		<button type="primary" size="mini" bindtap="addCount">加入购物车(<text class="weui-cell_warn">{{cartsPid[id]?cartsPid[id].num:0}}</text>)</button>
 	</view>
 </view>

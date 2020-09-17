@@ -13,6 +13,7 @@ import work.onss.domain.Product;
 import work.onss.domain.Store;
 import work.onss.vo.Work;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -101,9 +102,18 @@ public class CartController {
      * @return 购物车
      */
     @GetMapping(value = {"carts"})
-    public Work<List<Product>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "pids") List<String> pids) {
-        Query productQuery = Query.query(Criteria.where("id").in(pids).and("sid").is(sid));
+    public Work<List<Product>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) {
+        Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
+        List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+        Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+        Query productQuery = Query.query(Criteria.where("id").in(cartsPid.keySet()).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        products.forEach(product -> {
+            Cart cart = cartsPid.get(product.getId());
+            product.setChecked(cart.getChecked());
+            product.setNum(cart.getNum());
+            product.setTotal(product.getAverage().multiply(BigDecimal.valueOf(cart.getNum())));
+        });
         return Work.success("加载成功", products);
     }
 }

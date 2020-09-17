@@ -10,52 +10,68 @@ Page({
     total: '0.00'
   },
   onLoad: function (options) {
-    let pages = getCurrentPages();//当前页面栈
-    let prevPage = pages[pages.length - 2];//上一页面
-    const store = prevPage.data.stores[options.index];
-    appInstance.wxLogin().then(({ user, authorization, cartsPid }) => {
-      wx.request({
-        url: `${domain}/carts?uid=${user.id}&sid=${store.id}&pids=${Object.keys(cartsPid)}`,
-        header: {
-          authorization,
-        },
-        method: "GET",
-        success: ({ data }) => {
-          const { code, msg, content } = data;
-          console.log(data)
-          switch (code) {
-            case 'success':
-              this.setData({
-                store,
-                cartsPid,
-                products: content
-              })
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login/login',
-              })
-              break;
-            default:
+    if (options.id) {
+      appInstance.getStore(options.id).then((store) => {
+        appInstance.wxLogin().then(({ user, authorization, cartsPid }) => {
+          wx.request({
+            url: `${domain}/carts?uid=${user.id}&sid=${options.id}&pids=${Object.keys(cartsPid)}`,
+            header: {
+              authorization,
+            },
+            method: "GET",
+            success: ({ data }) => {
+              const { code, msg, content } = data;
+              console.log(data)
+              switch (code) {
+                case 'success':
+                  let total = 0.00
+                  let checkeds = [];
+                  content.forEach((product, index) => {
+                    const cart = cartsPid[product.id];
+                    if (cart.checked) {
+                      total = total + product.average * cart.num;
+                      checkeds.push(product.id);
+                    }
+                  });
+                  this.setData({
+                    total: total.toFixed(2),
+                    checkeds,
+                    store,
+                    cartsPid,
+                    products: content
+                  })
+                  break;
+                case 'fail.login':
+                  wx.redirectTo({
+                    url: '/pages/login/login',
+                  })
+                  break;
+                default:
+                  wx.showModal({
+                    title: '警告',
+                    content: msg,
+                    confirmColor: '#e64340',
+                    showCancel: false,
+                  })
+                  break;
+              }
+            },
+            fail: (res) => {
               wx.showModal({
                 title: '警告',
-                content: msg,
+                content: '加载失败',
                 confirmColor: '#e64340',
                 showCancel: false,
               })
-              break;
-          }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
+            },
           })
-        },
-      })
-    })
+        })
+      });
+    } else {
+      wx.reLaunch({
+        url: '/pages/cart/cart'
+      });
+    }
   },
 
   addCount: function (e) {
@@ -96,8 +112,8 @@ Page({
               const key = `cartsPid.${product.id}`
               wx.setStorageSync('cartsPid', cartsPid);
               this.setData({
-                [key]: content, 
-                total: total.toFixed(2), 
+                [key]: content,
+                total: total.toFixed(2),
                 checkeds
               });
               break;
@@ -167,22 +183,22 @@ Page({
 
   checkAll: function (e) {
     const checkAll = e.detail.value;
-    const cartsPid = this.data.cartsPid;
-    let checkeds = [];
     let total = 0.00;
-    this.data.products.forEach((product, index) => {
-      const num = cartsPid[product.id].num;
-      total = total + product.average * num;
-      checkeds.push(product.id)
-      const checked = `cartsPid.${product.id}.checked`;
-      this.setData({
-        [checked]: checkAll,
-      })
+    if (checkAll) {
+      let cartsPid = this.data.cartsPid;
+      this.data.products.forEach((product, index) => {
+        let key = `products[${index}].checked`;
+        this.setData({
+          [key]: true
+        });
+        const num = cartsPid[product.id].num;
+        total = total + product.average * num;
+      });
+      total = total.toFixed(2);
+    }
+    this.setData({
+      total
     });
 
-    this.setData({
-      checkeds: checkAll ? checkeds : [],
-      total: total.toFixed(2)
-    });
   }
 })

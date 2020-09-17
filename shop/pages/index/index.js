@@ -11,49 +11,78 @@ Page({
       success: (res) => {
         appInstance.getStores(res.longitude, res.latitude).then((stores) => {
           this.setData({
-            stores
+            stores,
+            latitude: res.latitude,
+            longitude: res.longitude
           })
         });
       }
     })
   },
   onPullDownRefresh: function () {
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        this.getStores(res.longitude, res.latitude).then((stores) => {
-          this.setData({
-            number: 0,
-            last: false,
-            stores
-          })
-          wx.stopPullDownRefresh()
-        });
-      }
-    })
+    const { latitude, longitude } = this.data;
+    if (latitude && longitude) {
+      appInstance.getStores(longitude, latitude).then((stores) => {
+        this.setData({
+          number: 0,
+          last: false,
+          stores
+        })
+        wx.stopPullDownRefresh()
+      });
+    } else {
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          appInstance.getStores(res.longitude, res.latitude).then((stores) => {
+            this.setData({
+              number: 0,
+              last: false,
+              stores
+            })
+            wx.stopPullDownRefresh()
+          });
+        }
+      })
+    }
   },
   onReachBottom: function () {
     if (this.data.last) {
       console.log(this.data)
     } else {
-      const number = this.data.number + 1;
-      wx.getLocation({
-        type: 'gcj02',
-        success: (res) => {
-          this.getStores(res.longitude, res.latitude, number).then((stores) => {
-            if (stores.length == 0) {
-              this.setData({
-                last: true,
-              });
-            } else {
-              this.setData({
-                number,
-                stores: [...this.data.stores, ...stores],
-              });
-            }
-          });
-        }
-      })
+      const { latitude, longitude, number } = this.data;
+      if (latitude && longitude) {
+        appInstance.getStores(longitude, latitude, number + 1).then((stores) => {
+          if (stores.length == 0) {
+            this.setData({
+              last: true,
+            });
+          } else {
+            this.setData({
+              number,
+              stores: [...this.data.stores, ...stores],
+            });
+          }
+        });
+      } else {
+        wx.getLocation({
+          type: 'gcj02',
+          success: (res) => {
+            appInstance.getStores(res.longitude, res.latitude, number + 1).then((stores) => {
+              if (stores.length == 0) {
+                this.setData({
+                  last: true,
+                });
+              } else {
+                this.setData({
+                  number,
+                  stores: [...this.data.stores, ...stores],
+                });
+              }
+            });
+          }
+        })
+      }
     }
   },
 })

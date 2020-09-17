@@ -24,21 +24,21 @@ App({
     // this.wxLogin();
   },
 
-  wxLogin: async function () {
-    const authorization = wx.getStorageSync('authorization');
-    const user = wx.getStorageSync('user');
-    const cartsPid = wx.getStorageSync('cartsPid');
-    const prefersPid = wx.getStorageSync('prefersPid');
-    if (authorization && user) {
-      if (user.phone) {
-        return { authorization, user, cartsPid, prefersPid }
+  wxLogin: function () {
+    return new Promise((resolve, reject) => {
+      const authorization = wx.getStorageSync('authorization');
+      const user = wx.getStorageSync('user');
+      const cartsPid = wx.getStorageSync('cartsPid');
+      const prefersPid = wx.getStorageSync('prefersPid');
+      if (authorization && user) {
+        if (user.phone) {
+          resolve({authorization, user, cartsPid, prefersPid});
+        } else {
+          wx.reLaunch({
+            url: '/pages/login'
+          });
+        }
       } else {
-        wx.reLaunch({
-          url: '/pages/login'
-        })
-      }
-    } else {
-      new Promise((resolve, reject) => {
         wx.login({
           success: ({ code }) => {
             console.log(code)
@@ -96,8 +96,8 @@ App({
             })
           },
         })
-      })
-    }
+      }
+    })
   },
 
   getProducts: function (sid, number = 0) {
@@ -129,13 +129,47 @@ App({
         },
       })
     })
-
   },
 
   getStores: function (longitude, latitude, number = 0) {
     return new Promise((resolve, reject) => {
       wx.request({
         url: `${domain}/stores/${longitude}-${latitude}/near?page=${number}`,
+        method: "GET",
+        success: ({ data }) => {
+          const { code, msg, content } = data;
+          console.log(data)
+          switch (code) {
+            case 'success':
+              console.log(content);
+              resolve(content)
+              break;
+            default:
+              wx.showModal({
+                title: '警告',
+                content: msg,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+              break;
+          }
+        },
+        fail: (res) => {
+          wx.showModal({
+            title: '警告',
+            content: '加载失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    });
+  },
+
+  getStore: function (id) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: `${domain}/stores/${id}`,
         method: "GET",
         success: ({ data }) => {
           const { code, msg, content } = data;

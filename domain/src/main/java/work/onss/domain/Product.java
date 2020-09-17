@@ -59,7 +59,8 @@ public class Product implements Serializable {
     private List<String> pictures;
     private String sid;
 
-    private BigDecimal total;
-    private Integer num;
+    private BigDecimal total = BigDecimal.ZERO;
+    private Integer num = 0;
+    private Boolean checked = false;
 
 }

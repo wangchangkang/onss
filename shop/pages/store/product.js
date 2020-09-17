@@ -2,29 +2,34 @@ const appInstance = getApp()
 const { domain, prefix } = appInstance.globalData;
 Page({
   data: {
-    prefix, cartsPid: [], products: [], number: 0,last:false
+    prefix, cartsPid: [], products: [], number: 0, last: false
   },
   onLoad: function (options) {
-    let pages = getCurrentPages();//当前页面栈
-    let prevPage = pages[pages.length - 2];//上一页面
-    const store = prevPage.data.stores[options.index].content;
-    appInstance.getProducts(store.id).then((content) => {
-      const cartsPid = wx.getStorageSync('cartsPid');
-      this.setData({
-        cartsPid,
-        store,
-        products: content,
+    if (options.id) {
+      appInstance.getStore(options.id).then((store) => {
+        appInstance.getProducts(options.id).then((products) => {
+          this.setData({ store, [`products[0]`]: products, });
+        });
       });
-    });
+    } else {
+      wx.reLaunch({
+        url: '/pages/index/index'
+      });
+    }
+  },
+
+  onShow: function () {
+    wx.getStorage({
+      key: 'cartsPid',
+      success: (res) => {
+        this.setData({ cartsPid: res.data });
+      }
+    })
   },
 
   onPullDownRefresh: function () {
-    appInstance.getProducts(this.data.store.id).then((content) => {
-      this.setData({
-        number: 0,
-        last: false,
-        products: content,
-      });
+    appInstance.getProducts(this.data.store.id).then((products) => {
+      this.setData({ number: 0, last: false, [`products[0]`]: products, });
       wx.stopPullDownRefresh();
     })
   },
@@ -33,35 +38,29 @@ Page({
       console.log(this.data)
     } else {
       const number = this.data.number + 1;
-      appInstance.getProducts(this.data.store.id, number).then((content) => {
-        if (content.length == 0) {
-          this.setData({
-            last: true,
-          });
+      appInstance.getProducts(this.data.store.id, number).then((nextProducts) => {
+        if (nextProducts.length == 0) {
+          this.setData({ last: true, });
         } else {
-          const { products } = this.data;
-          this.setData({
-            number,
-            products: [...products, ...content],
-          });
+          this.setData({ number, [`products[${number}]`]: nextProducts });
         }
       });
     }
   },
 
-
-
   addCount: function (e) {
-    this.updateCart(e.currentTarget.id, 1);
+    const { x, y } = e.currentTarget.dataset;
+    this.updateCart(x, y, 1);
   },
 
   subtractCount: function (e) {
-    this.updateCart(e.currentTarget.id, -1);
+    const { x, y } = e.currentTarget.dataset;
+    this.updateCart(x, y, -1);
   },
 
-  updateCart: function (index, count) {
+  updateCart: function (x, y, count) {
     appInstance.wxLogin().then(({ user, authorization }) => {
-      let product = this.data.products[index];
+      let product = this.data.products[x][y];
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
         wx.request({
