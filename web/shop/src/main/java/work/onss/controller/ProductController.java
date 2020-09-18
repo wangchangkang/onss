@@ -38,6 +38,26 @@ public class ProductController {
     }
 
     /**
+     * @param id  主键
+     * @param uid 用户主键
+     * @return 商品信息
+     */
+    @GetMapping(value = {"products/{id}/prefer"})
+    public Work<Product> product(@PathVariable String id, @RequestParam(name = "uid") String uid) {
+        Product product = mongoTemplate.findById(id, Product.class);
+        if (product != null) {
+            Query preferQuery = Query.query(Criteria.where("uid").is(id).and("pid").is(id));
+            Boolean isLike = mongoTemplate.exists(preferQuery, Prefer.class);
+            Cart cart = mongoTemplate.findOne(preferQuery, Cart.class);
+            if (cart != null) {
+                product.setNum(cart.getNum());
+            }
+            product.setIsLike(isLike);
+        }
+        return Work.success("加载成功", product);
+    }
+
+    /**
      * @param ids 商品主键
      * @return 商品列表
      */

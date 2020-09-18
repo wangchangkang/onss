@@ -14,19 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
-import work.onss.domain.Cart;
-import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
-import work.onss.vo.*;
+import work.onss.vo.WXLogin;
+import work.onss.vo.WXSession;
+import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -77,16 +75,9 @@ public class LoginController {
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
-            List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
-            Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-            Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
-            List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
-            Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
             String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
-            result.put("cartsPid", cartsPid);
-            result.put("prefersPid", prefersPid);
             return Work.success("登录成功", result);
         }
     }
