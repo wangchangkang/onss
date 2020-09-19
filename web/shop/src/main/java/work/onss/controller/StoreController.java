@@ -2,8 +2,6 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,9 +19,7 @@ import work.onss.domain.Product;
 import work.onss.domain.Store;
 import work.onss.vo.Work;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @RestController

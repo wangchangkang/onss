@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Cart;
-import work.onss.domain.Customer;
 import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.utils.Utils;

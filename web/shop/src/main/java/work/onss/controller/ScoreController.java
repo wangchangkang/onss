@@ -162,7 +162,7 @@ public class ScoreController {
         // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
         String prepayId = resultMap.get("prepay_id");
         // 二次签名，构建公众号唤起支付的参数,这里的签名方式要与上面统一下单请求签名方式保持一致
-        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
+        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(store.getSubMchId(), prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
 
