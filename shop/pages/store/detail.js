@@ -1,61 +1,34 @@
-const appInstance = getApp()
-const { windowWidth, domain, prefix, types } = appInstance.globalData;
+import { prefix, wxLogin, windowWidth, domain, getProduct } from '../../utils/util.js';
 Page({
   data: {
     windowWidth, domain, prefix
   },
   onLoad: function (options) {
-    wx.request({
-      url: `${domain}/products/${options.id}`,
-      method: "GET",
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.getStorage({
-              key: 'cartsPid',
-              success: (res) => {
-                this.setData({
-                  cartsPid: res.data
-                });
-              }
-            });
-            wx.getStorage({
-              key: 'prefersPid',
-              success: (res) => {
-                this.setData({
-                  prefersPid: res.data
-                });
-              }
-            });
-            this.setData({
-              ...content
-            });
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
+    getProduct(options.id).then((product) => {
+      wx.getStorage({
+        key: 'cartsPid',
+        success: (res) => {
+          this.setData({
+            cartsPid: res.data
+          });
         }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
+      });
+      wx.getStorage({
+        key: 'prefersPid',
+        success: (res) => {
+          this.setData({
+            prefersPid: res.data
+          });
+        }
+      });
+      this.setData({
+        ...product
+      });
     })
   },
 
   switch2Change: function (e) {
-    appInstance.wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ user, authorization }) => {
       const { sid, id } = this.data;
       if (e.detail.value) {
         wx.request({
@@ -158,7 +131,7 @@ Page({
   },
 
   updateCart: function (count) {
-    appInstance.wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ user, authorization }) => {
       const { sid, id, cartsPid } = this.data;
       if (cartsPid[id]) {
         wx.request({

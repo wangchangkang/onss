@@ -1,4 +1,5 @@
 const app = getApp();
+const { windowWidth } = app.globalData;
 const domain = 'https://1977.work/shop';
 const appid = "wxe78290c2a5313de3";
 const prefix = 'https://1977.work/';
@@ -177,6 +178,14 @@ function getStore(id) {
     })
   });
 }
+/** 商品详情
+ * @param {string} id 商品ID
+ */
+function getProduct(id) {
+  return wxRequest({
+    url: `${domain}/products/${id}`,
+  });
+}
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
   return new Promise((resolve, reject) => {
@@ -236,9 +245,10 @@ module.exports = {
   types,
   wxLogin,
   formatTime,
-  lock,
   app,
   getStores,
   getStore,
   getProducts,
+  getProduct,
+  windowWidth
 }

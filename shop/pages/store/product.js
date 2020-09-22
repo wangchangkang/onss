@@ -1,13 +1,12 @@
-const appInstance = getApp()
-const { domain, prefix } = appInstance.globalData;
+import { prefix,getStore,getProducts,wxLogin } from '../../utils/util.js';
 Page({
   data: {
     prefix, cartsPid: [], products: [], number: 0, last: false
   },
   onLoad: function (options) {
     if (options.id) {
-      appInstance.getStore(options.id).then((store) => {
-        appInstance.getProducts(options.id).then((products) => {
+      getStore(options.id).then((store) => {
+        getProducts(options.id).then((products) => {
           this.setData({ store, [`products[0]`]: products, });
         });
       });
@@ -28,7 +27,7 @@ Page({
   },
 
   onPullDownRefresh: function () {
-    appInstance.getProducts(this.data.store.id).then((products) => {
+    getProducts(this.data.store.id).then((products) => {
       this.setData({ number: 0, last: false, [`products[0]`]: products, });
       wx.stopPullDownRefresh();
     })
@@ -38,7 +37,7 @@ Page({
       console.log(this.data)
     } else {
       const number = this.data.number + 1;
-      appInstance.getProducts(this.data.store.id, number).then((nextProducts) => {
+      getProducts(this.data.store.id, number).then((nextProducts) => {
         if (nextProducts.length == 0) {
           this.setData({ last: true, });
         } else {
@@ -59,7 +58,7 @@ Page({
   },
 
   updateCart: function (x, y, count) {
-    appInstance.wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ user, authorization }) => {
       let product = this.data.products[x][y];
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
