@@ -1,19 +1,3 @@
-const scoreStatus = [
-  '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
-]
-const types = [
-  { id: 1, title: '服装', icon: "/images/clothing.png" },
-  { id: 2, title: '美食', icon: "/images/delicious.png" },
-  { id: 3, title: '果蔬', icon: "/images/fruits.png" },
-  { id: 4, title: '饮品', icon: "/images/drinks.png" },
-  { id: 5, title: '超市', icon: "/images/supermarkets.png" },
-  { id: 6, title: '书店', icon: "/images/bookstores.png" },
-]
-const appid = "wxe78290c2a5313de3";
-const domain = 'https://1977.work/shop';
-const prefix = 'https://1977.work/';
-const user = wx.getStorageSync('user');
-const authorization = wx.getStorageSync('authorization');
 const { windowWidth } = wx.getSystemInfoSync();
 App({
   globalData: {

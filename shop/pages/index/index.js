@@ -1,5 +1,7 @@
 const appInstance = getApp()
 const { windowWidth, domain, prefix, types } = appInstance.globalData;
+
+const { getStores } = require('../../utils/util.js')
 Page({
   data: {
     windowWidth, prefix, types,
@@ -9,7 +11,9 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
-        appInstance.getStores(res.longitude, res.latitude).then((stores) => {
+        getStores(res.longitude, res.latitude).then((stores) => {
+          console.log(stores);
+          
           this.setData({
             stores,
             latitude: res.latitude,
