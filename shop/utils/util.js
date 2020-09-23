@@ -48,7 +48,7 @@ function wxLogin() {
         success: ({ code }) => {
           wxRequest({
             url: `${domain}/wxLogin`,
-            method: 'PSOT',
+            method: 'POST',
             data: { code, appid }
           }).then(({ authorization, user, cartsPid, prefersPid }) => {
             wx.setStorageSync('authorization', authorization);
@@ -188,6 +188,8 @@ function getProduct(id) {
 }
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
+  console.log(url);
+  console.log(data);
   return new Promise((resolve, reject) => {
     wx.request({
       url,
@@ -196,7 +198,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       method,
       responseType,
       timeout,
-      header: { 'content-type': 'application/json', ...header },
+      header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
       success: ({ data }) => {
         const { code, msg, content } = data;
         console.log(data)
@@ -222,6 +224,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
         }
       },
       fail: (res) => {
+        console.log(res);
         wx.showModal({
           title: '警告',
           content: '加载失败',
@@ -250,5 +253,6 @@ module.exports = {
   getStore,
   getProducts,
   getProduct,
-  windowWidth
+  windowWidth,
+  wxRequest
 }

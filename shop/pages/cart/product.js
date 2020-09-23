@@ -1,5 +1,4 @@
-const appInstance = getApp()
-const { domain, prefix } = appInstance.globalData;
+import { prefix, wxLogin, domain, wxRequest, getStore } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -11,59 +10,30 @@ Page({
   },
   onLoad: function (options) {
     if (options.id) {
-      appInstance.getStore(options.id).then((store) => {
-        appInstance.wxLogin().then(({ user, authorization, cartsPid }) => {
-          wx.request({
+      getStore(options.id).then((store) => {
+        wxLogin().then(({ user, authorization, cartsPid }) => {
+          wxRequest({
             url: `${domain}/carts?uid=${user.id}&sid=${options.id}&pids=${Object.keys(cartsPid)}`,
             header: {
               authorization,
             },
-            method: "GET",
-            success: ({ data }) => {
-              const { code, msg, content } = data;
-              console.log(data)
-              switch (code) {
-                case 'success':
-                  let total = 0.00
-                  let checkeds = [];
-                  content.forEach((product, index) => {
-                    const cart = cartsPid[product.id];
-                    if (cart.checked) {
-                      total = total + product.average * cart.num;
-                      checkeds.push(product.id);
-                    }
-                  });
-                  this.setData({
-                    total: total.toFixed(2),
-                    checkeds,
-                    store,
-                    cartsPid,
-                    products: content
-                  })
-                  break;
-                case 'fail.login':
-                  wx.redirectTo({
-                    url: '/pages/login/login',
-                  })
-                  break;
-                default:
-                  wx.showModal({
-                    title: '警告',
-                    content: msg,
-                    confirmColor: '#e64340',
-                    showCancel: false,
-                  })
-                  break;
+          }).then((products) => {
+            let total = 0.00
+            let checkeds = [];
+            products.forEach((product, index) => {
+              const cart = cartsPid[product.id];
+              if (cart.checked) {
+                total = total + product.average * cart.num;
+                checkeds.push(product.id);
               }
-            },
-            fail: (res) => {
-              wx.showModal({
-                title: '警告',
-                content: '加载失败',
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-            },
+            });
+            this.setData({
+              total: total.toFixed(2),
+              checkeds,
+              store,
+              cartsPid,
+              products
+            })
           })
         })
       });
@@ -84,62 +54,34 @@ Page({
 
   updateCart: function (index, count) {
     let product = this.data.products[index]
-    appInstance.wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ user, authorization }) => {
       let { store, cartsPid } = this.data;
-      wx.request({
+      wxRequest({
         url: `${domain}/carts?uid=${user.id}`,
         method: 'POST',
         header: {
           authorization,
         },
         data: { id: cartsPid[product.id].id, sid: store.id, pid: product.id, num: cartsPid[product.id].num + count },
-        success: ({ data }) => {
-          const { code, msg, content } = data;
-          console.log(data)
-          switch (code) {
-            case 'success':
-              let total = parseFloat(this.data.total);
-              let checkeds = this.data.checkeds;
-              content.checked = cartsPid[product.id].checked
-              if (cartsPid[product.id].checked) {
-                total = count * product.average + total;
-                if (content.num == 0) {
-                  content.checked = false;
-                  checkeds = checkeds.splice(checkeds.findIndex(item => item === product.id), 1);
-                }
-              }
-              cartsPid = { ...this.data.cartsPid, [product.id]: content };
-              const key = `cartsPid.${product.id}`
-              wx.setStorageSync('cartsPid', cartsPid);
-              this.setData({
-                [key]: content,
-                total: total.toFixed(2),
-                checkeds
-              });
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login',
-              })
-              break;
-            default:
-              wx.showModal({
-                title: '警告',
-                content: msg,
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-              break;
+      }).then((cart) => {
+        let { total, checkeds } = this.data;
+        total = parseFloat(this.data.total);
+        cart.checked = cartsPid[product.id].checked;
+        if (cartsPid[product.id].checked) {
+          total = count * product.average + total;
+          if (cart.num == 0) {
+            cart.checked = false;
+            checkeds = checkeds.splice(checkeds.findIndex(item => item === product.id), 1);
           }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
+        }
+        cartsPid = { ...cartsPid, [product.id]: cart };
+        const key = `cartsPid.${product.id}`;
+        wx.setStorageSync('cartsPid', cartsPid);
+        this.setData({
+          [key]: cart,
+          total: total.toFixed(2),
+          checkeds
+        });
       })
     })
   },
