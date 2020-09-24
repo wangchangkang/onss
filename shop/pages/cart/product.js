@@ -5,7 +5,6 @@ Page({
     store: {},
     cartsPid: {},
     products: [],
-    checkeds: [],
     total: '0.00'
   },
   onLoad: function (options) {
@@ -19,17 +18,14 @@ Page({
             },
           }).then((products) => {
             let total = 0.00
-            let checkeds = [];
             products.forEach((product, index) => {
               const cart = cartsPid[product.id];
               if (cart.checked) {
                 total = total + product.average * cart.num;
-                checkeds.push(product.id);
               }
             });
             this.setData({
               total: total.toFixed(2),
-              checkeds,
               store,
               cartsPid,
               products
@@ -53,94 +49,85 @@ Page({
   },
 
   updateCart: function (index, count) {
-    let product = this.data.products[index]
-    wxLogin().then(({ user, authorization }) => {
-      let { store, cartsPid } = this.data;
-      wxRequest({
-        url: `${domain}/carts?uid=${user.id}`,
-        method: 'POST',
-        header: {
-          authorization,
-        },
-        data: { id: cartsPid[product.id].id, sid: store.id, pid: product.id, num: cartsPid[product.id].num + count },
-      }).then((cart) => {
-        let { total, checkeds } = this.data;
-        total = parseFloat(this.data.total);
-        cart.checked = cartsPid[product.id].checked;
-        if (cartsPid[product.id].checked) {
-          total = count * product.average + total;
-          if (cart.num == 0) {
-            cart.checked = false;
-            checkeds = checkeds.splice(checkeds.findIndex(item => item === product.id), 1);
-          }
+    console.log(index);
+    console.log(count);
+
+    let total = 0.00;
+    wxLogin().then(() => {
+      let { cartsPid, products } = this.data;
+      console.log(cartsPid);
+      console.log(products);
+      products.forEach((product, k) => {
+        console.log(product);
+        console.log(k);
+        let cart = cartsPid[product.id];
+        if (index == k) {
+          cart.num = cart.num + count;
+          console.log(cart);
         }
-        cartsPid = { ...cartsPid, [product.id]: cart };
+        if (cart.checked) {
+          total = cart.num * product.average + total;
+          console.log(total);
+        }
         const key = `cartsPid.${product.id}`;
-        wx.setStorageSync('cartsPid', cartsPid);
         this.setData({
-          [key]: cart,
-          total: total.toFixed(2),
-          checkeds
+          [key]: cart
         });
-      })
-    })
+      });
+      this.setData({
+        total: total.toFixed(2)
+      });
+      wx.setStorageSync('cartsPid', this.data.cartsPid);
+    });
   },
 
+  /** 购物车复选框 onChange
+   * @param {Object} e 
+   */
   cartChange: function (e) {
-    let checkeds = e.detail.value;
-    const cartsPid = this.data.cartsPid;
+    const checkeds = e.detail.value;
+    console.log(checkeds);
+    const { cartsPid, products } = this.data;
     let total = 0.00;
-    this.data.products.forEach((product, index) => {
+    products.forEach((product) => {
+      const isChecked = checkeds.includes(product.id);
       const checked = `cartsPid.${product.id}.checked`;
-      if (checkeds.includes(product.id)) {
-        const num = cartsPid[product.id].num;
+      const num = cartsPid[product.id].num;
+      this.setData({
+        [checked]: isChecked
+      });
+      if (isChecked) {
         total = total + product.average * num;
-        if (num == 0) {
-          checkeds = checkeds.splice(checkeds.findIndex(item => item === product.id), 1);
-          this.setData({
-            [checked]: false
-          });
-          wx.showModal({
-            title: '警告',
-            content: `请增加[${product.name}]数量`,
-            confirmColor: '#e64340',
-            showCancel: false,
-          });
-        } else {
-          this.setData({
-            [checked]: true
-          });
-        }
-      } else {
-        this.setData({
-          [checked]: false
-        })
       }
     });
     this.setData({
-      checkeds,
       total: total.toFixed(2)
-    })
+    });
   },
 
   checkAll: function (e) {
     const checkAll = e.detail.value;
     let total = 0.00;
+    let { cartsPid, products } = this.data;
     if (checkAll) {
-      let cartsPid = this.data.cartsPid;
-      this.data.products.forEach((product, index) => {
-        let key = `products[${index}].checked`;
+      products.forEach((product) => {
+        const checked = `cartsPid.${product.id}.checked`;
         this.setData({
-          [key]: true
+          [checked]: true
         });
         const num = cartsPid[product.id].num;
         total = total + product.average * num;
       });
-      total = total.toFixed(2);
+    } else {
+      products.forEach((product) => {
+        const checked = `cartsPid.${product.id}.checked`;
+        this.setData({
+          [checked]: false
+        });
+      });
     }
     this.setData({
-      total
+      total: total.toFixed(2)
     });
-
   }
 })
