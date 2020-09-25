@@ -5,7 +5,8 @@ Page({
     store: {},
     cartsPid: {},
     products: [],
-    total: '0.00'
+    total: '0.00',
+    checkAll: false
   },
   onLoad: function (options) {
     if (options.id) {
@@ -17,14 +18,17 @@ Page({
               authorization,
             },
           }).then((products) => {
-            let total = 0.00
+            let checkeds = [];
+            let total = 0.00;
             products.forEach((product, index) => {
               const cart = cartsPid[product.id];
               if (cart.checked) {
+                checkeds.push(product.id);
                 total = total + product.average * cart.num;
               }
             });
             this.setData({
+              checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
               total: total.toFixed(2),
               store,
               cartsPid,
@@ -52,6 +56,7 @@ Page({
     console.log(index);
     console.log(count);
 
+    let checkeds = [];
     let total = 0.00;
     wxLogin().then(() => {
       let { cartsPid, products } = this.data;
@@ -67,6 +72,7 @@ Page({
         }
         if (cart.checked) {
           total = cart.num * product.average + total;
+          checkeds.push(product.id);
           console.log(total);
         }
         const key = `cartsPid.${product.id}`;
@@ -75,6 +81,7 @@ Page({
         });
       });
       this.setData({
+        checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
         total: total.toFixed(2)
       });
       wx.setStorageSync('cartsPid', this.data.cartsPid);
@@ -86,7 +93,6 @@ Page({
    */
   cartChange: function (e) {
     const checkeds = e.detail.value;
-    console.log(checkeds);
     const { cartsPid, products } = this.data;
     let total = 0.00;
     products.forEach((product) => {
@@ -100,7 +106,10 @@ Page({
         total = total + product.average * num;
       }
     });
+
+
     this.setData({
+      checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
       total: total.toFixed(2)
     });
   },
@@ -113,7 +122,7 @@ Page({
       products.forEach((product) => {
         const checked = `cartsPid.${product.id}.checked`;
         this.setData({
-          [checked]: true
+          [checked]: checkAll
         });
         const num = cartsPid[product.id].num;
         total = total + product.average * num;
@@ -122,11 +131,12 @@ Page({
       products.forEach((product) => {
         const checked = `cartsPid.${product.id}.checked`;
         this.setData({
-          [checked]: false
+          [checked]: checkAll
         });
       });
     }
     this.setData({
+      checkAll,
       total: total.toFixed(2)
     });
   }

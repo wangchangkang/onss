@@ -33,7 +33,7 @@
 <view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom">
 	<view class='weui-flex__item weui-cell'>
 		<view class="weui-cell__hd">
-			<switch class="checkbox" type='checkbox' bindchange="checkAll" checked="{{products.length}}" />全选
+			<switch class="checkbox" type='checkbox' bindchange="checkAll" checked="{{checkAll}}" />全选
 		</view>
 		<view class="weui-cell__bd"></view>
 		<view class='weui-cell__ft'>预售：<text style='color:red'>{{total}}</text>元</view>
