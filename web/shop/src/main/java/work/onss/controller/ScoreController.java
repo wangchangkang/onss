@@ -126,7 +126,7 @@ public class ScoreController {
           小程序取值如下：JSAPI
           trade_type=JSAPI，此参数必传，用户在子商户appid下的唯一标识。openid和sub_openid可以选传其中之一，如果选择传sub_openid,则必须传sub_appid
          */
-        Map<String, String> sign = UnifiedOrderModel.builder()
+        UnifiedOrderModel unifiedOrderModel = UnifiedOrderModel.builder()
                 .appid(weChatConfig.getAppId())
                 .mch_id(weChatConfig.getMchId())
                 .sub_appid(score.getSubAppId())
@@ -139,16 +139,17 @@ public class ScoreController {
                 .notify_url(weChatConfig.getNotifyUrl())
                 .trade_type("JSAPI")
                 .sub_openid(score.getOpenid())
-                .build()
-                .createSign(weChatConfig.getApiKey(), SignType.HMACSHA256);
+                .build();
+        Map<String, String> params = unifiedOrderModel.createSign(weChatConfig.getApiKey(), SignType.HMACSHA256);
 
-        String xmlResult = WxPayApi.pushOrder(true, sign);
+        String xmlResult = WxPayApi.pushOrder(true, params);
         Map<String, String> resultMap = WxPayKit.xmlToMap(xmlResult);
 
         if (!WxPayKit.codeIsOk(resultMap.get("return_code")) && !WxPayKit.codeIsOk(resultMap.get("result_code"))) {
-            log.error(sign);
+            log.error(unifiedOrderModel);
+            log.error(params);
             log.error(resultMap);
-            return Work.fail(resultMap.get("return_msg"));
+//            return Work.fail(resultMap.get("return_msg"));
         }
 
         /*
@@ -163,12 +164,14 @@ public class ScoreController {
         */
 
         // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
-        String prepayId = resultMap.get("prepay_id");
+        String prepayId = resultMap.getOrDefault("prepay_id",params.get("sign"));
+        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(),prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
+
         // 二次签名，构建公众号唤起支付的参数,这里的签名方式要与上面统一下单请求签名方式保持一致
-        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(store.getSubMchId(), prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
-
+        packageParams.put("id",score.getId());
+        packageParams.put("prepayId",prepayId);
         return Work.success("创建订单成功", packageParams);
     }
 }
