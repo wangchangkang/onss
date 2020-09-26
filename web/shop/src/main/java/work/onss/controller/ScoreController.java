@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WeChatConfig;
-import work.onss.domain.Cart;
 import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
@@ -81,7 +80,7 @@ public class ScoreController {
             return Work.fail("该店铺不存,请联系客服!");
         }
         if (!store.getStatus()) {
-            return Work.fail("正在准备中。。。,请稍后重试!");
+            return Work.fail("正在准备中,请稍后重试!");
         }
         LocalTime now = LocalTime.now();
         if (now.isAfter(store.getCloseTime()) & now.isBefore(store.getOpenTime())) {
@@ -146,15 +145,12 @@ public class ScoreController {
         String xmlResult = WxPayApi.pushOrder(true, sign);
         Map<String, String> resultMap = WxPayKit.xmlToMap(xmlResult);
 
-        String returnCode = resultMap.get("return_code");
-        String returnMsg = resultMap.get("return_msg");
-        if (!WxPayKit.codeIsOk(returnCode)) {
-            return Work.fail(returnMsg);
+        if (!WxPayKit.codeIsOk(resultMap.get("return_code")) && !WxPayKit.codeIsOk(resultMap.get("result_code"))) {
+            log.error(sign);
+            log.error(resultMap);
+            return Work.fail(resultMap.get("return_msg"));
         }
-        String resultCode = resultMap.get("result_code");
-        if (!WxPayKit.codeIsOk(resultCode)) {
-            return Work.fail(returnMsg);
-        }
+
         /*
             timeStamp	String	是	时间戳从1970年1月1日00:00:00至今的秒数,即当前的时间
             nonceStr	String	是	随机字符串，长度为32个字符以下。
