@@ -26,9 +26,12 @@ import work.onss.vo.Work;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -78,16 +81,20 @@ public class ScoreController {
             return Work.fail("该店铺不存,请联系客服!");
         }
         if (!store.getStatus()) {
+            return Work.fail("正在准备中。。。,请稍后重试!");
+        }
+        LocalTime now = LocalTime.now();
+        if (now.isAfter(store.getCloseTime()) & now.isBefore(store.getOpenTime())) {
             String message = MessageFormat.format("营业时间:{0}-{1}", store.getOpenTime(), store.getCloseTime());
             return Work.fail(message);
         }
-        Map<String, Cart> carts = score.getCarts();
-        Set<String> pids = carts.keySet();
+        Map<String, Product> productMap = score.getProducts().stream().collect(Collectors.toMap(Product::getId, Function.identity()));
+        Set<String> pids = productMap.keySet();
         Query query = Query.query(Criteria.where("id").in(pids).and("sid").is(score.getSid()));
         List<Product> products = mongoTemplate.find(query, Product.class);
         BigDecimal total = BigDecimal.ZERO;
         for (Product product : products) {
-            Cart cart = carts.get(product.getId());
+            Product cart = productMap.get(product.getId());
             if (cart.getNum() > product.getStock()) {
                 String message = MessageFormat.format("[{0}]库存不足!", product.getName());
                 return Work.fail(message);

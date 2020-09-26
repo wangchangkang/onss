@@ -57,10 +57,6 @@ public class Score implements Serializable {
     @Indexed(unique = true)
     private String transaction_id;
 
-    @Valid
-    @Transient
-    private Map<String, Cart> carts;
-
     public Score(Address address, List<Product> products, BigDecimal total) {
         this.address = address;
         this.products = products;

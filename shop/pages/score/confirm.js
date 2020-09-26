@@ -1,12 +1,11 @@
-const appInstance = getApp()
-const { domain, prefix } = appInstance.globalData;
+import { wxLogin, appid, wxRequest, domain } from '../../utils/util.js';
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    cartsPid: [], checkeds: [], prefix: '', products: [], store: {}, total: '0.00', address: {}
+    address: {}
   },
 
   /**
@@ -20,58 +19,23 @@ Page({
     this.setData({
       ...data
     })
-
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
   saveScore: function (e) {
-    appInstance.wxLogin().then(({ user, authorization }) => {
-      const { address, cartsPid, checkeds, store } = this.data;
-      const carts = {}
-      Object.keys(cartsPid).filter((key) => checkeds.includes(key)).forEach((key) => {
-        carts[key] = cartsPid[key]
-      });
-      wx.request({
+    wxLogin().then(({ user, authorization }) => {
+      let { address, cartsPid, store, products } = this.data;
+      products = products.filter((product) => { return cartsPid[product.id].checked });
+      wxRequest({
         url: `${domain}/scores?uid=${user.id}`,
-        header: {
-          authorization,
-        },
+        header: { authorization, },
         method: "POST",
-        data: { sid: store.id, address, carts, subAppId: appInstance.appid, openid: user.openid },
-        success: ({ data }) => {
-          const { code, msg, content } = data;
-          console.log(data)
-          switch (code) {
-            case 'success':
-              console.log(content);
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login/login',
-              })
-              break;
-            default:
-              wx.showModal({
-                title: '警告',
-                content: msg,
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-              break;
-          }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
+        data: { sid: store.id, address, products, subAppId: appid, openid: user.openid },
+      }).then((score) => {
+        console.log(score);
       })
     })
-
   },
 })
