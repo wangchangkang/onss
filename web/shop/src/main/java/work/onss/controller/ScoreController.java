@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Product;
@@ -25,6 +26,7 @@ import work.onss.vo.Work;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -74,8 +76,12 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<Map<String, String>> score(@RequestParam(name = "uid") String uid, @RequestBody Score score, HttpServletRequest request) {
+    public Work<Map<String, String>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score, HttpServletRequest request) {
+        if (score.getAddress() == null) {
+            return Work.fail("请选择收货地址");
+        }
         Store store = mongoTemplate.findById(score.getSid(), Store.class);
+
         if (store == null) {
             return Work.fail("该店铺不存,请联系客服!");
         }
@@ -164,14 +170,19 @@ public class ScoreController {
         */
 
         // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
-        String prepayId = resultMap.getOrDefault("prepay_id",params.get("sign"));
-        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(),prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
+        String prepayId = resultMap.getOrDefault("prepay_id", params.get("sign"));
+        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
 
         // 二次签名，构建公众号唤起支付的参数,这里的签名方式要与上面统一下单请求签名方式保持一致
+        LocalDateTime dateTime = LocalDateTime.now();
+        score.setInsertTime(dateTime);
+        score.setPayTime(dateTime);
+        score.setUpdateTime(dateTime);
+        score.setOutTradeNo(unifiedOrderModel.getOut_trade_no());
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
-        packageParams.put("id",score.getId());
-        packageParams.put("prepayId",prepayId);
+        packageParams.put("id", score.getId());
+        packageParams.put("prepayId", prepayId);
         return Work.success("创建订单成功", packageParams);
     }
 }

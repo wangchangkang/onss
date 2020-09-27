@@ -106,12 +106,6 @@ public class CartController {
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         Query productQuery = Query.query(Criteria.where("id").in(cartsPid.keySet()).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
-        products.forEach(product -> {
-            Cart cart = cartsPid.get(product.getId());
-            product.setChecked(cart.getChecked());
-            product.setNum(cart.getNum());
-            product.setTotal(product.getAverage().multiply(BigDecimal.valueOf(cart.getNum())));
-        });
         return Work.success("加载成功", products);
     }
 }

@@ -61,7 +61,4 @@ public class Product implements Serializable {
 
     private BigDecimal total = BigDecimal.ZERO;
     private Integer num = 0;
-    private Boolean checked = false;
-    private Boolean isLike = false;
-
 }

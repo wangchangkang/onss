@@ -40,11 +40,10 @@ public class Score implements Serializable {
     private Integer status = 0;
     private BigDecimal total;
     private List<Product> products;
-    @Valid
     private Address address;
 
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private LocalDateTime insertTime = LocalDateTime.now();
+    private LocalDateTime insertTime;
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
     private LocalDateTime updateTime;
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
@@ -52,10 +51,12 @@ public class Score implements Serializable {
 
     private String name;
 
+    @Indexed
+    private String outTradeNo;
     @Indexed(unique = true)
     private String prepayId;
     @Indexed(unique = true)
-    private String transaction_id;
+    private String transactionId;
 
     public Score(Address address, List<Product> products, BigDecimal total) {
         this.address = address;

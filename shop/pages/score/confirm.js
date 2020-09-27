@@ -1,16 +1,9 @@
 import { wxLogin, appid, wxRequest, domain } from '../../utils/util.js';
 Page({
 
-  /**
-   * 页面的初始数据
-   */
   data: {
-    address: {}
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad: function (options) {
     let pages = getCurrentPages();//当前页面栈
     let prevPage = pages[pages.length - 2];//上一页面
@@ -21,9 +14,6 @@ Page({
     })
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
   saveScore: function (e) {
     wxLogin().then(({ user, authorization }) => {
       let { address, cartsPid, store, products } = this.data;
@@ -34,7 +24,21 @@ Page({
         method: "POST",
         data: { sid: store.id, address, products, subAppId: appid, openid: user.openid },
       }).then((score) => {
-        console.log(score);
+        wx.requestPayment(
+          {
+            ...score,
+            'success': (res) => {
+              console.log(res);
+            },
+            'fail': (res) => {
+              console.log(res);
+            },
+            'complete': (res) => {
+              wx.reLaunch({
+                url: `/pages/score/detail?id=${score.id}`,
+              })
+            }
+          })
       })
     })
   },
