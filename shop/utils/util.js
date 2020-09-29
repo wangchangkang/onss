@@ -1,6 +1,6 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
-const domain = 'http://1977.work/shop';
+const domain = 'https://1977.work/shop';
 const appid = "wxe78290c2a5313de3";
 const prefix = 'https://1977.work/';
 const scoreStatus = [
@@ -247,6 +247,7 @@ module.exports = {
   scoreStatus,
   types,
   wxLogin,
+  setPhone,
   formatTime,
   app,
   getStores,
