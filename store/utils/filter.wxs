@@ -1,0 +1,6 @@
+toFixed = function(distance,number) {
+  return distance.toFixed(number);
+}
+module.exports = {
+  toFixed: toFixed
+}

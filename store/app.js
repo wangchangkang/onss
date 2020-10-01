@@ -193,7 +193,6 @@ App({
   },
 
   onLaunch: function (e) {
-    this.wxLogin();
   },
 
   wxLogin: function () {
