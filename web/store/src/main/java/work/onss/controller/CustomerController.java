@@ -24,6 +24,7 @@ import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -101,7 +102,8 @@ public class CustomerController {
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
-        return Work.success("上传成功", path.toString());
+        int nameCount = path.getNameCount();
+        return Work.success("上传成功", path.subpath(nameCount - 3, nameCount).toString());
     }
 }
 

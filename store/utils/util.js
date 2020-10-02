@@ -2,7 +2,7 @@ const app = getApp();
 const { windowWidth } = app.globalData;
 const domain = 'http://127.0.0.1:8002/store';
 const appid = "wx095ba1a3f9396476";
-const prefix = 'http://127.0.0.1';
+const prefix = 'http://127.0.0.1/';
 const scoreStatus = [
   '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
 ];

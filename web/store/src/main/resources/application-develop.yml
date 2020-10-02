@@ -10,4 +10,4 @@ logging:
   file:
     path: var/log
 system:
-  file-path: picture
+  file-path: picture/
