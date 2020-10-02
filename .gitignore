@@ -45,3 +45,6 @@ picture/
 tessdata-4.0.0/
 
 */project.config.json
+.DS_Store
+*.gz
+*.log
