@@ -82,7 +82,7 @@ public class CustomerController {
      * @return 图片地址
      */
     @PostMapping("customers/{id}/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "id") String id) throws Exception {
+    public Work<String> upload(@PathVariable(name = "id") String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             return Work.fail("上传失败!");
@@ -92,7 +92,7 @@ public class CustomerController {
             return Work.fail("文件格式错误!");
         }
         String md5 = SecureUtil.md5(file.getInputStream());
-        Path path = Paths.get(systemConfig.getFilePath(), id, md5, filename.substring(index));
+        Path path = Paths.get(systemConfig.getFilePath(), id, md5.concat(filename.substring(index)));
         Path parent = path.getParent();
         if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
             throw new ServiceException("fail", "上传失败!");

@@ -1,4 +1,4 @@
-import { prefix, wxLogin, domain, wxRequest, banks, qualification } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification,chooseImages,chooseImage } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -49,7 +49,7 @@ Page({
   /** 申请特约商户 */
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
-    wxLogin().then(({ customer, authorization }) => {
+    checkCustomer().then(({ customer, authorization }) => {
       const data = { ...this.data, ...e.detail.value };
       wxRequest({
         url: `${domain}/merchants?cid=${customer.id}`,
@@ -96,7 +96,7 @@ Page({
   },
   /** 选择多张图片 */
   chooseImages: function (e) {
-    wxLogin().then(({ customer, authorization }) => {
+    checkCustomer().then(({ customer, authorization }) => {
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
@@ -111,7 +111,7 @@ Page({
   /** 选择一张图片 */
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    wxLogin().then(({ customer, authorization }) => {
+    checkCustomer().then(({ customer, authorization }) => {
       chooseImage(customer.id, authorization).then((data) => {
         this.setData({
           [`${id}`]: data

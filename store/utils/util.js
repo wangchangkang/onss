@@ -115,7 +115,7 @@ const formatNumber = n => {
   return n[1] ? n : '0' + n
 };
 
-function wxLogin() {
+function checkStore() {
   return new Promise((resolve, reject) => {
     const authorization = wx.getStorageSync('authorization');
     const customer = wx.getStorageSync('customer');
@@ -164,7 +164,43 @@ function wxLogin() {
     }
   })
 };
-
+function checkCustomer() {
+  return new Promise((resolve, reject) => {
+    const authorization = wx.getStorageSync('authorization');
+    const customer = wx.getStorageSync('customer');
+    if (authorization && customer) {
+      if (customer.phone) {
+        resolve({ authorization, customer });
+      } else {
+        wx.reLaunch({
+          url: '/pages/login/login'
+        });
+      }
+    } else {
+      wx.login({
+        success: ({ code }) => {
+          wxRequest({
+            url: `${domain}/wxLogin`,
+            method: 'POST',
+            data: { code, appid }
+          }).then(({ authorization, customer }) => {
+            wx.setStorageSync('authorization', authorization);
+            wx.setStorageSync('customer', customer);
+            resolve({ authorization, customer });
+          });
+        },
+        fail: (res) => {
+          wx.showModal({
+            title: '警告',
+            content: '获取微信code失败',
+            confirmColor: '#e64340',
+            showCancel: false,
+          })
+        },
+      })
+    }
+  })
+};
 /** 同步微信手机号
  * @param {string} id 用户ID
  * @param {string} authorization 授权码
@@ -430,7 +466,8 @@ module.exports = {
   banks,
   scoreStatus,
   types,
-  wxLogin,
+  checkStore,
+  checkCustomer,
   setPhone,
   formatTime,
   app,

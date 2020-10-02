@@ -1,4 +1,4 @@
-import { prefix, wxLogin, domain, wxRequest } from '../../utils/util.js';
+import { prefix, checkStore, domain, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -10,7 +10,7 @@ Page({
    * @param {*} e 
    */
   bindStore: function (e) {
-    wxLogin().then(({ customer, authorization }) => {
+    checkStore().then(({ customer, authorization }) => {
       wxRequest({
         url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${customer.id}`,
         method: 'POST',
