@@ -30,9 +30,10 @@ Page({
    * @param {*} options 
    */
   onLoad: function (options) {
-    wxLogin().then(({ customer, authorization }) => {
+    const authorization = wx.getStorageSync('authorization');
+    if (authorization) {
       wxRequest({
-        url: `${domain}/stores?cid=${customer.id}`,
+        url: `${domain}/stores?cid=${options.cid}`,
         header: { authorization },
       }).then((stores) => {
         if (stores.length > 0) {
@@ -45,6 +46,8 @@ Page({
           })
         }
       })
-    })
+    } else {
+      wxLogin();
+    }
   },
 })

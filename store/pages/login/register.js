@@ -1,8 +1,7 @@
-let appInstance = getApp();
-const { domain, banks, qualification } = appInstance.globalData;
-
+import { prefix, wxLogin, domain, wxRequest, banks, qualification } from '../../utils/util.js';
 Page({
   data: {
+    prefix,
     banks,
     qualification,
 
@@ -12,23 +11,18 @@ Page({
     contactEmail: 'for_ccc@qq.com',
 
     subjectType: 'SUBJECT_TYPE_ENTERPRISE',
-    licenseCopy: 'http://192.168.103.184/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png',
     licenseNumber: '91371523MA3PU9M466',
     merchantName: '茌平壹玖柒柒软件有限公司',
     legalPerson: '王先生',
 
-    idCardCopy: 'http://192.168.103.184/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idCardNumber: '371523199201251250',
     idCardName: '王先生',
-    idCardNational: 'http://192.168.103.184/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     cardPeriodBegin: '2013-05-02',
     cardPeriodEnd: '2023-05-02',
     owner: true,
 
-    idCardA: 'http://192.168.103.184/picture/91371523MA3PU9M466/722b3b45cefd4d13af652132d069b0f1.jpg',
     idNumber: '371523199201251250',
     beneficiary: '王先生',
-    idCardB: 'http://192.168.103.184/picture/91371523MA3PU9M466/689d3b7e926f8e61a2ba410644d41d7a.jpg',
     idPeriodBegin: '2013-05-02',
     idPeriodEnd: '2023-05-02',
 
@@ -37,7 +31,6 @@ Page({
 
     qualificationType: '餐饮',
     qualifications: [
-      'http://192.168.103.184/picture/91371523MA3PU9M466/163e41889a1358f2d56535dd3ecc96d0.png'
     ],
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_CORPORATE',
@@ -55,57 +48,19 @@ Page({
 
   /** 申请特约商户 */
   saveMerchant: function (e) {
-    wx.showLoading({
-      title: '加载中。。。',
-    })
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    const data = { ...this.data, ...e.detail.value };
-    wx.request({
-      url: `${domain}/merchants?cid=${customer.id}`,
-      header: { authorization },
-      method: 'POST',
-      data: data,
-      success: ({ data }) => {
-        console.log(data)
-        const { code, msg } = data;
-        if (code === 'success') {
-          wx.hideLoading()
-          wx.showModal({
-            title: '温馨提示',
-            content: msg,
-            confirmColor: '#e64340',
-            showCancel: false,
-            success (res) {
-              if (res.confirm) {
-                wx.reLaunch({
-                  url: '/pages/login/stores'
-                })
-                console.log('用户点击确定')
-              } 
-            }
-          })
-        } else if (code === '1977.session.expire') {
-          appInstance.wxLogin();
-        } else {
-          wx.hideLoading()
-          wx.showModal({
-            title: '警告',
-            content: msg,
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        }
-      },
-      fail: (res) => {
-        wx.hideLoading()
-        wx.showModal({
-          title: '警告',
-          content: '登陆失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      }
+    wx.showLoading({ title: '加载中。。。' });
+    wxLogin().then(({ customer, authorization }) => {
+      const data = { ...this.data, ...e.detail.value };
+      wxRequest({
+        url: `${domain}/merchants?cid=${customer.id}`,
+        header: { authorization },
+        method: 'POST',
+        data: data,
+      }).then(() => {
+        wx.reLaunch({
+          url: `/pages/login/stores?cid=${customer.id}`
+        });
+      })
     })
   },
   /** 输入框 */
@@ -193,14 +148,14 @@ Page({
     })
   },
 
-   /** 所属行业 */
+  /** 所属行业 */
   qualificationTypeChange: function (e) {
     this.setData({
       qualificationType: qualification[this.data.subjectType][e.detail.value]
     })
   },
 
-   /** 开户银行 */
+  /** 开户银行 */
   accountBankChange: function (e) {
     this.setData({
       accountBank: banks[e.detail.value]

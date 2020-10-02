@@ -51,7 +51,7 @@
 		</view>
 		<image wx:if="{{licenseCopy == null}}" src="/images/五证合一.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="licenseCopy"></image>
 		<icon wx:if="{{licenseCopy!=null}}" type="cancel" bindtap="deletePicture" id="licenseCopy"></icon>
-		<image wx:if="{{licenseCopy!=null}}" src="{{licenseCopy}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{licenseCopy!=null}}" src="{{prefix}}{{licenseCopy}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">社会信用代码</view>
@@ -98,7 +98,7 @@
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<image wx:if="{{idCardCopy == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardCopy"></image>
 		<icon wx:if="{{idCardCopy!=null}}" type="cancel" bindtap="deletePicture" id="idCardCopy"></icon>
-		<image wx:if="{{idCardCopy!=null}}" src="{{idCardCopy}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardCopy!=null}}" src="{{prefix}}{{idCardCopy}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">法人证件号</view>
@@ -117,7 +117,7 @@
 		</view>
 		<image wx:if="{{idCardNational == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardNational"></image>
 		<icon wx:if="{{idCardNational!=null}}" type="cancel" bindtap="deletePicture" id="idCardNational"></icon>
-		<image wx:if="{{idCardNational!=null}}" src="{{idCardNational}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardNational!=null}}" src="{{prefix}}{{idCardNational}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">开始时间</view>
@@ -151,7 +151,7 @@
 	<view wx:if="{{!owner}}" class="weui-cells weui-cells_after-title" style="font-size:27rpx">
 		<image wx:if="{{idCardA == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardA"></image>
 		<icon wx:if="{{idCardA!=null}}" type="cancel" bindtap="deletePicture" id="idCardA"></icon>
-		<image wx:if="{{idCardA!=null}}" src="{{idCardA}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardA!=null}}" src="{{prefix}}{{idCardA}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">法人证件号</view>
@@ -170,7 +170,7 @@
 		</view>
 		<image wx:if="{{idCardB == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardB"></image>
 		<icon wx:if="{{idCardB!=null}}" type="cancel" bindtap="deletePicture" id="idCardB"></icon>
-		<image wx:if="{{idCardB!=null}}" src="{{idCardB}}" mode="aspectFit" style="width:100%"></image>
+		<image wx:if="{{idCardB!=null}}" src="{{prefix}}{{idCardB}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">开始时间</view>
@@ -249,7 +249,7 @@
 							<block wx:for="{{qualifications}}" wx:key="*this">
 								<view class="weui-uploader__file" id="{{item}}">
 									<icon type="cancel" bindtap="deletePictures" id="qualifications"></icon>
-									<image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+									<image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
 								</view>
 							</block>
 						</view>
