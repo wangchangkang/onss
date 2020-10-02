@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification,chooseImages,chooseImage } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage } from '../../utils/util.js';
 Page({
   data: {
     prefix,

@@ -1,4 +1,4 @@
-import { prefix, checkStore, domain, wxRequest } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -10,7 +10,7 @@ Page({
    * @param {*} e 
    */
   bindStore: function (e) {
-    checkStore().then(({ customer, authorization }) => {
+    checkCustomer().then(({ customer, authorization }) => {
       wxRequest({
         url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${customer.id}`,
         method: 'POST',
@@ -30,10 +30,9 @@ Page({
    * @param {*} options 
    */
   onLoad: function (options) {
-    const authorization = wx.getStorageSync('authorization');
-    if (authorization) {
+    checkCustomer().then(({ authorization, customer }) => {
       wxRequest({
-        url: `${domain}/stores?cid=${options.cid}`,
+        url: `${domain}/stores?cid=${customer.id}`,
         header: { authorization },
       }).then((stores) => {
         if (stores.length > 0) {
@@ -46,8 +45,6 @@ Page({
           })
         }
       })
-    } else {
-      wxLogin();
-    }
+    })
   },
 })

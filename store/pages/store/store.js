@@ -1,59 +1,20 @@
-let appInstance = getApp();
-const { windowWidth, domain, prefix, types } = appInstance.globalData;
+import { prefix, windowWidth, checkStore, domain, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     prefix, domain, windowWidth
   },
   updateStatus: function (e) {
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    const status = !this.data.status;
-    wx.request({
-      url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
-      method: "PUT",
-      header: {
-        status: status.toString(),
-        authorization,
-      },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.showToast({
-              title: msg,
-              icon: 'success',
-              duration: 2000,
-              success: (res) => {
-                this.setData({
-                  status: content
-                });
-              }
-            })
-            break;
-          case 'fail.login':
-            wx.redirectTo({
-              url: '/pages/login/login',
-            })
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
+    checkStore().then(({ authorization, customer }) => {
+      wxRequest({
+        url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
+        header: { authorization, status: (!this.data.status).toString() },
+        method: 'PUT'
+      }).then((status) => {
+        console.log(status);
+        this.setData({
+          status
+        });
+      })
     })
   },
 
@@ -61,9 +22,6 @@ Page({
     const x = e.currentTarget.dataset.x;
     const y = e.currentTarget.dataset.y;
     const name = e.currentTarget.dataset.name;
-    console.log(y)
-    console.log(x)
-
     wx.openLocation({
       latitude: parseFloat(y),
       longitude: parseFloat(x),
@@ -72,52 +30,15 @@ Page({
   },
 
   onShow: function (options) {
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    wx.request({
-      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-      header: {
-        authorization,
-      },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.showToast({
-              title: msg,
-              icon: 'success',
-              duration: 2000,
-              success: (res) => {
-                this.setData({
-                  ...content
-                })
-              }
-            })
-            break;
-          case 'fail.login':
-            wx.redirectTo({
-              url: '/pages/login/login',
-            })
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
+    checkStore().then(({ authorization, customer }) => {
+      wxRequest({
+        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+        header: { authorization, },
+      }).then((store) => {
+        this.setData({
+          ...store
         })
-      },
+      })
     })
   },
 })
