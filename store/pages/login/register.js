@@ -97,11 +97,11 @@ Page({
   /** 选择多张图片 */
   chooseImages: function (e) {
     checkCustomer().then(({ customer, authorization }) => {
+      const id = e.currentTarget.id;
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
       chooseImages(customer.id, authorization, count).then((data) => {
-        const id = e.currentTarget.id;
         this.setData({
           [`${id}[${length}]`]: data
         })

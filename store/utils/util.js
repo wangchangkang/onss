@@ -332,9 +332,7 @@ function chooseImages(id, authorization, count) {
         })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
-            header: {
-              authorization
-            },
+            header: {authorization},
             url: `${domain}/customers/${id}/uploadPicture`,
             filePath: filePath,
             name: 'file',
