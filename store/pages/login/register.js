@@ -96,24 +96,26 @@ Page({
   },
   /** 选择多张图片 */
   chooseImages: function (e) {
-    const id = e.currentTarget.id;
-    let count = e.currentTarget.dataset.count
-    const length = this.data[id].length;
-    count = count - length;
-    const number = this.data.license.number
-    appInstance.chooseImages({ count, number }).then((data) => {
-      this.setData({
-        [`${id}[${length}]`]: data
+    wxLogin().then(({ customer, authorization }) => {
+      let count = e.currentTarget.dataset.count
+      const length = this.data[id].length;
+      count = count - length;
+      chooseImages(customer.id, authorization, count).then((data) => {
+        const id = e.currentTarget.id;
+        this.setData({
+          [`${id}[${length}]`]: data
+        })
       })
     })
   },
   /** 选择一张图片 */
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    const number = this.data.license.number
-    appInstance.chooseImage({ number }).then((data) => {
-      this.setData({
-        [`${id}`]: data
+    wxLogin().then(({ customer, authorization }) => {
+      chooseImage(customer.id, authorization).then((data) => {
+        this.setData({
+          [`${id}`]: data
+        })
       })
     })
   },

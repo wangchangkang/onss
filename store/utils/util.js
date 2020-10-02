@@ -279,10 +279,11 @@ function getProduct(id) {
   });
 }
 /**多个文件上传
- * @param {string} url 上传地址
+ * @param {string} id 用户ID
+ * @param {string} authorization 密钥
  * @param {number} count 上传数量
  */
-function chooseImages(url, count) {
+function chooseImages(id, authorization, count) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count,
@@ -298,7 +299,7 @@ function chooseImages(url, count) {
             header: {
               authorization
             },
-            url: `${domain}/${url}`,
+            url: `${domain}/customers/${id}/uploadPicture`,
             filePath: filePath,
             name: 'file',
             success: res => {
@@ -324,9 +325,10 @@ function chooseImages(url, count) {
   })
 }
 /**单个文件上传
- * @param {string} url 上传地址
+ * @param {string} id 用户ID
+ * @param {string} authorization 密钥
  */
-function chooseImage(url) {
+function chooseImage(id, authorization) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count: 1,
@@ -341,7 +343,7 @@ function chooseImage(url) {
           header: {
             authorization
           },
-          url: `${domain}/${url}`,
+          url: `${domain}/customers/${id}/uploadPicture`,
           filePath: res.tempFilePaths[0],
           name: 'file',
           success: res => {

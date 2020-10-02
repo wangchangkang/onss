@@ -1,5 +1,6 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
 import com.google.gson.Gson;
@@ -11,18 +12,20 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
+import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +38,7 @@ public class CustomerController {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
+
     /**
      * @param wxRegister 注册信息
      * @return 密钥及用户信息
@@ -52,7 +56,7 @@ public class CustomerController {
 
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSession_key(), wxRegister.getIv());
-        if (encryptedData== null){
+        if (encryptedData == null) {
             return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
         }
         PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
@@ -69,6 +73,35 @@ public class CustomerController {
         result.put("authorization", authorization);
         result.put("customer", customer);
         return Work.success("授权成功", result);
+    }
+
+    /**
+     * 商品图片
+     *
+     * @param file 文件
+     * @return 图片地址
+     */
+    @PostMapping("customers/{id}/uploadPicture")
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "id") String id) throws Exception {
+        String filename = file.getOriginalFilename();
+        if (filename == null) {
+            return Work.fail("上传失败!");
+        }
+        int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            return Work.fail("文件格式错误!");
+        }
+        String md5 = SecureUtil.md5(file.getInputStream());
+        Path path = Paths.get(systemConfig.getFilePath(), id, md5, filename.substring(index));
+        Path parent = path.getParent();
+        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        // 判断文件是否存在
+        if (!Files.exists(path)) {
+            file.transferTo(path);
+        }
+        return Work.success("上传成功", path.toString());
     }
 }
 
