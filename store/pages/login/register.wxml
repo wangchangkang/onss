@@ -49,7 +49,7 @@
 				</radio-group>
 			</view>
 		</view>
-		<image wx:if="{{licenseCopy == null}}" src="/images/五证合一.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="licenseCopy"></image>
+		<image wx:if="{{licenseCopy == null}}" src="/images/license.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="licenseCopy"></image>
 		<icon wx:if="{{licenseCopy!=null}}" type="cancel" bindtap="deletePicture" id="licenseCopy"></icon>
 		<image wx:if="{{licenseCopy!=null}}" src="{{prefix}}{{licenseCopy}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
@@ -96,7 +96,7 @@
 	</view>
 	<view class="weui-cells__title">法人信息</view>
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
-		<image wx:if="{{idCardCopy == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardCopy"></image>
+		<image wx:if="{{idCardCopy == null}}" src="/images/idCardA.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardCopy"></image>
 		<icon wx:if="{{idCardCopy!=null}}" type="cancel" bindtap="deletePicture" id="idCardCopy"></icon>
 		<image wx:if="{{idCardCopy!=null}}" src="{{prefix}}{{idCardCopy}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
@@ -115,7 +115,7 @@
 				<input name="idCardName" value="{{idCardName}}" class="weui-input" placeholder="请输入法人姓名" maxlength="18" />
 			</view>
 		</view>
-		<image wx:if="{{idCardNational == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardNational"></image>
+		<image wx:if="{{idCardNational == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardNational"></image>
 		<icon wx:if="{{idCardNational!=null}}" type="cancel" bindtap="deletePicture" id="idCardNational"></icon>
 		<image wx:if="{{idCardNational!=null}}" src="{{prefix}}{{idCardNational}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
@@ -149,7 +149,7 @@
 	</view>
 	<view wx:if="{{!owner}}" class="weui-cells__title">最终受益人 </view>
 	<view wx:if="{{!owner}}" class="weui-cells weui-cells_after-title" style="font-size:27rpx">
-		<image wx:if="{{idCardA == null}}" src="/images/身份证正面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardA"></image>
+		<image wx:if="{{idCardA == null}}" src="/images/idCardA.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardA"></image>
 		<icon wx:if="{{idCardA!=null}}" type="cancel" bindtap="deletePicture" id="idCardA"></icon>
 		<image wx:if="{{idCardA!=null}}" src="{{prefix}}{{idCardA}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">
@@ -168,7 +168,7 @@
 				<input name="beneficiary" value="{{beneficiary}}" class="weui-input" placeholder="请输入姓名" maxlength="18" />
 			</view>
 		</view>
-		<image wx:if="{{idCardB == null}}" src="/images/身份证背面.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardB"></image>
+		<image wx:if="{{idCardB == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardB"></image>
 		<icon wx:if="{{idCardB!=null}}" type="cancel" bindtap="deletePicture" id="idCardB"></icon>
 		<image wx:if="{{idCardB!=null}}" src="{{prefix}}{{idCardB}}" mode="aspectFit" style="width:100%"></image>
 		<view class="weui-cell ">

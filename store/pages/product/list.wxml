@@ -1,27 +1,50 @@
 <view class="weui-cells__title">
-	商品列表 <navigator url="/pages/product/create" class="fr"><button size='mini' style="font-size:28rpx" bindtap='createProduct'>+</button></navigator>
+	<view class="weui-flex">
+		<icon class="weui-flex__item" type="success">
+			<button size='mini' style="font-size:28rpx" bindtap='createProduct'>上架</button>
+		</icon>
+		<icon class="weui-flex__item" type="cancel"><button size='mini' style="font-size:28rpx"
+				bindtap='createProduct'>下架</button></icon>
+		<icon class="weui-flex__item" type="clear"><button size='mini' style="font-size:28rpx"
+				bindtap='createProduct'>删除</button></icon>
+		<navigator class="weui-flex__item weui-cell__ft" url="/pages/product/create">
+			<button size='mini' style="font-size:28rpx" bindtap='createProduct'>+</button>
+		</navigator>
+	</view>
 </view>
 <view class="weui-panel">
-	<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
-		<mp-slideview buttons="{{[slideButtons[product.status]]}}" id="{{index}}" show="{{index==currentID}}" bindshow="bindShow" bindbuttontap="bindButtonTap">
-			<navigator url="/pages/product/detail?id={{product.id}}&index={{index}}" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">{{product.stock}}</view>
-					<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
-				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">{{product.name}}
-						<icon wx:if="{{product.status}}" type="success" id="{{index}}" class='fr' size="16"></icon>
-						<icon wx:else type="clear" hover-stop-propagation='true' catchtap="deleteProduct" id="{{index}}" class='fr' size="16"></icon>
+	<checkbox-group>
+		<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
+			<mp-slideview buttons="{{[slideButtons[product.status]]}}" id="{{index}}" show="{{index==currentID}}"
+				bindshow="bindShow" bindbuttontap="bindButtonTap">
+				<view class="weui-media-box">
+					<navigator class="weui-media-box_appmsg" url="/pages/product/detail?id={{product.id}}&index={{index}}">
+						<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+							<view class="weui-badge">{{product.stock}}</view>
+							<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+						</view>
+						<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+							<view class="weui-media-box__title">{{product.name}}</view>
+							<view class="weui-media-box__desc">{{product.description}}</view>
+						</view>
+						<view class="weui-media-box__ft">
+							<icon type="{{product.status?'success':'clear'}}" id="{{index}}" size="16"></icon>
+						</view>
+					</navigator>
+					<view class="weui-flex">
+						<label class="checkbox">
+							<checkbox value="{{product.id}}" />
+						</label>
+						<view class="weui-flex__item weui-cell__ft">
+							<block wx:if="{{product.quality}}">
+								均价:<label class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label>
+							</block>
+							单价:<label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label>
+						</view>
 					</view>
-					<view class="weui-media-box__desc">
-						<block wx:if="{{product.quality}}">
-							均价:<label class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label>
-						</block>
-						单价:<label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label>
-					</view>
 				</view>
-			</navigator>
-		</mp-slideview>
-	</block>
+			</mp-slideview>
+		</block>
+	</checkbox-group>
+
 </view>

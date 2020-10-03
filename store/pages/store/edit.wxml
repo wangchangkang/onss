@@ -38,7 +38,7 @@
 				<view>{{location.y}}</view>
 			</view>
 			<view class="weui-cell__ft">
-				<image src="/images/位置.png" style="height:1em;width:1em;" />
+				<image src="/images/position.png" style="height:1em;width:1em;" />
 			</view>
 		</view>
 		<view class="weui-cell ">

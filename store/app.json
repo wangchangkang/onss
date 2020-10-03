@@ -30,8 +30,8 @@
       {
         "text": "商品",
         "pagePath": "pages/product/list",
-        "iconPath": "/images/首页1.png",
-        "selectedIconPath": "/images/首页2.png"
+        "iconPath": "/images/index0.png",
+        "selectedIconPath": "/images/index1.png"
       },
       {
         "text": "订单",
@@ -42,8 +42,8 @@
       {
         "text": "我的",
         "pagePath": "pages/store/store",
-        "iconPath": "/images/我的1.png",
-        "selectedIconPath": "/images/我的2.png"
+        "iconPath": "/images/mine0.png",
+        "selectedIconPath": "/images/mine1.png"
       }
     ]
   },

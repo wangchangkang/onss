@@ -20,6 +20,8 @@
     "checkSiteMap": false,
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
+    "useMultiFrameRuntime": false,
+    "useApiHook": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -27,10 +29,8 @@
     },
     "bundle": true,
     "useIsolateContext": true,
-    "useCompilerModule": false,
+    "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
-    "useMultiFrameRuntime": true,
-    "useApiHook": true,
     "packNpmManually": false,
     "packNpmRelationList": []
   },
