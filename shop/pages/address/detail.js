@@ -1,5 +1,4 @@
-const appInstance = getApp()
-const { domain } = appInstance.globalData;
+import { domain, wxLogin, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     location: {}
@@ -46,61 +45,33 @@ Page({
   saveAddress: function (e) {
     let address = e.detail.value;
     address.location = this.data.location;
-    appInstance.wxLogin().then(({ user, authorization }) => {
-      wx.request({
+    wxLogin().then(({ user, authorization }) => {
+      wxRequest({
         url: `${domain}/addresses?uid=${user.id}`,
         header: {
           authorization,
         },
         data: address,
         method: "POST",
-        success: ({ data }) => {
-          const { code, msg, content } = data;
-          console.log(data)
-          switch (code) {
-            case 'success':
-              let pages = getCurrentPages();//当前页面栈
-              let prevPage = pages[pages.length - 2];//上一页面
-              if (address.id) {
-                const key = `addresses[${this.data.index}]`;
-                prevPage.setData({
-                  [key]: address
-                });
-              } else {
-                let addresses = prevPage.data.addresses;
-                addresses.unshift(address);
-                prevPage.setData({
-                  addresses
-                });
-              }
-              this.setData({
-                ...content
-              })
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login/login',
-              })
-              break;
-            default:
-              wx.showModal({
-                title: '警告',
-                content: msg,
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-              break;
-          }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
-      })
+      }).then((content) => {
+        let pages = getCurrentPages();//当前页面栈
+        let prevPage = pages[pages.length - 2];//上一页面
+        if (address.id) {
+          const key = `addresses[${this.data.index}]`;
+          prevPage.setData({
+            [key]: address
+          });
+        } else {
+          let addresses = prevPage.data.addresses;
+          addresses.unshift(address);
+          prevPage.setData({
+            addresses
+          });
+        }
+        this.setData({
+          ...content
+        })
+      });
     })
   }
 })

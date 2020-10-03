@@ -112,7 +112,7 @@
 				</view>
 			</view>
 		</view>
-		<txv vid="{{vid}}" playerid="{{vid}}" height="100%" />
+		<txv wx:if="{{vid}}" vid="{{vid}}" playerid="{{vid}}" height="100%" />
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">视频ID</view>

@@ -1,5 +1,5 @@
 <swiper style="height:{{windowWidth}}px;">
-	<swiper-item>
+	<swiper-item wx:if="{{product.vid}}">
 		<txv vid="{{product.vid}}" playerid="{{product.vid}}" height="100%" />
 	</swiper-item>
 	<swiper-item wx:for="{{product.pictures}}" wx:for-item='picture' wx:key="index">

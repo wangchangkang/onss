@@ -1,4 +1,4 @@
-import { prefix,getStore,getProducts,wxLogin } from '../../utils/util.js';
+import { domain, prefix, getStore, getProducts, wxLogin, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     prefix, cartsPid: [], products: [], number: 0, last: false
@@ -62,91 +62,35 @@ Page({
       let product = this.data.products[x][y];
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
-        wx.request({
+        wxRequest({
           url: `${domain}/carts?uid=${user.id}`,
           method: 'POST',
           header: {
             authorization,
           },
           data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
-          success: ({ data }) => {
-            const { code, msg, content } = data;
-            console.log(data)
-            switch (code) {
-              case 'success':
-                const cartsPid = { ...this.data.cartsPid, [product.id]: content };
-                wx.setStorageSync('cartsPid', cartsPid);
-                this.setData({
-                  cartsPid
-                });
-                break;
-              case 'fail.login':
-                wx.redirectTo({
-                  url: '/pages/login',
-                })
-                break;
-              default:
-                wx.showModal({
-                  title: '警告',
-                  content: msg,
-                  confirmColor: '#e64340',
-                  showCancel: false,
-                })
-                break;
-            }
-          },
-          fail: (res) => {
-            wx.showModal({
-              title: '警告',
-              content: '加载失败',
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-          },
-        })
+        }).then((content) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: content };
+          wx.setStorageSync('cartsPid', cartsPid);
+          this.setData({
+            cartsPid
+          });
+        });
       } else {
-        wx.request({
+        wxRequest({
           url: `${domain}/carts?uid=${user.id}`,
           method: 'POST',
           header: {
             authorization,
           },
           data: { sid: product.sid, pid: product.id, num: 1 },
-          success: ({ data }) => {
-            const { code, msg, content } = data;
-            console.log(data)
-            switch (code) {
-              case 'success':
-                const cartsPid = { ...this.data.cartsPid, [product.id]: content };
-                wx.setStorageSync('cartsPid', cartsPid);
-                this.setData({
-                  cartsPid
-                });
-                break;
-              case 'fail.login':
-                wx.redirectTo({
-                  url: '/pages/login',
-                })
-                break;
-              default:
-                wx.showModal({
-                  title: '警告',
-                  content: msg,
-                  confirmColor: '#e64340',
-                  showCancel: false,
-                })
-                break;
-            }
-          },
-          fail: (res) => {
-            wx.showModal({
-              title: '警告',
-              content: '加载失败',
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-          },
-        })
+        }).then((content) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: content };
+          wx.setStorageSync('cartsPid', cartsPid);
+          this.setData({
+            cartsPid
+          });
+        });
       }
     })
   }

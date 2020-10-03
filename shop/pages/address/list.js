@@ -1,5 +1,4 @@
-const appInstance = getApp()
-const { domain } = appInstance.globalData;
+import { domain, wxLogin, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     addresses: [],
@@ -7,48 +6,15 @@ Page({
     scrollLeft: 0,
   },
   onLoad: function (options) {
-    appInstance.wxLogin().then(({ user, authorization }) => {
-      wx.request({
+    wxLogin().then(({ user, authorization }) => {
+      wxRequest({
         url: `${domain}/addresses?uid=${user.id}`,
-        method: 'GET',
-        header: {
-          authorization,
-        },
-        success: ({ data }) => {
-          const { code, msg, content } = data;
-          console.log(data)
-          switch (code) {
-            case 'success':
-              this.setData({
-                addresses: content
-              });
-
-
-              break;
-            case 'fail.login':
-              wx.redirectTo({
-                url: '/pages/login',
-              })
-              break;
-            default:
-              wx.showModal({
-                title: '警告',
-                content: msg,
-                confirmColor: '#e64340',
-                showCancel: false,
-              })
-              break;
-          }
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '加载失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
-      })
+        header: { authorization },
+      }).then((addresses) => {
+        this.setData({
+          addresses
+        });
+      });
     })
   },
 
