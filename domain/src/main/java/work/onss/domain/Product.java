@@ -50,9 +50,6 @@ public class Product implements Serializable {
     @NotBlank(message = "商品标签不能为空")
     private String label;
     private String vid;
-    @NotNull(message = "主分类数据不能为空")
-    @Range(min = 0, max = 3, message = "主类 0-衣服、1-食品、2-住宿、3-出行")
-    private Integer rough;
     private Boolean status = false;
     @NotEmpty(message = "请上传商品图片")
     @Size(min = 1, max = 9, message = "商品图片数量为{min}-{max}")

@@ -1,6 +1,7 @@
-<view class="weui-cells__title">新增商品</view>
-<view class="weui-cells weui-cells_after-title">
-	<form bindsubmit="createProduct">
+<form bindsubmit="createProduct">
+
+	<view class="weui-cells__title">新增商品</view>
+	<view class="weui-cells weui-cells_after-title">
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">名称</view>
@@ -10,19 +11,6 @@
 			</view>
 		</view>
 
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">分类</view>
-			</view>
-			<view class="weui-cell__bd">
-				<radio-group class="radio-group" name="rough" bindchange="radioChange">
-					<radio class="radio" value='0'>衣</radio>
-					<radio class="radio" checked value='1'>食</radio>
-					<radio class="radio" value='2'>住</radio>
-					<radio class="radio" value='3'>行</radio>
-				</radio-group>
-			</view>
-		</view>
 		<view class="weui-cell ">
 			<view class="weui-cell__hd">
 				<view class="weui-label">标签</view>
@@ -91,18 +79,11 @@
 		</view>
 		<view class="weui-cell">
 			<view class="weui-cell__bd">
-				<textarea class="weui-textarea" id="description" name="description" value="{{description}}" placeholder="请输入商品描述" bindinput='textareaInput' auto-height="true" maxlength="200"></textarea>
+				<textarea class="weui-textarea" id="description" name="description" value="{{description}}"
+					placeholder="请输入商品描述" bindinput='textareaInput' auto-height="true" maxlength="200"></textarea>
 				<view class="weui-textarea-counter">{{description ? description.length:0}}/200</view>
 			</view>
 		</view>
-
-		<view class="weui-cell">
-			<view class="weui-cell__bd">
-				<textarea class="weui-textarea" id="remarks" name="remarks" value="{{remarks}}" placeholder="提示用户必须填写购买备注 例如 身高 体重" bindinput='textareaInput' auto-height="true" maxlength="200"></textarea>
-				<view class="weui-textarea-counter">{{remarks?remarks.length:0}}/200</view>
-			</view>
-		</view>
-
 		<view class="weui-cell">
 			<view class="weui-cell__bd">
 				<view class="weui-uploader">
@@ -110,7 +91,8 @@
 						<view class="weui-uploader__overview">
 							<view class="weui-uploader__title">图片上传</view>
 							<view class="weui-uploader__info">
-								<icon wx:if='{{pictures.length > 0}}' bindtap="clearPictues" id="pictures" type="clear" size="21"></icon> {{pictures.length}}/5
+								<icon wx:if='{{pictures.length > 0}}' bindtap="clearPictues" id="pictures" type="clear" size="21">
+								</icon> {{pictures.length}}/5
 							</view>
 						</view>
 					</view>
@@ -136,13 +118,16 @@
 				<view class="weui-label">视频ID</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input class="weui-input" id="vid" name="vid" value="{{vid}}" data-count='11' bindinput="bindInput" placeholder="请输入11位视频ID" maxlength="11" />
+				<input class="weui-input" id="vid" name="vid" value="{{vid}}" data-count='11' bindinput="bindInput"
+					placeholder="请输入11位视频ID" maxlength="11" />
 			</view>
 		</view>
-		<view style="min-height:200rpx"></view>
-		<view class="weui-flex weui-footer_fixed-bottom" style="z-index:2">
-			<button class="weui-flex__item" type="default" form-type="reset" bindtap="resetForm">重置</button>
-			<button class="weui-flex__item" type="primary" form-type='submit'>保存</button>
-		</view>
-	</form>
-</view>
+
+	</view>
+	<view style="min-height:200rpx"></view>
+	<view class="weui-flex weui-footer_fixed-bottom" style="z-index:2">
+		<button class="weui-flex__item" type="default" form-type="reset" bindtap="resetForm">重置</button>
+		<button class="weui-flex__item" type="primary" form-type='submit'>保存</button>
+	</view>
+
+</form>

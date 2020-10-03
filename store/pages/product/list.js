@@ -3,6 +3,7 @@ Page({
   data: {
     prefix,
     currentID: -1,
+    products: [],
     slideButtons: {
       'false': {
         type: "default",
@@ -24,13 +25,12 @@ Page({
     checkStore().then(({ customer, authorization }) => {
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}`,
-        header: {
-          authorization,
-        },
-      })
-    }).then((products) => {
-      this.setData({
-        products
+        header: { authorization },
+      }).then((products) => {
+        console.log(products);
+        this.setData(
+          { products }
+        )
       })
     })
   },

@@ -101,7 +101,7 @@ Page({
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
-      chooseImages(customer.id, authorization, count).then((data) => {
+      chooseImages(authorization, count, `${domain}/customers/${customer.id}/uploadPicture`).then((data) => {
         this.setData({
           [`${id}[${length}]`]: data
         })
@@ -112,7 +112,7 @@ Page({
   chooseImage: function (e) {
     const id = e.currentTarget.id;
     checkCustomer().then(({ customer, authorization }) => {
-      chooseImage(customer.id, authorization).then((data) => {
+      chooseImage(authorization, `${domain}/customers/${customer.id}/uploadPicture`,).then((data) => {
         this.setData({
           [`${id}`]: data
         })

@@ -1,6 +1,5 @@
 package work.onss.controller;
 
-import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
 import com.google.gson.Gson;
@@ -16,17 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
-import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,26 +78,8 @@ public class CustomerController {
      */
     @PostMapping("customers/{id}/uploadPicture")
     public Work<String> upload(@PathVariable(name = "id") String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
-        String filename = file.getOriginalFilename();
-        if (filename == null) {
-            return Work.fail("上传失败!");
-        }
-        int index = filename.lastIndexOf(".");
-        if (index == -1) {
-            return Work.fail("文件格式错误!");
-        }
-        String md5 = SecureUtil.md5(file.getInputStream());
-        Path path = Paths.get(systemConfig.getFilePath(), id, md5.concat(filename.substring(index)));
-        Path parent = path.getParent();
-        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-        // 判断文件是否存在
-        if (!Files.exists(path)) {
-            file.transferTo(path);
-        }
-        int nameCount = path.getNameCount();
-        return Work.success("上传成功", path.subpath(nameCount - 3, nameCount).toString());
+        String path = Utils.upload(file, systemConfig.getFilePath(), id);
+        return Work.success("上传成功", path);
     }
 }
 

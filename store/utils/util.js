@@ -319,7 +319,7 @@ function getProduct(id) {
  * @param {string} authorization 密钥
  * @param {number} count 上传数量
  */
-function chooseImages(id, authorization, count) {
+function chooseImages(authorization, count, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count,
@@ -332,8 +332,8 @@ function chooseImages(id, authorization, count) {
         })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
-            header: {authorization},
-            url: `${domain}/customers/${id}/uploadPicture`,
+            header: { authorization },
+            url,
             filePath: filePath,
             name: 'file',
             success: res => {
@@ -362,7 +362,7 @@ function chooseImages(id, authorization, count) {
  * @param {string} id 用户ID
  * @param {string} authorization 密钥
  */
-function chooseImage(id, authorization) {
+function chooseImage(authorization, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count: 1,
@@ -374,10 +374,8 @@ function chooseImage(id, authorization) {
           mask: true
         })
         wx.uploadFile({
-          header: {
-            authorization
-          },
-          url: `${domain}/customers/${id}/uploadPicture`,
+          header: { authorization },
+          url,
           filePath: res.tempFilePaths[0],
           name: 'file',
           success: res => {

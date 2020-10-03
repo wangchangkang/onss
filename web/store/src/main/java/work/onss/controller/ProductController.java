@@ -65,12 +65,11 @@ public class ProductController {
      */
     @PostMapping(value = {"products"})
     public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
+        product.setSid(sid);
         if (product.getId() == null) {
-            product.setSid(sid);
             product = mongoTemplate.insert(product);
             return Work.success("创建成功", product);
         } else {
-            product.setSid(sid);
             Query query = Query.query(Criteria.where("id").is(product.getId()).and("sid").is(sid));
             mongoTemplate.findAndReplace(query, product);
             return Work.success("编辑成功", product);
@@ -123,6 +122,7 @@ public class ProductController {
      */
     @PostMapping("products/uploadPicture")
     public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {
+
         String filename = file.getOriginalFilename();
         if (filename == null) {
             return Work.fail("上传失败!");

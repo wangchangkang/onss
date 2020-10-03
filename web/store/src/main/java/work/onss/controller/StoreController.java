@@ -19,6 +19,7 @@ import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Store;
 import work.onss.exception.ServiceException;
+import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
 import java.nio.file.Files;
@@ -147,29 +148,10 @@ public class StoreController {
      * @param file 文件
      * @return 图片地址
      */
-    @PostMapping("stores/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {
-        String filename = file.getOriginalFilename();
-        if (filename == null) {
-            return Work.fail("上传失败!");
-        }
-        int index = filename.lastIndexOf(".");
-        if (index == -1) {
-            return Work.fail("文件格式错误!");
-        }
-        String md5 = SecureUtil.md5(file.getInputStream());
-
-        Path path = Paths.get(systemConfig.getFilePath(), sid, md5, filename.substring(index));
-        Path parent = path.getParent();
-        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-        // 判断文件是否存在
-        if (!Files.exists(path)) {
-            file.transferTo(path);
-        }
-
-        return Work.success("上传成功", path.toString());
+    @PostMapping("stores/{id}/uploadPicture")
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @PathVariable(name = "id") String id) throws Exception {
+        String path = Utils.upload(file, systemConfig.getFilePath(), id);
+        return Work.success("上传成功", path);
     }
 }
 

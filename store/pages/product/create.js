@@ -1,12 +1,10 @@
-let appInstance = getApp();
-const { windowWidth, domain, prefix, types } = appInstance.globalData;
+import { prefix, windowWidth, checkStore, domain, wxRequest, chooseImages } from '../../utils/util.js';
 Page({
   data: {
     prefix,
-    windowWidth,
-    pictures: [],
-    remarks: '',
-    description: ''
+    pictures: ["picture/5f7718b17df1fd2713364cfc/f1e5b71b609a059f09d58660f5a77c64.png"],
+    description: '描述',
+    vid: 'l09179f499o'
   },
 
   chooseImages: function (e) {
@@ -14,29 +12,14 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    const customer = wx.getStorageSync('customer');
-    appInstance.chooseImages({ count, url: `products/uploadPicture?sid=${customer.store.id}` }).then((data) => {
-      const pictures = this.data[id];
-      if (pictures.includes(data)) {
-        wx.showModal({
-          title: '警告',
-          content: "图片重复上传",
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      } else {
-        this.setData({
-          [`${id}[${length}]`]: data
-        })
-      }
-    })
-  },
-
-  chooseImage: function (e) {
-    const id = e.currentTarget.id;
-    appInstance.chooseImage({ url: `products/uploadPicture?sid=${customer.store.id}` }).then((data) => {
-      this.setData({
-        [`${id}`]: data
+    checkStore().then(({ authorization, customer }) => {
+      chooseImages(authorization, count, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+        const pictures = this.data[id];
+        if (!pictures.includes(data)) {
+          this.setData({
+            [`${id}[${length}]`]: data
+          })
+        }
       })
     })
   },
@@ -48,13 +31,6 @@ Page({
     files.splice(index, 1);
     this.setData({
       [id]: files
-    })
-  },
-
-  deletePicture: function (e) {
-    const id = e.currentTarget.id;
-    this.setData({
-      [id]: null
     })
   },
 
@@ -85,64 +61,29 @@ Page({
   },
 
   createProduct: function (e) {
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    const { remarks, description, pictures, id } = this.data;
-    const product = { ...e.detail.value, remarks, description, pictures, id }
-    wx.request({
-      url: `${domain}/products?sid=${customer.store.id}`,
-      data: product,
-      method: "POST",
-      header: {
-        authorization,
-      },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.showToast({
-              title: msg,
-              icon: 'success',
-              duration: 2000,
-              success: (res) => {
-                this.setData({
-                  ...content
-                })
-                let pages = getCurrentPages();
-                let prevPage = pages[pages.length - 2];
-                prevPage.setData({
-                  products: [content, ...prevPage.data.products]
-                });
-                wx.navigateBack({
-                  delta: 1
-                })
-              }
-            })
-            break;
-          case 'fail.login':
-            wx.redirectTo({
-              url: '/pages/login/login',
-            })
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
+    const { description, pictures, id } = this.data;
+    const data = { ...e.detail.value, description, pictures, id }
+    checkStore().then(({ authorization, customer }) => {
+      wxRequest({
+        url: `${domain}/products?sid=${customer.store.id}`,
+        data,
+        method: "POST",
+        header: { authorization },
+      }).then((product) => {
+        this.setData({
+          ...product
+        });
+        let pages = getCurrentPages();
+        let prevPage = pages[pages.length - 2];
+        let products = prevPage.data.products;
+        products = [product, ...products];
+        prevPage.setData({
+          products
+        });
+        wx.navigateBack({
+          delta: 1
+        });
+      })
     })
   },
 
@@ -150,7 +91,6 @@ Page({
     this.setData({
       pictures: [],
       vid: null,
-      remarks: '',
       description: ''
     })
   },

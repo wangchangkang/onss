@@ -1,5 +1,6 @@
 package work.onss.utils;
 
+import cn.hutool.crypto.SecureUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -10,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
+import work.onss.vo.Work;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -126,15 +128,26 @@ public class Utils {
     }
 
     public static String upload(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
-        Path path = Paths.get(dir, more);
-        Path folder = path.subpath(0, more.length);
-        if (!Files.exists(folder) && !folder.toFile().mkdirs()) {
+        String filename = file.getOriginalFilename();
+        if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
         }
+        int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            throw new ServiceException("fail", "文件格式错误!");
+        }
+        Path path = Paths.get(dir, more);
+        if (!Files.exists(path) && !path.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        String md5 = SecureUtil.md5(file.getInputStream());
+        path = path.resolve(md5.concat(filename.substring(index)));
+        // 判断文件是否存在
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
-        return path.subpath(0, more.length + 1).toString().replaceAll("\\\\", "/");
+        int nameCount = path.getNameCount();
+        return path.subpath(nameCount - more.length - 2, nameCount).toString();
     }
 
 }

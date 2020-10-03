@@ -1,8 +1,7 @@
-let appInstance = getApp();
-const { windowWidth, domain, prefix, types } = appInstance.globalData;
+import { prefix, windowWidth, checkStore, domain, wxRequest, types, chooseImages,chooseImage } from '../../utils/util.js';
 Page({
   data: {
-    prefix, domain, windowWidth, types,
+    prefix, domain, windowWidth, types,videos:[]
   },
   bindPickerChange: function (e) {
     const id = e.currentTarget.id;
@@ -50,30 +49,25 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    const customer = wx.getStorageSync('customer');
-    appInstance.chooseImages({ url: `stores/uploadPicture?sid=${customer.store.id}`, count }).then((data) => {
-      const pictures = this.data[id];
-      if (pictures.includes(data)) {
-        wx.showModal({
-          title: '警告',
-          content: "图片重复上传",
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      } else {
-        this.setData({
-          [`${id}[${length}]`]: data
-        })
-      }
+    checkStore().then(({ authorization, customer }) => {
+      chooseImages(authorization, count, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+        const pictures = this.data[id];
+        if (!pictures.includes(data)) {
+          this.setData({
+            [`${id}[${length}]`]: data
+          })
+        }
+      })
     })
   },
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    const customer = wx.getStorageSync('customer');
-    appInstance.chooseImage({ url: `stores/uploadPicture?sid=${customer.store.id}` }).then((data) => {
-      this.setData({
-        [`${id}`]: data
+    checkStore().then(({ authorization, customer }) => {
+      chooseImage(authorization, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+        this.setData({
+          [`${id}`]: data
+        })
       })
     })
   },
@@ -102,6 +96,7 @@ Page({
     })
   },
   videosBindInput: function (e) {
+    console.log(e);
     this.setData({
       videos: e.detail.value.split(",")
     })
@@ -115,8 +110,6 @@ Page({
       pictures: this.data.pictures,
       videos: this.data.videos
     }
-    console.log(store);
-
     const customer = wx.getStorageSync('customer');
     const authorization = wx.getStorageSync('authorization');
     wx.request({
@@ -175,59 +168,21 @@ Page({
   },
 
   onLoad: function (options) {
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    wx.request({
-      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-      method: "GET",
-      header: {
-        authorization,
-      },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.showToast({
-              title: msg,
-              icon: 'success',
-              duration: 2000,
-              success: (res) => {
-                let index = -1;
-                types.find((value, key, array) => {
-                  if (value.id === content.type) {
-                    index = key;
-                  }
-                })
-                this.setData({
-                  ...content, index, store: content
-                })
-              }
-            })
-            break;
-          case 'fail.login':
-            wx.redirectTo({
-              url: '/pages/login/login',
-            })
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
+    checkStore().then(({ authorization, customer }) => {
+      wxRequest({
+        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+        header: { authorization },
+      }).then((store) => {
+        let index = -1;
+        types.find((value, key, array) => {
+          if (value.id === store.type) {
+            index = key;
+          }
         })
-      },
+        this.setData({
+          ...store, index, store
+        })
+      })
     })
   },
 
