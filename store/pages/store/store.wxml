@@ -26,8 +26,8 @@
 </view>
 
 <swiper style="height:{{windowWidth}}px;">
-	<swiper-item wx:for="{{videos}}" wx:for-item='video' wx:key="index">
-		<txv vid="{{video}}" playerid="{{video}}" height="100%" />
+	<swiper-item wx:if="{{videos}}" wx:for="{{videos}}" wx:for-item='video' wx:key="index">
+		<txv wx:if="{{video}}" vid="{{video}}" playerid="{{video}}" height="100%" />
 	</swiper-item>
 	<swiper-item wx:for="{{pictures}}" wx:for-item='picture' wx:key="index">
 		<image mode="aspectFit" src="{{prefix}}{{picture}}" class="weui-media-box__thumb" />
