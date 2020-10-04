@@ -1,5 +1,7 @@
+import { windowWidth } from '../../utils/util.js';
 Page({
   data: {
+    windowWidth
   },
 
   onReady: function () {

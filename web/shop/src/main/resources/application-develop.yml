@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://49.232.165.242:27017/test?replicaSet=onss
+      uri: mongodb://49.232.165.242:27017,49.232.165.242:27018/test?replicaSet=onss
   main:
     lazy-initialization: true
 logging:
@@ -10,4 +10,4 @@ logging:
   file:
     path: var/log
 system:
-  file-path: picture
+  file-path: picture/
