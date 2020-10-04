@@ -18,6 +18,7 @@ import work.onss.vo.Work;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -103,13 +104,37 @@ public class ProductController {
     }
 
     /**
+     * 上/下架商品
+     *
+     * @param status 商品状态
+     */
+    @PutMapping(value = {"products"})
+    public Work<Boolean> updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
+        Query query = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
+        mongoTemplate.updateFirst(query, Update.update("status", status), Product.class);
+        return Work.success("操作成功", status);
+    }
+
+    /**
      * 删除（逻辑删除）
      *
      * @param id 主键
      */
     @DeleteMapping(value = {"products/{id}"})
-    public Work<Boolean> delete(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+    public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
+        Query query = Query.query(Criteria.where("sid").is(sid).and("id").is(id));
+        mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
+        return Work.success("删除成功", true);
+    }
+
+    /**
+     * 删除（逻辑删除）
+     *
+     * @param ids 主键
+     */
+    @DeleteMapping(value = {"products"})
+    public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
+        Query query = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
         mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
         return Work.success("删除成功", true);
     }
