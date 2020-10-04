@@ -3,7 +3,7 @@ Page({
   data: {
     prefix,
     currentID: -1,
-    indexs: [],
+    ids: [],
     products: [],
     slideButtons: {
       'false': {
@@ -100,7 +100,6 @@ Page({
     this.setData({
       [key]: e.detail.value
     });
-
   },
 
   /**上架
@@ -108,12 +107,11 @@ Page({
    */
   up: function () {
     checkStore().then(({ authorization, customer }) => {
-      let { indexs, products } = this.data;
-      let ids = [];
-      indexs.forEach((value) => {
-        const id = products[value].id;
-        products[value].status = true;
-        ids.push(id);
+      let { ids, products } = this.data;
+      products.forEach((product, index) => {
+        if (ids.includes(product.id)) {
+          products[index].status = true
+        }
       });
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=true`,
@@ -121,7 +119,7 @@ Page({
         header: { authorization },
       }).then(() => {
         this.setData({
-          products, indexs: []
+          products, ids: []
         })
       })
     })
@@ -131,12 +129,11 @@ Page({
    */
   lower: function () {
     checkStore().then(({ authorization, customer }) => {
-      let { indexs, products } = this.data;
-      let ids = [];
-      indexs.forEach((value) => {
-        const id = products[value].id;
-        products[value].status = false;
-        ids.push(id);
+      let { ids, products } = this.data;
+      products.forEach((product, index) => {
+        if (ids.includes(product.id)) {
+          products[index].status = false;
+        }
       });
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=false`,
@@ -144,7 +141,7 @@ Page({
         header: { authorization },
       }).then(() => {
         this.setData({
-          products, indexs: []
+          products, ids: []
         })
       })
     })
@@ -154,12 +151,8 @@ Page({
    */
   delete: function () {
     checkStore().then(({ authorization, customer }) => {
-      let { indexs, products } = this.data;
-      let ids = [];
-      indexs.forEach((value) => {
-        const id = products[value].id;
-        ids.push(id);
-      });
+      let { ids, products } = this.data;
+      
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}`,
         method: 'DELETE',
@@ -167,7 +160,7 @@ Page({
       }).then(() => {
         products = this.data.products.filter((value) => !ids.includes(value.id));
         this.setData({
-          products, indexs: []
+          products, ids: []
         })
       })
     })

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -108,10 +109,11 @@ public class ProductController {
      *
      * @param status 商品状态
      */
+    @Transactional
     @PutMapping(value = {"products"})
     public Work<Boolean> updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.updateFirst(query, Update.update("status", status), Product.class);
+        mongoTemplate.updateMulti(query, Update.update("status", status), Product.class);
         return Work.success("操作成功", status);
     }
 
