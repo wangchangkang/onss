@@ -136,16 +136,20 @@ function getProducts(sid, number = 0) {
  * @param {Number} latitude 维度
  * @param {Number} type 类型
  * @param {Number} number 分页数
+ * @param {string} keyword 关键字
  */
-function getStores(longitude, latitude, type, number = 0) {
+function getStores(longitude, latitude, type, number = 0, keyword) {
   console.log(longitude);
   console.log(latitude);
   console.log(type);
   console.log(number);
-  
+
   let url = `${domain}/stores/${longitude}-${latitude}/near?page=${number}`;
   if (type) {
     url = `${url}&type=${type}`
+  }
+  if (keyword) {
+    url = `${url}&keyword=${keyword}`
   }
   return wxRequest({ url })
 }
@@ -201,7 +205,7 @@ function getProduct(id) {
  * @param {string} number 关键字
  * @param {Number} number 分页数
  */
-function searchStores(longitude, latitude, type, keyword, number = 0){
+function searchStores(longitude, latitude, type, keyword, number = 0) {
   console.log(longitude);
   console.log(latitude);
   console.log(type);

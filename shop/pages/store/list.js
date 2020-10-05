@@ -8,7 +8,7 @@ Page({
 
   onLoad: function (options) {
     const type = types[options.type]
-    getStores(options.longitude, options.latitude, type.id, 0).then((stores) => {
+    getStores(options.longitude, options.latitude, type.id).then((stores) => {
       this.setData({
         stores,
         longitude: options.longitude,

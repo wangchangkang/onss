@@ -15,15 +15,15 @@
 	<view class="weui-panel ">
 		<view class="weui-panel__bd">
 			<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index"
-				url="/pages/store/product?id={{store.id}}" class="weui-media-box weui-media-box_appmsg"
+				url="/pages/store/product?id={{store.content.id}}" class="weui-media-box weui-media-box_appmsg"
 				hover-class="weui-cell_active">
 				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<image class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
+					<image class="weui-media-box__thumb" src="{{prefix}}{{store.content.trademark}}" />
 				</view>
 				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">{{store.name}}</view>
-					<view class="weui-media-box__desc">{{store.description}}</view>
-					<!-- <view class="weui-media-box__desc">{{tools.toFixed(store.distance.value,2)}}km</view> -->
+					<view class="weui-media-box__title">{{store.content.name}}</view>
+					<view class="weui-media-box__desc">{{store.content.description}}</view>
+					<view class="weui-media-box__desc">{{tools.toFixed(store.distance.value,2)}}km</view>
 				</view>
 			</navigator>
 		</view>

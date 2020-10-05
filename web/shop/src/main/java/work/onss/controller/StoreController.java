@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.core.query.*;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +46,7 @@ public class StoreController {
      * @param x        经度
      * @param y        纬度
      * @param type     店铺类型
+     * @param keyword  关键字
      * @param pageable 分页参数
      * @return 店铺分页
      */
@@ -53,6 +55,7 @@ public class StoreController {
                                               @PathVariable(name = "y") Double y,
                                               @RequestParam(name = "r", defaultValue = "100") Double r,
                                               @RequestParam(required = false) Integer type,
+                                              @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
         Query query = new Query();
         query.fields()
@@ -61,6 +64,13 @@ public class StoreController {
                 .exclude("merchant");
         if (type != null) {
             query.addCriteria(Criteria.where("type").is(type));
+        }
+        if (StringUtils.hasText(keyword)) {
+            String regex = StringUtils.trimAllWhitespace(keyword).replaceAll("", "|");
+            Criteria name = Criteria.where("name").regex(regex);
+            Criteria description = Criteria.where("description").regex(regex);
+            query.addCriteria(name);
+            query.addCriteria(description);
         }
         Point point = new GeoJsonPoint(x, y);
         NearQuery nearQuery = NearQuery
@@ -73,37 +83,6 @@ public class StoreController {
         return Work.success(null, storeGeoResults.getContent());
 
     }
-
-    /**
-     * @param x        经度
-     * @param y        纬度
-     * @param type     店铺类型
-     * @param keyword  关键字
-     * @param pageable 分页参数
-     * @return 店铺分页
-     */
-    @GetMapping(path = "stores/{x}-{y}/search")
-    public Work<List<Store>> search(@PathVariable(name = "x") Double x,
-                                    @PathVariable(name = "y") Double y,
-                                    @RequestParam(name = "r", defaultValue = "100") Double r,
-                                    @RequestParam(required = false) Integer type,
-                                    @RequestParam(required = false) String keyword,
-                                    @PageableDefault Pageable pageable) {
-        Query query = TextQuery
-                .queryText(TextCriteria.forDefaultLanguage().matchingPhrase(keyword)).includeScore()
-                .addCriteria(Criteria.where("location").within(new Circle(new Point(x, y), r)))
-                .with(pageable);
-        if (type != null) {
-            query.addCriteria(Criteria.where("type").is(type));
-        }
-        query.fields()
-                .exclude("customers")
-                .exclude("products")
-                .exclude("merchant");
-            List<Store> result = mongoTemplate.find(query, Store.class);
-        return Work.success(null, result);
-    }
-
 
     /**
      * @param id 主键

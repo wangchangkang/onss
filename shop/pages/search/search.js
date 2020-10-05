@@ -1,4 +1,4 @@
-import { prefix, getStores, types ,searchStores} from '../../utils/util.js';
+import { prefix, getStores, types, searchStores } from '../../utils/util.js';
 Page({
 
   /**
@@ -20,9 +20,9 @@ Page({
   },
 
   search: function (e) {
-    const {keyword} = e.detail.value
+    const { keyword } = e.detail.value
     const { longitude, latitude } = this.data
-    searchStores(longitude, latitude, null, keyword, 0).then((stores) => {
+    getStores(longitude, latitude, null, 0, keyword).then((stores) => {
       this.setData({
         stores
       })

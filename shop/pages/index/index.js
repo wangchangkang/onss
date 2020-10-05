@@ -51,7 +51,7 @@ Page({
     } else {
       const { latitude, longitude, number } = this.data;
       if (latitude && longitude) {
-        getStores(longitude, latitude, null, number + 1).then((stores) => {
+        getStores(longitude, latitude, null,number + 1).then((stores) => {
           if (stores.length == 0) {
             this.setData({
               last: true,
