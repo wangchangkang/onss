@@ -16,14 +16,14 @@ Page({
   },
 
   chooseLocation: function (e) {
-    const { location, detail } = this.data.location;
+    const { location, detail } = this.data;
     if (location && location.x && location.y) {
       wx.chooseLocation({
-        longitude: x,
-        latitude: y,
+        longitude: location.x,
+        latitude: location.y,
         name: detail,
         success: (res) => {
-          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
+          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } });
         }
       })
     } else {
@@ -34,30 +34,29 @@ Page({
             longitude: parseFloat(res.longitude),
             latitude: parseFloat(res.latitude),
             success: (res) => {
-              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
+              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } });
             }
           })
         }
-      })
+      });
     }
   },
 
   saveAddress: function (e) {
-    let address = e.detail.value;
-    address.location = this.data.location;
     wxLogin().then(({ user, authorization }) => {
+      const { location, index } = this.data;
+      let address = e.detail.value;
+      address.location = location;
       wxRequest({
         url: `${domain}/addresses?uid=${user.id}`,
-        header: {
-          authorization,
-        },
+        header: { authorization },
         data: address,
         method: "POST",
       }).then((content) => {
         let pages = getCurrentPages();//当前页面栈
         let prevPage = pages[pages.length - 2];//上一页面
-        if (address.id) {
-          const key = `addresses[${this.data.index}]`;
+        if (index) {
+          const key = `addresses[${index}]`;
           prevPage.setData({
             [key]: address
           });
@@ -70,7 +69,10 @@ Page({
         }
         this.setData({
           ...content
-        })
+        });
+        wx.navigateBack({
+          delta: 1
+        });
       });
     })
   }

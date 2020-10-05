@@ -31,9 +31,6 @@ public class Address implements Serializable {
     @NotBlank(message = "详细地址不能为空")
     @Length(min = 3, max = 50, message = "请尽可能填写详细地址")
     private String detail;
-    @NotNull(message = "请选择地址类型")
-    @Range(min = 0, max = 3, message = "地址类型格式错误")
-    private Integer tag;
     @NotNull(message = "请重新定位收货地址")
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
     private Point location;//坐标
