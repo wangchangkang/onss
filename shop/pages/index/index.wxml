@@ -5,7 +5,7 @@
 		</view>
 	</navigator>
 	<view class="weui-grids types weui-media-box">
-		<navigator wx:for="{{types}}" wx:for-item='type' wx:key="index" url="/pages/store/list" class="weui-grid" hover-class="weui-grid_active">
+		<navigator wx:for="{{types}}" wx:for-item='type' wx:key="index" url="/pages/store/list?type={{index}}&latitude={{latitude}}&longitude={{longitude}}" class="weui-grid" hover-class="weui-grid_active">
 			<image class="weui-grid__icon" src="{{type.icon}}" />
 			<view class="weui-grid__label">{{type.title}}</view>
 		</navigator>

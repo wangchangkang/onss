@@ -136,10 +136,15 @@ function getProducts(sid, number = 0) {
  * @param {Number} latitude 维度
  * @param {Number} number 分页数
  */
-function getStores(longitude, latitude, number = 0) {
-  return wxRequest({
-    url: `${domain}/stores/${longitude}-${latitude}/near?page=${number}`,
-  })
+function getStores(longitude, latitude, type, keyword, number = 0) {
+  let url = `${domain}/stores/${longitude}-${latitude}/near?page=${number}`;
+  if (type) {
+    url = `${url}&type=${type}`
+  }
+  if (keyword) {
+    url = `${url}&keyword=${keyword}`
+  }
+  return wxRequest({ url })
 }
 /** 根据商户ID获取商户信息
  * @param {String} id 商户主键 

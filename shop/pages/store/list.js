@@ -1,24 +1,52 @@
+import { prefix, getStores, types } from '../../utils/util.js';
 Page({
   data: {
-    stores: [{
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    },
-    {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }, {
-      name: "华盛超市-星美城市广场",
-      description: "果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食、果蔬、饮品、粮油、厨卫、副食",
-      pictures: ["/images/pic_160.png"]
-    }
-  ]
+    types,
+    prefix,
+    stores: []
   },
 
   onLoad: function (options) {
-
+    const type = types[options.type]
+    getStores(options.longitude, options.latitude, type.id, null, 0).then((stores) => {
+      this.setData({
+        stores,
+        longitude: options.longitude,
+        latitude: options.latitude,
+        type
+      })
+    });
   },
-  
+
+  onPullDownRefresh: function () {
+    const { latitude, longitude, type } = this.data;
+    getStores(longitude, latitude, type.id).then((stores) => {
+      this.setData({
+        number: 0,
+        last: false,
+        stores
+      })
+      wx.stopPullDownRefresh()
+    });
+  },
+
+  onReachBottom: function () {
+    if (this.data.last) {
+      console.log(this.data)
+    } else {
+      const { latitude, longitude, number } = this.data;
+      getStores(longitude, latitude, number + 1).then((stores) => {
+        if (stores.length == 0) {
+          this.setData({
+            last: true,
+          });
+        } else {
+          this.setData({
+            number,
+            stores: [...this.data.stores, ...stores],
+          });
+        }
+      });
+    }
+  },
 })
