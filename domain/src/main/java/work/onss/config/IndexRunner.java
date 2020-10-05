@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.mongodb.core.index.GeospatialIndex;
+import org.springframework.data.mongodb.core.index.*;
 import org.springframework.stereotype.Component;
 import work.onss.domain.*;
 
@@ -21,6 +20,10 @@ public class IndexRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         GeospatialIndex location = new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE);
+        TextIndexDefinition textIndexDefinition = TextIndexDefinition.builder().onFields("name", "description").build();
+        HashedIndex licenseNumber = HashedIndex.hashed("licenseNumber");
         mongoTemplate.indexOps(Store.class).ensureIndex(location);
+        mongoTemplate.indexOps(Store.class).ensureIndex(textIndexDefinition);
+        mongoTemplate.indexOps(Store.class).ensureIndex(licenseNumber);
     }
 }

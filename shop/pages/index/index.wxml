@@ -1,5 +1,5 @@
 <view class="weui-panel" style="margin-top: 0px;">
-	<navigator class="weui-cell search " url="/pages/search/search">
+	<navigator class="weui-cell search " url="/pages/search/search?latitude={{latitude}}&longitude={{longitude}}">
 		<view class="weui-cell__bd">
 			<icon type="search"></icon> 搜索
 		</view>

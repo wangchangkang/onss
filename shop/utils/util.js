@@ -134,15 +134,18 @@ function getProducts(sid, number = 0) {
 /** 根据经纬度分页获取商户
  * @param {Number} longitude 经度
  * @param {Number} latitude 维度
+ * @param {Number} type 类型
  * @param {Number} number 分页数
  */
-function getStores(longitude, latitude, type, keyword, number = 0) {
+function getStores(longitude, latitude, type, number = 0) {
+  console.log(longitude);
+  console.log(latitude);
+  console.log(type);
+  console.log(number);
+  
   let url = `${domain}/stores/${longitude}-${latitude}/near?page=${number}`;
   if (type) {
     url = `${url}&type=${type}`
-  }
-  if (keyword) {
-    url = `${url}&keyword=${keyword}`
   }
   return wxRequest({ url })
 }
@@ -190,6 +193,29 @@ function getProduct(id) {
   return wxRequest({
     url: `${domain}/products/${id}`,
   });
+}
+/** 根据经纬度分页获取商户
+ * @param {Number} longitude 经度
+ * @param {Number} latitude 维度
+ * @param {Number} number 类型
+ * @param {string} number 关键字
+ * @param {Number} number 分页数
+ */
+function searchStores(longitude, latitude, type, keyword, number = 0){
+  console.log(longitude);
+  console.log(latitude);
+  console.log(type);
+  console.log(keyword);
+  console.log(number);
+  let url = `${domain}/stores/${longitude}-${latitude}/search?page=${number}`;
+  if (type) {
+    url = `${url}&type=${type}`
+  }
+  if (keyword) {
+    url = `${url}&keyword=${keyword}`
+  }
+  return wxRequest({ url })
+
 }
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
@@ -255,6 +281,7 @@ module.exports = {
   setPhone,
   formatTime,
   app,
+  searchStores,
   getStores,
   getStore,
   getProducts,

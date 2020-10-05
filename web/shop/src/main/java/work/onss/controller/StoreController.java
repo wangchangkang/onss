@@ -6,10 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.NearQuery;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
+import org.springframework.data.mongodb.core.query.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,7 +45,6 @@ public class StoreController {
      * @param x        经度
      * @param y        纬度
      * @param type     店铺类型
-     * @param keyword  关键字
      * @param pageable 分页参数
      * @return 店铺分页
      */
@@ -56,28 +53,57 @@ public class StoreController {
                                               @PathVariable(name = "y") Double y,
                                               @RequestParam(name = "r", defaultValue = "100") Double r,
                                               @RequestParam(required = false) Integer type,
-                                              @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
         Query query = new Query();
-        query.with(pageable);
-        if (type != null) {
-            query.addCriteria(Criteria.where("type").is(type));
-        }
-        if (keyword != null) {
-            TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matching(keyword);
-            Criteria criteria = Criteria.where("source").in(1, 2);
-            query.addCriteria(textCriteria).addCriteria(criteria);
-        }
-        Point point = new GeoJsonPoint(x, y);
-        NearQuery nearQuery = NearQuery.near(point, Metrics.KILOMETERS).maxDistance(new Distance(r, Metrics.KILOMETERS));
         query.fields()
                 .exclude("customers")
                 .exclude("products")
                 .exclude("merchant");
-        nearQuery.query(query);
+        if (type != null) {
+            query.addCriteria(Criteria.where("type").is(type));
+        }
+        Point point = new GeoJsonPoint(x, y);
+        NearQuery nearQuery = NearQuery
+                .near(point, Metrics.KILOMETERS)
+                .spherical(false)
+                .maxDistance(new Distance(r, Metrics.KILOMETERS))
+                .with(pageable)
+                .query(query);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         return Work.success(null, storeGeoResults.getContent());
+
     }
+
+    /**
+     * @param x        经度
+     * @param y        纬度
+     * @param type     店铺类型
+     * @param keyword  关键字
+     * @param pageable 分页参数
+     * @return 店铺分页
+     */
+    @GetMapping(path = "stores/{x}-{y}/search")
+    public Work<List<Store>> search(@PathVariable(name = "x") Double x,
+                                    @PathVariable(name = "y") Double y,
+                                    @RequestParam(name = "r", defaultValue = "100") Double r,
+                                    @RequestParam(required = false) Integer type,
+                                    @RequestParam(required = false) String keyword,
+                                    @PageableDefault Pageable pageable) {
+        Query query = TextQuery
+                .queryText(TextCriteria.forDefaultLanguage().matchingPhrase(keyword)).includeScore()
+                .addCriteria(Criteria.where("location").within(new Circle(new Point(x, y), r)))
+                .with(pageable);
+        if (type != null) {
+            query.addCriteria(Criteria.where("type").is(type));
+        }
+        query.fields()
+                .exclude("customers")
+                .exclude("products")
+                .exclude("merchant");
+            List<Store> result = mongoTemplate.find(query, Store.class);
+        return Work.success(null, result);
+    }
+
 
     /**
      * @param id 主键

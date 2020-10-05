@@ -1,7 +1,7 @@
 <view class="weui-cells__title">附近商家-{{type.title}}</view>
 <view class="weui-panel ">
 	<view class="weui-panel__bd">
-		<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url="/pages/store/product"
+		<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url="/pages/store/product?id={{store.content.id}}"
 			class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<image class="weui-media-box__thumb" src="{{prefix}}{{store.content.trademark}}" />

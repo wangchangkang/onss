@@ -8,7 +8,7 @@ Page({
 
   onLoad: function (options) {
     const type = types[options.type]
-    getStores(options.longitude, options.latitude, type.id, null, 0).then((stores) => {
+    getStores(options.longitude, options.latitude, type.id, 0).then((stores) => {
       this.setData({
         stores,
         longitude: options.longitude,
@@ -34,8 +34,8 @@ Page({
     if (this.data.last) {
       console.log(this.data)
     } else {
-      const { latitude, longitude, number } = this.data;
-      getStores(longitude, latitude, number + 1).then((stores) => {
+      const { latitude, longitude,type, number } = this.data;
+      getStores(longitude, latitude, type.id,number + 1).then((stores) => {
         if (stores.length == 0) {
           this.setData({
             last: true,
