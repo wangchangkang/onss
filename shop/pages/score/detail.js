@@ -1,4 +1,4 @@
-import { prefix,wxLogin, wxRequest, domain,scoreStatus } from '../../utils/util.js';
+import { prefix, wxLogin, wxRequest, domain, scoreStatus } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -26,29 +26,34 @@ Page({
         data: this.data.score,
         header: { authorization, },
       }).then((data) => {
+        const index = this.data.index;
         wx.requestPayment(
           {
             ...data.content,
             'success': (res) => {
-              let pages = getCurrentPages();//当前页面栈
-              let prevPage = pages[pages.length - 2];//上一页面
-              const data = prevPage.data;
-              console.log(data);
-              prevPage.setData({
-                [`scores[${this.data.index}].status`]: 1
-              })
+              if (index) {
+                let pages = getCurrentPages();//当前页面栈
+                let prevPage = pages[pages.length - 2];//上一页面
+                const data = prevPage.data;
+                console.log(data);
+                prevPage.setData({
+                  [`scores[${index}].status`]: 1
+                })
+              }
               this.setData({
                 [`score.status`]: 1
               })
             },
             'fail': (res) => {
-              let pages = getCurrentPages();//当前页面栈
-              let prevPage = pages[pages.length - 2];//上一页面
-              const data = prevPage.data;
-              console.log(data);
-              prevPage.setData({
-                [`scores[${this.data.index}].status`]: 1
-              })
+              if (index) {
+                let pages = getCurrentPages();//当前页面栈
+                let prevPage = pages[pages.length - 2];//上一页面
+                const data = prevPage.data;
+                console.log(data);
+                prevPage.setData({
+                  [`scores[${index}].status`]: 1
+                })
+              }
               this.setData({
                 [`score.status`]: 1
               })
