@@ -71,20 +71,20 @@ Page({
         method: "PUT",
         data: product,
         header: { authorization, },
-      }).then((product) => {
+      }).then(({content}) => {
         this.setData({
-          ...product,
-          product
+          ...content,
+          product:content
         });
         let pages = getCurrentPages();//当前页面栈
         let detail = pages[pages.length - 2];//详情页面
         detail.setData({
-          product
+          product:content
         });
         let list = pages[pages.length - 3];//列表页面
         const key = `products[${index}]`
         list.setData({
-          [key]: product
+          [key]: content
         });
       });
     });
@@ -95,11 +95,11 @@ Page({
       wxRequest({
         url: `${domain}/products/${options.id}?sid=${customer.store.id}`,
         header: { authorization },
-      }).then((product) => {
+      }).then(({content}) => {
         this.setData({
           index: options.index,
-          ...product,
-          product
+          ...content,
+          product:content
         })
       });
     })

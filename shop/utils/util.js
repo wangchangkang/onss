@@ -3,9 +3,9 @@ const { windowWidth } = app.globalData;
 const domain = 'http://127.0.0.1:8001/shop';
 const appid = "wxe78290c2a5313de3";
 const prefix = 'http://127.0.0.1/';
-const scoreStatus = [
-  '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
-];
+const scoreStatus = {
+  PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
+};
 const types = [
   { id: 1, title: '服装', icon: "/images/clothing.png" },
   { id: 2, title: '美食', icon: "/images/delicious.png" },
@@ -190,5 +190,6 @@ module.exports = {
   getProducts,
   getProduct,
   windowWidth,
-  wxRequest
+  wxRequest,
+  scoreStatus
 }

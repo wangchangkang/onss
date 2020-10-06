@@ -3,9 +3,9 @@ const { windowWidth } = app.globalData;
 const domain = 'http://127.0.0.1:8002/store';
 const appid = "wx095ba1a3f9396476";
 const prefix = 'http://127.0.0.1/';
-const scoreStatus = [
-  '待支付', '待配货', '待补价', '待发货', '待签收', '已完成'
-];
+const scoreStatus = {
+  PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
+};
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
     "餐饮",
@@ -116,7 +116,7 @@ const formatNumber = n => {
 };
 
 function checkStore() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
     const customer = wx.getStorageSync('customer');
     if (authorization && customer) {
@@ -140,7 +140,8 @@ function checkStore() {
             url: `${domain}/wxLogin`,
             method: 'POST',
             data: { code, appid }
-          }).then(({ authorization, customer }) => {
+          }).then((data) => {
+            const { authorization, customer } = data.content;
             wx.setStorageSync('authorization', authorization);
             wx.setStorageSync('customer', customer);
             if (customer.store) {
@@ -165,7 +166,7 @@ function checkStore() {
   })
 };
 function checkCustomer() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
     const customer = wx.getStorageSync('customer');
     if (authorization && customer) {
@@ -183,7 +184,8 @@ function checkCustomer() {
             url: `${domain}/wxLogin`,
             method: 'POST',
             data: { code, appid }
-          }).then(({ authorization, customer }) => {
+          }).then((data) => {
+            const { authorization, customer } = data.content
             wx.setStorageSync('authorization', authorization);
             wx.setStorageSync('customer', customer);
             resolve({ authorization, customer });
@@ -217,7 +219,8 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
       header: {
         authorization,
       },
-    }).then(({ authorization, customer }) => {
+    }).then((data) => {
+      const { authorization, customer } = data.content;
       wx.setStorageSync('authorization', authorization);
       wx.setStorageSync('customer', customer);
       resolve({ authorization, customer })
@@ -225,95 +228,10 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
   })
 };
 
-/** 根据商户ID分页商品
- * @param {String} sid 商户ID
- * @param {Number} number 分页数 
- */
-function getProducts(sid, number = 0) {
-  return new Promise((resolve, reject) => {
-    wx.request({
-      url: `${domain}/stores/${sid}/getProducts?page=${number}&size=4`,
-      method: "GET",
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        if (code === 'success') {
-          console.log(content);
-          resolve(content);
-        } else {
-          wx.showModal({
-            title: '警告',
-            content: msg,
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
-    })
-  })
-}
-/** 根据经纬度分页获取商户
- * @param {Number} longitude 经度
- * @param {Number} latitude 维度
- * @param {Number} number 分页数
- */
-function getStores(longitude, latitude, number = 0) {
-  return wxRequest({
-    url: `${domain}/stores/${longitude}-${latitude}/near?page=${number}`,
-  })
-}
-/** 根据商户ID获取商户信息
- * @param {String} id 商户主键 
- */
-function getStore(id) {
-  return new Promise((resolve, reject) => {
-    wx.request({
-      url: `${domain}/stores/${id}`,
-      method: "GET",
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            console.log(content);
-            resolve(content)
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        })
-      },
-    })
-  });
-}
-/** 商品详情
- * @param {string} id 商品ID
- */
-function getProduct(id) {
-  return wxRequest({
-    url: `${domain}/products/${id}`,
-  });
-}
+
+
+
+
 /**多个文件上传
  * @param {string} id 用户ID
  * @param {string} authorization 密钥
@@ -417,7 +335,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
         console.log(data)
         switch (code) {
           case 'success':
-            resolve(content)
+            resolve(data)
             break;
           case '1977.customer.notfound':
             wx.setStorageSync('authorization', content.authorization);
@@ -467,10 +385,6 @@ module.exports = {
   setPhone,
   formatTime,
   app,
-  getStores,
-  getStore,
-  getProducts,
-  getProduct,
   windowWidth,
   wxRequest,
   chooseImages,

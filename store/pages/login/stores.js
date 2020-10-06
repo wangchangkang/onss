@@ -15,7 +15,7 @@ Page({
         url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${customer.id}`,
         method: 'POST',
         header: { authorization },
-      }).then((content) => {
+      }).then(({content}) => {
         wx.setStorageSync('authorization', content.authorization);
         wx.setStorageSync('customer', content.customer);
         wx.reLaunch({
@@ -34,10 +34,10 @@ Page({
       wxRequest({
         url: `${domain}/stores?cid=${customer.id}`,
         header: { authorization },
-      }).then((stores) => {
-        if (stores.length > 0) {
+      }).then(({content}) => {
+        if (content.length > 0) {
           this.setData({
-            stores
+            stores:content
           })
         } else {
           wx.reLaunch({

@@ -110,77 +110,41 @@ Page({
       pictures: this.data.pictures,
       videos: this.data.videos
     }
-    const customer = wx.getStorageSync('customer');
-    const authorization = wx.getStorageSync('authorization');
-    wx.request({
-      url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-      data: store,
-      method: "PUT",
-      header: {
-        authorization,
-      },
-      success: ({ data }) => {
-        const { code, msg, content } = data;
-        console.log(data)
-        switch (code) {
-          case 'success':
-            wx.showToast({
-              title: msg,
-              icon: 'success',
-              duration: 2000,
-              success: (res) => {
-                const store = { ...this.data.store, ...content }
-                this.setData({
-                  store
-                })
-                let pages = getCurrentPages();//当前页面栈
-                let detail = pages[pages.length - 2];//详情页面
-                detail.setData({
-                  ...store
-                });
-              }
-            })
-            break;
-          case 'fail.login':
-            wx.redirectTo({
-              url: '/pages/login/login',
-            })
-            break;
-          default:
-            wx.showModal({
-              title: '警告',
-              content: msg,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-            break;
-        }
-      },
-      fail: (res) => {
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
+
+    checkStore().then(({ authorization, customer }) => {
+      wxRequest({
+        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+        data: store,
+        method: "PUT",
+        header: { authorization },
+      }).then(({ content }) => {
+        const store = { ...this.data.store, ...content }
+        this.setData({
+          store
         })
-      },
+        let pages = getCurrentPages();//当前页面栈
+        let detail = pages[pages.length - 2];//详情页面
+        detail.setData({
+          ...store
+        });
+      })
     })
   },
 
-  onLoad: function (options) {
+  onLoad: function () {
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
         header: { authorization },
-      }).then((store) => {
+      }).then(({ content }) => {
         let index = -1;
-        types.find((value, key, array) => {
-          if (value.id === store.type) {
+        types.find((value, key) => {
+          if (value.id === content.type) {
             index = key;
           }
         })
         this.setData({
-          ...store, index, store
+          ...content, index, store: content
         })
       })
     })

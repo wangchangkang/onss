@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import work.onss.enums.ScoreEnum;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,7 +35,7 @@ public class Score implements Serializable {
     private String sid;
     private String subAppId;
     private String openid;
-    private Integer status = 0;
+    private ScoreEnum status = ScoreEnum.PAY;
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
     private BigDecimal total;
     private List<Product> products;

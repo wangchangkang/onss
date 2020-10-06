@@ -9,10 +9,10 @@ Page({
         url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
         header: { authorization, status: (!this.data.status).toString() },
         method: 'PUT'
-      }).then((status) => {
-        console.log(status);
+      }).then(({content}) => {
+        console.log(content);
         this.setData({
-          status
+          status:content
         });
       })
     })
@@ -34,9 +34,9 @@ Page({
       wxRequest({
         url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
         header: { authorization, },
-      }).then((store) => {
+      }).then(({content}) => {
         this.setData({
-          ...store
+          ...content
         })
       })
     })

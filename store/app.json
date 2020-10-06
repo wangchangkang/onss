@@ -7,7 +7,6 @@
     "pages/login/register",
     "pages/score/list",
     "pages/score/detail",
-    "pages/score/confirm",
     "pages/product/detail",
     "pages/product/edit",
     "pages/product/create",

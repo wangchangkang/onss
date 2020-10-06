@@ -44,82 +44,15 @@ public class ScoreController {
 
     /**
      * 列表
-     * 待支付 待配货 待补价 待发货 待签收 完成 已关闭
+     * 待支付 待配货 待发货 待签收 完成
      *
      * @param sid 商户ID
      */
     @GetMapping(value = {"scores"})
-    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<Integer> status) {
+    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<String> status) {
         Query query = Query.query(Criteria.where("sid").is(sid).and("status").in(status));
         List<Score> scores = mongoTemplate.find(query, Score.class);
         return Work.success("加载成功", scores);
-    }
-
-    /**
-     * 订单配货
-     * 待支付 0 待配货/配货中 1 待配送/补全差价 2 待配送/发货中  3 待签收/已发货 4 完成 5 已关闭 6
-     * 签收时补偿差价
-     *
-     * @param sid     商户ID
-     * @param id      订单ID
-     * @param weights 商品重量 {商品ID:重量,商品ID:重量,商品ID:重量,}
-     */
-    @PutMapping(value = {"scores/{id}/updateStatus"})
-    public Work<Score> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestBody(required = false) Map<String, BigDecimal> weights) throws ServiceException {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        Score score = mongoTemplate.findOne(query, Score.class);
-        if (score == null) {
-            throw new ServiceException("fail", "订单丢失，请立刻截图，再联系客服");
-        }
-        if (score.getStatus() == 1) {
-            List<Product> products = score.getProducts();
-            BigDecimal total = BigDecimal.valueOf(0.00);
-            Update update = new Update();
-            for (int i = 0; i < products.size(); i++) {
-                Product product = products.get(i);
-                // 商品重量
-                BigDecimal weight = weights.get(product.getId());
-                // 销售价格
-                BigDecimal price = product.getPrice();
-                // 实际小计
-                BigDecimal realTotal = price.multiply(weight);
-                // 购买小计
-                BigDecimal littleTotal = product.getTotal();
-                // 差价
-                BigDecimal difference = littleTotal.subtract(realTotal);
-                if (product.getQuality()) {
-                    update.set("product.".concat(String.valueOf(i)).concat("difference"), difference);
-                    update.set("product.".concat(String.valueOf(i)).concat("weight"), weight);
-                }
-                // 汇总差价
-                total = total.add(difference);
-            }
-            switch (total.compareTo(BigDecimal.ZERO)) {
-                // 差价为零时，待配送
-                case 0:
-                    update.set("status", 3);
-                    break;
-                // 差价为正数时 待配送
-                case 1:
-                    update.set("status", 3).set("difference", total);
-                    break;
-                // 差价为负数时 待补价
-                case -1:
-                    update.set("status", 2).set("difference", total);
-                    break;
-                default:
-                    break;
-            }
-            mongoTemplate.updateFirst(query, update, Score.class);
-            return Work.success("配货成功", score);
-        } else {
-            if (score.getStatus() == 0) {
-                return Work.fail("该订单尚未支付,无法配货");
-            } else {
-                return Work.fail("请不要重复配货");
-            }
-
-        }
     }
 
 }

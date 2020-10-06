@@ -29,6 +29,8 @@ Page({
         method: "POST",
         data: { sid: store.id, address, products, subAppId: appid, openid: user.openid },
       }).then((data) => {
+        console.log(data.content);
+        
         wx.requestPayment(
           {
             ...data.content,

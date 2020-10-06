@@ -7,8 +7,6 @@ import com.ijpay.wxpay.WxPayApi;
 import com.ijpay.wxpay.model.UnifiedOrderModel;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -62,12 +60,11 @@ public class ScoreController {
      * @return 订单分页
      */
     @GetMapping(value = {"scores"})
-    public Work<Page<Score>> all(@RequestParam(name = "uid") String uid,
+    public Work<List<Score>> all(@RequestParam(name = "uid") String uid,
                                  @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         Query query = Query.query(Criteria.where("uid").is(uid)).with(pageable);
         List<Score> scores = mongoTemplate.find(query, Score.class);
-        Page<Score> page = new PageImpl<>(scores);
-        return Work.success("加载成功", page);
+        return Work.success("加载成功", scores);
     }
 
     /**
@@ -117,6 +114,7 @@ public class ScoreController {
         score.setUid(uid);
         score.setProducts(products);
         score.setTotal(total);
+        score.setName(store.getName());
 
         /*
           服务商APPID
@@ -182,7 +180,13 @@ public class ScoreController {
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
         packageParams.put("id", score.getId());
-        packageParams.put("prepayId", prepayId);
         return Work.success("创建订单成功", packageParams);
+    }
+
+
+    @PostMapping(value = {"scores/pay"})
+    public Work<Map<String, String>> pay(@RequestBody Score score) {
+        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), score.getPrepayId(), weChatConfig.getApiKey(), SignType.HMACSHA256);
+        return Work.success("生成订单成功", packageParams);
     }
 }

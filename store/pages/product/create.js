@@ -69,14 +69,14 @@ Page({
         data,
         method: "POST",
         header: { authorization },
-      }).then((product) => {
+      }).then(({content}) => {
         this.setData({
-          ...product
+          ...content
         });
         let pages = getCurrentPages();
         let prevPage = pages[pages.length - 2];
         let products = prevPage.data.products;
-        products = [product, ...products];
+        products = [content, ...products];
         prevPage.setData({
           products
         });

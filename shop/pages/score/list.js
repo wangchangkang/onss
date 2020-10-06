@@ -1,66 +1,62 @@
-// pages/score/list.js
+import { prefix, wxLogin, domain, wxRequest, scoreStatus } from '../../utils/util.js';
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    prefix, scores: [], scoreStatus, number: 0, last: false
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad: function (options) {
-
+    wxLogin().then(({ authorization, user }) => {
+      wxRequest({
+        url: `${domain}/scores?uid=${user.id}&page=0&size=4`,
+        header: { authorization, },
+      }).then((data) => {
+        console.log(data.content);
+        this.setData({
+          scores: data.content
+        });
+      });
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
   onPullDownRefresh: function () {
-
+    wxLogin().then(({ authorization, user }) => {
+      wxRequest({
+        url: `${domain}/scores?uid=${user.id}&page=0&size=4`,
+        header: { authorization, },
+      }).then((data) => {
+        console.log(data.content);
+        this.setData({
+          number: 0,
+          last: false,
+          scores: data.content
+        })
+        wx.stopPullDownRefresh()
+      });
+    });
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
   onReachBottom: function () {
-
+    if (this.data.last) {
+      console.log(this.data.scores)
+    } else {
+      const number = this.data.number + 1
+      wxLogin().then(({ authorization, user }) => {
+        wxRequest({
+          url: `${domain}/scores?uid=${user.id}&page=${number}&size=4`,
+          header: { authorization, },
+        }).then((data) => {
+          if (data.content.length == 0) {
+            this.setData({
+              last: true,
+            });
+          } else {
+            this.setData({
+              number,
+              scores: [...this.data.scores, ...data.content],
+            });
+          }
+        });
+      });
+    }
   },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })

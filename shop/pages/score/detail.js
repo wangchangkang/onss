@@ -1,6 +1,8 @@
-import { wxLogin, appid, wxRequest, domain } from '../../utils/util.js';
+import { prefix,wxLogin, wxRequest, domain,scoreStatus } from '../../utils/util.js';
 Page({
   data: {
+    prefix,
+    scoreStatus
   },
   onLoad: function (options) {
     wxLogin().then(({ user, authorization }) => {
@@ -9,9 +11,63 @@ Page({
         header: { authorization, },
       }).then((data) => {
         this.setData({
-          score:data.content
+          index: options.index,
+          score: data.content
         });
       });
     })
   },
+
+  pay: function () {
+    wxLogin().then(({ user, authorization }) => {
+      wxRequest({
+        url: `${domain}/scores/pay`,
+        method: 'POST',
+        data: this.data.score,
+        header: { authorization, },
+      }).then((data) => {
+        wx.requestPayment(
+          {
+            ...data.content,
+            'success': (res) => {
+              let pages = getCurrentPages();//当前页面栈
+              let prevPage = pages[pages.length - 2];//上一页面
+              const data = prevPage.data;
+              console.log(data);
+              prevPage.setData({
+                [`scores[${this.data.index}].status`]: 1
+              })
+              this.setData({
+                [`score.status`]: 1
+              })
+            },
+            'fail': (res) => {
+              let pages = getCurrentPages();//当前页面栈
+              let prevPage = pages[pages.length - 2];//上一页面
+              const data = prevPage.data;
+              console.log(data);
+              prevPage.setData({
+                [`scores[${this.data.index}].status`]: 1
+              })
+              this.setData({
+                [`score.status`]: 1
+              })
+              console.log(res);
+            },
+            'complete': (res) => {
+            }
+          })
+      });
+    })
+  },
+
+  clipBoard: function (e) {
+    wx.setClipboardData({
+      data: this.data.score.outTradeNo,
+      success: (res) => {
+        console.log(res);
+
+      }
+    })
+  }
 })

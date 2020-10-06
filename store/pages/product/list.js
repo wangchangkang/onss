@@ -27,10 +27,10 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}`,
         header: { authorization },
-      }).then((products) => {
-        console.log(products);
+      }).then(({content}) => {
+        console.log(content);
         this.setData(
-          { products }
+          { products:content }
         )
       })
     })
@@ -60,7 +60,7 @@ Page({
               url: `${domain}/products/${id}/updateStatus?sid=${customer.store.id}&status=${!status}`,
               method: 'PUT',
               header: { authorization },
-            }).then((content) => {
+            }).then(({content}) => {
               this.setData({
                 [`products[${index}].status`]: content
               })
