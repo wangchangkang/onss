@@ -52,7 +52,7 @@ Page({
         header: { authorization },
         data: address,
         method: "POST",
-      }).then((content) => {
+      }).then((data) => {
         let pages = getCurrentPages();//当前页面栈
         let prevPage = pages[pages.length - 2];//上一页面
         if (index) {
@@ -68,7 +68,7 @@ Page({
           });
         }
         this.setData({
-          ...content
+          ...data.content
         });
         wx.navigateBack({
           delta: 1

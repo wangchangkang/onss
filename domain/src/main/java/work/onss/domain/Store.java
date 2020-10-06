@@ -1,16 +1,15 @@
 package work.onss.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -31,9 +30,7 @@ public class Store implements Serializable {
 
     @Id
     private String id;
-    @TextIndexed
     private String name;//店名
-    @TextIndexed
     private String description;//描述
     private String address;//地址
     private String trademark;//图标
@@ -49,12 +46,11 @@ public class Store implements Serializable {
     private String licenseNumber;//营业执照编号
     private String licenseCopy;//营业执照
 
-    private LocalTime openTime;
-    private LocalTime closeTime;
-
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime openTime = LocalTime.of(7, 30);
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime closeTime = LocalTime.of(22, 30);
     private List<Customer> customers;//营业员
-    @Transient
-    private List<Product> products;//销售产品
 
     private String subMchId;//商户号
     private String businessCode; // 业务编号

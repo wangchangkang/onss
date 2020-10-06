@@ -4,7 +4,7 @@ Page({
     windowWidth, domain, prefix
   },
   onLoad: function (options) {
-    getProduct(options.id).then((product) => {
+    getProduct(options.id).then((data) => {
       wx.getStorage({
         key: 'cartsPid',
         success: (res) => {
@@ -22,7 +22,7 @@ Page({
         }
       });
       this.setData({
-        ...product
+        ...data.content
       });
     })
   },
@@ -34,11 +34,9 @@ Page({
         wxRequest({
           url: `${domain}/prefers?uid=${user.id}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
-        }).then((content) => {
-          const prefersPid = { ...this.data.prefersPid, [id]: content };
+          header: { authorization },
+        }).then((data) => {
+          const prefersPid = { ...this.data.prefersPid, [id]: data.content };
           this.setData({
             prefersPid
           });
@@ -48,9 +46,7 @@ Page({
         wxRequest({
           url: `${domain}/prefers/${this.data.prefersPid[id]}?uid=${user.id}`,
           method: 'DELETE',
-          header: {
-            authorization,
-          },
+          header: { authorization },
         }).then(() => {
           let prefersPid = this.data.prefersPid;
           delete prefersPid[id];
@@ -79,12 +75,10 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${user.id}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization },
           data: { id: cartsPid[id].id, sid: sid, pid: id, num: cartsPid[id].num + count },
-        }).then((content) => {
-          const cartsPid = { ...this.data.cartsPid, [id]: content };
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [id]: data.content };
           wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
             cartsPid
@@ -94,12 +88,10 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${user.id}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization },
           data: { sid: sid, pid: id, num: 1 },
-        }).then((content) => {
-          const cartsPid = { ...this.data.cartsPid, [id]: content };
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [id]: data.content };
           wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
             cartsPid

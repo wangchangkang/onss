@@ -7,9 +7,9 @@ Page({
       wxRequest({
         url: `${domain}/scores/${options.id}?uid=${user.id}`,
         header: { authorization, },
-      }).then((score) => {
+      }).then((data) => {
         this.setData({
-          score
+          score:data.content
         });
       });
     })

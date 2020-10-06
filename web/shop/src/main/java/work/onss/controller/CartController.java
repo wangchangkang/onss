@@ -44,13 +44,13 @@ public class CartController {
     @PostMapping(value = {"carts"})
     public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) {
         Query queryProduct = Query.query(Criteria.where("id").is(cart.getPid()));
-         Product product = mongoTemplate.findOne(queryProduct, Product.class);
+        Product product = mongoTemplate.findOne(queryProduct, Product.class);
         if (product != null) {
-            if (cart.getNum() > product.getStock()) {
-                return Work.fail("库存不足");
-            } else if (cart.getNum() > product.getMax()) {
+            if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
                 String msg = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
                 return Work.fail(msg);
+            } else if (cart.getNum().compareTo(product.getStock()) > 0) {
+                return Work.fail("库存不足");
             } else if (!product.getStatus()) {
                 return Work.fail("该商品已下架");
             }
@@ -58,14 +58,17 @@ public class CartController {
             if (null != cart.getId()) {
                 cartQuery.addCriteria(Criteria.where("id").is(cart.getId()));
             }
+            BigDecimal total = product.getAverage().multiply(new BigDecimal(cart.getNum()));
             Cart oldCart = mongoTemplate.findOne(cartQuery, Cart.class);
             if (oldCart != null) {
                 oldCart.setNum(cart.getNum());
-                Update updateCart = Update.update("num", cart.getNum());
+                oldCart.setTotal(total);
+                Update updateCart = Update.update("num", oldCart.getNum()).set("total", total);
                 mongoTemplate.updateFirst(cartQuery, updateCart, Cart.class);
                 return Work.success("更新购物车成功", oldCart);
             } else {
                 cart.setUid(uid);
+                cart.setTotal(total);
                 mongoTemplate.insert(cart);
                 return Work.success("加入购物车成功", cart);
             }
@@ -73,7 +76,6 @@ public class CartController {
             return Work.fail("该商品不存在");
         }
     }
-
     /**
      * @param uid 用户ID
      * @return 购物车商户

@@ -41,7 +41,7 @@ public class AsyncTask {
             Map<String, String> carts = new HashMap<>();
             score.getProducts().forEach(product -> {
                 Update updateTotal = new Update();
-                updateTotal.inc("total", -product.getNum());
+//                updateTotal.inc("total", -product.getNum());
                 UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(product.getId()).and("total").gte(product.getNum())), updateTotal, Product.class);
                 if (result.getMatchedCount() == 0) {
                     carts.put(product.getId(), product.getName().concat(":").concat(product.getPrice().toPlainString()).concat("×").concat(product.getNum().toString()));

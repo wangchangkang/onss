@@ -1,7 +1,7 @@
-import { prefix, windowWidth, checkStore, domain, wxRequest, types, chooseImages,chooseImage } from '../../utils/util.js';
+import { prefix, windowWidth, checkStore, domain, wxRequest, types, chooseImages, chooseImage } from '../../utils/util.js';
 Page({
   data: {
-    prefix, domain, windowWidth, types,videos:[]
+    prefix, domain, windowWidth, types, videos: [], openTime: '07:30', closeTime: '22:30',
   },
   bindPickerChange: function (e) {
     const id = e.currentTarget.id;
@@ -198,4 +198,12 @@ Page({
       ...store, index
     })
   },
+
+  timeChange: function (e) {
+    const key = e.currentTarget.id;
+    const value = e.detail.value;
+    this.setData({
+      [key]: value
+    });
+  }
 })

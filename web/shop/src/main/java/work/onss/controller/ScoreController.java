@@ -100,15 +100,15 @@ public class ScoreController {
         BigDecimal total = BigDecimal.ZERO;
         for (Product product : products) {
             Product cart = productMap.get(product.getId());
-            if (cart.getNum() > product.getStock()) {
-                String message = MessageFormat.format("[{0}]库存不足!", product.getName());
+            if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
+                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", product.getName(), product.getMin(), product.getMax());
                 return Work.fail(message);
-            } else if (cart.getNum() > product.getMax()) {
-                String message = MessageFormat.format("[{0}]每次限购{1}", product.getName(), product.getMax());
+            } else if (cart.getNum().compareTo(product.getStock()) > 0) {
+                String message = MessageFormat.format("[{0}]库存不足!", product.getName());
                 return Work.fail(message);
             }
             product.setNum(cart.getNum());
-            product.setTotal(product.getAverage().multiply(BigDecimal.valueOf(cart.getNum())));
+            product.setTotal(product.getAverage().multiply(new BigDecimal(cart.getNum())));
             total = total.add(product.getTotal());
         }
         if (total.equals(BigDecimal.ZERO) && 0 == products.size()) {

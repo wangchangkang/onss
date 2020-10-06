@@ -1,6 +1,5 @@
 import { wxLogin, appid, wxRequest, domain } from '../../utils/util.js';
 Page({
-
   data: {
   },
 
@@ -17,16 +16,22 @@ Page({
   saveScore: function (e) {
     wxLogin().then(({ user, authorization }) => {
       let { address, cartsPid, store, products } = this.data;
-      products = products.filter((product) => { return cartsPid[product.id].checked });
+      products = products.filter((product) => { 
+        const cart = cartsPid[product.id];
+        product.num = cart.num;
+        return cartsPid[product.id].checked && store.id === product.sid 
+      });
+      console.log(products);
+      
       wxRequest({
         url: `${domain}/scores?uid=${user.id}`,
         header: { authorization, },
         method: "POST",
         data: { sid: store.id, address, products, subAppId: appid, openid: user.openid },
-      }).then((score) => {
+      }).then((data) => {
         wx.requestPayment(
           {
-            ...score,
+            ...data.content,
             'success': (res) => {
               console.log(res);
             },
@@ -35,7 +40,7 @@ Page({
             },
             'complete': (res) => {
               wx.reLaunch({
-                url: `/pages/score/detail?id=${score.id}`,
+                url: `/pages/score/detail?id=${data.content.id}`,
               })
             }
           })

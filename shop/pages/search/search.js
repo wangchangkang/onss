@@ -1,4 +1,4 @@
-import { prefix, getStores, types, searchStores } from '../../utils/util.js';
+import { prefix, getStores } from '../../utils/util.js';
 Page({
 
   /**
@@ -22,9 +22,9 @@ Page({
   search: function (e) {
     const { keyword } = e.detail.value
     const { longitude, latitude } = this.data
-    getStores(longitude, latitude, null, 0, keyword).then((stores) => {
+    getStores(longitude, latitude, null, 0, keyword).then((data) => {
       this.setData({
-        stores
+        stores:data.content
       })
     })
   }

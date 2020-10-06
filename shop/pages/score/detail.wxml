@@ -7,8 +7,8 @@
 	</view>
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">联系方式：</view>
-		<view class="weui-cell__bd">{{score.phone}} </view>
-		<view class="weui-cell__ft">{{score.username}}</view>
+		<view class="weui-cell__bd">{{score.address.phone}} </view>
+		<view class="weui-cell__ft">{{score.address.username}}</view>
 	</view>
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">收货地址：</view>

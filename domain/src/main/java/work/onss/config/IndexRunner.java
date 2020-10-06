@@ -20,10 +20,8 @@ public class IndexRunner implements CommandLineRunner {
     @Override
     public void run(String... args) {
         GeospatialIndex location = new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE);
-        TextIndexDefinition textIndexDefinition = TextIndexDefinition.builder().onFields("name", "description").build();
         HashedIndex licenseNumber = HashedIndex.hashed("licenseNumber");
         mongoTemplate.indexOps(Store.class).ensureIndex(location);
-        mongoTemplate.indexOps(Store.class).ensureIndex(textIndexDefinition);
         mongoTemplate.indexOps(Store.class).ensureIndex(licenseNumber);
     }
 }

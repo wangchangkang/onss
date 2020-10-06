@@ -10,9 +10,9 @@ Page({
       wxRequest({
         url: `${domain}/addresses?uid=${user.id}`,
         header: { authorization },
-      }).then((addresses) => {
+      }).then((data) => {
         this.setData({
-          addresses
+          addresses:data.content
         });
       });
     })

@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.Valid;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
@@ -38,6 +35,7 @@ public class Score implements Serializable {
     private String subAppId;
     private String openid;
     private Integer status = 0;
+    @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
     private BigDecimal total;
     private List<Product> products;
     private Address address;

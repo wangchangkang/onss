@@ -61,6 +61,30 @@
 				</picker>
 			</view>
 		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">地址</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="address" value="{{address}}" placeholder="请填写详细地址" maxlength="12" />
+			</view>
+		</view>
+		<view class="weui-cell">
+			<view class="weui-cell__hd">
+				<view class="weui-label">营业时间</view>
+			</view>
+			<view class="weui-cell__bd">
+				<view class="weui-flex">
+					<picker mode="time" class="weui-flex__item" bindchange='timeChange' id="openTime">
+						<input placeholder="开始时间" name='openTime' value="{{openTime}}" disabled="true" />
+					</picker>
+					<picker mode="time" class="weui-flex__item" bindchange='timeChange' id="closeTime">
+						<input placeholder="结束时间" name='closeTime' value="{{closeTime}}" disabled="true" />
+					</picker>
+				</view>
+			</view>
+		</view>
 	</view>
 
 	<view class="weui-cells__title">经营内容</view>

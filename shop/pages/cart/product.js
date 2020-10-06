@@ -10,29 +10,29 @@ Page({
   },
   onLoad: function (options) {
     if (options.id) {
-      getStore(options.id).then((store) => {
+      getStore(options.id).then((data1) => {
         wxLogin().then(({ user, authorization, cartsPid }) => {
           wxRequest({
             url: `${domain}/carts?uid=${user.id}&sid=${options.id}&pids=${Object.keys(cartsPid)}`,
-            header: {
-              authorization,
-            },
-          }).then((products) => {
+            header: { authorization },
+          }).then((data2) => {
             let checkeds = [];
             let total = 0.00;
-            products.forEach((product, index) => {
+            data2.content.forEach((product) => {
               const cart = cartsPid[product.id];
+              let sum = product.average * 100 * cart.num;
+              cartsPid[product.id].total = sum / 100;
               if (cart.checked) {
                 checkeds.push(product.id);
-                total = total + product.average * cart.num;
+                total = total + sum / 100;
               }
             });
             this.setData({
-              checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
+              checkAll: checkeds.length === 0 ? false : checkeds.length === data2.content.length,
               total: total.toFixed(2),
-              store,
+              store: data1.content,
               cartsPid,
-              products
+              products: data2.content
             })
           })
         })
@@ -53,9 +53,6 @@ Page({
   },
 
   updateCart: function (index, count) {
-    console.log(index);
-    console.log(count);
-
     let checkeds = [];
     let total = 0.00;
     wxLogin().then(() => {
@@ -63,17 +60,16 @@ Page({
       console.log(cartsPid);
       console.log(products);
       products.forEach((product, k) => {
-        console.log(product);
-        console.log(k);
         let cart = cartsPid[product.id];
         if (index == k) {
           cart.num = cart.num + count;
-          console.log(cart);
+          let sum = product.average * 100 * cart.num;
+          cart.total = sum / 100;
         }
         if (cart.checked) {
-          total = cart.num * product.average + total;
+          total = cart.total + total;
           checkeds.push(product.id);
-          console.log(total);
+
         }
         const key = `cartsPid.${product.id}`;
         this.setData({
@@ -96,18 +92,18 @@ Page({
     const { cartsPid, products } = this.data;
     let total = 0.00;
     products.forEach((product) => {
+      let cart = cartsPid[product.id];
       const isChecked = checkeds.includes(product.id);
-      const checked = `cartsPid.${product.id}.checked`;
-      const num = cartsPid[product.id].num;
+      cart.checked = isChecked;
+      cart.total = product.average * cart.num;
+      const key = `cartsPid.${product.id}`;
       this.setData({
-        [checked]: isChecked
+        [key]: cart
       });
       if (isChecked) {
-        total = total + product.average * num;
+        total = total + cart.total;
       }
     });
-
-
     this.setData({
       checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
       total: total.toFixed(2)
@@ -120,12 +116,11 @@ Page({
     let { cartsPid, products } = this.data;
     if (checkAll) {
       products.forEach((product) => {
-        const checked = `cartsPid.${product.id}.checked`;
+        const key = `cartsPid.${product.id}.checked`;
         this.setData({
-          [checked]: checkAll
+          [key]: checkAll
         });
-        const num = cartsPid[product.id].num;
-        total = total + product.average * num;
+        total = total + cartsPid[product.id].num * product.average;
       });
     } else {
       products.forEach((product) => {

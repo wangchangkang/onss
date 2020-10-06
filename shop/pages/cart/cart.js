@@ -5,14 +5,12 @@ Page({
   },
   onShow: function (options) {
     wxLogin().then(({ user, authorization }) => {
-      console.log(user);
-      
       wxRequest({
         url: `${domain}/carts/getStores?uid=${user.id}`,
         header: { authorization, },
-      }).then((stores) => {
+      }).then((data) => {
         this.setData({
-          stores
+          stores:data.content
         })
       })
     })

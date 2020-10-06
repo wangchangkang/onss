@@ -136,7 +136,9 @@ public class StoreController {
                 .set("type", store.getType())
                 .set("location", store.getLocation())
                 .set("pictures", store.getPictures())
-                .set("videos", store.getVideos());
+                .set("videos", store.getVideos())
+                .set("openTime", store.getOpenTime())
+                .set("closeTime", store.getCloseTime());
         mongoTemplate.updateFirst(query, update, Store.class);
         return Work.success("更新成功", store);
     }

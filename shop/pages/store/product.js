@@ -5,9 +5,9 @@ Page({
   },
   onLoad: function (options) {
     if (options.id) {
-      getStore(options.id).then((store) => {
-        getProducts(options.id).then((products) => {
-          this.setData({ store, [`products[0]`]: products, });
+      getStore(options.id).then((data1) => {
+        getProducts(options.id).then((data2) => {
+          this.setData({ store: data1.content, [`products[0]`]: data2.content });
         });
       });
     } else {
@@ -27,8 +27,8 @@ Page({
   },
 
   onPullDownRefresh: function () {
-    getProducts(this.data.store.id).then((products) => {
-      this.setData({ number: 0, last: false, [`products[0]`]: products, });
+    getProducts(this.data.store.id).then((data) => {
+      this.setData({ number: 0, last: false, [`products[0]`]: data.content, });
       wx.stopPullDownRefresh();
     })
   },
@@ -37,11 +37,11 @@ Page({
       console.log(this.data)
     } else {
       const number = this.data.number + 1;
-      getProducts(this.data.store.id, number).then((nextProducts) => {
-        if (nextProducts.length == 0) {
+      getProducts(this.data.store.id, number).then((data) => {
+        if (data.content.length == 0) {
           this.setData({ last: true, });
         } else {
-          this.setData({ number, [`products[${number}]`]: nextProducts });
+          this.setData({ number, [`products[${number}]`]: data.content });
         }
       });
     }
@@ -69,8 +69,8 @@ Page({
             authorization,
           },
           data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
-        }).then((content) => {
-          const cartsPid = { ...this.data.cartsPid, [product.id]: content };
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
           wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
             cartsPid
@@ -84,8 +84,8 @@ Page({
             authorization,
           },
           data: { sid: product.sid, pid: product.id, num: 1 },
-        }).then((content) => {
-          const cartsPid = { ...this.data.cartsPid, [product.id]: content };
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
           wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
             cartsPid

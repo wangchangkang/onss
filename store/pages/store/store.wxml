@@ -11,6 +11,10 @@
 			<view class="weui-media-box__desc">联系方式：{{username}} {{phone}} </view>
 		</view>
 	</view>
+	<view class="weui-cell">
+		<view class="weui-cell__hd">营业时间：</view>
+		<view class="weui-cell__bd">{{openTime}} 至 {{closeTime}}</view>
+	</view>
 	<view class="weui-cells weui-cells_after-title storeInfo">
 		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}"
 			data-name="{{address}}">
