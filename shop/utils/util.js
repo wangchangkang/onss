@@ -1,8 +1,10 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
+const size = 6;
 const domain = 'http://192.168.103.103:8001/shop';
 const appid = "wxe78290c2a5313de3";
 const prefix = 'http:/192.168.103.103/';
+
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
 };
@@ -92,7 +94,7 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
  * @param {Number} number 分页数 
  */
 function getProducts(sid, number = 0) {
-  return wxRequest({ url: `${domain}/stores/${sid}/getProducts?page=${number}&size=4` })
+  return wxRequest({ url: `${domain}/stores/${sid}/getProducts?page=${number}&size=${size}` })
 }
 /** 根据经纬度分页获取商户
  * @param {Number} longitude 经度
@@ -191,5 +193,6 @@ module.exports = {
   getProduct,
   windowWidth,
   wxRequest,
-  scoreStatus
+  scoreStatus,
+  size
 }

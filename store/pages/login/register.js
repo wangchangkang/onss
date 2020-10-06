@@ -14,6 +14,10 @@ Page({
     licenseNumber: '91371523MA3PU9M466',
     merchantName: '茌平壹玖柒柒软件有限公司',
     legalPerson: '王先生',
+    licenseCopy: 'picture/logo2.png',
+    idCardCopy: 'picture/logo2.png',
+    idCardNational: 'picture/logo2.png',
+    qualifications: ['picture/logo2.png'],
 
     idCardNumber: '371523199201251250',
     idCardName: '王先生',
@@ -30,8 +34,6 @@ Page({
     servicePhone: '15063517240',
 
     qualificationType: '餐饮',
-    qualifications: [
-    ],
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_CORPORATE',
     accountName: '茌平壹玖柒柒软件有限公司',
@@ -49,7 +51,9 @@ Page({
   /** 申请特约商户 */
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
-    checkCustomer().then(({ customer, authorization }) => {
+    checkCustomer().then(({ authorization, customer }) => {
+      console.log(customer);
+
       const data = { ...this.data, ...e.detail.value };
       wxRequest({
         url: `${domain}/merchants?cid=${customer.id}`,

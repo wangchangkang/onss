@@ -1,4 +1,4 @@
-import { prefix, checkStore, domain, wxRequest,scoreStatus } from '../../utils/util.js';
+import { prefix, checkStore, domain, wxRequest,scoreStatus,size } from '../../utils/util.js';
 
 Page({
   /**
@@ -19,7 +19,7 @@ Page({
     })
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
-        url: `${domain}/scores?sid=${customer.store.id}&status=${options.status}&page=0&size=4`,
+        url: `${domain}/scores?sid=${customer.store.id}&status=${options.status}&page=0&size=${size}`,
         header: { authorization },
       }).then(({ content }) => {
         this.setData({

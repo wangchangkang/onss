@@ -1,6 +1,7 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
-const domain = 'https://1977.work/store';
+const size = 6;
+const domain = 'http://192.168.103.103:8002/store';
 const appid = "wx095ba1a3f9396476";
 const prefix = 'https://1977.work/';
 const scoreStatus = {
@@ -388,5 +389,6 @@ module.exports = {
   windowWidth,
   wxRequest,
   chooseImages,
-  chooseImage
+  chooseImage,
+  size
 }

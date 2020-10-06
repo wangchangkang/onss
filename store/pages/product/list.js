@@ -23,14 +23,14 @@ Page({
   },
 
   onLoad: function () {
-    checkStore().then(({ customer, authorization }) => {
+    checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}`,
         header: { authorization },
-      }).then(({content}) => {
+      }).then(({ content }) => {
         console.log(content);
         this.setData(
-          { products:content }
+          { products: content }
         )
       })
     })
@@ -60,7 +60,7 @@ Page({
               url: `${domain}/products/${id}/updateStatus?sid=${customer.store.id}&status=${!status}`,
               method: 'PUT',
               header: { authorization },
-            }).then(({content}) => {
+            }).then(({ content }) => {
               this.setData({
                 [`products[${index}].status`]: content
               })
@@ -152,7 +152,6 @@ Page({
   delete: function () {
     checkStore().then(({ authorization, customer }) => {
       let { ids, products } = this.data;
-      
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}`,
         method: 'DELETE',

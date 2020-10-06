@@ -1,4 +1,4 @@
-import { prefix, wxLogin, domain, wxRequest, scoreStatus } from '../../utils/util.js';
+import { prefix, wxLogin, domain, wxRequest, scoreStatus,size } from '../../utils/util.js';
 Page({
   data: {
     prefix, scores: [], scoreStatus, number: 0, last: false
@@ -7,7 +7,7 @@ Page({
   onLoad: function (options) {
     wxLogin().then(({ authorization, user }) => {
       wxRequest({
-        url: `${domain}/scores?uid=${user.id}&page=0&size=4`,
+        url: `${domain}/scores?uid=${user.id}&page=0&size=${size}`,
         header: { authorization, },
       }).then((data) => {
         console.log(data.content);
@@ -21,7 +21,7 @@ Page({
   onPullDownRefresh: function () {
     wxLogin().then(({ authorization, user }) => {
       wxRequest({
-        url: `${domain}/scores?uid=${user.id}&page=0&size=4`,
+        url: `${domain}/scores?uid=${user.id}&page=0&size=${size}`,
         header: { authorization, },
       }).then((data) => {
         console.log(data.content);
@@ -42,7 +42,7 @@ Page({
       const number = this.data.number + 1
       wxLogin().then(({ authorization, user }) => {
         wxRequest({
-          url: `${domain}/scores?uid=${user.id}&page=${number}&size=4`,
+          url: `${domain}/scores?uid=${user.id}&page=${number}&size=${size}`,
           header: { authorization, },
         }).then((data) => {
           if (data.content.length == 0) {
