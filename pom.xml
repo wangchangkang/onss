@@ -20,7 +20,7 @@
     <description>POM</description>
 
     <properties>
-        <java.version>8</java.version>
+        <java.version>15</java.version>
         <spring-cloud.version>Hoxton.SR1</spring-cloud.version>
     </properties>
 
