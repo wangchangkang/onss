@@ -35,6 +35,6 @@
 
 <view class="weui-footer weui-footer_fixed-bottom">
 	<button class="weui-footer__text" open-type="contact">联系客服</button>
-	<view class="weui-footer__text">微信公众号：一九七七A</view>
-	<view class="weui-footer__text">Copyright © 2019-2020 www.1977.work</view>
+	<view class="weui-footer__text">微信公众号：茌平壹玖柒柒软件有限公司</view>
+	<view class="weui-footer__text">Copyright © 2019-2021 www.1977.work</view>
 </view>
