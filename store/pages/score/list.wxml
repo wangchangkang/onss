@@ -11,7 +11,7 @@
 					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 						<view class="weui-media-box__title">{{score.address.username}} {{score.address.phone}}</view>
 						<view class="weui-media-box__desc">{{score.address.detail}}</view>
-						<view class="weui-media-box__desc">{{score.insertTime}} <label class='fr'>合计:{{score.total}}元</label></view>
+						<view class="weui-media-box__desc">{{score.insertTime}} <label class='fr'>{{score.total}}元</label></view>
 					</view>
 				</view>
 			</navigator>

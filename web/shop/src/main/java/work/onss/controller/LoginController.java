@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
-import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.Utils;
-import work.onss.vo.*;
+import work.onss.vo.WXLogin;
+import work.onss.vo.WXSession;
+import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
