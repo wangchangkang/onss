@@ -4,10 +4,3 @@ spring:
       uri: mongodb://49.232.165.242:27017,49.232.165.242:27018/test?replicaSet=onss
   main:
     lazy-initialization: true
-logging:
-  level:
-    root: info
-  file:
-    path: var/log
-system:
-  file-path: picture/
