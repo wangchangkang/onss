@@ -79,14 +79,10 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-            Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
-            List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
-            Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
             String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
             result.put("cartsPid", cartsPid);
-            result.put("prefersPid", prefersPid);
             return Work.success("登录成功", result);
         }
     }

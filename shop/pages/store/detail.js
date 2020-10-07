@@ -11,6 +11,14 @@ Page({
       this.setData({
         ...data.content
       });
+      wx.getStorage({
+        key: 'cartsPid',
+        success: (res) => {
+          this.setData({
+            cartsPid: res.data
+          });
+        }
+      });
     })
   },
 

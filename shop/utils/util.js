@@ -38,8 +38,7 @@ function wxLogin() {
     if (authorization && user) {
       if (user.phone) {
         const cartsPid = wx.getStorageSync('cartsPid');
-        const prefersPid = wx.getStorageSync('prefersPid');
-        resolve({ authorization, user, cartsPid, prefersPid });
+        resolve({ authorization, user, cartsPid });
       } else {
         wx.reLaunch({
           url: '/pages/login'
@@ -56,7 +55,6 @@ function wxLogin() {
             wx.setStorageSync('authorization', content.authorization);
             wx.setStorageSync('user', content.user);
             wx.setStorageSync('cartsPid', content.cartsPid);
-            wx.setStorageSync('prefersPid', content.prefersPid);
             resolve(content);
           });
         },
