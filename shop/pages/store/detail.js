@@ -23,16 +23,18 @@ Page({
   },
 
   switch2Change: function (e) {
-    wxLogin().then(({ user, authorization }) => {
-      const { id, isLike } = this.data;
+    wxLogin().then(({ authorization, user, cartsPid }) => {
+      const { id, isLike, sid } = this.data;
       if (e.detail.value) {
         wxRequest({
           url: `${domain}/prefers?uid=${user.id}`,
           method: 'POST',
           header: { authorization },
+          data: { sid, pid: id, uid: user.id }
         }).then((data) => {
           this.setData({
-            isLike: id
+            cartsPid,
+            isLike: data.content
           });
         });
       } else {
@@ -42,6 +44,7 @@ Page({
           header: { authorization },
         }).then(() => {
           this.setData({
+            cartsPid,
             isLike: null
           });
         });

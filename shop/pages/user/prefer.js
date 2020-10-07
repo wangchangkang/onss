@@ -2,16 +2,22 @@ import { prefix, wxLogin, wxRequest, domain, size } from '../../utils/util.js';
 Page({
 
   data: {
-    prefix, number: 0
+    prefix, number: 0, last: false, products: []
   },
 
   onLoad: function (options) {
-    wxLogin().then(({ authorization, user }) => {
+    wxLogin().then(({ authorization, user, cartsPid }) => {
       wxRequest({
         url: `${domain}/prefers?uid=${user.id}&page=0&size=${size}`,
         header: { authorization },
       }).then((data) => {
         console.log(data);
+        this.setData({
+          cartsPid,
+          number: 0,
+          last: false,
+          products: data.content
+        })
       })
     })
   },
@@ -29,7 +35,7 @@ Page({
         this.setData({
           number: 0,
           last: false,
-          prefers: data.content
+          products: data.content
         })
         wx.stopPullDownRefresh()
       })
@@ -52,13 +58,59 @@ Page({
             last: true,
           });
         } else {
-          this.setData({
-            number,
-            prefers: [...this.data.prefers, ...data.content],
-          });
+          const products = this.data.products.concat(data.content)
+          this.setData({ number, products, });
         }
       })
     })
   },
+
+  addCount: function (e) {
+    const id = e.currentTarget.id;
+    this.updateCart(id, 1);
+  },
+
+  subtractCount: function (e) {
+    const id = e.currentTarget.id;
+    this.updateCart(id, -1);
+  },
+
+  updateCart: function (index, count) {
+    wxLogin().then(({ user, authorization }) => {
+      let product = this.data.products[index]
+      const { cartsPid } = this.data;
+      if (cartsPid[product.id]) {
+        wxRequest({
+          url: `${domain}/carts?uid=${user.id}`,
+          method: 'POST',
+          header: {
+            authorization,
+          },
+          data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
+          wx.setStorageSync('cartsPid', cartsPid);
+          this.setData({
+            cartsPid
+          });
+        });
+      } else {
+        wxRequest({
+          url: `${domain}/carts?uid=${user.id}`,
+          method: 'POST',
+          header: {
+            authorization,
+          },
+          data: { sid: product.sid, pid: product.id, num: 1 },
+        }).then((data) => {
+          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
+          wx.setStorageSync('cartsPid', cartsPid);
+          this.setData({
+            cartsPid
+          });
+        });
+      }
+    })
+  }
 
 })

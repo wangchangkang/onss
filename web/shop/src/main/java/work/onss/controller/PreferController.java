@@ -2,9 +2,11 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Prefer;
@@ -52,8 +54,8 @@ public class PreferController {
      * @return 所有收藏
      */
     @GetMapping(value = {"prefers"})
-    public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid) {
-        Query query = Query.query(Criteria.where("uid").is(uid));
+    public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid,@PageableDefault Pageable pageable) {
+        Query query = Query.query(Criteria.where("uid").is(uid)).with(pageable);
         List<Prefer> prefers = mongoTemplate.find(query, Prefer.class);
         List<String> pids = prefers.stream().map(Prefer::getPid).collect(Collectors.toList());
         Query productQuery = Query.query(Criteria.where("id").in(pids));
