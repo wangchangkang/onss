@@ -19,7 +19,8 @@
     "pages/store/product",
     "pages/store/detail",
     "pages/cart/product",
-    "pages/category/detail"
+    "pages/category/detail",
+    "pages/user/prefer"
   ],
   "window": {
     "backgroundTextStyle": "dark",
@@ -38,8 +39,6 @@
         "iconPath": "/images/index0.png",
         "selectedIconPath": "/images/index1.png"
       },
-    
-     
       {
         "text": "购物车",
         "pagePath": "pages/cart/cart",

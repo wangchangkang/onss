@@ -7,7 +7,7 @@ Page({
     if (options.id) {
       getStore(options.id).then((data1) => {
         getProducts(options.id).then((data2) => {
-          this.setData({ store: data1.content, [`products[0]`]: data2.content });
+          this.setData({ store: data1.content, products: data2.content });
         });
       });
     } else {
@@ -28,7 +28,7 @@ Page({
 
   onPullDownRefresh: function () {
     getProducts(this.data.store.id).then((data) => {
-      this.setData({ number: 0, last: false, [`products[0]`]: data.content, });
+      this.setData({ number: 0, last: false, products: data.content, });
       wx.stopPullDownRefresh();
     })
   },
@@ -41,25 +41,27 @@ Page({
         if (data.content.length == 0) {
           this.setData({ last: true, });
         } else {
-          this.setData({ number, [`products[${number}]`]: data.content });
+          let products = this.data.products;
+          products = products.concat(data.content);
+          this.setData({ number, products });
         }
       });
     }
   },
 
   addCount: function (e) {
-    const { x, y } = e.currentTarget.dataset;
-    this.updateCart(x, y, 1);
+    const id = e.currentTarget.id;
+    this.updateCart(id, 1);
   },
 
   subtractCount: function (e) {
-    const { x, y } = e.currentTarget.dataset;
-    this.updateCart(x, y, -1);
+    const id = e.currentTarget.id;
+    this.updateCart(id, -1);
   },
 
-  updateCart: function (x, y, count) {
+  updateCart: function (index, count) {
     wxLogin().then(({ user, authorization }) => {
-      let product = this.data.products[x][y];
+      let product = this.data.products[index]
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
         wxRequest({

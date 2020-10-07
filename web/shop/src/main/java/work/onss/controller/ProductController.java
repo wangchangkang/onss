@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import work.onss.domain.Cart;
+import work.onss.domain.Prefer;
 import work.onss.domain.Product;
 import work.onss.vo.Work;
 
@@ -27,8 +29,19 @@ public class ProductController {
      * @return 商品信息
      */
     @GetMapping(value = {"products/{id}"})
-    public Work<Product> product(@PathVariable String id) {
+    public Work<Product> product(@PathVariable String id, @RequestParam String uid) {
         Product product = mongoTemplate.findById(id, Product.class);
+        if (product != null && uid != null) {
+            Query query = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
+            Cart cart = mongoTemplate.findOne(query, Cart.class);
+            Prefer prefer = mongoTemplate.findOne(query, Prefer.class);
+            if (prefer != null) {
+                product.setIsLike(prefer.getId());
+            }
+            if (cart != null) {
+                product.setNum(cart.getNum());
+            }
+        }
         return Work.success("加载成功", product);
     }
 

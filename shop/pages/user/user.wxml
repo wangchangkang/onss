@@ -27,6 +27,13 @@
 		<view class="weui-cell__bd">收货地址</view>
 		<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 	</navigator>
+
+	
+	<navigator class="weui-cell" hover-class="weui-cell_active" url="/pages/user/prefer">
+		<image mode="aspectFit" src="/images/logo2.png" style="height:1em;width:1em" />
+		<view class="weui-cell__bd">我的收藏</view>
+		<view class="weui-cell__ft weui-cell__ft_in-access"></view>
+	</navigator>
 </view>
 
 

@@ -4,23 +4,10 @@ Page({
     windowWidth, domain, prefix
   },
   onLoad: function (options) {
-    getProduct(options.id).then((data) => {
-      wx.getStorage({
-        key: 'cartsPid',
-        success: (res) => {
-          this.setData({
-            cartsPid: res.data
-          });
-        }
-      });
-      wx.getStorage({
-        key: 'prefersPid',
-        success: (res) => {
-          this.setData({
-            prefersPid: res.data
-          });
-        }
-      });
+    const authorization = wx.getStorageSync('authorization');
+    const user = wx.getStorageSync('user');
+    getProduct(options.id, authorization, user.id).then((data) => {
+      console.log(data.content);
       this.setData({
         ...data.content
       });
@@ -29,31 +16,26 @@ Page({
 
   switch2Change: function (e) {
     wxLogin().then(({ user, authorization }) => {
-      const { sid, id } = this.data;
+      const { id, isLike } = this.data;
       if (e.detail.value) {
         wxRequest({
           url: `${domain}/prefers?uid=${user.id}`,
           method: 'POST',
           header: { authorization },
         }).then((data) => {
-          const prefersPid = { ...this.data.prefersPid, [id]: data.content };
           this.setData({
-            prefersPid
+            isLike: id
           });
-          wx.setStorageSync('prefersPid', prefersPid);
         });
       } else {
         wxRequest({
-          url: `${domain}/prefers/${this.data.prefersPid[id]}?uid=${user.id}`,
+          url: `${domain}/prefers/${isLike}?uid=${user.id}`,
           method: 'DELETE',
           header: { authorization },
         }).then(() => {
-          let prefersPid = this.data.prefersPid;
-          delete prefersPid[id];
           this.setData({
-            prefersPid
+            isLike: null
           });
-          console.log(this.data);
         });
       }
     })

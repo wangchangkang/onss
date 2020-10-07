@@ -85,4 +85,6 @@ public class Product implements Serializable {
 
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
     private BigDecimal total = BigDecimal.ZERO;// 小计
+
+    private String isLike;
 }

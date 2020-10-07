@@ -77,45 +77,6 @@ public class MerchantController {
         return Work.success("申请成功，请等待审核结果", null);
     }
 
-
-    /**
-     * 图片上传到微信平台
-     *
-     * @param file 文件
-     * @return 图片地址
-     */
-    @PostMapping("merchants/upload")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid, @RequestParam String type, @RequestParam String i) throws Exception {
-        String filename = file.getOriginalFilename();
-        if (filename == null) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-        int index = filename.lastIndexOf(".");
-        if (index == -1) {
-            throw new ServiceException("fail", "文件格式错误!");
-        }
-        // 图片摘要md5加密
-        String md5 = SecureUtil.md5(file.getInputStream());
-        // pictures/cid/type/i/md5.png
-        Path path = Paths.get(systemConfig.getFilePath(), cid, type, i, md5, filename.substring(index));
-        Path parent = path.getParent();
-        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-        // 判断文件是否存在
-        if (!Files.exists(path)) {
-            File[] files = parent.toFile().listFiles();
-            if (files != null) {
-                for (File value : files) {
-                    Files.delete(value.toPath());
-                }
-            }
-            file.transferTo(path);
-        }
-        return Work.success("上传成功", path.toString());
-    }
-
-
 //    Map<String, String> data = new HashMap<>();
 //        data.put("filename", file.getName());
 //        data.put("md5", md5);

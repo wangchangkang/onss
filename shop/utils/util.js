@@ -122,9 +122,17 @@ function getStore(id) {
 }
 /** 商品详情
  * @param {string} id 商品ID
+ * @param {string} authorization 密钥
+ * @param {string} uid 用户ID
  */
-function getProduct(id) {
-  return wxRequest({ url: `${domain}/products/${id}` });
+function getProduct(id, authorization, uid) {
+  let url = `${domain}/products/${id}`
+  if (authorization && uid) {
+    url = `${url}?uid=${uid}`
+    return wxRequest({ url, header: { authorization } });
+  } else {
+    return wxRequest({ url });
+  }
 }
 
 
