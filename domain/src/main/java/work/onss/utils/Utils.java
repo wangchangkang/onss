@@ -2,7 +2,6 @@ package work.onss.utils;
 
 import cn.hutool.crypto.SecureUtil;
 import lombok.extern.log4j.Log4j2;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.exception.ServiceException;
 
@@ -14,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
 
 @Log4j2
@@ -27,8 +25,7 @@ public class Utils {
         SecretKeySpec keySpec = new SecretKeySpec(keyByte, "AES");
         AlgorithmParameterSpec paramSpec = new IvParameterSpec(ivByte);
         try {
-            Security.addProvider(new BouncyCastleProvider());
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, keySpec, paramSpec);
             byte[] resultByte = cipher.doFinal(dataByte);
             return new String(resultByte, StandardCharsets.UTF_8);
