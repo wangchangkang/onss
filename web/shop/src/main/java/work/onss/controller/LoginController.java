@@ -17,7 +17,7 @@ import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
-import work.onss.utils.Utils;
+import work.onss.utils.JsonMapper;
 import work.onss.vo.WXLogin;
 import work.onss.vo.WXSession;
 import work.onss.vo.Work;
@@ -62,7 +62,8 @@ public class LoginController {
             user.setLastTime(LocalDateTime.now());
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            String authorization = new SM2(null,systemConfig.getPublicKeyStr())
+                    .encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
             result.put("user", user);
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -71,7 +72,7 @@ public class LoginController {
             user.setSession_key(wxSession.getSession_key());
             user.setLastTime(LocalDateTime.now());
             mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
             result.put("user", user);
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -80,7 +81,7 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
             result.put("authorization", authorization);
             result.put("user", user);
             result.put("cartsPid", cartsPid);

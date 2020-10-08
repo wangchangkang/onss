@@ -11,7 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import work.onss.config.SystemConfig;
 import work.onss.domain.User;
 import work.onss.exception.ServiceException;
-import work.onss.utils.Utils;
+import work.onss.utils.JsonMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +30,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             if (null != uid) {
                 if (StringUtils.hasLength(authorization)) {
                     String decrypt = new SM2(systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr()).decryptStr(authorization, KeyType.PrivateKey);
-                    User user = Utils.fromJson(decrypt, User.class);
+                    User user = JsonMapper.fromJson(decrypt, User.class);
                     if (uid.equals(user.getId())) {
                         return true;
                     } else {

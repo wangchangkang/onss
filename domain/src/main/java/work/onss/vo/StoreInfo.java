@@ -1,6 +1,5 @@
 package work.onss.vo;
 
-import com.google.gson.Gson;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

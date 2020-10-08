@@ -1,7 +1,7 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'https://1977.work/shop';
+const domain = 'http://192.168.103.103:8001/shop';
 const appid = "wxe78290c2a5313de3";
 const prefix = 'https://1977.work/';
 

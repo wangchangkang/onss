@@ -2,8 +2,6 @@ package work.onss.controller;
 
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
+import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
@@ -54,7 +53,7 @@ public class CustomerController {
         if (encryptedData == null) {
             return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
         }
-        PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
+        PhoneEncryptedData phoneEncryptedData = JsonMapper.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号
         Query query = Query.query(Criteria.where("id").is(id));
@@ -63,8 +62,7 @@ public class CustomerController {
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(gson.toJson(customer)), KeyType.PublicKey);
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)), KeyType.PublicKey);
         result.put("authorization", authorization);
         result.put("customer", customer);
         return Work.success("授权成功", result);

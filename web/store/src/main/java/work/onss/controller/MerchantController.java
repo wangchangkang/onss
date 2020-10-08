@@ -1,6 +1,5 @@
 package work.onss.controller;
 
-import cn.hutool.crypto.SecureUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,20 +9,14 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Merchant;
 import work.onss.domain.Store;
-import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +79,7 @@ public class MerchantController {
 //                weChatConfig.getMchId(),
 //                weChatConfig.getSerialNo(), "",
 //                weChatConfig.getV3CertPemPath(),
-//                Utils.toJson(data),
+//                JsonMapper.toJson(data),
 //                path.toFile());
     //        Map<String, Object> certificates = WxPayApi.v3Execution(
 //                RequestMethod.GET,
@@ -106,7 +99,7 @@ public class MerchantController {
 
 
 //        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(),
-//                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), Utils.toJson("speciallyMerchant"));
+//                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), JsonMapper.toJson("speciallyMerchant"));
 //        merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
 //        Query query = Query.query(Criteria.where("id").is(merchant.getId()));
 //        mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);

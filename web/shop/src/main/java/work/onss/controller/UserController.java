@@ -17,6 +17,7 @@ import work.onss.config.SystemConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.Prefer;
 import work.onss.domain.User;
+import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
@@ -54,7 +55,7 @@ public class UserController {
 
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSession_key(), wxRegister.getIv());
-        PhoneEncryptedData phoneEncryptedData = Utils.fromJson(encryptedData, PhoneEncryptedData.class);
+        PhoneEncryptedData phoneEncryptedData = JsonMapper.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号
         Query query = Query.query(Criteria.where("id").is(id));
@@ -63,7 +64,7 @@ public class UserController {
         user.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(Utils.toJson(user)), KeyType.PublicKey);
+        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
 
 
         List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
