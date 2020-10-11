@@ -7,11 +7,15 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.ScoreEnum;
+import work.onss.exception.ServiceException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
@@ -36,7 +40,7 @@ public class Score implements Serializable {
     private String subAppId;
     private String openid;
     private ScoreEnum status = ScoreEnum.PAY;
-    @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal total;
     private List<Product> products;
     private Address address;
@@ -61,5 +65,61 @@ public class Score implements Serializable {
         this.address = address;
         this.products = products;
         this.total = total;
+    }
+
+    /**
+     * @param uid              用户ID
+     * @param spbill_create_ip 终端IP
+     * @param sub_mch_id       子商户号
+     * @param notify_url       通知地址
+     * @param out_trade_no     商户订单号
+     * @param body             商品描述
+     * @return 微信支付参数
+     */
+    public Map<String, String> createUnifiedOrder(
+            String uid,
+            String spbill_create_ip,
+            String sub_mch_id,
+            String notify_url,
+            String out_trade_no,
+            String body, Map<String, Product> productMap,
+            List<Product> products) throws ServiceException {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Product product : products) {
+            Product cart = productMap.get(product.getId());
+            if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
+                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", product.getName(), product.getMin(), product.getMax());
+                throw new ServiceException("fail", message);
+            } else if (cart.getNum().compareTo(product.getStock()) > 0) {
+                String message = MessageFormat.format("[{0}]库存不足!", product.getName());
+                throw new ServiceException("fail", message);
+            }
+            product.setNum(cart.getNum());
+            product.setTotal(product.getAverage().multiply(new BigDecimal(cart.getNum())));
+            total = total.add(product.getTotal());
+        }
+        this.products = products;
+
+        HashMap<String, String> unifiedOrder = new HashMap<>();
+        unifiedOrder.put("sub_mch_id", sub_mch_id);
+        unifiedOrder.put("out_trade_no", out_trade_no);
+        unifiedOrder.put("spbill_create_ip", spbill_create_ip);
+        unifiedOrder.put("notify_url", notify_url);
+        unifiedOrder.put("trade_type", "JSAPI");
+
+        unifiedOrder.put("sub_appid", this.subAppId);
+        unifiedOrder.put("sub_openid", this.openid);
+
+        this.total = total;
+        unifiedOrder.put("total_fee", String.valueOf(total.movePointRight(2).intValue()));
+        this.name = body;
+        unifiedOrder.put("body", body);
+
+        LocalDateTime now = LocalDateTime.now();
+        this.insertTime = now;
+        this.payTime = now;
+        this.updateTime = now;
+        this.uid = uid;
+        return unifiedOrder;
     }
 }
