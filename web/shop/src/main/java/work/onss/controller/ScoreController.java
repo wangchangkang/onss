@@ -24,10 +24,7 @@ import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -96,7 +93,6 @@ public class ScoreController {
 
         WXPay wxPay = new WXPay(weChatConfig, WXPayConstants.SignType.HMACSHA256);
         String ip = InetAddress.getLocalHost().getHostAddress();
-
         Map<String, String> params = score.createUnifiedOrder(
                 uid,
                 ip,
@@ -124,7 +120,8 @@ public class ScoreController {
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
         Map<String, String> packageParams = new HashMap<>();
-//        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), prepayId, weChatConfig.getApiKey(), SignType.HMACSHA256);
+        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), prepayId,
+                weChatConfig.getKey(), WXPayConstants.SignType.HMACSHA256);
         packageParams.put("id", score.getId());
         return Work.success("创建订单成功", packageParams);
     }
