@@ -1,16 +1,12 @@
 package work.onss.utils;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.util.Base64Utils;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.*;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -19,47 +15,72 @@ import java.security.spec.X509EncodedKeySpec;
  *
  * @author jjs
  */
-public class RSADemo {
-
-    private static String src = "infcn";
-
-    private static RSAPublicKey rsaPublicKey;
-    private static RSAPrivateKey rsaPrivateKey;
-
-    static {
-        // 1、初始化密钥
-        KeyPairGenerator keyPairGenerator;
-        try {
-            keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(512);// 64的整倍数
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
-            rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
-            System.out.println("Public Key : " + Base64Utils.encodeToString(rsaPublicKey.getEncoded()));
-            System.out.println("Private Key : " + Base64Utils.encodeToString(rsaPrivateKey.getEncoded()));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+public class RSAUtil {
+    /**
+     * RSA公钥加密
+     *
+     * @param data      加密字符串
+     * @param publicKey 公钥
+     * @return 密文
+     * @throws Exception 加密过程中的异常信息
+     */
+    public static byte[] encrypt(String data, byte[] publicKey) throws Exception {
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey);
+        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec);
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+        return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
-     * 公钥加密，私钥解密
+     * RSA私钥解密
      *
-     * @author jijs
+     * @param inputByte  加密字符串
+     * @param privateKey 私钥
+     * @return 明文
+     * @throws Exception 解密过程中的异常信息
      */
-    public static void pubEn2PriDe() {
-        //公钥加密
-        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(rsaPublicKey.getEncoded());
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            byte[] result = cipher.doFinal(src.getBytes());
-            String s = Base64.encodeBase64String(result);
-            System.out.println("公钥加密，私钥解密 --加密: " + s);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static String decrypt(byte[] inputByte, byte[] privateKey) throws Exception {
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey);
+        RSAPrivateKey priKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(pkcs8EncodedKeySpec);
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, priKey);
+        byte[] bytes = cipher.doFinal(inputByte);
+        return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 私钥加密
+     *
+     * @param data       加密数据
+     * @param privateKey 私钥
+     * @return 密文
+     * @throws Exception 加密过程中的异常信息
+     */
+    public static byte[] encryptByPrivateKey(String data, byte[] privateKey) throws Exception {
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey key = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * 公钥解密
+     *
+     * @param inputByte 解密数据
+     * @param publicKey 公钥
+     * @return 明文
+     * @throws Exception 解密过程中的异常信息
+     */
+    public static String decryptByPublicKey(byte[] inputByte, String publicKey) throws Exception {
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey.getBytes(StandardCharsets.UTF_8));
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey key = keyFactory.generatePublic(x509EncodedKeySpec);
+        Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] decrypt = cipher.doFinal(inputByte);
+        return new String(decrypt, StandardCharsets.UTF_8);
     }
 }
