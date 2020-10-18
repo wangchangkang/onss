@@ -26,6 +26,7 @@ import work.onss.vo.WXSession;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -66,21 +67,19 @@ public class LoginController {
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("user", user);
-            result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else if (user.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             user.setSession_key(wxSession.getSession_key());
             user.setLastTime(LocalDateTime.now());
             mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
-            byte[] privateKey = Base64Utils.decodeFromString(systemConfig.getPrivateKeyStr());
-            byte[] publicKey = Base64Utils.decodeFromString(systemConfig.getPublicKeyStr());
-            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA,privateKey , publicKey);
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
+            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("user", user);
-            result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));
@@ -88,8 +87,8 @@ public class LoginController {
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
-            result.put("authorization", authorization);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("user", user);
             result.put("cartsPid", cartsPid);
             return Work.success("登录成功", result);

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -71,11 +73,9 @@ public class UserController {
         Query preferQuery = Query.query(Criteria.where("uid").is(user.getId()));
         List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
         Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
-
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
-        result.put("authorization", new String(authorization));
-
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+        result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("cartsPid", cartsPid);
         result.put("prefersPid", prefersPid);
         result.put("user", user);

@@ -6,6 +6,7 @@ import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -27,20 +28,10 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServiceException {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
-            String uid = request.getParameter("uid");
-            if (null != uid) {
-                if (StringUtils.hasLength(authorization)) {
-
-                    Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-                    if (sign.verify("".getBytes(),authorization.getBytes())){
-                        return true;
-                    }else {
-                        throw new ServiceException("fail.login", "请重新登录!");
-                    }
-                }else {
-                    throw new ServiceException("fail.login", "请重新登录!");
-                }
-
+            if (StringUtils.hasLength(authorization)) {
+                String customer = request.getHeader("user");
+                Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+                return sign.verify(StringUtils.trimAllWhitespace(customer).getBytes(), Base64Utils.decodeFromString(authorization));
             }
         }
         return true;
