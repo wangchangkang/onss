@@ -26,7 +26,7 @@ Page({
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, customer },
       }).then(({ content }) => {
         console.log(content);
         this.setData(

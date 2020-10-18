@@ -3,6 +3,7 @@ package work.onss.utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.exception.ServiceException;
 
@@ -17,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 
@@ -64,7 +67,8 @@ public class Utils {
             file.transferTo(path);
         }
         int nameCount = path.getNameCount();
-        return path.subpath(nameCount - more.length - 2, nameCount).toString();
+
+        return StringUtils.cleanPath(path.subpath(nameCount - more.length - 2, nameCount).toString());
     }
 
     public static String rsaEncryptOAEP(String message, X509Certificate certificate) throws IllegalBlockSizeException {

@@ -238,7 +238,7 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
  * @param {string} authorization 密钥
  * @param {number} count 上传数量
  */
-function chooseImages(authorization, count, url) {
+function chooseImages(authorization, customer, count, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count,
@@ -251,7 +251,7 @@ function chooseImages(authorization, count, url) {
         })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
-            header: { authorization },
+            header: { authorization, customer: JSON.stringify(customer) },
             url,
             filePath: filePath,
             name: 'file',
@@ -281,7 +281,7 @@ function chooseImages(authorization, count, url) {
  * @param {string} id 用户ID
  * @param {string} authorization 密钥
  */
-function chooseImage(authorization, url) {
+function chooseImage(authorization, customer, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count: 1,
@@ -293,7 +293,7 @@ function chooseImage(authorization, url) {
           mask: true
         })
         wx.uploadFile({
-          header: { authorization },
+          header: { authorization, customer: JSON.stringify(customer) },
           url,
           filePath: res.tempFilePaths[0],
           name: 'file',
@@ -321,6 +321,8 @@ function chooseImage(authorization, url) {
 }
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
+  console.log(url);
+  
   return new Promise((resolve, reject) => {
     wx.request({
       url,
