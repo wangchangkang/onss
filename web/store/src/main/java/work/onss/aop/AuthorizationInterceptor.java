@@ -1,8 +1,12 @@
 package work.onss.aop;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -22,8 +26,14 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
             if (StringUtils.hasLength(authorization)) {
-                String decrypt = new SM2(systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr()).decryptStr(authorization, KeyType.PrivateKey);
-                log.info(decrypt);
+                String customer = request.getHeader("customer");
+                Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+                boolean verify = sign.verify(StringUtils.trimAllWhitespace(customer).getBytes(), Base64Utils.decodeFromString(authorization));
+                if (verify){
+                    return true;
+                }else {
+                    return  false;
+                }
             }
         }
         return true;

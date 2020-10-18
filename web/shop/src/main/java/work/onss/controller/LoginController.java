@@ -1,12 +1,16 @@
 package work.onss.controller;
 
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,8 +65,8 @@ public class LoginController {
             user.setLastTime(LocalDateTime.now());
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
-            String authorization = new SM2(null,systemConfig.getPublicKeyStr())
-                    .encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
+            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
             result.put("user", user);
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -71,7 +75,10 @@ public class LoginController {
             user.setSession_key(wxSession.getSession_key());
             user.setLastTime(LocalDateTime.now());
             mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
+            byte[] privateKey = Base64Utils.decodeFromString(systemConfig.getPrivateKeyStr());
+            byte[] publicKey = Base64Utils.decodeFromString(systemConfig.getPublicKeyStr());
+            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA,privateKey , publicKey);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
             result.put("user", user);
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -80,7 +87,8 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-            String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
+            Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
             result.put("authorization", authorization);
             result.put("user", user);
             result.put("cartsPid", cartsPid);

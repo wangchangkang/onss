@@ -116,7 +116,7 @@ Page({
         url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
         data: store,
         method: "PUT",
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(({ content }) => {
         const store = { ...this.data.store, ...content }
         this.setData({
@@ -135,7 +135,7 @@ Page({
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(({ content }) => {
         let index = -1;
         types.find((value, key) => {

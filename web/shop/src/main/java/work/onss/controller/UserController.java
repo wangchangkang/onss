@@ -1,5 +1,8 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -62,8 +65,6 @@ public class UserController {
         user.setPhone(phoneEncryptedData.getPhoneNumber());
 
         Map<String, Object> result = new HashMap<>();
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)), KeyType.PublicKey);
-
 
         List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
@@ -71,9 +72,12 @@ public class UserController {
         List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
         Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
 
+        Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes());
+        result.put("authorization", new String(authorization));
+
         result.put("cartsPid", cartsPid);
         result.put("prefersPid", prefersPid);
-        result.put("authorization", authorization);
         result.put("user", user);
         return Work.success("登录成功", result);
     }

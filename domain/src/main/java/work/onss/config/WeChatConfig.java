@@ -6,8 +6,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamSource;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -29,9 +27,4 @@ public class WeChatConfig implements WXPayConfig,Serializable {
     private String serialNo;
     private String notifyUrl;
     private Map<String,String> keys;
-
-    public WeChatConfig() throws Exception {
-        InputStreamSource inputStreamSource = new ClassPathResource(this.getMchID().concat(".p12"));
-        this.certStream = inputStreamSource.getInputStream();
-    }
 }

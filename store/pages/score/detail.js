@@ -1,4 +1,4 @@
-import { prefix,checkStore, wxRequest, domain, scoreStatus } from '../../utils/util.js';
+import { prefix, checkStore, wxRequest, domain, scoreStatus } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -8,10 +8,10 @@ Page({
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/scores/${options.id}?sid=${customer.store.id}`,
-        header: { authorization, },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then((data) => {
         console.log(data.content);
-        
+
         this.setData({
           index: options.index,
           score: data.content

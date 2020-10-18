@@ -57,7 +57,7 @@ Page({
       const data = { ...this.data, ...e.detail.value };
       wxRequest({
         url: `${domain}/merchants?cid=${customer.id}`,
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
         method: 'POST',
         data: data,
       }).then(() => {

@@ -26,7 +26,7 @@ Page({
     checkStore().then(({ authorization, customer }) => {
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}`,
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(({ content }) => {
         console.log(content);
         this.setData(
@@ -59,7 +59,7 @@ Page({
             wxRequest({
               url: `${domain}/products/${id}/updateStatus?sid=${customer.store.id}&status=${!status}`,
               method: 'PUT',
-              header: { authorization },
+              header: { authorization, customer: JSON.stringify(customer) },
             }).then(({ content }) => {
               this.setData({
                 [`products[${index}].status`]: content
@@ -83,7 +83,7 @@ Page({
             wxRequest({
               url: `${domain}/products/${id}?sid=${customer.store.id}`,
               method: 'DELETE',
-              header: { authorization },
+              header: { authorization, customer: JSON.stringify(customer) },
             }).then(() => {
               this.data.products.splice(index, 1)
               this.setData({
@@ -116,7 +116,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=true`,
         method: 'PUT',
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -138,7 +138,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=false`,
         method: 'PUT',
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -155,7 +155,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${customer.store.id}&ids=${ids}`,
         method: 'DELETE',
-        header: { authorization },
+        header: { authorization, customer: JSON.stringify(customer) },
       }).then(() => {
         products = this.data.products.filter((value) => !ids.includes(value.id));
         this.setData({

@@ -1,13 +1,17 @@
 package work.onss.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.SM2;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,9 +95,10 @@ public class StoreController {
         }
         log.info(store.toString());
         customer.setStore(store);
-        String authorization = new SM2(null, systemConfig.getPublicKeyStr()).encryptHex(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)), KeyType.PublicKey);
         Map<String, Object> result = new HashMap<>();
-        result.put("authorization", authorization);
+        Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)).getBytes(StandardCharsets.UTF_8));
+        result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("customer", customer);
         return Work.success("登陆成功", result);
     }

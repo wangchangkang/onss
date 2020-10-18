@@ -68,8 +68,8 @@ Page({
         url: `${domain}/products?sid=${customer.store.id}`,
         data,
         method: "POST",
-        header: { authorization },
-      }).then(({content}) => {
+        header: { authorization, customer: JSON.stringify(customer) },
+      }).then(({ content }) => {
         this.setData({
           ...content
         });

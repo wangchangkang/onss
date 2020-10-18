@@ -1,5 +1,8 @@
 package work.onss.aop;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,11 +30,11 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
             String uid = request.getParameter("uid");
             if (null != uid) {
                 if (StringUtils.hasLength(authorization)) {
-                    String decrypt = new SM2(systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr()).decryptStr(authorization, KeyType.PrivateKey);
-                    User user = JsonMapper.fromJson(decrypt, User.class);
-                    if (uid.equals(user.getId())) {
+
+                    Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+                    if (sign.verify("".getBytes(),authorization.getBytes())){
                         return true;
-                    } else {
+                    }else {
                         throw new ServiceException("fail.login", "请重新登录!");
                     }
                 }else {

@@ -120,8 +120,7 @@ public class ScoreController {
         score.setPrepayId(prepayId);
         mongoTemplate.insert(score);
         Map<String, String> packageParams = new HashMap<>();
-        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), prepayId,
-                weChatConfig.getKey(), WXPayConstants.SignType.HMACSHA256);
+        WXPayUtil.generateSignature(packageParams,weChatConfig.getKey(),WXPayConstants.SignType.HMACSHA256);
         packageParams.put("id", score.getId());
         return Work.success("创建订单成功", packageParams);
     }

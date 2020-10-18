@@ -42,7 +42,7 @@ public class MerchantController {
     @PostMapping(value = {"merchants"})
     public Work<Map<String, Object>> register(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
         Store store = new Store(merchant);
-        store.setBusinessCode(weChatConfig.getMchId().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
+        store.setBusinessCode(weChatConfig.getMchID().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         store.setCustomers(Collections.singletonList(customer));
         store.setTrademark(systemConfig.getLogo());
