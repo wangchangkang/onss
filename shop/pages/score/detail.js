@@ -5,10 +5,10 @@ Page({
     scoreStatus
   },
   onLoad: function (options) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores/${options.id}?uid=${user.id}`,
-        header: { authorization, },
+        url: `${domain}/scores/${options.id}?uid=${info.uid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         this.setData({
           index: options.index,
@@ -19,12 +19,12 @@ Page({
   },
 
   pay: function () {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization,info }) => {
       wxRequest({
         url: `${domain}/scores/pay`,
         method: 'POST',
         data: this.data.score,
-        header: { authorization, },
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         const index = this.data.index;
         wx.requestPayment(

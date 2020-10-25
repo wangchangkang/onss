@@ -5,10 +5,10 @@ Page({
   },
 
   onLoad: function (options) {
-    wxLogin().then(({ authorization, user }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores?uid=${user.id}&page=0&size=${size}`,
-        header: { authorization, },
+        url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         console.log(data.content);
         this.setData({
@@ -19,10 +19,10 @@ Page({
   },
 
   onPullDownRefresh: function () {
-    wxLogin().then(({ authorization, user }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores?uid=${user.id}&page=0&size=${size}`,
-        header: { authorization, },
+        url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         console.log(data.content);
         this.setData({
@@ -40,10 +40,10 @@ Page({
       console.log(this.data.scores)
     } else {
       const number = this.data.number + 1
-      wxLogin().then(({ authorization, user }) => {
+      wxLogin().then(({ authorization, info }) => {
         wxRequest({
-          url: `${domain}/scores?uid=${user.id}&page=${number}&size=${size}`,
-          header: { authorization, },
+          url: `${domain}/scores?uid=${info.uid}&page=${number}&size=${size}`,
+          header: { authorization, info: JSON.stringify(info) },
         }).then((data) => {
           if (data.content.length == 0) {
             this.setData({

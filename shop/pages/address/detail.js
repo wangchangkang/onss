@@ -43,13 +43,13 @@ Page({
   },
 
   saveAddress: function (e) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       const { location, index } = this.data;
       let address = e.detail.value;
       address.location = location;
       wxRequest({
-        url: `${domain}/addresses?uid=${user.id}`,
-        header: { authorization },
+        url: `${domain}/addresses?uid=${info.uid}`,
+        header: { authorization, info: JSON.stringify(info) },
         data: address,
         method: "POST",
       }).then((data) => {

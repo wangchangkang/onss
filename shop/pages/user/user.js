@@ -1,5 +1,5 @@
 const appInstance = getApp()
-const { windowWidth, domain, prefix,authorization, types,user } = appInstance.globalData;
+const { windowWidth, domain, prefix,authorization, types,info } = appInstance.globalData;
 Page({
 
   /**

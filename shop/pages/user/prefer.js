@@ -6,10 +6,10 @@ Page({
   },
 
   onLoad: function (options) {
-    wxLogin().then(({ authorization, user, cartsPid }) => {
+    wxLogin().then(({ authorization, info, cartsPid }) => {
       wxRequest({
-        url: `${domain}/prefers?uid=${user.id}&page=0&size=${size}`,
-        header: { authorization },
+        url: `${domain}/prefers?uid=${info.uid}&page=0&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         console.log(data);
         this.setData({
@@ -27,10 +27,10 @@ Page({
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-    wxLogin().then(({ authorization, user }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/prefers?uid=${user.id}&page=0&size=${size}`,
-        header: { authorization },
+        url: `${domain}/prefers?uid=${info.uid}&page=0&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         this.setData({
           number: 0,
@@ -47,11 +47,11 @@ Page({
    */
   onReachBottom: function () {
 
-    wxLogin().then(({ authorization, user }) => {
+    wxLogin().then(({ authorization, info }) => {
       const number = this.data.number + 1;
       wxRequest({
-        url: `${domain}/prefers?uid=${user.id}&page=${number}&size=${size}`,
-        header: { authorization },
+        url: `${domain}/prefers?uid=${info.uid}&page=${number}&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         if (data.content.length == 0) {
           this.setData({
@@ -76,16 +76,14 @@ Page({
   },
 
   updateCart: function (index, count) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       let product = this.data.products[index]
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
         wxRequest({
-          url: `${domain}/carts?uid=${user.id}`,
+          url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization, info: JSON.stringify(info) },
           data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
         }).then((data) => {
           const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
@@ -96,11 +94,9 @@ Page({
         });
       } else {
         wxRequest({
-          url: `${domain}/carts?uid=${user.id}`,
+          url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization, info: JSON.stringify(info) },
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
           const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };

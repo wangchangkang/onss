@@ -4,13 +4,13 @@ Page({
     prefix,
   },
   onShow: function (options) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/carts/getStores?uid=${user.id}`,
-        header: { authorization, },
+        url: `${domain}/carts/getStores?uid=${info.uid}`,
+        header: { authorization, info: JSON.stringify(info) }
       }).then((data) => {
         this.setData({
-          stores:data.content
+          stores: data.content
         })
       })
     })

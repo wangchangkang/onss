@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'https://1977.work/shop';
+const domain = 'http:///192.168.103.103:8001/shop';
 const appid = "wxe78290c2a5313de3";
-const prefix = 'https://1977.work/';
+const prefix = 'http:///192.168.103.103:8001/';
 
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
@@ -34,16 +34,10 @@ const formatNumber = n => {
 function wxLogin() {
   return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
-    const user = wx.getStorageSync('user');
-    if (authorization && user) {
-      if (user.phone) {
-        const cartsPid = wx.getStorageSync('cartsPid');
-        resolve({ authorization, user, cartsPid });
-      } else {
-        wx.reLaunch({
-          url: '/pages/login'
-        });
-      }
+    if (authorization) {
+      const info = wx.getStorageSync('info');
+      const cartsPid = wx.getStorageSync('cartsPid');
+      resolve({ authorization, info, cartsPid });
     } else {
       wx.login({
         success: ({ code }) => {
@@ -53,7 +47,7 @@ function wxLogin() {
             data: { code, appid }
           }).then(({ content }) => {
             wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('user', content.user);
+            wx.setStorageSync('info', content.info);
             wx.setStorageSync('cartsPid', content.cartsPid);
             resolve(content);
           });
@@ -76,14 +70,13 @@ function wxLogin() {
  * @param {string} authorization 授权码
  * @param {string} encryptedData 微信用户密文
  * @param {string} iv 偏移量
- * @param {string} lastTime 授权时间
  */
-function setPhone(id, authorization, encryptedData, iv, lastTime) {
+function setPhone(id, authorization, info, encryptedData, iv) {
   return wxRequest({
     url: `${domain}/users/${id}/setPhone`,
     method: 'POST',
-    data: { appid, encryptedData, iv, lastTime: lastTime },
-    header: { authorization },
+    data: { appid, encryptedData, iv },
+    header: { authorization, info: JSON.stringify(info) },
   })
 };
 
@@ -123,11 +116,11 @@ function getStore(id) {
  * @param {string} authorization 密钥
  * @param {string} uid 用户ID
  */
-function getProduct(id, authorization, uid) {
+function getProduct(id, authorization, info, uid) {
   let url = `${domain}/products/${id}`
   if (authorization && uid) {
     url = `${url}?uid=${uid}`
-    return wxRequest({ url, header: { authorization } });
+    return wxRequest({ url, header: { authorization, info: JSON.stringify(info) } });
   } else {
     return wxRequest({ url });
   }
@@ -153,19 +146,19 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             break;
           case '1977.user.notfound':
             wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('user', content.user);
+            wx.setStorageSync('info', content.info);
             wx.reLaunch({
               url: '/pages/login'
             })
             break;
-            case '1977.session.expire':
-              wx.removeStorageSync('authorization');
-              wx.removeStorageSync('user');
-              wx.removeStorageSync('cartsPid');
-              wx.reLaunch({
-                url: '/pages/index/index'
-              })
-              break;
+          case '1977.session.expire':
+            wx.removeStorageSync('authorization');
+            wx.removeStorageSync('info');
+            wx.removeStorageSync('cartsPid');
+            wx.reLaunch({
+              url: '/pages/index/index'
+            })
+            break;
           default:
             wx.showModal({
               title: '警告',

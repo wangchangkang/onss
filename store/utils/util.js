@@ -199,14 +199,14 @@ function checkCustomer() {
  * @param {string} iv 偏移量
  * @param {string} lastTime 授权时间
  */
-function setPhone(id, authorization, encryptedData, iv, lastTime) {
+function setPhone(id, authorization, info, encryptedData, iv, lastTime) {
   return new Promise((resolve, reject) => {
     wxRequest({
       url: `${domain}/customers/${id}/setPhone`,
       method: 'POST',
       data: { appid, encryptedData, iv, lastTime: lastTime },
       header: {
-        authorization,
+        authorization, info: JSON.stringify(info)
       },
     }).then((data) => {
       const { authorization, info } = data.content;

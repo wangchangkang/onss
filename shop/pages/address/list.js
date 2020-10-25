@@ -6,13 +6,13 @@ Page({
     scrollLeft: 0,
   },
   onLoad: function (options) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/addresses?uid=${user.id}`,
-        header: { authorization },
+        url: `${domain}/addresses?uid=${info.uid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         this.setData({
-          addresses:data.content
+          addresses: data.content
         });
       });
     })

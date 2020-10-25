@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
+import work.onss.domain.Info;
 import work.onss.domain.User;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.JsonMapper;
@@ -59,37 +60,41 @@ public class LoginController {
         User user = mongoTemplate.findOne(query, User.class);
 
         Map<String, Object> result = new HashMap<>();
+        LocalDateTime now = LocalDateTime.now();
         if (user == null) {
             user = new User();
             user.setOpenid(wxSession.getOpenid());
             user.setSession_key(wxSession.getSession_key());
-            user.setLastTime(LocalDateTime.now());
+            user.setLastTime(now);
             user.setAppid(wxLogin.getAppid());
             user = mongoTemplate.insert(user);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info(user.getId(),now);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("user", user);
+            result.put("info", info);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else if (user.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             user.setSession_key(wxSession.getSession_key());
-            user.setLastTime(LocalDateTime.now());
+            user.setLastTime(now);
             mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info(user.getId(),now);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("user", user);
+            result.put("info", info);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(user.getId()));
-            mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), User.class);
+            mongoTemplate.updateFirst(query, Update.update("lastTime", now), User.class);
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info(user.getId(),now);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("user", user);
+            result.put("info", info);
             result.put("cartsPid", cartsPid);
             return Work.success("登录成功", result);
         }

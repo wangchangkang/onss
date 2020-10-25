@@ -13,7 +13,7 @@ Page({
     const length = this.data[id].length;
     count = count - length;
     checkStore().then(({ authorization, info }) => {
-      chooseImages(authorization, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
+      chooseImages(authorization,info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({

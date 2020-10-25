@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Cart;
+import work.onss.domain.Info;
 import work.onss.domain.Prefer;
 import work.onss.domain.User;
 import work.onss.utils.JsonMapper;
@@ -27,7 +28,6 @@ import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +70,12 @@ public class UserController {
         List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
         Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(user)).getBytes(StandardCharsets.UTF_8));
+        Info info = new Info(user.getId(),user.getLastTime());
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("cartsPid", cartsPid);
         result.put("prefersPid", prefersPid);
-        result.put("user", user);
+        result.put("info", info);
         return Work.success("登录成功", result);
     }
 }

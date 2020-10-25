@@ -14,23 +14,23 @@ Page({
   },
 
   saveScore: function (e) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       let { address, cartsPid, store, products } = this.data;
-      products = products.filter((product) => { 
+      products = products.filter((product) => {
         const cart = cartsPid[product.id];
         product.num = cart.num;
-        return cartsPid[product.id].checked && store.id === product.sid 
+        return cartsPid[product.id].checked && store.id === product.sid
       });
       console.log(products);
-      
+
       wxRequest({
-        url: `${domain}/scores?uid=${user.id}`,
-        header: { authorization, },
+        url: `${domain}/scores?uid=${info.id}`,
+        header: { authorization, info: JSON.stringify(info) },
         method: "POST",
-        data: { sid: store.id, address, products, subAppId: appid, openid: user.openid },
+        data: { sid: store.id, address, products, subAppId: appid, openid: info.openid },
       }).then((data) => {
         console.log(data.content);
-        
+
         wx.requestPayment(
           {
             ...data.content,

@@ -25,13 +25,13 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     private SystemConfig systemConfig;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServiceException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
             if (StringUtils.hasLength(authorization)) {
-                String customer = request.getHeader("user");
+                String info = request.getHeader("info");
                 Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-                return sign.verify(StringUtils.trimAllWhitespace(customer).getBytes(), Base64Utils.decodeFromString(authorization));
+                return sign.verify(StringUtils.trimAllWhitespace(info).getBytes(), Base64Utils.decodeFromString(authorization));
             }
         }
         return true;

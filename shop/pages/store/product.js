@@ -60,16 +60,14 @@ Page({
   },
 
   updateCart: function (index, count) {
-    wxLogin().then(({ user, authorization }) => {
+    wxLogin().then(({ authorization, info }) => {
       let product = this.data.products[index]
       const { cartsPid } = this.data;
       if (cartsPid[product.id]) {
         wxRequest({
-          url: `${domain}/carts?uid=${user.id}`,
+          url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization, info: JSON.stringify(info) },
           data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
         }).then((data) => {
           const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
@@ -80,11 +78,9 @@ Page({
         });
       } else {
         wxRequest({
-          url: `${domain}/carts?uid=${user.id}`,
+          url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: {
-            authorization,
-          },
+          header: { authorization, info: JSON.stringify(info) },
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
           const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
