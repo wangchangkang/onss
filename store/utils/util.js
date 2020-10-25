@@ -176,7 +176,7 @@ function checkCustomer() {
           }).then((data) => {
             const { authorization, info } = data.content
             wx.setStorageSync('authorization', authorization);
-            wx.setStorageSync('customer', info);
+            wx.setStorageSync('info', info);
             resolve({ authorization, info });
           });
         },
@@ -209,10 +209,10 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
         authorization,
       },
     }).then((data) => {
-      const { authorization, customer } = data.content;
+      const { authorization, info } = data.content;
       wx.setStorageSync('authorization', authorization);
-      wx.setStorageSync('customer', customer);
-      resolve({ authorization, customer })
+      wx.setStorageSync('info', info);
+      resolve({ authorization, info })
     })
   })
 };
@@ -226,7 +226,7 @@ function setPhone(id, authorization, encryptedData, iv, lastTime) {
  * @param {string} authorization 密钥
  * @param {number} count 上传数量
  */
-function chooseImages(authorization, customer, count, url) {
+function chooseImages(authorization, info, count, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count,
@@ -239,7 +239,7 @@ function chooseImages(authorization, customer, count, url) {
         })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
-            header: { authorization, customer: JSON.stringify(customer) },
+            header: { authorization, info: JSON.stringify(info) },
             url,
             filePath: filePath,
             name: 'file',
@@ -269,7 +269,7 @@ function chooseImages(authorization, customer, count, url) {
  * @param {string} id 用户ID
  * @param {string} authorization 密钥
  */
-function chooseImage(authorization, customer, url) {
+function chooseImage(authorization, info, url) {
   return new Promise((resolve, reject) => {
     wx.chooseImage({
       count: 1,
@@ -281,7 +281,7 @@ function chooseImage(authorization, customer, url) {
           mask: true
         })
         wx.uploadFile({
-          header: { authorization, customer: JSON.stringify(customer) },
+          header: { authorization, info: JSON.stringify(info) },
           url,
           filePath: res.tempFilePaths[0],
           name: 'file',

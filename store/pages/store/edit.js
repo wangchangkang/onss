@@ -49,8 +49,8 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    checkStore().then(({ authorization, customer }) => {
-      chooseImages(authorization, count, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+    checkStore().then(({ authorization, info }) => {
+      chooseImages(authorization, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -63,8 +63,8 @@ Page({
 
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    checkStore().then(({ authorization, customer }) => {
-      chooseImage(authorization, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+    checkStore().then(({ authorization, info }) => {
+      chooseImage(authorization, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         this.setData({
           [`${id}`]: data
         })
@@ -111,12 +111,12 @@ Page({
       videos: this.data.videos
     }
 
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
+        url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
         data: store,
         method: "PUT",
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         const store = { ...this.data.store, ...content }
         this.setData({
@@ -132,10 +132,10 @@ Page({
   },
 
   onLoad: function () {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         let index = -1;
         types.find((value, key) => {

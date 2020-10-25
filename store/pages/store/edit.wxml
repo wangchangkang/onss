@@ -41,14 +41,7 @@
 				<image src="/images/position.png" style="height:1em;width:1em;" />
 			</view>
 		</view>
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">地址</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input class="weui-input" name="address" value="{{address}}" placeholder="请填写详细地址" maxlength="12" />
-			</view>
-		</view>
+	
 		<view class="weui-cell">
 			<view class="weui-cell__hd">
 				<view class="weui-label">分类</view>

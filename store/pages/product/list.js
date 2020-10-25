@@ -53,13 +53,13 @@ Page({
       content: '请仔细审核商品信息！',
       success: (res) => {
         if (res.confirm) {
-          checkStore().then(({ authorization, customer }) => {
+          checkStore().then(({ authorization, info }) => {
             const index = e.currentTarget.id;
             const { id, status } = this.data.products[index];
             wxRequest({
-              url: `${domain}/products/${id}/updateStatus?sid=${customer.store.id}&status=${!status}`,
+              url: `${domain}/products/${id}/updateStatus?sid=${info.sid}&status=${!status}`,
               method: 'PUT',
-              header: { authorization, customer: JSON.stringify(customer) },
+              header: { authorization, info: JSON.stringify(info) },
             }).then(({ content }) => {
               this.setData({
                 [`products[${index}].status`]: content
@@ -77,13 +77,13 @@ Page({
       content: '是否删除商品?',
       success: (res) => {
         if (res.confirm) {
-          checkStore().then(({ authorization, customer }) => {
+          checkStore().then(({ authorization, info }) => {
             const index = e.currentTarget.id;
             const { id } = this.data.products[index];
             wxRequest({
-              url: `${domain}/products/${id}?sid=${customer.store.id}`,
+              url: `${domain}/products/${id}?sid=${info.sid}`,
               method: 'DELETE',
-              header: { authorization, customer: JSON.stringify(customer) },
+              header: { authorization, info: JSON.stringify(info) },
             }).then(() => {
               this.data.products.splice(index, 1)
               this.setData({
@@ -106,7 +106,7 @@ Page({
    * 
    */
   up: function () {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       let { ids, products } = this.data;
       products.forEach((product, index) => {
         if (ids.includes(product.id)) {
@@ -114,9 +114,9 @@ Page({
         }
       });
       wxRequest({
-        url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=true`,
+        url: `${domain}/products?sid=${info.sid}&ids=${ids}&status=true`,
         method: 'PUT',
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -128,7 +128,7 @@ Page({
    * 
    */
   lower: function () {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       let { ids, products } = this.data;
       products.forEach((product, index) => {
         if (ids.includes(product.id)) {
@@ -136,9 +136,9 @@ Page({
         }
       });
       wxRequest({
-        url: `${domain}/products?sid=${customer.store.id}&ids=${ids}&status=false`,
+        url: `${domain}/products?sid=${info.sid}&ids=${ids}&status=false`,
         method: 'PUT',
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -150,12 +150,12 @@ Page({
    * 
    */
   delete: function () {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       let { ids, products } = this.data;
       wxRequest({
-        url: `${domain}/products?sid=${customer.store.id}&ids=${ids}`,
+        url: `${domain}/products?sid=${info.sid}&ids=${ids}`,
         method: 'DELETE',
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(() => {
         products = this.data.products.filter((value) => !ids.includes(value.id));
         this.setData({

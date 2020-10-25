@@ -4,9 +4,9 @@ Page({
     prefix, domain, windowWidth
   },
   updateStatus: function (e) {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores/${customer.store.id}/updateStatus?cid=${customer.id}`,
+        url: `${domain}/stores/${info.sid}/updateStatus?cid=${info.cid}`,
         header: { authorization, status: (!this.data.status).toString() },
         method: 'PUT'
       }).then(({ content }) => {
@@ -30,10 +30,10 @@ Page({
   },
 
   onShow: function (options) {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores/${customer.store.id}?cid=${customer.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           ...content

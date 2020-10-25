@@ -8,8 +8,8 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    checkStore().then(({ authorization, customer }) => {
-      chooseImages(authorization, count, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+    checkStore().then(({ authorization, info }) => {
+      chooseImages(authorization, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -65,12 +65,12 @@ Page({
   updateProduct: function (e) {
     const { index, description, pictures, id } = this.data;
     const product = { ...e.detail.value, description, pictures, id }
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/products/${id}?sid=${customer.store.id}`,
+        url: `${domain}/products/${id}?sid=${info.sid}`,
         method: "PUT",
         data: product,
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           ...content,
@@ -91,10 +91,10 @@ Page({
   },
 
   onLoad: function (options) {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/products/${options.id}?sid=${customer.store.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/products/${options.id}?sid=${info.sid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           index: options.index,

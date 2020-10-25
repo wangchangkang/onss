@@ -12,8 +12,8 @@ Page({
     let count = e.currentTarget.dataset.count
     const length = this.data[id].length;
     count = count - length;
-    checkStore().then(({ authorization, customer }) => {
-      chooseImages(authorization, count, `${domain}/stores/${customer.store.id}/uploadPicture`).then((data) => {
+    checkStore().then(({ authorization, info }) => {
+      chooseImages(authorization, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -63,12 +63,12 @@ Page({
   createProduct: function (e) {
     const { description, pictures, id } = this.data;
     const data = { ...e.detail.value, description, pictures, id }
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/products?sid=${customer.store.id}`,
+        url: `${domain}/products?sid=${info.sid}`,
         data,
         method: "POST",
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           ...content

@@ -17,10 +17,10 @@ Page({
     this.setData({
       status: options.status
     })
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores?sid=${customer.store.id}&status=${options.status}&page=0&size=${size}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/scores?sid=${info.sid}&status=${options.status}&page=0&size=${size}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           scores: content

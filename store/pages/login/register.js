@@ -51,18 +51,18 @@ Page({
   /** 申请特约商户 */
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
-    checkCustomer().then(({ authorization, customer }) => {
-      console.log(customer);
+    checkCustomer().then(({ authorization, info }) => {
+      console.log(info);
 
       const data = { ...this.data, ...e.detail.value };
       wxRequest({
-        url: `${domain}/merchants?cid=${customer.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/merchants?cid=${info.cid}`,
+        header: { authorization, info: JSON.stringify(info) },
         method: 'POST',
         data: data,
       }).then(() => {
         wx.reLaunch({
-          url: `/pages/login/stores?cid=${customer.id}`
+          url: `/pages/login/stores?cid=${info.cid}`
         });
       })
     })
@@ -100,12 +100,12 @@ Page({
   },
   /** 选择多张图片 */
   chooseImages: function (e) {
-    checkCustomer().then(({ customer, authorization }) => {
+    checkCustomer().then(({  authorization,info }) => {
       const id = e.currentTarget.id;
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
-      chooseImages(authorization,customer, count, `${domain}/customers/${customer.id}/uploadPicture`).then((data) => {
+      chooseImages(authorization,info, count, `${domain}/customers/${info.cid}/uploadPicture`).then((data) => {
         this.setData({
           [`${id}[${length}]`]: data
         })
@@ -115,8 +115,8 @@ Page({
   /** 选择一张图片 */
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    checkCustomer().then(({ customer, authorization }) => {
-      chooseImage(authorization,customer, `${domain}/customers/${customer.id}/uploadPicture`,).then((data) => {
+    checkCustomer().then(({  authorization,info }) => {
+      chooseImage(authorization,info, `${domain}/customers/${info.cid}/uploadPicture`,).then((data) => {
         this.setData({
           [`${id}`]: data
         })

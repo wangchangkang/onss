@@ -6,11 +6,11 @@ Page({
   },
 
   onLoad: function (options) {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/products/${options.id}?sid=${customer.store.id}`,
+        url: `${domain}/products/${options.id}?sid=${info.sid}`,
         method: "GET",
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         this.setData({
           index: options.index,

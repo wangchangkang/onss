@@ -5,10 +5,10 @@ Page({
     scoreStatus
   },
   onLoad: function (options) {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores/${options.id}?sid=${customer.store.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/scores/${options.id}?sid=${info.sid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         console.log(data.content);
 
