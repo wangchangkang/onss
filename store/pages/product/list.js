@@ -23,10 +23,10 @@ Page({
   },
 
   onLoad: function () {
-    checkStore().then(({ authorization, customer }) => {
+    checkStore().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/products?sid=${customer.store.id}`,
-        header: { authorization, customer },
+        url: `${domain}/products?sid=${info.sid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         console.log(content);
         this.setData(

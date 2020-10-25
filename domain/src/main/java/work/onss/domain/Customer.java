@@ -27,9 +27,6 @@ public class Customer implements Serializable {
     @Indexed
     private String session_key;
     private LocalDateTime lastTime;
-    @Transient
-    private Store store;
-
 
     public Customer(String phone, String openid, LocalDateTime lastTime) {
         this.phone = phone;

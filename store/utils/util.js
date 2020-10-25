@@ -119,19 +119,13 @@ const formatNumber = n => {
 function checkStore() {
   return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
-    const customer = wx.getStorageSync('customer');
-    if (authorization && customer) {
-      if (customer.phone) {
-        if (customer.store) {
-          resolve({ authorization, customer });
-        } else {
-          wx.reLaunch({
-            url: `/pages/login/stores?cid=${customer.id}`
-          });
-        }
+    if (authorization) {
+      const info = wx.getStorageSync('info');
+      if (info.sid) {
+        resolve({ authorization, info });
       } else {
         wx.reLaunch({
-          url: '/pages/login/login'
+          url: `/pages/login/stores?cid=${info.cid}`
         });
       }
     } else {
@@ -142,14 +136,14 @@ function checkStore() {
             method: 'POST',
             data: { code, appid }
           }).then((data) => {
-            const { authorization, customer } = data.content;
+            const { authorization, info } = data.content;
             wx.setStorageSync('authorization', authorization);
-            wx.setStorageSync('customer', customer);
-            if (customer.store) {
-              resolve({ authorization, customer });
+            wx.setStorageSync('info', info);
+            if (info.sid) {
+              resolve({ authorization, info });
             } else {
               wx.reLaunch({
-                url: `/pages/login/stores?cid=${customer.id}`
+                url: `/pages/login/stores?cid=${info.cid}`
               });
             }
           });
@@ -169,15 +163,9 @@ function checkStore() {
 function checkCustomer() {
   return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
-    const customer = wx.getStorageSync('customer');
-    if (authorization && customer) {
-      if (customer.phone) {
-        resolve({ authorization, customer });
-      } else {
-        wx.reLaunch({
-          url: '/pages/login/login'
-        });
-      }
+    if (authorization) {
+      const info = wx.getStorageSync('info');
+      resolve({ authorization, info });
     } else {
       wx.login({
         success: ({ code }) => {
@@ -186,10 +174,10 @@ function checkCustomer() {
             method: 'POST',
             data: { code, appid }
           }).then((data) => {
-            const { authorization, customer } = data.content
+            const { authorization, info } = data.content
             wx.setStorageSync('authorization', authorization);
-            wx.setStorageSync('customer', customer);
-            resolve({ authorization, customer });
+            wx.setStorageSync('customer', info);
+            resolve({ authorization, info });
           });
         },
         fail: (res) => {
@@ -321,9 +309,7 @@ function chooseImage(authorization, customer, url) {
 }
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
-  console.log(url);
-  
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     wx.request({
       url,
       data,
@@ -342,9 +328,16 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             break;
           case '1977.customer.notfound':
             wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('customer', content.customer);
+            wx.setStorageSync('info', content.info);
             wx.reLaunch({
               url: '/pages/login/login'
+            })
+            break;
+          case '1977.store.notfound':
+            wx.setStorageSync('authorization', content.authorization);
+            wx.setStorageSync('info', content.info);
+            wx.reLaunch({
+              url: '/pages/login/register'
             })
             break;
           default:
@@ -365,12 +358,16 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           content: '加载失败',
           confirmColor: '#e64340',
           showCancel: false,
+          success: (res) => {
+            if (res.confirm) {
+              wx.reLaunch({
+                url: '/pages/login/login'
+              })
+            }
+          }
         });
       },
       complete: (res) => { },
-      enableCache: true,
-      enableHttp2: true,
-      enableQuic: true,
     })
   })
 }

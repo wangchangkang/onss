@@ -1,8 +1,6 @@
 package work.onss.controller;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.SM2;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
+import work.onss.domain.Info;
 import work.onss.domain.Store;
 import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
@@ -81,25 +80,21 @@ public class StoreController {
             return Work.fail("该用户已不存在，请联系客服");
         }
         Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        query.fields().exclude("description");
-        query.fields().exclude("address");
-        query.fields().exclude("trademark");
-        query.fields().exclude("pictures");
-        query.fields().exclude("videos");
-        query.fields().exclude("customers");
-        query.fields().exclude("products");
-        query.fields().exclude("merchant");
         Store store = mongoTemplate.findOne(query, Store.class);
         if (store == null) {
             return Work.fail("该商户已不存在，请联系客服!");
         }
-        log.info(store.toString());
-        customer.setStore(store);
         Map<String, Object> result = new HashMap<>();
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)).getBytes(StandardCharsets.UTF_8));
+        Info info = new Info();
+        info.setCid(customer.getId());
+        info.setSid(store.getId());
+        info.setMerchantId(store.getMerchantId());
+        info.setApplymentId(store.getApplymentId());
+        info.setSubMchId(store.getSubMchId());
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
-        result.put("customer", customer);
+        result.put("info", info);
         return Work.success("登陆成功", result);
     }
 

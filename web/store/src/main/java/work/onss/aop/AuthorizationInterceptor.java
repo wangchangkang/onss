@@ -26,9 +26,9 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
             if (StringUtils.hasLength(authorization)) {
-                String customer = request.getHeader("customer");
+                String info = request.getHeader("info");
                 Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-                return sign.verify(StringUtils.trimAllWhitespace(customer).getBytes(), Base64Utils.decodeFromString(authorization));
+                return sign.verify(StringUtils.trimAllWhitespace(info).getBytes(), Base64Utils.decodeFromString(authorization));
             }
         }
         return true;

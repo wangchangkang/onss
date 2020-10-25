@@ -47,10 +47,6 @@ public class UserController {
      */
     @PostMapping(value = {"users/{id}/setPhone"})
     public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) {
-        if (wxRegister.getLastTime().plusSeconds(6000).isBefore(LocalDateTime.now())) {
-            return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
-        }
-
         User user = mongoTemplate.findById(id, User.class);
         if (user == null) {
             return Work.fail("用户不存在", null);

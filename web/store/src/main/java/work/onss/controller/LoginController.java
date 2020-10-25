@@ -1,8 +1,6 @@
 package work.onss.controller;
 
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.SM2;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
+import work.onss.domain.Info;
+import work.onss.domain.Store;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.JsonMapper;
 import work.onss.vo.WXLogin;
@@ -65,27 +65,43 @@ public class LoginController {
             customer.setAppid(wxLogin.getAppid());
             customer = mongoTemplate.insert(customer);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info();
+            info.setCid(customer.getId());
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("customer", customer);
+            result.put("info", info);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else if (customer.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
-            Update update = Update.update("lastTime", LocalDateTime.now()).set("session_key", wxSession.getSession_key());
+            LocalDateTime now = LocalDateTime.now();
+            Update update = Update.update("lastTime", now).set("session_key", wxSession.getSession_key());
             mongoTemplate.updateFirst(query, update, Customer.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info();
+            info.setCid(customer.getId());
+            info.setLastTime(now);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("customer", customer);
+            result.put("info", info);
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
-            mongoTemplate.updateFirst(query, Update.update("lastTime", LocalDateTime.now()), Customer.class);
+            LocalDateTime now = LocalDateTime.now();
+            mongoTemplate.updateFirst(query, Update.update("lastTime",now), Customer.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(customer)).getBytes(StandardCharsets.UTF_8));
+            Info info = new Info();
+            info.setCid(customer.getId());
+            info.setLastTime(now);
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
-            result.put("customer", customer);
-            return Work.success("登录成功", result);
+            result.put("info", info);
+            Query storeQuery = Query.query(Criteria.where("customers.id").is(customer.getId()));
+            boolean exists = mongoTemplate.exists(storeQuery, Store.class);
+            if (exists){
+                return Work.success("登录成功", result);
+            }else {
+                return Work.message("1977.store.notfound", "请申请成为特约商户", result);
+            }
         }
     }
 

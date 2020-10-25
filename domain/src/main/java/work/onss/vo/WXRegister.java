@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 public class WXRegister {
 
     private String openid;
-    private LocalDateTime lastTime;
     private String encryptedData;
     private String iv;
 

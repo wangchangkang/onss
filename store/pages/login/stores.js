@@ -10,14 +10,14 @@ Page({
    * @param {*} e 
    */
   bindStore: function (e) {
-    checkCustomer().then(({ customer, authorization }) => {
+    checkCustomer().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${customer.id}`,
+        url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${info.cid}`,
         method: 'POST',
-        header: { authorization, customer: JSON.stringify(customer) },
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         wx.setStorageSync('authorization', content.authorization);
-        wx.setStorageSync('customer', content.customer);
+        wx.setStorageSync('info', content.info);
         wx.reLaunch({
           url: '/pages/product/list'
         })
@@ -30,13 +30,12 @@ Page({
    * @param {*} options 
    */
   onLoad: function (options) {
-    checkCustomer().then(({ authorization, customer }) => {
+    checkCustomer().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/stores?cid=${customer.id}`,
-        header: { authorization, customer: JSON.stringify(customer) },
+        url: `${domain}/stores?cid=${info.cid}`,
+        header: { authorization, info: JSON.stringify(info) },
       }).then(({ content }) => {
         console.log(content);
-
         if (content.length > 0) {
           this.setData({
             stores: content

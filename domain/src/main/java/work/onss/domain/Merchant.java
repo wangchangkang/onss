@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.vo.WXAddress;
 import work.onss.vo.wx.SpeciallyMerchant;
 
@@ -16,9 +18,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @ToString
+@Document
 public class Merchant implements Serializable {
 
-    private String miniProgramSubAppid;
+    @Id
+    private String id;
+    @NotBlank(message = "服务商小程序APPID不能为空")
+    private String miniProgramSubAppid; // 服务商小程序APPID
 
     //超级管理员
     @NotBlank(message = "请填写管理员姓名")

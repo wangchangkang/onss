@@ -46,6 +46,7 @@ public class MerchantController {
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         store.setCustomers(Collections.singletonList(customer));
         store.setTrademark(systemConfig.getLogo());
+        mongoTemplate.insert(merchant);
         mongoTemplate.insert(store);
         return Work.success("操作成功", null);
     }

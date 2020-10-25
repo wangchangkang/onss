@@ -52,10 +52,10 @@ public class Store implements Serializable {
     private LocalTime closeTime = LocalTime.of(22, 30);
     private List<Customer> customers;//营业员
 
-    private String subMchId;//商户号
-    private String businessCode; // 业务编号
-    private Long applymentId; // 业务ID
-    private Merchant merchant;// 申请资料
+    private String subMchId;//微信支付商户号
+    private String businessCode; // 业务申请编号
+    private Long applymentId; // 微信支付申请单号
+    private String merchantId;
 
     public Store(Merchant merchant) {
         this.name = merchant.getMerchantShortname();
@@ -65,7 +65,6 @@ public class Store implements Serializable {
         this.status = false;
         this.licenseNumber = merchant.getLicenseNumber();
         this.licenseCopy = merchant.getLicenseCopy();
-        this.merchant = merchant;
     }
 
 }
