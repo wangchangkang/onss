@@ -1,4 +1,10 @@
-<view class="weui-cells__title">我的店铺</view>
+<view class="weui-cells__title">
+	<view class="weui-flex">我的商户
+		<navigator class="weui-flex__item weui-cell__ft" url="/pages/login/register">
+			<button size='mini' style="font-size:28rpx" bindtap='register'>+</button>
+		</navigator>
+	</view>
+</view>
 <view class="weui-panel ">
 	<view class="weui-panel__bd">
 		<view wx:for="{{stores}}" wx:for-item='store' wx:key="index" id="{{store.id}}" bindtap="bindStore" class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">

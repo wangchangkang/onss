@@ -6,7 +6,7 @@
 				<view class="weui-label">姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="contactName" value="{{contactName}}" class="weui-input" placeholder="请输入管理员姓名" maxlength="8" />
+				<input name="contactName" value="{{contactName}}"  placeholder="请输入管理员姓名" maxlength="8" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -14,7 +14,7 @@
 				<view class="weui-label">身份证</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="contactIdNumber" value="{{contactIdNumber}}" class="weui-input" placeholder="请输入管理员身份证号" maxlength="18" type="number" />
+				<input name="contactIdNumber" value="{{contactIdNumber}}"  placeholder="请输入管理员身份证号" maxlength="18" type="number" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -22,7 +22,7 @@
 				<view class="weui-label">手机号</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="mobilePhone" value="{{mobilePhone}}" class="weui-input" placeholder="请输入管理员手机号" maxlength="11" type="number" />
+				<input name="mobilePhone" value="{{mobilePhone}}"  placeholder="请输入管理员手机号" maxlength="11" type="number" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -30,7 +30,7 @@
 				<view class="weui-label">常用邮箱</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="contactEmail" value="{{contactEmail}}" class="weui-input" placeholder="请输入常用邮箱" />
+				<input name="contactEmail" value="{{contactEmail}}"  placeholder="请输入常用邮箱" />
 			</view>
 		</view>
 	</view>
@@ -57,7 +57,7 @@
 				<view class="weui-label">社会信用代码</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input id="licenseNumber" name="licenseNumber" value="{{licenseNumber}}" class="weui-input" placeholder="18位统一社会信用代码" maxlength="18" />
+				<input id="licenseNumber" name="licenseNumber" value="{{licenseNumber}}"  placeholder="18位统一社会信用代码" maxlength="18" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -65,7 +65,7 @@
 				<view class="weui-label">商户简称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="merchantShortname" value="{{merchantShortname}}" class="weui-input" placeholder="请输入商户简称" maxlength="8" />
+				<input name="merchantShortname" value="{{merchantShortname}}" placeholder="请输入商户简称" maxlength="18"/>
 			</view>
 		</view>
 
@@ -74,7 +74,7 @@
 				<view class="weui-label">商户全称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="lmerchantName" value="{{merchantName}}" class="weui-input" placeholder="请输入营业执照名称" maxlength="10" />
+				<input name="lmerchantName" value="{{merchantName}}" placeholder="请输入营业执照名称" maxlength="50"/>
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -82,7 +82,7 @@
 				<view class="weui-label">经营者</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="legalPerson" value="{{legalPerson}}" class="weui-input" placeholder="法人姓名" maxlength="8" />
+				<input name="legalPerson" value="{{legalPerson}}"  placeholder="法人姓名" maxlength="8" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -90,7 +90,7 @@
 				<view class="weui-label">客服电话</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="servicePhone" value="{{servicePhone}}" class="weui-input" placeholder="请输入客服电话" maxlength="8" />
+				<input name="servicePhone" value="{{servicePhone}}"  placeholder="请输入客服电话" maxlength="11" />
 			</view>
 		</view>
 	</view>
@@ -104,7 +104,7 @@
 				<view class="weui-label">法人证件号</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="idCardNumber" value="{{idCardNumber}}" class="weui-input" placeholder="请输入法人18位身份证号" maxlength="18" />
+				<input name="idCardNumber" value="{{idCardNumber}}"  placeholder="请输入法人18位身份证号" maxlength="18" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -112,7 +112,7 @@
 				<view class="weui-label">法人姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="idCardName" value="{{idCardName}}" class="weui-input" placeholder="请输入法人姓名" maxlength="18" />
+				<input name="idCardName" value="{{idCardName}}"  placeholder="请输入法人姓名" maxlength="18" />
 			</view>
 		</view>
 		<image wx:if="{{idCardNational == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardNational"></image>
@@ -124,7 +124,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker mode="date" bindchange="datePickerChange" id="cardPeriodBegin">
-					<input name="cardPeriodBegin" value="{{cardPeriodBegin}}" class="weui-input" placeholder="身份证登记时间" disabled="true" />
+					<input name="cardPeriodBegin" value="{{cardPeriodBegin}}"  placeholder="身份证登记时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -134,7 +134,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker mode="date" bindchange="datePickerChange" id="cardPeriodEnd">
-					<input name="cardPeriodEnd" value="{{cardPeriodEnd}}" class="weui-input" placeholder="身份证有效截止时间" disabled="true" />
+					<input name="cardPeriodEnd" value="{{cardPeriodEnd}}"  placeholder="身份证有效截止时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -157,7 +157,7 @@
 				<view class="weui-label">法人证件号</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="idNumber" value="{{idNumber}}" class="weui-input" placeholder="法人18位身份证号" maxlength="18" />
+				<input name="idNumber" value="{{idNumber}}"  placeholder="法人18位身份证号" maxlength="18" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -165,7 +165,7 @@
 				<view class="weui-label">法人姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="beneficiary" value="{{beneficiary}}" class="weui-input" placeholder="请输入姓名" maxlength="18" />
+				<input name="beneficiary" value="{{beneficiary}}"  placeholder="请输入姓名" maxlength="18" />
 			</view>
 		</view>
 		<image wx:if="{{idCardB == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%" bindtap="chooseImage" id="idCardB"></image>
@@ -177,7 +177,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker mode="date" bindchange="datePickerChange" id="idPeriodBegin">
-					<input name="idPeriodBegin" value="{{idPeriodBegin}}" class="weui-input" placeholder="身份证登记时间" disabled="true" />
+					<input name="idPeriodBegin" value="{{idPeriodBegin}}"  placeholder="身份证登记时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -187,7 +187,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker mode="date" bindchange="datePickerChange" id="idPeriodEnd">
-					<input name="idPeriodEnd" value="{{idPeriodEnd}}" class="weui-input" placeholder="身份证有效截止时间" disabled="true" />
+					<input name="idPeriodEnd" value="{{idPeriodEnd}}"  placeholder="身份证有效截止时间" disabled="true" />
 				</picker>
 			</view>
 		</view>
@@ -281,7 +281,7 @@
 				<view class="weui-label">开户名称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="accountName" value="{{accountName}}" class="weui-input" placeholder="请填写开户名称" />
+				<input name="accountName" value="{{accountName}}"  placeholder="请填写开户名称" maxlength="50"/>
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -300,7 +300,7 @@
 			</view>
 			<view class="weui-cell__bd">
 				<picker id="bankAddress" bindchange="regionChange" mode="region">
-					<view class="weui-input">{{bankAddress.value.length===3?{...bankAddress.value}:'请选择开户地址'}}</view>
+					<view >{{bankAddress.value.length===3?{...bankAddress.value}:'请选择开户地址'}}</view>
 				</picker>
 			</view>
 		</view>
@@ -309,7 +309,7 @@
 				<view class="weui-label">银行账号</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="accountNumber" value="{{accountNumber}}" class="weui-input" placeholder="请填写银行账号" />
+				<input name="accountNumber" value="{{accountNumber}}"  placeholder="请填写银行账号" maxlength="50"/>
 			</view>
 		</view>
 		<view class="weui-cell">
@@ -317,7 +317,7 @@
 				<view class="weui-label">银行全称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="bankNamee" value="{{bankName}}" class="weui-input" placeholder='请填写银行全称' />
+				<input name="bankNamee" value="{{bankName}}"  placeholder='请填写银行全称' maxlength="50"/>
 			</view>
 		</view>
 	</view>
