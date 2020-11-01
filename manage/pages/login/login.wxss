@@ -1,0 +1,21 @@
+.content {
+  text-align: center;
+  padding-top: 17vh;
+}
+
+.hd {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+.bd{
+  padding: 18px
+}
+.avatar {
+  background-color: #ffffff;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 50%;
+  display: block;
+}

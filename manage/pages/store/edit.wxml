@@ -1,0 +1,149 @@
+<form bindsubmit="updateStore">
+
+	<view class="weui-cells__title">编辑商户信息</view>
+	<view class="weui-cells weui-cells_after-title">
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">简称</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="name" value="{{name}}" placeholder="请输入名称" maxlength="12" />
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">姓名</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="username" value="{{username}}" placeholder="请填写姓名" maxlength="12" />
+			</view>
+		</view>
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">电话</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="phone" value="{{phone}}" placeholder="请填写联系方式" maxlength="12" />
+			</view>
+		</view>
+
+		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}"
+			data-name="{{address}}">
+			<view class="weui-cell__hd">
+				<view class="weui-label">坐标</view>
+			</view>
+			<view class="weui-cell__bd">
+				<view>{{location.x}}</view>
+				<view>{{location.y}}</view>
+			</view>
+			<view class="weui-cell__ft">
+				<image src="/images/position.png" style="height:1em;width:1em;" />
+			</view>
+		</view>
+	
+		<view class="weui-cell">
+			<view class="weui-cell__hd">
+				<view class="weui-label">分类</view>
+				<input id="type" name="type" value="{{type}}" hidden></input>
+			</view>
+			<view class="weui-cell__bd">
+				<picker bindchange="bindPickerChange" id="type" data-index="index" data-range="types" range="{{types}}"
+					range-key="title" value="{{index}}">
+					<view class="weui-input">{{types[index].title}}</view>
+				</picker>
+			</view>
+		</view>
+
+		<view class="weui-cell ">
+			<view class="weui-cell__hd">
+				<view class="weui-label">地址</view>
+			</view>
+			<view class="weui-cell__bd">
+				<input class="weui-input" name="address" value="{{address}}" placeholder="请填写详细地址" maxlength="12" />
+			</view>
+		</view>
+		<view class="weui-cell">
+			<view class="weui-cell__hd">
+				<view class="weui-label">营业时间</view>
+			</view>
+			<view class="weui-cell__bd">
+				<view class="weui-flex">
+					<picker mode="time" class="weui-flex__item" bindchange='timeChange' id="openTime">
+						<input placeholder="开始时间" name='openTime' value="{{openTime}}" disabled="true" />
+					</picker>
+					<picker mode="time" class="weui-flex__item" bindchange='timeChange' id="closeTime">
+						<input placeholder="结束时间" name='closeTime' value="{{closeTime}}" disabled="true" />
+					</picker>
+				</view>
+			</view>
+		</view>
+	</view>
+
+	<view class="weui-cells__title">经营内容</view>
+	<view class="weui-cells weui-cells_after-title">
+		<view class="weui-cell">
+			<view class="weui-cell__bd">
+				<textarea class="weui-textarea" id="description" name="description" bindinput='textareaInput'
+					value="{{description}}" placeholder="请输入经营内容" auto-height="true" maxlength="200"></textarea>
+				<view class="weui-textarea-counter">{{description.length}}/200</view>
+			</view>
+		</view>
+	</view>
+
+	<view class="weui-cells__title">商户图标</view>
+	<view class="weui-cells weui-cells_after-title">
+		<image wx:if="{{trademark == null}}" src="/images/logo3.png" mode="widthFix" style="width:100%"
+			bindtap="chooseImage" id="trademark"></image>
+		<icon wx:if="{{trademark!=null}}" type="cancel" bindtap="deletePicture" id="trademark"></icon>
+		<image wx:if="{{trademark!=null}}" src="{{prefix}}{{trademark}}" mode="aspectFit" style="width:100%"></image>
+		<input id="trademark" name="trademark" value="{{trademark}}" hidden></input>
+	</view>
+
+	<view class="weui-cells__title">商户特点</view>
+	<view class="weui-cells weui-cells_after-title">
+		<view class="weui-cell">
+			<view class="weui-cell__bd">
+				<view class="weui-uploader">
+					<view class="weui-uploader__hd">
+						<view class="weui-uploader__overview">
+							<view class="weui-uploader__title">图片</view>
+							<view class="weui-uploader__info">{{pictures.length}}/5 <icon bindtap="clearPictues" id="pictures"
+									type="clear" size="21"></icon>
+							</view>
+						</view>
+					</view>
+					<view class="weui-uploader__bd">
+						<view class="weui-uploader__files" id="uploaderFiles">
+							<block wx:for="{{pictures}}" wx:key="*this">
+								<view class="weui-uploader__file">
+									<icon type="cancel" bindtap="deletePictures" id="pictures" data-index="{{index}}"></icon>
+									<image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
+								</view>
+							</block>
+						</view>
+						<view hidden="{{pictures.length>=5}}" class="weui-uploader__input-box">
+							<view class="weui-uploader__input" bindtap="chooseImages" id="pictures" data-count="5"></view>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="weui-cell ">
+			<view class="weui-cell__bd">
+				<textarea class="weui-input" id="videos" name="videos" value="{{videos}}" bindinput="videosBindInput"
+					placeholder="请用逗号分隔多个视频" auto-height="true"></textarea>
+			</view>
+		</view>
+		<swiper hidden="{{videos.length == 0}}" style="height:{{windowWidth}}px;">
+			<swiper-item wx:for="{{videos}}" wx:for-item='video' wx:key="index">
+				<txv vid="{{video}}" playerid="{{video}}" height="100%" />
+			</swiper-item>
+		</swiper>
+	</view>
+
+	<view class="weui-flex">
+		<button class="weui-flex__item" type="default" bindtap="resetForm">重置</button>
+		<button class="weui-flex__item" type="primary" form-type='submit'>保存</button>
+	</view>
+</form>

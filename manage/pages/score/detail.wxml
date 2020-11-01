@@ -1,0 +1,51 @@
+<view class="weui-cells__title weui-flex">
+	<view class="weui-flex__item">编号:{{score.outTradeNo}}</view>
+	<view class="weui-">
+		<button type="primary" size='mini' style="font-size:13rpx" bindtap='clipBoard'>复制</button>
+	</view>
+</view>
+<view class="weui-panel weui-cells userinfo">
+	<view class="weui-cell ">
+		<view class="weui-cell__hd">订单时间：</view>
+		<view class="weui-cell__bd">{{score.payTime}}</view>
+		<view class="weui-cell__ft"><label class='status status-{{score.status}}'>{{scoreStatus[score.status]}}</label></view>
+	</view>
+	<view class="weui-cell ">
+		<view class="weui-cell__hd">联系方式：</view>
+		<view class="weui-cell__bd">{{score.address.phone}} </view>
+		<view class="weui-cell__ft">{{score.address.username}}</view>
+	</view>
+	<view class="weui-cell ">
+		<view class="weui-cell__hd">收货地址：</view>
+		<view class="weui-cell__bd">{{score.address.detail}} </view>
+	</view>
+</view>
+<view class="weui-cells__title weui-flex">
+	<view class="weui-flex__item">购物清单(<text class="weui-cell_warn">{{score.name}}</text>)</view>
+	<view class="weui-"><text class="weui-cell_warn">合计:{{score.total}}</text></view>
+</view>
+<view class="weui-cells weui-cells_after-title">
+	<view wx:for="{{score.products}}" wx:for-item='product' wx:key="index" class="weui-cell score"
+		url='/pages/score/detail'>
+		<view class="weui-cell__hd">
+			<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<swiper-item class="weui-media-box__thumb">
+					<view class="weui-badge">{{product.num}}</view>
+					<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+				</swiper-item>
+			</swiper>
+		</view>
+		<view class="weui-cell__bd">
+			<view class="weui-media-box__title">{{product.name}}</view>
+			<view wx:if="{{product.quality}}" class="weui-media-box__desc">均价:{{product.average}}{{product.averageUnit}}
+				<label class='status'>小计{{product.total}}元</label></view>
+			<view wx:else class="weui-media-box__desc">单价:{{product.average}}{{product.averageUnit}} <label
+					class='status'>小计{{product.total}}元</label></view>
+		</view>
+	</view>
+</view>
+<view style="min-height:150rpx"></view>
+
+<view wx:if="{{score.status === 'PAY'}}" class="weui-flex weui-footer_fixed-bottom">
+	<button class="weui-flex__item" type="primary" bindtap="pay">微信支付</button>
+</view>

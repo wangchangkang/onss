@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "编辑商户",
+  "usingComponents": {
+    "txv": "plugin://tencentvideo/video"
+  }
+}

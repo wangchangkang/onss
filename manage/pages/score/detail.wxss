@@ -1,0 +1,6 @@
+.weui-cells{
+  font-size: 35rpx;
+}
+.userinfo .weui-cell__hd{
+  color: #999;
+}

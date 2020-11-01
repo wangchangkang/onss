@@ -1,0 +1,49 @@
+/**app.wxss**/
+@import 'style/weui.wxss';
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+} 
+page {
+  background: #ebebeb;
+}
+
+.weui-badge {
+  position: absolute;
+}
+.fr {
+  float: right;
+}
+
+
+.status {
+  border-radius: 5px;
+  float: right;
+  padding: 2px 5px 2px 5px;
+}
+
+.status-PAY, .status-SIGN{
+  background-color: #FF0000;
+  color: #FFFFFF;
+}
+
+.status-PACKAGE {
+  background-color: #E9E9E9;
+  color: #1AAD19;
+
+}
+
+.status-DELIVER {
+  background-color: #E9E9E9;
+  color: #00000093
+}
+
+.status-FINISH {
+  background-color: #E9E9E9;
+  color: #FFFFFF;
+}

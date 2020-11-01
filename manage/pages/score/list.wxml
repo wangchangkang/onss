@@ -1,0 +1,18 @@
+		<view class="weui-cells__title">{{scoreStatus[status]}}</view>
+		<view class="weui-panel">
+			<navigator wx:for="{{scores}}" wx:for-item='score' wx:key="index" url='/pages/score/detail?index=${{index}}&id={{score.id}}' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<swiper-item wx:for="{{score.products}}" wx:for-item='product' wx:key="index" class="weui-media-box__thumb">
+							<view class="weui-badge">{{product.num}}</view>
+							<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+						</swiper-item>
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">{{score.address.username}} {{score.address.phone}}</view>
+						<view class="weui-media-box__desc">{{score.address.detail}}</view>
+						<view class="weui-media-box__desc">{{score.insertTime}} <label class='fr'>{{score.total}}元</label></view>
+					</view>
+				</view>
+			</navigator>
+		</view>

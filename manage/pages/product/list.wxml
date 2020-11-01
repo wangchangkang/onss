@@ -1,0 +1,58 @@
+<form>
+	<view class="weui-cells__title">
+		<view class="weui-flex">
+			<icon class="weui-flex__item">
+				<button size='mini' style="font-size:28rpx" form-type="reset">重置</button>
+			</icon>
+			<icon type="success" bindtap="up">
+				<button size='mini' style="font-size:28rpx" form-type="reset">上架</button>
+			</icon>
+			<icon type="cancel" bindtap="lower">
+				<button size='mini' style="font-size:28rpx" form-type="reset">下架</button>
+			</icon>
+			<icon type="clear" bindtap="delete">
+				<button size='mini' style="font-size:28rpx" form-type="reset">删除</button>
+			</icon>
+
+			<navigator class="weui-flex__item weui-cell__ft" url="/pages/product/create">
+				<button size='mini' style="font-size:28rpx" bindtap='createProduct'>+</button>
+			</navigator>
+		</view>
+	</view>
+	<view class="weui-panel">
+		<checkbox-group bindchange='checkboxChange' id="ids">
+			<block wx:for="{{products}}" wx:for-item='product' wx:key='index'>
+				<mp-slideview buttons="{{[slideButtons[product.status]]}}" id="{{index}}" show="{{index==currentID}}"
+					bindshow="bindShow" bindbuttontap="bindButtonTap">
+					<view class="weui-media-box">
+						<navigator class="weui-media-box_appmsg" url="/pages/product/detail?id={{product.id}}&index={{index}}">
+							<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+								<view class="weui-badge">{{product.stock}}</view>
+								<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+							</view>
+							<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+								<view class="weui-media-box__title">{{product.name}}</view>
+								<view class="weui-media-box__desc">{{product.description}}</view>
+							</view>
+							<view class="weui-media-box__ft">
+								<icon type="{{product.status?'success':'clear'}}" id="{{index}}" size="16" hover-stop-propagation='true'
+									catchtap="{{product.status?'':'deleteProduct'}}"></icon>
+							</view>
+						</navigator>
+						<view class="weui-flex">
+							<label class="checkbox">
+								<checkbox value='{{product.id}}' />
+							</label>
+							<view class="weui-flex__item weui-cell__ft">
+								<block wx:if="{{product.quality}}">
+									均价:<label class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label>
+								</block>
+								单价:<label class="weui-cell_warn">{{product.price}}{{product.priceUnit}}</label>
+							</view>
+						</view>
+					</view>
+				</mp-slideview>
+			</block>
+		</checkbox-group>
+	</view>
+</form>

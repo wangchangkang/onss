@@ -1,0 +1,9 @@
+<view class="content">
+	<view class="hd">
+		<open-data class="avatar" type='userAvatarUrl'></open-data>
+	</view>
+	<view class="bd">
+		<open-data type="userNickName"></open-data>
+	</view>
+	<button class="weui-btn" type='primary' open-type='getPhoneNumber' bindgetphonenumber='wxLogin'>微信授权登录</button>
+</view>
