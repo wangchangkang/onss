@@ -6,26 +6,12 @@
 
     <parent>
         <groupId>work.onss</groupId>
-        <artifactId>onss</artifactId>
+        <artifactId>web</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>web</artifactId>
+    <artifactId>manage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <modules>
-        <module>shop</module>
-        <module>store</module>
-        <module>manage</module>
-    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>work.onss</groupId>
-            <artifactId>domain</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
-    <packaging>pom</packaging>
 </project>

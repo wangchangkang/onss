@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage,appid } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -14,10 +14,10 @@ Page({
     licenseNumber: '92330411MA2JDMCK9H',
     merchantName: '嘉兴市秀洲区洪合镇依茗纱服饰经营部',
     legalPerson: '谷圣齐',
-    licenseCopy: 'picture/logo2.png',
-    idCardCopy: 'picture/logo2.png',
-    idCardNational: 'picture/logo2.png',
-    qualifications: ['picture/logo2.png'],
+    licenseCopy: 'picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg',
+    idCardCopy: 'picture/5f8c11f5669d3c156d6446bb/e017fae920c6ce6ba405a00bdca89aae.jpg',
+    idCardNational: 'picture/5f8c11f5669d3c156d6446bb/e2a536e37bf02292ed99c84a6d237964.jpg',
+    qualifications: ['picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg'],
 
     idCardNumber: '371523199111201292',
     idCardName: '谷圣齐',
@@ -54,7 +54,7 @@ Page({
     checkCustomer().then(({ authorization, info }) => {
       console.log(info);
 
-      const data = { ...this.data, ...e.detail.value };
+      const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid };
       wxRequest({
         url: `${domain}/merchants?cid=${info.cid}`,
         header: { authorization, info: JSON.stringify(info) },

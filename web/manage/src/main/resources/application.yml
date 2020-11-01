@@ -1,14 +1,14 @@
 server:
-  port: 8010
+  port: 8030
   servlet:
-    context-path: /shop
+    context-path: /manage
     encoding:
       force-response: true
 logging:
   level:
     root: info
   file:
-    path: log/shop
+    path: log/store
 spring:
   profiles:
     active: develop
