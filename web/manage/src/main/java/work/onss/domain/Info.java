@@ -12,10 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class Info {
-    private String cid;
-    private String sid;
-    private String merchantId;
-    private Long applymentId;
-    private String subMchId;
+    private String userid;
     private LocalDateTime lastTime;
 }

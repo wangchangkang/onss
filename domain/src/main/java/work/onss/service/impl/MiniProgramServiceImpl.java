@@ -8,6 +8,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import work.onss.service.MiniProgramService;
 import work.onss.utils.JsonMapper;
+import work.onss.vo.QYWXSession;
 import work.onss.vo.WXSession;
 
 import java.io.IOException;
@@ -32,6 +33,15 @@ public class MiniProgramServiceImpl implements MiniProgramService {
     }
 
     @Override
+    public Map<String, String> gettoken(String corpid, String corpsecret) {
+        Map<String, String> map = new HashMap<>();
+        map.put("corpid", corpid);
+        map.put("corpsecret", corpsecret);
+        String seesion = restTemplate.getForObject("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={corpid}&corpsecret={corpsecret}", String.class, map);
+        return JsonMapper.fromJson(seesion,String.class,String.class);
+    }
+
+    @Override
     public WXSession jscode2session(String appid, String secret, String code) {
         Map<String, String> map = new HashMap<>();
         map.put("appid", appid);
@@ -40,6 +50,15 @@ public class MiniProgramServiceImpl implements MiniProgramService {
         map.put("grant_type", "authorization_code");
         String seesion = restTemplate.getForObject("https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={js_code}&grant_type={grant_type}", String.class, map);
         return JsonMapper.fromJson(seesion,WXSession.class);
+    }
+
+    @Override
+    public QYWXSession jscode2session(String js_code, String access_token) {
+        Map<String, String> map = new HashMap<>();
+        map.put("access_token", access_token);
+        map.put("js_code", js_code);
+        String seesion = restTemplate.getForObject("https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session?access_token={access_token}&js_code={js_code}&grant_type=authorization_code", String.class, map);
+        return JsonMapper.fromJson(seesion,QYWXSession.class);
     }
 
     @Override

@@ -1,7 +1,7 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.103:8002/store';
+const domain = 'http://192.168.103.103:8030/manage';
 const appid = "wx095ba1a3f9396476";
 const prefix = 'http://192.168.103.103/';
 const scoreStatus = {
@@ -129,8 +129,10 @@ function checkStore() {
         });
       }
     } else {
-      wx.login({
+      wx.qy.login({
         success: ({ code }) => {
+          console.log(code);
+          
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
@@ -309,6 +311,10 @@ function chooseImage(authorization, info, url) {
 }
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
+  console.log(url);
+  console.log(data);
+  
+  
   return new Promise((resolve) => {
     wx.request({
       url,

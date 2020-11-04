@@ -13,8 +13,8 @@ spring:
   profiles:
     active: develop
 wechat:
-  appid: wxb7dc92a3570afc3e
-  key: 78a64d9313cc7e93fcddc3de90139d39
+  appid: 'ww1954801118238ef6'
+  key: 'miLaMN_EoGfwoPZycw5Li4wWlrOs-fixPCijyfPCQuQ'
   mchid: 1573972751
   serialno: 155B5E15AF0B644879126A37A8E2C878A1A048FC
   keys: {

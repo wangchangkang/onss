@@ -68,35 +68,6 @@ public class StoreController {
         return Work.success("加载成功", store);
     }
 
-    /**
-     * 店铺授权
-     *
-     * @param id 主键
-     */
-    @PostMapping(value = {"stores/{id}/bind"})
-    public Work<Map<String, Object>> bind(@PathVariable String id, @RequestParam(name = "cid") String cid) {
-        Customer customer = mongoTemplate.findById(cid, Customer.class);
-        if (customer == null) {
-            return Work.fail("该用户已不存在，请联系客服");
-        }
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        Store store = mongoTemplate.findOne(query, Store.class);
-        if (store == null) {
-            return Work.fail("该商户已不存在，请联系客服!");
-        }
-        Map<String, Object> result = new HashMap<>();
-        Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        Info info = new Info();
-        info.setCid(customer.getId());
-        info.setSid(store.getId());
-        info.setMerchantId(store.getMerchantId());
-        info.setApplymentId(store.getApplymentId());
-        info.setSubMchId(store.getSubMchId());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
-        result.put("authorization", Base64Utils.encodeToString(authorization));
-        result.put("info", info);
-        return Work.success("登陆成功", result);
-    }
 
     /**
      * 营业中 or 休息中
