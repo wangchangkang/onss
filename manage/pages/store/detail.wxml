@@ -8,7 +8,7 @@
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">订单时间：</view>
 		<view class="weui-cell__bd">{{score.payTime}}</view>
-		<view class="weui-cell__ft"><label class='status status-{{score.status}}'>{{scoreStatus[score.status]}}</label></view>
+		<view class="weui-cell__ft"><label class='status status-{{score.status}}'>{{storeState[score.status]}}</label></view>
 	</view>
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">联系方式：</view>

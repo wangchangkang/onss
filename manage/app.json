@@ -1,17 +1,9 @@
 {
   "pages": [
-    "pages/product/list",
-    "pages/login/stores",
     "pages/store/store",
-    "pages/login/login",
-    "pages/login/register",
-    "pages/score/list",
-    "pages/score/detail",
-    "pages/product/detail",
-    "pages/product/edit",
-    "pages/product/create",
-    "pages/store/edit",
-    "pages/score/score"
+    "pages/store/list",
+    "pages/store/detail"
+   
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -28,13 +20,13 @@
     "list": [
       {
         "text": "商品",
-        "pagePath": "pages/product/list",
+        "pagePath": "pages/store/store",
         "iconPath": "/images/index0.png",
         "selectedIconPath": "/images/index1.png"
       },
       {
         "text": "订单",
-        "pagePath": "pages/score/score",
+        "pagePath": "pages/store/store",
         "iconPath": "/images/logo1.png",
         "selectedIconPath": "/images/logo2.png"
       },

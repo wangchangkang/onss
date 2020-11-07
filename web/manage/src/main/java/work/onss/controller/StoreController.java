@@ -1,31 +1,24 @@
 package work.onss.controller;
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.Sign;
-import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.util.Base64Utils;
-import org.springframework.util.StringUtils;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
-import work.onss.domain.Customer;
-import work.onss.domain.Info;
 import work.onss.domain.Store;
-import work.onss.utils.JsonMapper;
+import work.onss.enums.StoreStateEnum;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -42,14 +35,10 @@ public class StoreController {
     @Autowired
     private SystemConfig systemConfig;
 
-    /**
-     * 查询微信用户下的所有特约商户
-     *
-     * @param cid 客户ID
-     */
+
     @GetMapping(value = {"stores"})
-    public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
-        Query query = Query.query(Criteria.where("customers.id").is(cid));
+    public Work<List<Store>> stores(@RequestParam(name = "state") StoreStateEnum state, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        Query query = Query.query(Criteria.where("state").is(state)).with(pageable);
         List<Store> stores = mongoTemplate.find(query, Store.class);
         return Work.success("加载成功", stores);
     }
@@ -60,10 +49,8 @@ public class StoreController {
      * @param id 主键
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        query.fields().exclude("merchant");
-        query.fields().exclude("customers");
+    public Work<Store> detail(@PathVariable String id) {
+        Query query = Query.query(Criteria.where("id").is(id));
         Store store = mongoTemplate.findOne(query, Store.class);
         return Work.success("加载成功", store);
     }

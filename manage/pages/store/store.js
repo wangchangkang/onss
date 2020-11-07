@@ -1,44 +1,66 @@
-import { prefix, windowWidth, checkStore, domain, wxRequest } from '../../utils/util.js';
+// pages/score/score.js
 Page({
+
+  /**
+   * 页面的初始数据
+   */
   data: {
-    prefix, domain, windowWidth
-  },
-  updateStatus: function (e) {
-    checkStore().then(({ authorization, info }) => {
-      wxRequest({
-        url: `${domain}/stores/${info.sid}/updateStatus?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info), status: (!this.data.status).toString() },
-        method: 'PUT'
-      }).then(({ content }) => {
-        console.log(content);
-        this.setData({
-          status: content
-        });
-      })
-    })
+
   },
 
-  getLocation: function (e) {
-    const x = e.currentTarget.dataset.x;
-    const y = e.currentTarget.dataset.y;
-    const name = e.currentTarget.dataset.name;
-    wx.openLocation({
-      latitude: parseFloat(y),
-      longitude: parseFloat(x),
-      name: name,
-    })
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+
   },
 
-  onShow: function (options) {
-    checkStore().then(({ authorization, info }) => {
-      wxRequest({
-        url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
-      }).then(({ content }) => {
-        this.setData({
-          ...content
-        })
-      })
-    })
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
   },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+
+  },
+
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
+
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
+
+  }
 })

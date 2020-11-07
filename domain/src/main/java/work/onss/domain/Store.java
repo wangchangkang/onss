@@ -11,8 +11,10 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import work.onss.enums.StoreStateEnum;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +58,10 @@ public class Store implements Serializable {
     private String businessCode; // 业务申请编号
     private Long applymentId; // 微信支付申请单号
     private String merchantId;
+    private StoreStateEnum state;
 
+    private LocalDateTime insertTime;
+    private LocalDateTime updateTime;
     public Store(Merchant merchant) {
         this.name = merchant.getMerchantShortname();
         this.description = merchant.getQualificationType();

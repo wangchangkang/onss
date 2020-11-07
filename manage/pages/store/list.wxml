@@ -1,0 +1,15 @@
+		<view class="weui-cells__title">{{storeState[state]}}</view>
+		<view class="weui-panel">
+			<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url='/pages/store/detail?index=${{index}}&id={{store.id}}' class="weui-media-box">
+				<view class=" weui-media-box_appmsg">
+					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+						<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
+					</swiper>
+					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+						<view class="weui-media-box__title">{{store.username}} {{score.phone}}</view>
+						<view class="weui-media-box__desc">{{score.licenseNumber}}</view>
+						<view class="weui-media-box__desc">{{score.insertTime}}</view>
+						</view>
+					</view>
+			</navigator>
+		</view>

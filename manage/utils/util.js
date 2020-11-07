@@ -1,11 +1,18 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.103:8030/manage';
+const domain = 'http://192.168.103.101:8030/manage';
 const appid = "wx095ba1a3f9396476";
-const prefix = 'http://192.168.103.103/';
-const scoreStatus = {
-  PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
+const prefix = 'http://192.168.103.101/';
+const storeState = {
+
+  REJECTED: "审核失败",
+    FINISHED: "入住成功",
+    CANCELED: "撤销申请",
+    EDITTING: "商户编辑中",
+    SYSTEM_AUDITING: "平台审核中",
+    WEACHT_AUDITING: "微信审核中",
+    
 };
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
@@ -121,18 +128,13 @@ function checkStore() {
     const authorization = wx.getStorageSync('authorization');
     if (authorization) {
       const info = wx.getStorageSync('info');
-      if (info.sid) {
+      if (info.userid) {
         resolve({ authorization, info });
-      } else {
-        wx.reLaunch({
-          url: `/pages/login/stores?cid=${info.cid}`
-        });
-      }
+      } 
     } else {
       wx.qy.login({
         success: ({ code }) => {
           console.log(code);
-          
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
@@ -143,10 +145,6 @@ function checkStore() {
             wx.setStorageSync('info', info);
             if (info.sid) {
               resolve({ authorization, info });
-            } else {
-              wx.reLaunch({
-                url: `/pages/login/stores?cid=${info.cid}`
-              });
             }
           });
         },
@@ -162,65 +160,6 @@ function checkStore() {
     }
   })
 };
-function checkCustomer() {
-  return new Promise((resolve) => {
-    const authorization = wx.getStorageSync('authorization');
-    if (authorization) {
-      const info = wx.getStorageSync('info');
-      resolve({ authorization, info });
-    } else {
-      wx.login({
-        success: ({ code }) => {
-          wxRequest({
-            url: `${domain}/wxLogin`,
-            method: 'POST',
-            data: { code, appid }
-          }).then((data) => {
-            const { authorization, info } = data.content
-            wx.setStorageSync('authorization', authorization);
-            wx.setStorageSync('info', info);
-            resolve({ authorization, info });
-          });
-        },
-        fail: (res) => {
-          wx.showModal({
-            title: '警告',
-            content: '获取微信code失败',
-            confirmColor: '#e64340',
-            showCancel: false,
-          })
-        },
-      })
-    }
-  })
-};
-/** 同步微信手机号
- * @param {string} id 用户ID
- * @param {string} authorization 授权码
- * @param {string} encryptedData 微信用户密文
- * @param {string} iv 偏移量
- * @param {string} lastTime 授权时间
- */
-function setPhone(id, authorization, info, encryptedData, iv, lastTime) {
-  return new Promise((resolve, reject) => {
-    wxRequest({
-      url: `${domain}/customers/${id}/setPhone`,
-      method: 'POST',
-      data: { appid, encryptedData, iv, lastTime: lastTime },
-      header: {
-        authorization, info: JSON.stringify(info)
-      },
-    }).then((data) => {
-      const { authorization, info } = data.content;
-      wx.setStorageSync('authorization', authorization);
-      wx.setStorageSync('info', info);
-      resolve({ authorization, info })
-    })
-  })
-};
-
-
-
 
 
 /**多个文件上传
@@ -313,8 +252,6 @@ function chooseImage(authorization, info, url) {
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
   console.log(url);
   console.log(data);
-  
-  
   return new Promise((resolve) => {
     wx.request({
       url,
@@ -331,20 +268,6 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
         switch (code) {
           case 'success':
             resolve(data)
-            break;
-          case '1977.customer.notfound':
-            wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('info', content.info);
-            wx.reLaunch({
-              url: '/pages/login/login'
-            })
-            break;
-          case '1977.store.notfound':
-            wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('info', content.info);
-            wx.reLaunch({
-              url: '/pages/login/register'
-            })
             break;
           default:
             wx.showModal({
@@ -365,11 +288,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           confirmColor: '#e64340',
           showCancel: false,
           success: (res) => {
-            if (res.confirm) {
-              wx.reLaunch({
-                url: '/pages/login/login'
-              })
-            }
+           
           }
         });
       },
@@ -384,11 +303,9 @@ module.exports = {
   prefix,
   qualification,
   banks,
-  scoreStatus,
+  storeState,
   types,
   checkStore,
-  checkCustomer,
-  setPhone,
   formatTime,
   app,
   windowWidth,
