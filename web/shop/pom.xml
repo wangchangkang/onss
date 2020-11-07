@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shop-service</artifactId>
+    <artifactId>service-shop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <build>
