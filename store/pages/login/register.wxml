@@ -324,5 +324,6 @@
 	<view class="weui-cell">
 		<button style="weui-btn" type="default" formType="reset">重置</button>
 		<button style="weui-btn" type="primary" formType="submit">保存</button>
+			<button style="weui-btn" type="warn" formType="submit">提交</button>
 	</view>
 </form>

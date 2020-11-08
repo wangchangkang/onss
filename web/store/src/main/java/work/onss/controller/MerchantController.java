@@ -14,13 +14,12 @@ import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Merchant;
 import work.onss.domain.Store;
-import work.onss.enums.StoreStateEnum;
 import work.onss.vo.Work;
 
 import javax.annotation.Resource;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Collections;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -35,23 +34,20 @@ public class MerchantController {
     @Resource
     private MongoTemplate mongoTemplate;
 
+
     /**
      * @param merchant 注册信息
      * @return 密钥及用户信息
      */
-
     @Transactional
     @PostMapping(value = {"merchants"})
-    public Work<Map<String, Object>> register(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
-        Store store = new Store(merchant);
-        store.setBusinessCode(weChatConfig.getMchID().concat("_").concat(String.valueOf(Instant.now().toEpochMilli())));
+    public Work<Store> save(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
+        Instant now = Instant.now();
+        String businessCode = weChatConfig.getMchID().concat("_").concat(String.valueOf(now.toEpochMilli()));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
-        store.setCustomers(Collections.singletonList(customer));
-        store.setTrademark(systemConfig.getLogo());
-        mongoTemplate.insert(merchant);
-        store.setMerchantId(merchant.getId());
-        mongoTemplate.insert(store);
-        return Work.success("操作成功", null);
+        Store store = new Store(merchant, LocalDateTime.ofInstant(now,ZoneId.systemDefault()),businessCode,customer,systemConfig.getLogo());
+        mongoTemplate.save(store);
+        return Work.success("操作成功", store);
     }
 
     @Transactional

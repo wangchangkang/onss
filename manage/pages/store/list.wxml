@@ -6,9 +6,9 @@
 						<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
 					</swiper>
 					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-						<view class="weui-media-box__title">{{store.username}} {{score.phone}}</view>
-						<view class="weui-media-box__desc">{{score.licenseNumber}}</view>
-						<view class="weui-media-box__desc">{{score.insertTime}}</view>
+						<view class="weui-media-box__title">{{store.username}} {{store.phone}}</view>
+						<view class="weui-media-box__desc">{{store.licenseNumber}}</view>
+						<view class="weui-media-box__desc">{{store.insertTime}}</view>
 						</view>
 					</view>
 			</navigator>

@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class Store implements Serializable {
     private String trademark;//图标
     private String username;//联系人
     private String phone;//联系电话
-    private Boolean status = false;//是否休息
+    private Boolean status;//是否休息
     private Integer type;//分类
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
     private Point location;//坐标
@@ -53,26 +54,31 @@ public class Store implements Serializable {
     private LocalTime closeTime;
     private List<Customer> customers;//营业员
 
-    private String subMchId;//微信支付商户号
-    private String businessCode; // 业务申请编号
-    private Long applymentId; // 微信支付申请单号
-    private String merchantId;
     private StoreStateEnum state;
-
     private LocalDateTime insertTime;
     private LocalDateTime updateTime;
-    public Store(Merchant merchant) {
-        this.trademark = "picture/logo.png";
+
+    private String businessCode; // 业务申请编号
+    private Long applymentId; // 微信支付申请单号
+    private String subMchId;//微信支付商户号
+    private Merchant merchant;
+
+    public Store(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
+        this.trademark = trademark;
+        this.customers = Collections.singletonList(customer);
+        this.businessCode = businessCode;
         this.openTime = LocalTime.of(7, 30);
         this.closeTime = LocalTime.of(22, 30);
-        this.state = StoreStateEnum.SYSTEM_AUDITING;
+        this.status = false;
         this.name = merchant.getMerchantShortname();
         this.description = merchant.getQualificationType();
         this.username = merchant.getContactName();
         this.phone = merchant.getMobilePhone();
-        this.status = false;
         this.licenseNumber = merchant.getLicenseNumber();
         this.licenseCopy = merchant.getLicenseCopy();
+        this.insertTime = now;
+        this.updateTime = now;
+        this.merchant = merchant;
     }
 
 }

@@ -89,7 +89,6 @@ public class StoreController {
         Info info = new Info();
         info.setCid(customer.getId());
         info.setSid(store.getId());
-        info.setMerchantId(store.getMerchantId());
         info.setApplymentId(store.getApplymentId());
         info.setSubMchId(store.getSubMchId());
         byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
