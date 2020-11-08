@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage,appid } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage,appid,storeState } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -47,6 +47,25 @@ Page({
     bankName: '山东茌平农村商业银行胡屯支行',
   },
 
+    /** 申请特约商户 */
+    submitMerchant: function (e) {
+      wx.showLoading({ title: '加载中。。。' });
+      checkCustomer().then(({ authorization, info }) => {
+        console.log(info);
+  
+        const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid,state:'SYSTEM_AUDITING' };
+        wxRequest({
+          url: `${domain}/merchants?cid=${info.cid}`,
+          header: { authorization, info: JSON.stringify(info) },
+          method: 'POST',
+          data: data,
+        }).then(() => {
+          wx.reLaunch({
+            url: `/pages/login/stores?cid=${info.cid}`
+          });
+        })
+      })
+    },
 
   /** 申请特约商户 */
   saveMerchant: function (e) {
@@ -54,7 +73,7 @@ Page({
     checkCustomer().then(({ authorization, info }) => {
       console.log(info);
 
-      const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid };
+      const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid,state:'EDITTING' };
       wxRequest({
         url: `${domain}/merchants?cid=${info.cid}`,
         header: { authorization, info: JSON.stringify(info) },

@@ -7,6 +7,10 @@ const prefix = 'http://192.168.103.101/';
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
 };
+
+const storeState = {
+  REJECTED: "审核失败", FINISHED: "入住成功", CANCELED: "撤销申请", EDITTING: "商户编辑中", SYSTEM_AUDITING: "平台审核中",WEACHT_AUDITING:"微信审核中"
+};
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
     "餐饮",
@@ -378,6 +382,7 @@ module.exports = {
   prefix,
   qualification,
   banks,
+  storeState,
   scoreStatus,
   types,
   checkStore,
