@@ -14,8 +14,7 @@ public enum  StoreStateEnum implements Serializable {
     CANCELED(2,"撤销申请"),
     EDITTING(3,"商户编辑中"),
     SYSTEM_AUDITING(4,"平台审核中"),
-    WEACHT_AUDITING(5,"微信审核中"),
-    ;
+    WEACHT_AUDITING(5,"微信审核中");
 
     private final Integer code;
     private final String value;
