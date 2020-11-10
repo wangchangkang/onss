@@ -1,18 +1,17 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.101:8030/manage';
+const domain = 'http://192.168.103.103:8030/manage';
 const appid = "wx095ba1a3f9396476";
-const prefix = 'http://192.168.103.101/';
+const prefix = 'http://192.168.103.103/';
 const storeState = {
-
   REJECTED: "审核失败",
-    FINISHED: "入住成功",
-    CANCELED: "撤销申请",
-    EDITTING: "商户编辑中",
-    SYSTEM_AUDITING: "平台审核中",
-    WEACHT_AUDITING: "微信审核中",
-    
+  FINISHED: "入住成功",
+  CANCELED: "撤销申请",
+  EDITTING: "商户编辑中",
+  SYSTEM_AUDITING: "平台审核中",
+  WEACHT_AUDITING: "微信审核中",
+
 };
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
@@ -130,7 +129,7 @@ function checkStore() {
       const info = wx.getStorageSync('info');
       if (info.userid) {
         resolve({ authorization, info });
-      } 
+      }
     } else {
       wx.qy.login({
         success: ({ code }) => {
@@ -288,7 +287,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           confirmColor: '#e64340',
           showCancel: false,
           success: (res) => {
-           
+
           }
         });
       },

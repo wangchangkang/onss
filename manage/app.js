@@ -1,7 +1,7 @@
 const { windowWidth } = wx.getSystemInfoSync();
 App({
   globalData: {
-     windowWidth
+    windowWidth
   },
   onLaunch: function (e) {
   },
