@@ -36,16 +36,16 @@ public class MerchantController {
 
 
     /**
-     * @param merchant 注册信息
+     * @param store 注册信息
      * @return 密钥及用户信息
      */
     @Transactional
     @PostMapping(value = {"merchants"})
-    public Work<Store> save(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
+    public Work<Store> save(@RequestParam String cid, @Validated @RequestBody Store store) {
         Instant now = Instant.now();
         String businessCode = weChatConfig.getMchID().concat("_").concat(String.valueOf(now.toEpochMilli()));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
-        Store store = new Store(merchant, LocalDateTime.ofInstant(now,ZoneId.systemDefault()),businessCode,customer,systemConfig.getLogo());
+        store = store.Store(store.getMerchant(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()), businessCode, customer, systemConfig.getLogo());
         mongoTemplate.save(store);
         return Work.success("操作成功", store);
     }

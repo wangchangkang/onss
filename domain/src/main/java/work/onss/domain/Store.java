@@ -63,22 +63,23 @@ public class Store implements Serializable {
     private String subMchId;//微信支付商户号
     private Merchant merchant;
 
-    public Store(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
+    public Store Store(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
         this.trademark = trademark;
         this.customers = Collections.singletonList(customer);
         this.businessCode = businessCode;
         this.openTime = LocalTime.of(7, 30);
         this.closeTime = LocalTime.of(22, 30);
         this.status = false;
+
+        this.insertTime = now;
+        this.updateTime = now;
         this.name = merchant.getMerchantShortname();
         this.description = merchant.getQualificationType();
         this.username = merchant.getContactName();
         this.phone = merchant.getMobilePhone();
         this.licenseNumber = merchant.getLicenseNumber();
         this.licenseCopy = merchant.getLicenseCopy();
-        this.insertTime = now;
-        this.updateTime = now;
-        this.merchant = merchant;
+        return this;
     }
 
 }

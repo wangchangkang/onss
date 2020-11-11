@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage,appid,storeState } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage, appid, storeState } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -47,33 +47,11 @@ Page({
     bankName: '山东茌平农村商业银行胡屯支行',
   },
 
-    /** 申请特约商户 */
-    submitMerchant: function (e) {
-      wx.showLoading({ title: '加载中。。。' });
-      checkCustomer().then(({ authorization, info }) => {
-        console.log(info);
-  
-        const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid,state:'SYSTEM_AUDITING' };
-        wxRequest({
-          url: `${domain}/merchants?cid=${info.cid}`,
-          header: { authorization, info: JSON.stringify(info) },
-          method: 'POST',
-          data: data,
-        }).then(() => {
-          wx.reLaunch({
-            url: `/pages/login/stores?cid=${info.cid}`
-          });
-        })
-      })
-    },
-
   /** 申请特约商户 */
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
     checkCustomer().then(({ authorization, info }) => {
-      console.log(info);
-
-      const data = { ...this.data, ...e.detail.value,miniProgramSubAppid:appid,state:'EDITTING' };
+      const data = { merchant: { ...this.data, ...e.detail.value, miniProgramSubAppid: appid }, state: e.detail.target.id };
       wxRequest({
         url: `${domain}/merchants?cid=${info.cid}`,
         header: { authorization, info: JSON.stringify(info) },
@@ -119,12 +97,12 @@ Page({
   },
   /** 选择多张图片 */
   chooseImages: function (e) {
-    checkCustomer().then(({  authorization,info }) => {
+    checkCustomer().then(({ authorization, info }) => {
       const id = e.currentTarget.id;
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
-      chooseImages(authorization,info, count, `${domain}/customers/${info.cid}/uploadPicture`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/customers/${info.cid}/uploadPicture`).then((data) => {
         this.setData({
           [`${id}[${length}]`]: data
         })
@@ -134,8 +112,8 @@ Page({
   /** 选择一张图片 */
   chooseImage: function (e) {
     const id = e.currentTarget.id;
-    checkCustomer().then(({  authorization,info }) => {
-      chooseImage(authorization,info, `${domain}/customers/${info.cid}/uploadPicture`,).then((data) => {
+    checkCustomer().then(({ authorization, info }) => {
+      chooseImage(authorization, info, `${domain}/customers/${info.cid}/uploadPicture`,).then((data) => {
         this.setData({
           [`${id}`]: data
         })
