@@ -1,8 +1,9 @@
-import { prefix, checkCustomer, domain, wxRequest } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest,storeState } from '../../utils/util.js';
 Page({
   data: {
     prefix,
-    stores: []
+    stores: [],
+    storeState
   },
 
   /**绑定商户

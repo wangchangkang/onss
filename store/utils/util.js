@@ -9,7 +9,7 @@ const scoreStatus = {
 };
 
 const storeState = {
-  REJECTED: "审核失败", FINISHED: "入住成功", CANCELED: "撤销申请", EDITTING: "商户编辑中", SYSTEM_AUDITING: "平台审核中",WEACHT_AUDITING:"微信审核中"
+  REJECTED: "审核失败", CANCELED: "撤销申请", EDITTING: "商户编辑中", SYSTEM_AUDITING: "平台审核中",WEACHT_AUDITING:"微信审核中"
 };
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [
