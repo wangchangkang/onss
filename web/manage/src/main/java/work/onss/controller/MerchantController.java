@@ -7,19 +7,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import work.onss.config.SystemConfig;
-import work.onss.config.WeChatConfig;
-import work.onss.domain.Customer;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.Merchant;
 import work.onss.domain.Store;
 import work.onss.vo.Work;
 
-import javax.annotation.Resource;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -28,27 +23,8 @@ import java.util.Map;
 public class MerchantController {
 
     @Autowired
-    private WeChatConfig weChatConfig;
-    @Autowired
-    private SystemConfig systemConfig;
-    @Resource
     private MongoTemplate mongoTemplate;
 
-
-    /**
-     * @param merchant 注册信息
-     * @return 密钥及用户信息
-     */
-    @Transactional
-    @PostMapping(value = {"merchants"})
-    public Work<Store> save(@RequestParam String cid,@Validated @RequestBody Merchant merchant) {
-        Instant now = Instant.now();
-        String businessCode = weChatConfig.getMchID().concat("_").concat(String.valueOf(now.toEpochMilli()));
-        Customer customer = mongoTemplate.findById(cid, Customer.class);
-        Store store = new Store(merchant, LocalDateTime.ofInstant(now,ZoneId.systemDefault()),businessCode,customer,systemConfig.getLogo());
-        mongoTemplate.save(store);
-        return Work.success("操作成功", store);
-    }
 
     @Transactional
     @PutMapping(value = {"merchants/{id}/setMiniProgramPics"})
