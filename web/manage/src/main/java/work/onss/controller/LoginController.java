@@ -30,12 +30,10 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
-    @Resource
+    @Autowired
     private MiniProgramService miniProgramService;
     @Autowired
     private WeChatConfig weChatConfig;
-    @Resource
-    private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
 

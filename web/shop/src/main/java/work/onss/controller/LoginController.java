@@ -38,12 +38,12 @@ import java.util.stream.Collectors;
 @RestController
 public class LoginController {
 
-    @Resource
+    @Autowired
     private MiniProgramService miniProgramService;
 
     @Autowired
     private WeChatConfig weChatConfig;
-    @Resource
+    @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;

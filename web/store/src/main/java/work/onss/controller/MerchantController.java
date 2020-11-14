@@ -31,7 +31,7 @@ public class MerchantController {
     private WeChatConfig weChatConfig;
     @Autowired
     private SystemConfig systemConfig;
-    @Resource
+    @Autowired
     private MongoTemplate mongoTemplate;
 
 

@@ -25,7 +25,6 @@ import work.onss.vo.WXLogin;
 import work.onss.vo.WXSession;
 import work.onss.vo.Work;
 
-import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -35,11 +34,11 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
-    @Resource
+    @Autowired
     private MiniProgramService miniProgramService;
     @Autowired
     private WeChatConfig weChatConfig;
-    @Resource
+    @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;

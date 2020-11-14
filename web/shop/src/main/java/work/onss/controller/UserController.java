@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @RestController
 public class UserController {
 
-    @Resource
+    @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;

@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 @RestController
 public class CustomerController {
 
-    @Resource
+    @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
