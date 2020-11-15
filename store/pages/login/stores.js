@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest,storeState } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, storeState } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -11,19 +11,40 @@ Page({
    * @param {*} e 
    */
   bindStore: function (e) {
-    checkCustomer().then(({ authorization, info }) => {
-      wxRequest({
-        url: `${domain}/stores/${e.currentTarget.id}/bind?cid=${info.cid}`,
-        method: 'POST',
-        header: { authorization, info: JSON.stringify(info) },
-      }).then(({ content }) => {
-        wx.setStorageSync('authorization', content.authorization);
-        wx.setStorageSync('info', content.info);
-        wx.reLaunch({
-          url: '/pages/product/list'
+    const { state,id } = e.currentTarget.dataset;
+    if (state === 'EDITTING') {
+      console.log(state);
+      wx.navigateTo({
+        url: '/pages/login/register',
+        events: {
+          // 为指定事件添加一个监听器，获取被打开页面传送到当前页面的数据
+          acceptData: (data) => {
+            console.log(data)
+          },
+          someEvent: (data) => {
+            console.log(data)
+          }
+        },
+        success: (res) => {
+          // 通过eventChannel向被打开页面传送数据
+          res.eventChannel.emit('acceptData', { store: this.data.stores[e.currentTarget.id] })
+        }
+      })
+    } else {
+      checkCustomer().then(({ authorization, info }) => {
+        wxRequest({
+          url: `${domain}/stores/${id}/bind?cid=${info.cid}`,
+          method: 'POST',
+          header: { authorization, info: JSON.stringify(info) },
+        }).then(({ content }) => {
+          wx.setStorageSync('authorization', content.authorization);
+          wx.setStorageSync('info', content.info);
+          wx.reLaunch({
+            url: '/pages/product/list'
+          })
         })
       })
-    })
+    }
   },
 
   /**获取所有商户

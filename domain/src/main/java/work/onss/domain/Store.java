@@ -62,6 +62,7 @@ public class Store implements Serializable {
     private Long applymentId; // 微信支付申请单号
     private String subMchId;//微信支付商户号
     private Merchant merchant;
+    private String  rejected;
 
     public Store Store(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
         this.trademark = trademark;

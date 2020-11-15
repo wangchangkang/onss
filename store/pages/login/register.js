@@ -1,50 +1,9 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage, appid, storeState } from '../../utils/util.js';
+import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage, appid } from '../../utils/util.js';
 Page({
   data: {
     prefix,
     banks,
     qualification,
-
-    contactName: '谷圣齐',
-    contactIdNumber: '371523199111201292',
-    mobilePhone: '15314906861',
-    contactEmail: '237837647@qq.com',
-
-    subjectType: 'SUBJECT_TYPE_INDIVIDUAL',
-    licenseNumber: '92330411MA2JDMCK9H',
-    merchantName: '嘉兴市秀洲区洪合镇依茗纱服饰经营部',
-    legalPerson: '谷圣齐',
-    licenseCopy: 'picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg',
-    idCardCopy: 'picture/5f8c11f5669d3c156d6446bb/e017fae920c6ce6ba405a00bdca89aae.jpg',
-    idCardNational: 'picture/5f8c11f5669d3c156d6446bb/e2a536e37bf02292ed99c84a6d237964.jpg',
-    qualifications: ['picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg'],
-
-    idCardNumber: '371523199111201292',
-    idCardName: '谷圣齐',
-    cardPeriodBegin: '2012-03-31',
-    cardPeriodEnd: '2022-03-31',
-    owner: true,
-
-    idNumber: '371523199111201292',
-    beneficiary: '谷圣齐',
-    idPeriodBegin: '2012-03-31',
-    idPeriodEnd: '2022-03-31',
-
-    merchantShortname: '依茗纱服饰经营部',
-    servicePhone: '15314906861',
-
-    qualificationType: '零售批发/生活娱乐/其他',
-
-    bankAccountType: 'BANK_ACCOUNT_TYPE_PERSONAL',
-    accountName: '嘉兴市秀洲区洪合镇依茗纱服饰经营部',
-    accountBank: '工商银行',
-    bankAddress: {
-      code: ["110000", "110100", "110101"],
-      postcode: "100010",
-      value: ["山东省", "聊城市", "茌平县"]
-    },
-    accountNumber: '6230910199039064189',
-    bankName: '山东茌平农村商业银行胡屯支行',
   },
 
   /** 申请特约商户 */
@@ -163,5 +122,15 @@ Page({
     this.setData({
       accountBank: banks[e.detail.value]
     })
-  }
+  },
+
+  onLoad: function (options) {
+    const eventChannel = this.getOpenerEventChannel()
+    // 监听acceptDataFromOpenerPage事件，获取上一页面通过eventChannel传送到当前页面的数据
+    eventChannel.on('acceptData', ({ store }) => {
+      this.setData({
+        store, id: store.id, ...store.merchant
+      })
+    })
+  },
 })
