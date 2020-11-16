@@ -7,8 +7,7 @@
 </view>
 <view class="weui-panel">
 	<view class="weui-panel__bd">
-		<view wx:for="{{stores}}" wx:for-item='store' wx:key="index" id="{{index}}" data-id="{{store.id}}" data-state="{{store.state}}" bindtap="bindStore" 
-		class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
+		<view wx:for="{{stores}}" wx:for-item='store' wx:key="index" id="{{index}}" data-id="{{store.id}}" data-state="{{store.state}}" bindtap="bindStore" 	class="weui-media-box weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<image class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
 			</view>

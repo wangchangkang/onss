@@ -11,8 +11,8 @@ Page({
    * @param {*} e 
    */
   bindStore: function (e) {
-    const { state,id } = e.currentTarget.dataset;
-    if (state === 'EDITTING') {
+    const { state, id } = e.currentTarget.dataset;
+    if (state === 'EDITTING' || state === 'REJECTED') {
       console.log(state);
       wx.navigateTo({
         url: '/pages/login/register',
@@ -29,6 +29,14 @@ Page({
           // 通过eventChannel向被打开页面传送数据
           res.eventChannel.emit('acceptData', { store: this.data.stores[e.currentTarget.id] })
         }
+      })
+    } else if ('SYSTEM_AUDITING' === state || 'WEACHT_AUDITING' === state) {
+      // REJECTED: "审核失败", CANCELED: "撤销申请", EDITTING: "资质完善中", SYSTEM_AUDITING: "平台审核中", WEACHT_AUDITING: "微信审核中"
+      wx.showModal({
+        title: '温馨提示',
+        content: '正在审核中，请耐心等待。',
+        confirmColor: '#e64340',
+        showCancel: false,
       })
     } else {
       checkCustomer().then(({ authorization, info }) => {
