@@ -81,7 +81,7 @@ public class StoreController {
                 .with(pageable)
                 .query(query);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
-        return Work.success(null, storeGeoResults.getContent());
+        return Work.success("加载成功", storeGeoResults.getContent());
 
     }
 
@@ -93,7 +93,7 @@ public class StoreController {
     public Work<List<Product>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
         Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
         List<Product> products = mongoTemplate.find(query, Product.class);
-        return Work.success(null, products);
+        return Work.success("加载成功", products);
     }
 
 }

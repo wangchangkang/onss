@@ -32,6 +32,6 @@ public class IndexController {
                 .exclude("products")
                 .exclude("merchant");
         List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
-        return Work.success(null, stores);
+        return Work.success("加载成功", stores);
     }
 }

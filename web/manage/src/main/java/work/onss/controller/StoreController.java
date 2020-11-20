@@ -43,7 +43,7 @@ public class StoreController {
     public Work<Boolean> setMiniProgramPics(@PathVariable String id, @RequestBody List<String> miniProgramPics) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("merchant.miniProgramPics", miniProgramPics), Store.class);
-        return Work.success("申请成功，请等待审核结果", true);
+        return Work.success("更新成功", true);
     }
 
 
@@ -59,7 +59,7 @@ public class StoreController {
     public Work<Boolean> update(@PathVariable String id, StoreStateEnum state, @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id).and("state").is(state));
         mongoTemplate.updateFirst(query, Update.update("state", store.getState()).set("rejected", store.getRejected()), Store.class);
-        return Work.success("申请成功，请等待审核结果", true);
+        return Work.success("更新成功", true);
     }
 
 

@@ -107,7 +107,7 @@ public class StoreController {
     public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("status", status), Store.class);
-        return Work.success("更新成功", status);
+        return Work.success("操作成功", status);
     }
 
     /**

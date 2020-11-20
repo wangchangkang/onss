@@ -46,7 +46,7 @@ public class PreferController {
     public Work<Boolean> delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {
         Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
         mongoTemplate.remove(query, Prefer.class);
-        return Work.success("删除成功", true);
+        return Work.success("取消收藏成功", true);
     }
 
     /**
