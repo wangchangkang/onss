@@ -19,7 +19,6 @@ import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @RestController
@@ -33,7 +32,7 @@ public class StoreController {
 
 
     /**
-     * 上传小程序图片
+     * 设置小程序图片
      *
      * @param id              商户ID
      * @param miniProgramPics 小程序图片
@@ -41,10 +40,10 @@ public class StoreController {
      */
     @Transactional
     @PutMapping(value = {"stores/{id}/setMiniProgramPics"})
-    public Work<Map<String, Object>> setMiniProgramPics(@PathVariable String id, @RequestBody List<String> miniProgramPics) {
+    public Work<Boolean> setMiniProgramPics(@PathVariable String id, @RequestBody List<String> miniProgramPics) {
         Query query = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(query, Update.update("merchant.miniProgramPics", miniProgramPics), Store.class);
-        return Work.success("申请成功，请等待审核结果", null);
+        return Work.success("申请成功，请等待审核结果", true);
     }
 
 
@@ -56,11 +55,11 @@ public class StoreController {
      * @return 是否审核通过
      */
     @Transactional
-    @PutMapping(value = {"stores/{id}"})
-    public Work<Map<String, Object>> update(@PathVariable String id, @RequestBody Store store) {
-        Query query = Query.query(Criteria.where("id").is(id));
+    @PutMapping(value = {"stores/{id}/setState"})
+    public Work<Boolean> update(@PathVariable String id, StoreStateEnum state, @RequestBody Store store) {
+        Query query = Query.query(Criteria.where("id").is(id).and("state").is(state));
         mongoTemplate.updateFirst(query, Update.update("state", store.getState()).set("rejected", store.getRejected()), Store.class);
-        return Work.success("申请成功，请等待审核结果", null);
+        return Work.success("申请成功，请等待审核结果", true);
     }
 
 

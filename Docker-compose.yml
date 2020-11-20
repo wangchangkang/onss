@@ -59,3 +59,10 @@ services:
       - /Users/wangchanghao/Desktop/work/onss/picture:/picture
       - /Users/wangchanghao/Desktop/work/onss/web/shop/target/shop-service-0.0.1-SNAPSHOT.jar:/onss/shop-service-0.0.1-SNAPSHOT.jar
     entrypoint: ["java","-jar","/onss/shop-service-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=docker"]
+  mysql-db:
+    container_name: mysql        # 指定容器的名称
+    image: 'mysql:5.7.32'                  # 指定镜像和版本
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
