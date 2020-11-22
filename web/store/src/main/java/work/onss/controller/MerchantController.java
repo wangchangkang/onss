@@ -37,19 +37,19 @@ public class MerchantController {
      * @return 密钥及用户信息
      */
     @Transactional
-    @PostMapping(value = {"merchants"})
+    @PostMapping(value = {"stores"})
     public Work<Store> save(@RequestParam String cid, @Validated @RequestBody Store store) {
         Instant now = Instant.now();
         String businessCode = weChatConfig.getMchID().concat("_").concat(String.valueOf(now.toEpochMilli()));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
         store = store.Store(store.getMerchant(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()), businessCode, customer, systemConfig.getLogo());
-        mongoTemplate.save(store);
+        mongoTemplate.insert(store);
         return Work.success("操作成功", store);
     }
 
     @Transactional
-    @PutMapping(value = {"merchants/{id}"})
-    public Work<Store> update(@PathVariable String id, @RequestBody Merchant merchant) {
+    @PostMapping(value = {"stores/{id}/setMerchant"})
+    public Work<Store> setMerchant(@PathVariable String id, @RequestBody Merchant merchant) {
         Store store = mongoTemplate.findById(id, Store.class);
         if (store == null) {
             return Work.fail("该商户不存在");
