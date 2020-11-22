@@ -330,7 +330,7 @@
 				<view class="weui-label">银行全称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="bankNamee" value="{{bankName}}" placeholder='请填写银行全称' maxlength="50" />
+				<input name="bankName" value="{{bankName}}" placeholder='请填写银行全称' maxlength="50" />
 			</view>
 		</view>
 	</view>

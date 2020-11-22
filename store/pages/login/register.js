@@ -10,7 +10,8 @@ Page({
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
     checkCustomer().then(({ authorization, info }) => {
-      const data = { merchant: { ...this.data, ...e.detail.value, miniProgramSubAppid: appid }, state: e.detail.target.id };
+      const {bankAddress,qualifications,id} = this.data
+      const data = { merchant: { ...e.detail.value, miniProgramSubAppid: appid,bankAddress,qualifications }, state: e.detail.target.id,id };
       wxRequest({
         url: `${domain}/merchants?cid=${info.cid}`,
         header: { authorization, info: JSON.stringify(info) },
