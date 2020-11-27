@@ -10,18 +10,33 @@ Page({
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
     checkCustomer().then(({ authorization, info }) => {
-      const {bankAddress,qualifications,id} = this.data
-      const data = { merchant: { ...e.detail.value, miniProgramSubAppid: appid,bankAddress,qualifications }, state: e.detail.target.id,id };
-      wxRequest({
-        url: `${domain}/merchants?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
-        method: 'POST',
-        data: data,
-      }).then(() => {
-        wx.reLaunch({
-          url: `/pages/login/stores?cid=${info.cid}`
-        });
-      })
+      const { bankAddress, qualifications, id } = this.data
+      console.log(e.detail.value);
+      const data = { merchant: { ...e.detail.value, miniProgramSubAppid: appid, bankAddress, qualifications }, state: e.detail.target.id, id };
+      console.log(data);
+      if (id) {
+        wxRequest({
+          url: `${domain}/stores/${id}/setMerchant?cid=${info.cid}`,
+          header: { authorization, info: JSON.stringify(info) },
+          method: 'POST',
+          data: data,
+        }).then(() => {
+          wx.reLaunch({
+            url: `/pages/login/stores?cid=${info.cid}`
+          });
+        })
+      } else {
+        wxRequest({
+          url: `${domain}/stores?cid=${info.cid}`,
+          header: { authorization, info: JSON.stringify(info) },
+          method: 'POST',
+          data: data,
+        }).then(() => {
+          wx.reLaunch({
+            url: `/pages/login/stores?cid=${info.cid}`
+          });
+        })
+      }
     })
   },
   /** 输入框 */

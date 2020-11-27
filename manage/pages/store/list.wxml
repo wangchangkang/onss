@@ -1,6 +1,6 @@
 		<view class="weui-cells__title">{{storeState[state]}}</view>
 		<view class="weui-panel">
-			<navigator wx:for="{{stores}}" wx:for-item='store' wx:key="index" url='/pages/store/detail?index=${{index}}&id={{store.id}}' class="weui-media-box">
+			<view wx:for="{{stores}}" wx:for-item='store' wx:key="index" id="{{index}}" bindtap="toDetail" class="weui-media-box">
 				<view class=" weui-media-box_appmsg">
 					<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 						<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{store.trademark}}" />
@@ -11,5 +11,5 @@
 						<view class="weui-media-box__desc">{{store.insertTime}}</view>
 						</view>
 					</view>
-			</navigator>
+			</view>
 		</view>

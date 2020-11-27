@@ -64,7 +64,7 @@ public class Store implements Serializable {
     private Merchant merchant;
     private String  rejected;
 
-    public Store Store(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
+    public Store initStore(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
         this.trademark = trademark;
         this.customers = Collections.singletonList(customer);
         this.businessCode = businessCode;

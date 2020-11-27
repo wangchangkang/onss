@@ -54,7 +54,7 @@
 				<view class="weui-label">主体类型</view>
 			</view>
 			<view class="weui-cell__bd">
-				<radio-group class="weui-input radio-group" bindchange="radioChange" id='subjectType'>
+				<radio-group class="weui-input radio-group" bindchange="radioChange" id='subjectType' name="subjectType">
 					<label class="radio">
 						<radio value="SUBJECT_TYPE_INDIVIDUAL" checked="{{subjectType == 'SUBJECT_TYPE_INDIVIDUAL'}}" />个体 </label>
 					<label class="radio">
@@ -87,7 +87,7 @@
 				<view class="weui-label">商户全称</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input name="lmerchantName" value="{{merchantName}}" placeholder="请输入营业执照名称" maxlength="50" />
+				<input name="merchantName" value="{{merchantName}}" placeholder="请输入营业执照名称" maxlength="50" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -156,7 +156,7 @@
 				<view class="weui-label">是否是最终受益人</view>
 			</view>
 			<view class="weui-cell__ft">
-				<switch id="owner" checked="{{owner}}" bindchange="switchChange" />
+				<switch id="owner" name="owner" checked="{{owner}}" bindchange="switchChange" />
 			</view>
 		</view>
 	</view>
@@ -242,7 +242,7 @@
 				<view class="weui-label">所属行业</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}">
+				<picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}" name="qualificationType" value="{{qualificationType}}">
 					<view>{{qualificationType?qualificationType:'请选择所属行业'}}</view>
 				</picker>
 			</view>
@@ -281,7 +281,7 @@
 				<view class="weui-label">账户类型</view>
 			</view>
 			<view class="weui-cell__bd">
-				<radio-group class="weui-input radio-group" bindchange="radioChange" id="bankAccountType">
+				<radio-group class="weui-input radio-group" bindchange="radioChange" id="bankAccountType" name="bankAccountType">
 					<label class="radio"></label>
 					<radio value="BANK_ACCOUNT_TYPE_PERSONAL" checked="{{bankAccountType == 'BANK_ACCOUNT_TYPE_PERSONAL'}}" />个人
 					<label class="radio"></label>
@@ -302,7 +302,7 @@
 				<view class="weui-label">开户银行</view>
 			</view>
 			<view class="weui-cell__bd">
-				<picker bindchange="accountBankChange" range="{{banks}}">
+				<picker bindchange="accountBankChange" range="{{banks}}" name="accountBank" value="{{accountBank}}">
 					<view>{{accountBank?accountBank:'请选择开户行'}}</view>
 				</picker>
 			</view>

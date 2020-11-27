@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Customer;
-import work.onss.domain.Merchant;
 import work.onss.domain.Store;
+import work.onss.enums.StoreStateEnum;
 import work.onss.vo.Work;
 
 import java.time.Instant;
@@ -42,21 +42,16 @@ public class MerchantController {
         Instant now = Instant.now();
         String businessCode = weChatConfig.getMchID().concat("_").concat(String.valueOf(now.toEpochMilli()));
         Customer customer = mongoTemplate.findById(cid, Customer.class);
-        store = store.Store(store.getMerchant(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()), businessCode, customer, systemConfig.getLogo());
+        store = store.initStore(store.getMerchant(), LocalDateTime.ofInstant(now, ZoneId.systemDefault()), businessCode, customer, systemConfig.getLogo());
         mongoTemplate.insert(store);
         return Work.success("操作成功", store);
     }
 
     @Transactional
     @PostMapping(value = {"stores/{id}/setMerchant"})
-    public Work<Store> setMerchant(@PathVariable String id, @RequestBody Merchant merchant) {
-        Store store = mongoTemplate.findById(id, Store.class);
-        if (store == null) {
-            return Work.fail("该商户不存在");
-        }
-        Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("merchant", merchant), Store.class);
-        store.setMerchant(merchant);
+    public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) {
+        Query query = Query.query(Criteria.where("id").is(id).and("state").in(StoreStateEnum.REJECTED, StoreStateEnum.EDITTING));
+        mongoTemplate.updateFirst(query, Update.update("merchant", store.getMerchant()).set("state", store.getState()).set("updateTime", LocalDateTime.now()), Store.class);
         return Work.success("编辑成功", store);
     }
 }
