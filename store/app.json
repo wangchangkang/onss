@@ -11,7 +11,8 @@
     "pages/product/edit",
     "pages/product/create",
     "pages/store/edit",
-    "pages/score/score"
+    "pages/score/score",
+    "pages/store/merchant"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -17,12 +18,19 @@ import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
 import work.onss.domain.Info;
+import work.onss.domain.Product;
 import work.onss.domain.Store;
+import work.onss.enums.StoreStateEnum;
 import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,8 +70,6 @@ public class StoreController {
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
         Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        query.fields().exclude("merchant");
-        query.fields().exclude("customers");
         Store store = mongoTemplate.findOne(query, Store.class);
         return Work.success("加载成功", store);
     }
@@ -105,8 +111,17 @@ public class StoreController {
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) {
-        Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("status", status), Store.class);
+        Query qProduct = Query.query(Criteria.where("sid").is(id));
+        boolean productExists = mongoTemplate.exists(qProduct, Product.class);
+        if (!productExists){
+            return Work.fail("1977.products.zero", "请添加预售商品");
+        }
+        Query storeQuery = Query.query(Criteria.where("id").is(id).and("state").is(StoreStateEnum.FINISHED));
+        boolean storeExists = mongoTemplate.exists(storeQuery, Store.class);
+        if (!storeExists){
+            return Work.fail("1977.merchant.not_register", "请完善商户资质");
+        }
+        mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
         return Work.success("操作成功", status);
     }
 
@@ -138,14 +153,31 @@ public class StoreController {
 
 
     /**
+     * @param store 注册信息
+     * @return 密钥及用户信息
+     */
+    @Transactional
+    @PostMapping(value = {"stores"})
+    public Work<Store> insert(@RequestParam String cid, @Validated @RequestBody Store store) {
+        Customer customer = mongoTemplate.findById(cid, Customer.class);
+        store.setCustomers(Collections.singletonList(customer));
+        LocalDateTime now = LocalDateTime.now();
+        store.setInsertTime(now);
+        store.setUpdateTime(now);
+        store.setStatus(false);
+        mongoTemplate.insert(store);
+        return Work.success("操作成功", store);
+    }
+
+    /**
      * 商品图片
      *
      * @param file 文件
      * @return 图片地址
      */
-    @PostMapping("stores/{id}/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @PathVariable(name = "id") String id) throws Exception {
-        String path = Utils.upload(file, systemConfig.getFilePath(), id);
+    @PostMapping("stores/uploadPicture")
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid) throws Exception {
+        String path = Utils.upload(file, systemConfig.getFilePath(), cid);
         return Work.success("上传成功", path);
     }
 }

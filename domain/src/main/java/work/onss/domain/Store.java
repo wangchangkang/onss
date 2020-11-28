@@ -1,9 +1,7 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
@@ -25,6 +23,8 @@ import java.util.List;
  */
 @Log4j2
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Document
@@ -47,7 +47,6 @@ public class Store implements Serializable {
     @Indexed(unique = true)
     private String licenseNumber;//营业执照编号
     private String licenseCopy;//营业执照
-
     @JsonFormat(pattern = "HH:mm")
     private LocalTime openTime;
     @JsonFormat(pattern = "HH:mm")

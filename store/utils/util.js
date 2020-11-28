@@ -344,6 +344,32 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
               url: '/pages/login/register'
             })
             break;
+          case '1977.products.zero':
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+              success: () => {
+                wx.reLaunch({
+                  url: '/pages/product/create'
+                });
+              }
+            })
+            break;
+          case '1977.merchant.not_register':
+            wx.showModal({
+              title: '警告',
+              content: msg,
+              confirmColor: '#e64340',
+              showCancel: false,
+              success: () => {
+                wx.reLaunch({
+                  url: '/pages/store/merchant'
+                });
+              }
+            })
+            break;
           default:
             wx.showModal({
               title: '警告',

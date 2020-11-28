@@ -1,4 +1,4 @@
-import { prefix, checkCustomer, domain, wxRequest, banks, qualification, chooseImages, chooseImage, appid } from '../../utils/util.js';
+import { prefix, checkStore, domain, wxRequest, banks, qualification, chooseImages, chooseImage, appid } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -8,19 +8,38 @@ Page({
 
   /** 申请特约商户 */
   saveMerchant: function (e) {
-    wx.showLoading({ title: '加载中。。。' });
-    checkCustomer().then(({ authorization, info }) => {
-      const data = { merchant: { ...this.data, ...e.detail.value, miniProgramSubAppid: appid }, state: e.detail.target.id };
-      wxRequest({
-        url: `${domain}/merchants?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
-        method: 'POST',
-        data: data,
-      }).then(() => {
-        wx.reLaunch({
-          url: `/pages/login/stores?cid=${info.cid}`
-        });
-      })
+    checkStore().then(({ authorization, info }) => {
+      const data = {
+        merchant: {
+          ...this.data,
+          ...e.detail.value,
+          miniProgramSubAppid: appid
+        },
+        state: e.detail.target.id,
+        rejected: e.detail.value.rejected
+      };
+      console.log(!data.rejected);
+
+      if (data.state === 'REJECTED' && (!data.rejected || data.rejected === '' || data.rejected === this.data.store.rejected)) {
+        wx.showModal({
+          title: '警告',
+          content: '请编辑驳回原因',
+          confirmColor: '#e64340',
+          showCancel: false,
+        })
+      } else {
+        wx.showLoading({ title: '加载中。。。' });
+        wxRequest({
+          url: `${domain}/stores/${data.id}/setState?cid=${info.cid}&state=${this.data.store.state}`,
+          header: { authorization, info: JSON.stringify(info) },
+          method: 'POST',
+          data: data,
+        }).then((e) => {
+          console.log(e);
+          
+         
+        })
+      }
     })
   },
   /** 输入框 */
@@ -128,8 +147,10 @@ Page({
     const eventChannel = this.getOpenerEventChannel()
     // 监听acceptDataFromOpenerPage事件，获取上一页面通过eventChannel传送到当前页面的数据
     eventChannel.on('acceptData', ({ store }) => {
+      console.log(store);
+
       this.setData({
-        store, id: store.id, ...store.merchant
+        store, id: store.id, state: store.state, ...store.merchant
       })
     })
   },

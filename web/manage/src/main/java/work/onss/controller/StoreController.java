@@ -55,7 +55,7 @@ public class StoreController {
      * @return 是否审核通过
      */
     @Transactional
-    @PutMapping(value = {"stores/{id}/setState"})
+    @PostMapping(value = {"stores/{id}/setState"})
     public Work<Boolean> update(@PathVariable String id, StoreStateEnum state, @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id).and("state").is(state));
         mongoTemplate.updateFirst(query, Update.update("state", store.getState()).set("rejected", store.getRejected()), Store.class);

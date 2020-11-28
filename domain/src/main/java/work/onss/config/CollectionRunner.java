@@ -36,9 +36,5 @@ public class CollectionRunner implements CommandLineRunner {
         if (!mongoTemplate.collectionExists(User.class)){
             mongoTemplate.createCollection(User.class);
         }
-
-        if (!mongoTemplate.collectionExists(Merchant.class)){
-            mongoTemplate.createCollection(Merchant.class);
-        }
     }
 }
