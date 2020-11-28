@@ -11,6 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 客户
+ *
+ * @author wangchanghao
+ */
 @Log4j2
 @Data
 @NoArgsConstructor
@@ -19,19 +24,30 @@ public class Customer implements Serializable {
 
     @Id
     private String id;
+    /**
+     * 客户电话
+     */
     @Indexed(unique = true)
     private String phone;
-    @Indexed(unique = true)
+    /**
+     * 客户微信用户openid
+     */
     private String openid;
+    /**
+     * 小程序APPID
+     */
     private String appid;
-    @Indexed
+    /**
+     * 小程序session_key
+     */
     private String session_key;
-    private LocalDateTime lastTime;
-
-    public Customer(String phone, String openid, LocalDateTime lastTime) {
-        this.phone = phone;
-        this.openid = openid;
-        this.lastTime = lastTime;
-    }
+    /**
+     * 创建时间
+     */
+    private LocalDateTime insertTime;
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
 }
  

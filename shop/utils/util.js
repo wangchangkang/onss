@@ -63,7 +63,7 @@ function wxLogin() {
       })
     }
   })
-};
+}
 
 /** 同步微信手机号
  * @param {string} id 用户ID
@@ -78,7 +78,7 @@ function setPhone(id, authorization, info, encryptedData, iv) {
     data: { appid, encryptedData, iv },
     header: { authorization, info: JSON.stringify(info) },
   })
-};
+}
 
 /** 根据商户ID分页商品
  * @param {String} sid 商户ID

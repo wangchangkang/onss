@@ -36,9 +36,9 @@ public class ProductController {
     private SystemConfig systemConfig;
 
     /**
-     * 详情
-     *
-     * @param id 主键
+     * @param id  商品ID
+     * @param sid 商户ID
+     * @return 商品详情
      */
     @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
@@ -48,9 +48,8 @@ public class ProductController {
     }
 
     /**
-     * 列表
-     *
-     * @param sid 店铺ID
+     * @param sid 商户ID
+     * @return 商品列表
      */
     @GetMapping(value = {"products"})
     public Work<List<Product>> products(@RequestParam(name = "sid") String sid) {
@@ -60,42 +59,38 @@ public class ProductController {
 
     }
 
+
     /**
-     * 新增
-     *
-     * @param product 商品信息
+     * @param sid     商户ID
+     * @param product 新增商品详情
+     * @return 商品详情
      */
     @PostMapping(value = {"products"})
     public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         product.setSid(sid);
-        if (product.getId() == null) {
-            product = mongoTemplate.insert(product);
-            return Work.success("创建成功", product);
-        } else {
-            Query query = Query.query(Criteria.where("id").is(product.getId()).and("sid").is(sid));
-            mongoTemplate.findAndReplace(query, product);
-            return Work.success("编辑成功", product);
-        }
+        product = mongoTemplate.insert(product);
+        return Work.success("创建成功", product);
     }
 
     /**
-     * 编辑
-     *
-     * @param id      主键
-     * @param product 商品信息
+     * @param id      商品ID
+     * @param sid     商户ID
+     * @param product 编辑商品详情
+     * @return 商品详情
      */
     @PutMapping(value = {"products/{id}"})
     public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        product.setSid(sid);
         mongoTemplate.findAndReplace(query, product);
         return Work.success("编辑成功", product);
     }
 
+
     /**
-     * 上/下架商品
-     *
-     * @param status 商品状态
+     * @param id     商品ID
+     * @param sid    商户ID
+     * @param status 更新商品状态
+     * @return 商品状态
      */
     @PutMapping(value = {"products/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) {
@@ -105,9 +100,10 @@ public class ProductController {
     }
 
     /**
-     * 上/下架商品
-     *
-     * @param status 商品状态
+     * @param sid    商户ID
+     * @param ids    商品ID集合
+     * @param status 更新商品状态
+     * @return 商品状态
      */
     @Transactional
     @PutMapping(value = {"products"})
@@ -118,9 +114,9 @@ public class ProductController {
     }
 
     /**
-     * 删除（逻辑删除）
-     *
-     * @param id 主键
+     * @param sid 商户ID
+     * @param id  商品ID
+     * @return 逻辑删除商品是否成功
      */
     @DeleteMapping(value = {"products/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
@@ -130,9 +126,9 @@ public class ProductController {
     }
 
     /**
-     * 删除（逻辑删除）
-     *
-     * @param ids 主键
+     * @param sid 商户ID
+     * @param ids 商品ID集合
+     * @return 批量逻辑删除商品是否成功
      */
     @DeleteMapping(value = {"products"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
@@ -142,10 +138,10 @@ public class ProductController {
     }
 
     /**
-     * 商品图片
-     *
      * @param file 文件
-     * @return 图片地址
+     * @param sid  商户ID
+     * @return 文件存储路径
+     * @throws Exception 文件上传失败异常
      */
     @PostMapping("products/uploadPicture")
     public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {

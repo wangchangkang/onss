@@ -25,11 +25,8 @@ import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +48,8 @@ public class StoreController {
     private SystemConfig systemConfig;
 
     /**
-     * 查询微信用户下的所有特约商户
-     *
      * @param cid 客户ID
+     * @return 商户列表
      */
     @GetMapping(value = {"stores"})
     public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
@@ -63,9 +59,9 @@ public class StoreController {
     }
 
     /**
-     * 详情
-     *
-     * @param id 主键
+     * @param id  商户ID
+     * @param cid 客户ID
+     * @return 商户详情
      */
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
@@ -75,9 +71,14 @@ public class StoreController {
     }
 
     /**
-     * 店铺授权
+     * 登录商户
      *
      * @param id 主键
+     */
+    /**
+     * @param id  商户ID
+     * @param cid 客户ID
+     * @return 密钥及商户信息
      */
     @PostMapping(value = {"stores/{id}/bind"})
     public Work<Map<String, Object>> bind(@PathVariable String id, @RequestParam(name = "cid") String cid) {
@@ -104,21 +105,21 @@ public class StoreController {
     }
 
     /**
-     * 营业中 or 休息中
-     *
      * @param id     商户ID
-     * @param status 商户信息
+     * @param cid    客户ID
+     * @param status 更新商户状态
+     * @return 商户状态
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) {
         Query qProduct = Query.query(Criteria.where("sid").is(id));
         boolean productExists = mongoTemplate.exists(qProduct, Product.class);
-        if (!productExists){
+        if (!productExists) {
             return Work.fail("1977.products.zero", "请添加预售商品");
         }
         Query storeQuery = Query.query(Criteria.where("id").is(id).and("state").is(StoreStateEnum.FINISHED));
         boolean storeExists = mongoTemplate.exists(storeQuery, Store.class);
-        if (!storeExists){
+        if (!storeExists) {
             return Work.fail("1977.merchant.not_register", "请完善商户资质");
         }
         mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
@@ -126,10 +127,10 @@ public class StoreController {
     }
 
     /**
-     * 更新商户基本信息
-     *
      * @param id    商户ID
-     * @param store 商户信息
+     * @param cid   客户ID
+     * @param store 更新商户详情
+     * @return 商户详情
      */
     @PutMapping(value = {"stores/{id}"})
     public Work<Store> update(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @Validated @RequestBody Store store) {
@@ -151,10 +152,10 @@ public class StoreController {
         return Work.success("更新成功", store);
     }
 
-
     /**
-     * @param store 注册信息
-     * @return 密钥及用户信息
+     * @param cid   客户ID
+     * @param store 新增商户详情
+     * @return 商户详情
      */
     @Transactional
     @PostMapping(value = {"stores"})
@@ -170,10 +171,24 @@ public class StoreController {
     }
 
     /**
-     * 商品图片
-     *
+     * @param id    商户ID
+     * @param cid   客户ID
+     * @param store 更新商户详情
+     * @return 商户详情
+     */
+    @Transactional
+    @PostMapping(value = {"stores/{id}/setMerchant"})
+    public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) {
+        Query query = Query.query(Criteria.where("id").is(id).and("state").in(StoreStateEnum.REJECTED, StoreStateEnum.EDITTING, null));
+        mongoTemplate.updateFirst(query, Update.update("merchant", store.getMerchant()).set("state", store.getState()).set("updateTime", LocalDateTime.now()), Store.class);
+        return Work.success("编辑成功", store);
+    }
+
+    /**
      * @param file 文件
-     * @return 图片地址
+     * @param cid  客户ID
+     * @return 文件存储路径
+     * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/uploadPicture")
     public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid) throws Exception {

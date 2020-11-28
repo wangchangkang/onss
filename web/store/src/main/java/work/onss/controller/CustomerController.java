@@ -6,9 +6,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import work.onss.config.SystemConfig;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.Customer;
 import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
@@ -16,20 +17,17 @@ import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
-import javax.annotation.Resource;
-
 @Log4j2
 @RestController
 public class CustomerController {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private SystemConfig systemConfig;
 
     /**
-     * @param wxRegister 注册信息
-     * @return 密钥及用户信息
+     * @param id         客戶ID
+     * @param wxRegister 微信用户密文
+     * @return 更新客户手机是否成功
      */
     @PostMapping(value = {"customers/{id}/setPhone"})
     public Work<String> register(@PathVariable String id, @RequestBody WXRegister wxRegister) {
@@ -48,18 +46,6 @@ public class CustomerController {
         mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), Customer.class);
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
         return Work.success("授权成功");
-    }
-
-    /**
-     * 商品图片
-     *
-     * @param file 文件
-     * @return 图片地址
-     */
-    @PostMapping("customers/{id}/uploadPicture")
-    public Work<String> upload(@PathVariable(name = "id") String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
-        String path = Utils.upload(file, systemConfig.getFilePath(), id);
-        return Work.success("上传成功", path);
     }
 }
 

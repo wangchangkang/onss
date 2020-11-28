@@ -61,12 +61,14 @@ public class LoginController {
 
         Map<String, Object> result = new HashMap<>();
         LocalDateTime now = LocalDateTime.now();
+
         if (user == null) {
             user = new User();
             user.setOpenid(wxSession.getOpenid());
             user.setSession_key(wxSession.getSession_key());
-            user.setLastTime(now);
             user.setAppid(wxLogin.getAppid());
+            user.setInsertTime(now);
+            user.setUpdateTime(now);
             user = mongoTemplate.insert(user);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
@@ -77,8 +79,8 @@ public class LoginController {
         } else if (user.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             user.setSession_key(wxSession.getSession_key());
-            user.setLastTime(now);
-            mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getLastTime()), User.class);
+            user.setUpdateTime(now);
+            mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getUpdateTime()), User.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
             byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));

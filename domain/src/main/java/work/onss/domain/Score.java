@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.ScoreEnum;
 import work.onss.exception.ServiceException;
@@ -35,37 +34,70 @@ public class Score implements Serializable {
 
     @Id
     private String id;
+    /**
+     * 用户ID
+     */
     private String uid;
+    /**
+     * 商户ID
+     */
     private String sid;
+    /**
+     * 发起微信支付的小程序APPID
+     */
     private String subAppId;
+    /**
+     * 用户微信openid
+     */
     private String openid;
+    /**
+     * 订单状态
+     */
     private ScoreEnum status = ScoreEnum.PAY;
+    /**
+     * 订单总金额
+     */
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal total;
+    /**
+     * 订单明细
+     */
     private List<Product> products;
+    /**
+     * 订单接收地址
+     */
     private Address address;
-
+    /**
+     * 订单创建时间
+     */
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
     private LocalDateTime insertTime;
+    /**
+     * 订单更新时间
+     */
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
     private LocalDateTime updateTime;
+    /**
+     * 订单支付时间
+     */
     @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
     private LocalDateTime payTime;
-
+    /**
+     * 商户简称
+     */
     private String name;
-
-    @Indexed
+    /**
+     * 订单编号
+     */
     private String outTradeNo;
-    @Indexed(unique = true)
+    /**
+     * 微信支付ID
+     */
     private String prepayId;
-    @Indexed(unique = true)
+    /**
+     * 微信订单ID
+     */
     private String transactionId;
-
-    public Score(Address address, List<Product> products, BigDecimal total) {
-        this.address = address;
-        this.products = products;
-        this.total = total;
-    }
 
     /**
      * @param uid              用户ID

@@ -43,7 +43,7 @@ public class SpeciallyMerchant implements Serializable {
      * SUBJECT_TYPE_OTHERS（其他组织）：不属于企业、政府/事业单位的组织机构（如社会团体、民办非企业、基金会），要求机构已办理组织机构代码证
      */
     @Getter
-    public static enum SubjectEnum implements Serializable {
+    public enum SubjectEnum implements Serializable {
         SUBJECT_TYPE_INDIVIDUAL, SUBJECT_TYPE_ENTERPRISE, SUBJECT_TYPE_INSTITUTIONS, SUBJECT_TYPE_OTHERS
     }
 
@@ -55,7 +55,7 @@ public class SpeciallyMerchant implements Serializable {
      * IDENTIFICATION_TYPE_TAIWAN_PASSPORT：中国台湾居民-来往大陆通行证
      */
     @Getter
-    public static enum CardEnum implements Serializable {
+    public enum CardEnum implements Serializable {
         IDENTIFICATION_TYPE_IDCARD,
         IDENTIFICATION_TYPE_OVERSEA_PASSPORT,
         IDENTIFICATION_TYPE_HONGKONG_PASSPORT,
@@ -114,7 +114,7 @@ public class SpeciallyMerchant implements Serializable {
      * 企业微信：SALES_SCENES_WEWORK
      */
     @Getter
-    public static enum SalesScenesEnum {
+    public enum SalesScenesEnum {
         SALES_SCENES_STORE,SALES_SCENES_MP,SALES_SCENES_MINI_PROGRAM,SALES_SCENES_WEB,SALES_SCENES_APP,SALES_SCENES_WEWORK
     }
 
@@ -138,7 +138,7 @@ public class SpeciallyMerchant implements Serializable {
      * 宁波银行
      * 其他银行
      */
-    public static enum BankEnum{
+    public enum BankEnum{
         ICBC,
         BANKCOMM,
         CMBCHINA,

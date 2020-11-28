@@ -5,9 +5,6 @@ import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.StoreStateEnum;
 
@@ -15,10 +12,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
+ * 商户
+ *
  * @author wangchanghao
  */
 @Log4j2
@@ -32,54 +30,102 @@ public class Store implements Serializable {
 
     @Id
     private String id;
-    private String name;//店名
-    private String description;//描述
-    private String address;//地址
-    private String trademark;//图标
-    private String username;//联系人
-    private String phone;//联系电话
-    private Boolean status;//是否休息
-    private Integer type;//分类
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
-    private Point location;//坐标
-    private Collection<String> pictures;//宣传册
-    private Collection<String> videos;//小视频
-    @Indexed(unique = true)
-    private String licenseNumber;//营业执照编号
-    private String licenseCopy;//营业执照
+    /**
+     * 商户简称
+     */
+    private String name;
+    /**
+     * 商户简介
+     */
+    private String description;
+    /**
+     * 商户地址
+     */
+    private String address;
+    /**
+     * 商户图标
+     */
+    private String trademark;
+    /**
+     * 商户联系人姓名
+     */
+    private String username;
+    /**
+     * 商户联系人电话
+     */
+    private String phone;
+    /**
+     * 商户状态
+     */
+    private Boolean status;
+    /**
+     * 商户分类
+     */
+    private Integer type;
+    /**
+     * 商户坐标
+     */
+    private Point location;
+    /**
+     * 商户宣传册
+     */
+    private Collection<String> pictures;
+    /**
+     * 商户微视频
+     */
+    private Collection<String> videos;
+    /**
+     * 商户营业执照编号
+     */
+    private String licenseNumber;
+    /**
+     * 商户营业执照
+     */
+    private String licenseCopy;
+    /**
+     * 商户开门时间
+     */
     @JsonFormat(pattern = "HH:mm")
     private LocalTime openTime;
+    /**
+     * 商户关门时间
+     */
     @JsonFormat(pattern = "HH:mm")
     private LocalTime closeTime;
-    private List<Customer> customers;//营业员
-
+    /**
+     * 商户营业员集合
+     */
+    private List<Customer> customers;
+    /**
+     * 商户审核状态
+     */
     private StoreStateEnum state;
+    /**
+     * 商户审核驳回原因
+     */
+    private String rejected;
+    /**
+     * 商户创建时间
+     */
     private LocalDateTime insertTime;
+    /**
+     * 商户更新时间
+     */
     private LocalDateTime updateTime;
-
-    private String businessCode; // 业务申请编号
-    private Long applymentId; // 微信支付申请单号
-    private String subMchId;//微信支付商户号
+    /**
+     * 业务申请编号
+     */
+    private String businessCode;
+    /**
+     * 微信支付申请单号
+     */
+    private Long applymentId;
+    /**
+     * 微信支付商户号
+     */
+    private String subMchId;
+    /**
+     * 商户入住资质
+     */
     private Merchant merchant;
-    private String  rejected;
-
-    public Store initStore(Merchant merchant,LocalDateTime now,String businessCode,Customer customer,String trademark) {
-        this.trademark = trademark;
-        this.customers = Collections.singletonList(customer);
-        this.businessCode = businessCode;
-        this.openTime = LocalTime.of(7, 30);
-        this.closeTime = LocalTime.of(22, 30);
-        this.status = false;
-
-        this.insertTime = now;
-        this.updateTime = now;
-        this.name = merchant.getMerchantShortname();
-        this.description = merchant.getQualificationType();
-        this.username = merchant.getContactName();
-        this.phone = merchant.getMobilePhone();
-        this.licenseNumber = merchant.getLicenseNumber();
-        this.licenseCopy = merchant.getLicenseCopy();
-        return this;
-    }
-
 }

@@ -30,7 +30,8 @@ public class AddressController {
     @PostMapping(value = {"addresses"})
     public Work<Address> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Address address) {
         address.setUid(uid);
-        address.setLastTime(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        address.setUpdateTime(now);
         if (StringUtils.hasLength(address.getId())) {
             Address oldAddress = mongoTemplate.findById(address.getId(), Address.class);
             if (oldAddress == null) {
@@ -42,6 +43,7 @@ public class AddressController {
                 return Work.success("更新成功", address);
             }
         } else {
+            address.setInsertTime(now);
             mongoTemplate.insert(address);
             return Work.success("新增成功", address);
         }

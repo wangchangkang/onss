@@ -163,7 +163,7 @@ function checkStore() {
       })
     }
   })
-};
+}
 function checkCustomer() {
   return new Promise((resolve) => {
     const authorization = wx.getStorageSync('authorization');
@@ -195,7 +195,7 @@ function checkCustomer() {
       })
     }
   })
-};
+}
 /** 同步微信手机号
  * @param {string} id 用户ID
  * @param {string} authorization 授权码
@@ -219,7 +219,7 @@ function setPhone(id, authorization, info, encryptedData, iv, lastTime) {
       resolve({ authorization, info })
     })
   })
-};
+}
 
 
 

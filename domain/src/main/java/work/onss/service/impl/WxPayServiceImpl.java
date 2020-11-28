@@ -46,11 +46,7 @@ public class WxPayServiceImpl implements WxPayService {
         WXPay wxPay = new WXPay(weChatConfig);
         boolean signatureValid = wxPay.isResponseSignatureValid(data);
         //验证签名
-        if (signatureValid && WXPayConstants.SUCCESS.equals(data.get("return_code")) && WXPayConstants.SUCCESS.equals(data.get("result_code"))) {
-            return true;
-        } else {
-            return false;
-        }
+        return signatureValid && WXPayConstants.SUCCESS.equals(data.get("return_code")) && WXPayConstants.SUCCESS.equals(data.get("result_code"));
     }
 
     @Override

@@ -32,7 +32,7 @@ public class PreferController {
     @PostMapping(value = {"prefers"})
     public Work<String> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Prefer prefer) {
         prefer.setUid(uid);
-        prefer.setLastTime(LocalDateTime.now());
+        prefer.setInsertTime(LocalDateTime.now());
         mongoTemplate.insert(prefer);
         return Work.success("收藏成功", prefer.getId());
     }

@@ -44,8 +44,8 @@ public class LoginController {
     private SystemConfig systemConfig;
 
     /**
-     * @param wxLogin 微信登陆信息
-     * @return 密钥
+     * @param wxLogin 微信用户CODE及小程序APPID
+     * @return 密钥及客户信息
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
@@ -60,7 +60,7 @@ public class LoginController {
             customer = new Customer();
             customer.setOpenid(wxSession.getOpenid());
             customer.setSession_key(wxSession.getSession_key());
-            customer.setLastTime(LocalDateTime.now());
+            customer.setUpdateTime(LocalDateTime.now());
             customer.setAppid(wxLogin.getAppid());
             customer = mongoTemplate.insert(customer);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
@@ -86,7 +86,7 @@ public class LoginController {
         } else {
             query.addCriteria(Criteria.where("id").is(customer.getId()));
             LocalDateTime now = LocalDateTime.now();
-            mongoTemplate.updateFirst(query, Update.update("lastTime",now), Customer.class);
+            mongoTemplate.updateFirst(query, Update.update("lastTime", now), Customer.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info();
             info.setCid(customer.getId());
@@ -96,9 +96,9 @@ public class LoginController {
             result.put("info", info);
             Query storeQuery = Query.query(Criteria.where("customers.id").is(customer.getId()));
             boolean exists = mongoTemplate.exists(storeQuery, Store.class);
-            if (exists){
+            if (exists) {
                 return Work.success("登录成功", result);
-            }else {
+            } else {
                 return Work.message("1977.store.notfound", "请申请成为特约商户", result);
             }
         }

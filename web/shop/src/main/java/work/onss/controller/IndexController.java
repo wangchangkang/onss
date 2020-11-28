@@ -24,7 +24,7 @@ public class IndexController {
     @GetMapping(value = {"index"})
     public Work<List<Store>> index() {
         Circle circle = new Circle(30, 20, 20);
-        Query storeQuery = new Query(Criteria.where("point").within(circle));;
+        Query storeQuery = new Query(Criteria.where("point").within(circle));
         storeQuery.fields()
                 .exclude("pictures")
                 .exclude("videos")

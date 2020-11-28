@@ -28,10 +28,9 @@ public class ScoreController {
     private MongoTemplate mongoTemplate;
 
     /**
-     * 详情
-     *
-     * @param sid 商户ID
      * @param id  订单ID
+     * @param sid 商户ID
+     * @return 订单详情
      */
     @GetMapping(value = {"scores/{id}"})
     public Work<Score> score(@PathVariable String id, @RequestParam(name = "sid") String sid) {
@@ -41,10 +40,9 @@ public class ScoreController {
     }
 
     /**
-     * 列表
-     * 待支付 待配货 待发货 待签收 完成
-     *
-     * @param sid 商户ID
+     * @param sid    商户ID
+     * @param status 订单状态集合
+     * @return 订单列表
      */
     @GetMapping(value = {"scores"})
     public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<String> status) {

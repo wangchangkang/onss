@@ -158,7 +158,7 @@ function checkStore() {
       })
     }
   })
-};
+}
 
 
 /**多个文件上传

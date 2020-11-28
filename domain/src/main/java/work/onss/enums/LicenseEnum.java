@@ -14,6 +14,6 @@ public enum LicenseEnum implements Serializable {
     INDIVIDUAL,
     ENTERPRISE,
     INSTITUTIONS,
-    OTHER;
+    OTHER
 
 }

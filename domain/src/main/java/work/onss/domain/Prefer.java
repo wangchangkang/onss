@@ -15,15 +15,24 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Document
-@CompoundIndexes(@CompoundIndex(
-        name = "store_product_user", def = "{'sid':1,'pid':-1,'uid':1}", unique = true
-))
 public class Prefer implements Serializable {
 
     @Id
     private String id;
+    /**
+     * 商户ID
+     */
     private String sid;
+    /**
+     * 商品ID
+     */
     private String pid;
+    /**
+     * 用户ID
+     */
     private String uid;
-    private LocalDateTime lastTime;
+    /**
+     * 创建时间
+     */
+    private LocalDateTime insertTime;
 }

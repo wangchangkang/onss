@@ -12,10 +12,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class Info {
+    /**
+     * 客户ID
+     */
     private String cid;
+    /**
+     * 商户ID
+     */
     private String sid;
-    private String merchantId;
+    /**
+     * 微信支付申请单号
+     */
     private Long applymentId;
+    /**
+     * 微信支付商户号
+     */
     private String subMchId;
+    /**
+     * 客户登录时间
+     */
     private LocalDateTime lastTime;
 }
