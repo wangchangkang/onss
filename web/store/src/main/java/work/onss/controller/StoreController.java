@@ -16,10 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
-import work.onss.domain.Customer;
-import work.onss.domain.Info;
-import work.onss.domain.Product;
-import work.onss.domain.Store;
+import work.onss.domain.*;
 import work.onss.enums.StoreStateEnum;
 import work.onss.utils.JsonMapper;
 import work.onss.utils.Utils;
@@ -115,14 +112,17 @@ public class StoreController {
         Store store = mongoTemplate.findById(id, Store.class);
         if (store == null) {
             return Work.fail("该商户不存在,请立刻截图联系客服");
-        } else if (store.getState() == StoreStateEnum.EDITTING) {
+        } else if (store.getState() == StoreStateEnum.EDITTING || store.getState() == StoreStateEnum.REJECTED) {
             return Work.fail("1977.merchant.not_register", "请完善商户资质");
-        } else if (store.getState() != StoreStateEnum.FINISHED) {
+        } else if (store.getState() == StoreStateEnum.SYSTEM_AUDITING || store.getState() == StoreStateEnum.WEACHT_AUDITING) {
             return Work.fail("正在审核中,请耐心等待");
+        } else if (store.getState() == StoreStateEnum.FINISHED) {
+            Query storeQuery = Query.query(Criteria.where("id").is(id));
+            mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
+            return Work.success("操作成功", status);
+        } else {
+            return Work.fail("系统异常,请立刻联系客服");
         }
-        Query storeQuery = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
-        return Work.success("操作成功", status);
     }
 
     /**
@@ -180,7 +180,13 @@ public class StoreController {
     @PostMapping(value = {"stores/{id}/setMerchant"})
     public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id).and("state").in(StoreStateEnum.REJECTED, StoreStateEnum.EDITTING, null));
-        mongoTemplate.updateFirst(query, Update.update("merchant", store.getMerchant()).set("state", store.getState()).set("updateTime", LocalDateTime.now()), Store.class);
+        Merchant merchant = store.getMerchant();
+        Update update = Update.update("merchant", merchant)
+                .set("state", store.getState())
+                .set("updateTime", LocalDateTime.now())
+                .set("licenseNumber", merchant.getLicenseNumber())
+                .set("licenseCopy", merchant.getLicenseCopy());
+        mongoTemplate.updateFirst(query, update, Store.class);
         return Work.success("编辑成功", store);
     }
 
