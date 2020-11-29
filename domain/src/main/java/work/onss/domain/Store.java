@@ -99,7 +99,7 @@ public class Store implements Serializable {
     /**
      * 商户审核状态
      */
-    private StoreStateEnum state = StoreStateEnum.EDITTING;
+    private StoreStateEnum state;
     /**
      * 商户审核驳回原因
      */

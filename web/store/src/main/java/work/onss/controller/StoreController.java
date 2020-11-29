@@ -165,6 +165,7 @@ public class StoreController {
         store.setInsertTime(now);
         store.setUpdateTime(now);
         store.setStatus(false);
+        store.setState(StoreStateEnum.EDITTING);
         mongoTemplate.insert(store);
         return Work.success("操作成功", store);
     }
