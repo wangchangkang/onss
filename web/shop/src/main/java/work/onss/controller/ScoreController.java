@@ -91,7 +91,7 @@ public class ScoreController {
         Query query = Query.query(Criteria.where("id").in(pids).and("sid").is(score.getSid()));
         List<Product> products = mongoTemplate.find(query, Product.class);
 
-        WXPay wxPay = new WXPay(weChatConfig, WXPayConstants.SignType.HMACSHA256);
+        WXPay wxPay = new WXPay(weChatConfig, WXPayConstants.SignType.HMACSHA256,true);
         String ip = InetAddress.getLocalHost().getHostAddress();
         Map<String, String> params = score.createUnifiedOrder(
                 uid,

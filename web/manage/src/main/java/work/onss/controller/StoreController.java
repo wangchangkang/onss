@@ -48,8 +48,6 @@ public class StoreController {
 
 
     /**
-     * 审核特约商户资质是否合格
-     *
      * @param id    商户ID
      * @param store 审核状态及原因
      * @return 是否审核通过
@@ -59,6 +57,10 @@ public class StoreController {
     public Work<Boolean> update(@PathVariable String id, StoreStateEnum state, @RequestBody Store store) {
         Query query = Query.query(Criteria.where("id").is(id).and("state").is(state));
         mongoTemplate.updateFirst(query, Update.update("state", store.getState()).set("rejected", store.getRejected()), Store.class);
+//        if (store.getState() == StoreStateEnum.WEACHT_AUDITING){
+//            log.info("推送特约商户资质信息");
+//
+//        }
         return Work.success("更新成功", true);
     }
 

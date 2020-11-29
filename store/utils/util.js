@@ -9,7 +9,14 @@ const scoreStatus = {
 };
 
 const storeState = {
-  REJECTED: "审核失败", CANCELED: "撤销申请", EDITTING: "资质完善中", SYSTEM_AUDITING: "平台审核中", WEACHT_AUDITING: "微信审核中"
+  APPLYMENT_STATE_EDITTING:"编辑中",
+  APPLYMENT_STATE_AUDITING:"审核中",
+  APPLYMENT_STATE_REJECTED:"已驳回",
+  APPLYMENT_STATE_TO_BE_CONFIRMED:"待账户验证",
+  APPLYMENT_STATE_TO_BE_SIGNED:"待签约",
+  APPLYMENT_STATE_SIGNING:"开通权限中",
+  APPLYMENT_STATE_FINISHED:"已完成",
+  APPLYMENT_STATE_CANCELED:"已作废",
 };
 const qualification = {
   "SUBJECT_TYPE_INDIVIDUAL": [

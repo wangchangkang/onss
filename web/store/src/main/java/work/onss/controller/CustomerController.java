@@ -17,6 +17,11 @@ import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
+/**
+ * 营业员管理
+ *
+ * @author wangchanghao
+ */
 @Log4j2
 @RestController
 public class CustomerController {
@@ -27,7 +32,7 @@ public class CustomerController {
     /**
      * @param id         客戶ID
      * @param wxRegister 微信用户密文
-     * @return 更新客户手机是否成功
+     * @return 更新营业员手机是否成功
      */
     @PostMapping(value = {"customers/{id}/setPhone"})
     public Work<String> register(@PathVariable String id, @RequestBody WXRegister wxRegister) {

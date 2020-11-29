@@ -1,6 +1,6 @@
 <form bindsubmit='saveMerchant'>
 
-	<block wx:if="{{state === 'SYSTEM_AUDITING' || state === 'REJECTED'}}">
+	<block wx:if="{{state === 'APPLYMENT_STATE_REJECTED'}}">
 		<view class="weui-cells__title">驳回原因</view>
 		<view class="weui-cells weui-cells_after-title">
 			<view class="weui-cell">
@@ -10,8 +10,6 @@
 			</view>
 		</view>
 	</block>
-
-
 
 	<view class="weui-cells__title">超级管理员</view>
 	<view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
@@ -344,10 +342,6 @@
 				<input name="bankName" value="{{bankName}}" placeholder='请填写银行全称' maxlength="50" />
 			</view>
 		</view>
-	</view>
-	<view class="weui-cell" wx:if="{{state === 'SYSTEM_AUDITING'}}">
-		<button style="weui-btn" type="primary" formType="submit" id="WEACHT_AUDITING">通过</button>
-		<button style="weui-btn" type="warn" formType="submit" id="REJECTED">驳回</button>
 	</view>
 	<input hidden="true" name="id" value="{{id}}"></input>
 </form>

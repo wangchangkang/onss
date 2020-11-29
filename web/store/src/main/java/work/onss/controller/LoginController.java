@@ -30,6 +30,11 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 营业员登录
+ *
+ * @author wangchanghao
+ */
 @Log4j2
 @RestController
 public class LoginController {
@@ -45,7 +50,7 @@ public class LoginController {
 
     /**
      * @param wxLogin 微信用户CODE及小程序APPID
-     * @return 密钥及客户信息
+     * @return 密钥及营业员信息
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {

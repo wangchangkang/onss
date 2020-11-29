@@ -31,7 +31,7 @@ import java.util.Map;
 
 
 /**
- * 店铺管理
+ * 商户管理
  *
  * @author wangchanghao
  */
@@ -45,7 +45,7 @@ public class StoreController {
     private SystemConfig systemConfig;
 
     /**
-     * @param cid 客户ID
+     * @param cid 营业员ID
      * @return 商户列表
      */
     @GetMapping(value = {"stores"})
@@ -57,7 +57,7 @@ public class StoreController {
 
     /**
      * @param id  商户ID
-     * @param cid 客户ID
+     * @param cid 营业员ID
      * @return 商户详情
      */
     @GetMapping(value = {"stores/{id}"})
@@ -69,7 +69,7 @@ public class StoreController {
 
     /**
      * @param id  商户ID
-     * @param cid 客户ID
+     * @param cid 营业员ID
      * @return 密钥及商户信息
      */
     @PostMapping(value = {"stores/{id}/bind"})
@@ -98,7 +98,7 @@ public class StoreController {
 
     /**
      * @param id     商户ID
-     * @param cid    客户ID
+     * @param cid    营业员ID
      * @param status 更新商户状态
      * @return 商户状态
      */
@@ -112,22 +112,26 @@ public class StoreController {
         Store store = mongoTemplate.findById(id, Store.class);
         if (store == null) {
             return Work.fail("该商户不存在,请立刻截图联系客服");
-        } else if (store.getState() == StoreStateEnum.EDITTING || store.getState() == StoreStateEnum.REJECTED) {
-            return Work.fail("1977.merchant.not_register", "请完善商户资质");
-        } else if (store.getState() == StoreStateEnum.SYSTEM_AUDITING || store.getState() == StoreStateEnum.WEACHT_AUDITING) {
-            return Work.fail("正在审核中,请耐心等待");
-        } else if (store.getState() == StoreStateEnum.FINISHED) {
+        } else if (store.getState() == StoreStateEnum.APPLYMENT_STATE_FINISHED) {
             Query storeQuery = Query.query(Criteria.where("id").is(id));
             mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
             return Work.success("操作成功", status);
         } else {
-            return Work.fail("系统异常,请立刻联系客服");
+            return switch (store.getState()) {
+                case APPLYMENT_STATE_EDITTING, APPLYMENT_STATE_REJECTED -> Work.fail("1977.merchant.not_register", "请完善商户资质");
+                case APPLYMENT_STATE_AUDITING -> Work.fail("正在审核中,请耐心等待");
+                case APPLYMENT_STATE_TO_BE_CONFIRMED -> Work.fail("请及时验证账户");
+                case APPLYMENT_STATE_TO_BE_SIGNED -> Work.fail("请及时签约特约商户");
+                case APPLYMENT_STATE_SIGNING -> Work.fail("开通权限中,请耐心等待");
+                case APPLYMENT_STATE_CANCELED -> Work.fail("申请特约商户已作废");
+                default -> Work.fail("系统异常,请立刻联系客服");
+            };
         }
     }
 
     /**
      * @param id    商户ID
-     * @param cid   客户ID
+     * @param cid   营业员ID
      * @param store 更新商户详情
      * @return 商户详情
      */
@@ -152,7 +156,7 @@ public class StoreController {
     }
 
     /**
-     * @param cid   客户ID
+     * @param cid   营业员ID
      * @param store 新增商户详情
      * @return 商户详情
      */
@@ -165,21 +169,21 @@ public class StoreController {
         store.setInsertTime(now);
         store.setUpdateTime(now);
         store.setStatus(false);
-        store.setState(StoreStateEnum.EDITTING);
+        store.setState(StoreStateEnum.APPLYMENT_STATE_EDITTING);
         mongoTemplate.insert(store);
         return Work.success("操作成功", store);
     }
 
     /**
      * @param id    商户ID
-     * @param cid   客户ID
+     * @param cid   营业员ID
      * @param store 更新商户详情
      * @return 商户详情
      */
     @Transactional
     @PostMapping(value = {"stores/{id}/setMerchant"})
     public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) {
-        Query query = Query.query(Criteria.where("id").is(id).and("state").in(StoreStateEnum.REJECTED, StoreStateEnum.EDITTING, null));
+        Query query = Query.query(Criteria.where("id").is(id).and("state").in(StoreStateEnum.APPLYMENT_STATE_REJECTED, StoreStateEnum.APPLYMENT_STATE_EDITTING, null));
         Merchant merchant = store.getMerchant();
         Update update = Update.update("merchant", merchant)
                 .set("state", store.getState())
@@ -192,7 +196,7 @@ public class StoreController {
 
     /**
      * @param file 文件
-     * @param cid  客户ID
+     * @param cid  营业员ID
      * @return 文件存储路径
      * @throws Exception 文件上传失败异常
      */

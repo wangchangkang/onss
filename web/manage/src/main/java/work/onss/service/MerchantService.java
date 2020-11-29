@@ -3,9 +3,17 @@ package work.onss.service;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import work.onss.domain.Merchant;
+import work.onss.domain.Store;
+import work.onss.enums.StoreStateEnum;
 import work.onss.vo.wx.*;
+
+import java.util.List;
 
 @Log4j2
 @Service
@@ -86,4 +94,26 @@ public class MerchantService {
 //            return certificate.getSerialNumber().toString(16).toUpperCase();
 //        }
 //    }
+
+    public String getApply(String applyment_id){
+        return null;
+    }
+
+    /**
+     * @param id 商户ID
+     * @param storeStateEnum 商户审核状态
+     * @param rejected 商户审核驳回原因
+     */
+    @Async
+    public void setState(String id, StoreStateEnum storeStateEnum,String rejected){
+        Query query = Query.query(Criteria.where("id").is(id));
+        Update update = Update.update("state", storeStateEnum)
+                .set("rejected", rejected);
+        mongoTemplate.updateFirst(query,update, Store.class);
+    }
+
+    public List<Store> findStores(StoreStateEnum storeStateEnum){
+        Query query = Query.query(Criteria.where("state").is(storeStateEnum));
+        return mongoTemplate.find(query,Store.class);
+    }
 }

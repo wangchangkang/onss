@@ -133,25 +133,6 @@ Page({
     })
   },
 
-  onLoad: function () {
-    // checkStore().then(({ authorization, info }) => {
-    //   wxRequest({
-    //     url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
-    //     header: { authorization, info: JSON.stringify(info) },
-    //   }).then(({ content }) => {
-    //     let index = -1;
-    //     types.find((value, key) => {
-    //       if (value.id === content.type) {
-    //         index = key;
-    //       }
-    //     })
-    //     this.setData({
-    //       ...content, index, store: content
-    //     })
-    //   })
-    // })
-  },
-
   resetForm: function (e) {
     const store = this.data.store;
     let index = this.data.index;

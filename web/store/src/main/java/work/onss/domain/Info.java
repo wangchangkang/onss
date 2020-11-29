@@ -7,13 +7,18 @@ import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
 
+/**
+ * 商户登录信息
+ *
+ * @author wangchanghao
+ */
 @Log4j2
 @Data
 @NoArgsConstructor
 @ToString
 public class Info {
     /**
-     * 客户ID
+     * 营业员ID
      */
     private String cid;
     /**
@@ -29,7 +34,7 @@ public class Info {
      */
     private String subMchId;
     /**
-     * 客户登录时间
+     * 营业员登录时间
      */
     private LocalDateTime lastTime;
 }

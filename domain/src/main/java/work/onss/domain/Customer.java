@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 客户
+ * 营业员
  *
  * @author wangchanghao
  */
@@ -25,12 +25,12 @@ public class Customer implements Serializable {
     @Id
     private String id;
     /**
-     * 客户电话
+     * 营业员电话
      */
     @Indexed(unique = true)
     private String phone;
     /**
-     * 客户微信用户openid
+     * 营业员微信用户openid
      */
     private String openid;
     /**

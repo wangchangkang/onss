@@ -1,51 +1,61 @@
 <view class="weui-cells__title">特约商户管理</view>
 <view class="weui-panel">
 	<view class="weui-cells weui-cells_after-title">
-		<navigator class="weui-cell" url='/pages/store/list?state=EDITTING'>
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_EDITTING'>
 			<view class="weui-cell__hd">
 				<image src="/images/watting-pay.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">商户编辑中</view>
+			<view class="weui-cell__bd">编辑中</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-		<navigator class="weui-cell" url='/pages/store/list?state=SYSTEM_AUDITING'>
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_AUDITING'>
 			<view class="weui-cell__hd">
 				<image mode="aspectFit" src="/images/watting-package.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">平台待审核</view>
+			<view class="weui-cell__bd">审核中</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-
-		<navigator class="weui-cell" url='/pages/store/list?state=WEACHT_AUDITING'>
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_REJECTED'>
 			<view class="weui-cell__hd">
 				<image mode="aspectFit" src="/images/watting-deliver.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">微信审核中</view>
+			<view class="weui-cell__bd">已驳回</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-
-		<navigator class="weui-cell" url='/pages/store/list?state=REJECTED'>
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_TO_BE_CONFIRMED'>
 			<view class="weui-cell__hd">
 				<image mode="aspectFit" src="/images/watting-sign.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">审核失败</view>
+			<view class="weui-cell__bd">待账户验证</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-		<navigator class="weui-cell" url='/pages/store/list?state=FINISHED'>
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_TO_BE_SIGNED'>
 			<view class="weui-cell__hd">
 				<image mode="aspectFit" src="/images/finish.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">入住成功</view>
+			<view class="weui-cell__bd">待签约</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-
-			<navigator class="weui-cell" url='/pages/store/list?state=CANCELED'>
+        <navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_SIGNING'>
 			<view class="weui-cell__hd">
 				<image mode="aspectFit" src="/images/finish.png" style="height:1em;width:1em;margin-right: 16px;" />
 			</view>
-			<view class="weui-cell__bd">撤销申请</view>
+			<view class="weui-cell__bd">开通权限中</view>
 			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
 		</navigator>
-
+		<navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_FINISHED'>
+            <view class="weui-cell__hd">
+                <image mode="aspectFit" src="/images/finish.png" style="height:1em;width:1em;margin-right: 16px;" />
+            </view>
+            <view class="weui-cell__bd">已完成</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+        </navigator>
+        <navigator class="weui-cell" url='/pages/store/list?state=APPLYMENT_STATE_CANCELED'>
+            <view class="weui-cell__hd">
+                <image mode="aspectFit" src="/images/finish.png" style="height:1em;width:1em;margin-right: 16px;" />
+            </view>
+            <view class="weui-cell__bd">已作废</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+        </navigator>
 	</view>
 </view>

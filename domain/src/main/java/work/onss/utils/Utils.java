@@ -101,4 +101,20 @@ public class Utils {
             throw new BadPaddingException("解密失败");
         }
     }
+
+//    public static void up(){
+//        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
+//        //设置boundary
+//        multipartEntityBuilder.setBoundary("boundary");
+//        multipartEntityBuilder.setCharset(Charset.forName("UTF-8"));
+//        //设置meta内容
+//        multipartEntityBuilder.addTextBody("meta","{\"filename\":\""+file.getName()+"\",\"sha256\":\""+DigestUtils.sha256Hex(new FileInputStream(file))+"\"}");
+//        //设置图片内容
+//        multipartEntityBuilder.addBinaryBody("file", file, ContentType.create("image/jpg"), file.getName());
+//        //放入内容
+//        httpPost.setEntity(multipartEntityBuilder.build());
+//        HttpClientBuilder httpClientBuilder = HttpClients.custom();
+//        CloseableHttpClient httpClient = httpClientBuilder.setSSLContext(SSLContextUtils.getSSLContext(apiclientCertP12,mchId)).build();
+//        CloseableHttpResponse response = httpClient.execute(httpPost);
+//    }
 }
