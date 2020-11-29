@@ -7,7 +7,7 @@
 					</swiper>
 					<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 						<view class="weui-media-box__title">{{store.username}} {{store.phone}}</view>
-						<view class="weui-media-box__desc">{{store.licenseNumber}}</view>
+						<view class="weui-media-box__desc">{{store.merchant.licenseNumber}}</view>
 						<view class="weui-media-box__desc">{{store.insertTime}}</view>
 						</view>
 					</view>

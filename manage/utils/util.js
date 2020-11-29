@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.125:8030/manage';
+const domain = 'http://192.168.103.102:8030/manage';
 const appid = "wx095ba1a3f9396476";
-const prefix = 'http://192.168.103.125/';
+const prefix = 'http://192.168.103.102/';
 const storeState = {
   REJECTED: "审核失败",
   FINISHED: "入住成功",

@@ -188,7 +188,7 @@ Page({
       }).then(({ content }) => {
         console.log(content);
         this.setData({
-          ...content.merchant
+          ...content.merchant,store:content, id: content.id, state: content.state,rejected:content.rejected
         })
 
 

@@ -71,11 +71,6 @@ public class StoreController {
     }
 
     /**
-     * 登录商户
-     *
-     * @param id 主键
-     */
-    /**
      * @param id  商户ID
      * @param cid 客户ID
      * @return 密钥及商户信息
@@ -117,11 +112,15 @@ public class StoreController {
         if (!productExists) {
             return Work.fail("1977.products.zero", "请添加预售商品");
         }
-        Query storeQuery = Query.query(Criteria.where("id").is(id).and("state").is(StoreStateEnum.FINISHED));
-        boolean storeExists = mongoTemplate.exists(storeQuery, Store.class);
-        if (!storeExists) {
+        Store store = mongoTemplate.findById(id, Store.class);
+        if (store == null) {
+            return Work.fail("该商户不存在,请立刻截图联系客服");
+        } else if (store.getState() == StoreStateEnum.EDITTING) {
             return Work.fail("1977.merchant.not_register", "请完善商户资质");
+        } else if (store.getState() != StoreStateEnum.FINISHED) {
+            return Work.fail("正在审核中,请耐心等待");
         }
+        Query storeQuery = Query.query(Criteria.where("id").is(id));
         mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
         return Work.success("操作成功", status);
     }

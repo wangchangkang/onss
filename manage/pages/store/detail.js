@@ -10,15 +10,10 @@ Page({
   saveMerchant: function (e) {
     checkStore().then(({ authorization, info }) => {
       const data = {
-        merchant: {
-          ...this.data,
-          ...e.detail.value,
-          miniProgramSubAppid: appid
-        },
         state: e.detail.target.id,
         rejected: e.detail.value.rejected
       };
-      console.log(!data.rejected);
+      console.log(this.data.store.state);
 
       if (data.state === 'REJECTED' && (!data.rejected || data.rejected === '' || data.rejected === this.data.store.rejected)) {
         wx.showModal({
@@ -30,14 +25,12 @@ Page({
       } else {
         wx.showLoading({ title: '加载中。。。' });
         wxRequest({
-          url: `${domain}/stores/${data.id}/setState?cid=${info.cid}&state=${this.data.store.state}`,
+          url: `${domain}/stores/${this.data.store.id}/setState?state=${this.data.store.state}`,
           header: { authorization, info: JSON.stringify(info) },
           method: 'POST',
           data: data,
         }).then((e) => {
           console.log(e);
-          
-         
         })
       }
     })
@@ -150,7 +143,7 @@ Page({
       console.log(store);
 
       this.setData({
-        store, id: store.id, state: store.state, ...store.merchant
+        store, id: store.id, state: store.state, rejected: store.rejected,...store.merchant, 
       })
     })
   },

@@ -85,7 +85,6 @@ public class ProductController {
         return Work.success("编辑成功", product);
     }
 
-
     /**
      * @param id     商品ID
      * @param sid    商户ID
