@@ -5,16 +5,16 @@
   <input type="text" hidden="true" name="idCardNational" value="{{idCardNational}}" />
   <input type="text" hidden="true" name="idCardA" value="{{idCardA}}" />
   <input type="text" hidden="true" name="idCardB" value="{{idCardB}}" />
-	<block wx:if="{{state === 'REJECTED'}}">
-		<view class="weui-cells__title">驳回原因</view>
-		<view class="weui-cells weui-cells_after-title">
-			<view class="weui-cell">
-				<view class="weui-cell__bd">
-					<textarea name='rejected' value="{{rejected}}" maxlength="-1" auto-height='true'></textarea>
-				</view>
-			</view>
-		</view>
-	</block>
+  <block wx:if="{{state === 'REJECTED'}}">
+    <view class="weui-cells__title">驳回原因</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">
+          <textarea name='rejected' value="{{rejected}}" maxlength="-1" auto-height='true'></textarea>
+        </view>
+      </view>
+    </view>
+  </block>
 
 
   <view class="weui-cells__title">超级管理员</view>
@@ -239,8 +239,8 @@
           <view class="weui-uploader__hd">
             <view class="weui-uploader__overview">
               <view class="weui-uploader__title">特殊资质图片</view>
-              <view class="weui-uploader__info">{{qualifications?qualifications.length:0}}/5 <icon bindtap="clearPictues"
-                  id="qualifications" type="clear" size="21"></icon>
+              <view class="weui-uploader__info">{{qualifications?qualifications.length:0}}/5 <icon
+                  bindtap="clearPictues" id="qualifications" type="clear" size="21"></icon>
               </view>
             </view>
           </view>
@@ -262,31 +262,32 @@
     </view>
 
     <view class="weui-cell">
-    <view class="weui-cell__bd">
-      <view class="weui-uploader">
-        <view class="weui-uploader__hd">
-          <view class="weui-uploader__overview">
-            <view class="weui-uploader__title">小程序截图</view>
-            <view class="weui-uploader__info">{{miniProgramPics?miniProgramPics.length:0}}/5 <icon bindtap="clearPictues" id="miniProgramPics" type="clear" size="21"></icon>
+      <view class="weui-cell__bd">
+        <view class="weui-uploader">
+          <view class="weui-uploader__hd">
+            <view class="weui-uploader__overview">
+              <view class="weui-uploader__title">小程序截图</view>
+              <view class="weui-uploader__info">{{miniProgramPics?miniProgramPics.length:0}}/5 <icon
+                  bindtap="clearPictues" id="miniProgramPics" type="clear" size="21"></icon>
+              </view>
             </view>
           </view>
-        </view>
-        <view class="weui-uploader__bd">
-          <view class="weui-uploader__files" id="uploaderFiles">
-            <block wx:for="{{miniProgramPics}}" wx:key="*this">
-              <view class="weui-uploader__file" id="{{item}}">
-                <icon type="cancel" bindtap="deletePictures" id="miniProgramPics"></icon>
-                <image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
-              </view>
-            </block>
-          </view>
-          <view wx:if="{{!miniProgramPics||miniProgramPics.length<5}}" class="weui-uploader__input-box">
-            <view class="weui-uploader__input" bindtap="chooseImages" id="miniProgramPics" data-count="5"></view>
+          <view class="weui-uploader__bd">
+            <view class="weui-uploader__files" id="uploaderFiles">
+              <block wx:for="{{miniProgramPics}}" wx:key="*this">
+                <view class="weui-uploader__file" id="{{item}}">
+                  <icon type="cancel" bindtap="deletePictures" id="miniProgramPics"></icon>
+                  <image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
+                </view>
+              </block>
+            </view>
+            <view wx:if="{{!miniProgramPics||miniProgramPics.length<5}}" class="weui-uploader__input-box">
+              <view class="weui-uploader__input" bindtap="chooseImages" id="miniProgramPics" data-count="5"></view>
+            </view>
           </view>
         </view>
       </view>
     </view>
-  </view>
   </view>
   <view class="weui-cells__title">结算银行账户</view>
   <view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
