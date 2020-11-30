@@ -13,7 +13,7 @@ Page({
     const length = this.data[id].length;
     count = count - length;
     checkStore().then(({ authorization, info }) => {
-      chooseImages(authorization,info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -53,7 +53,7 @@ Page({
     const id = e.currentTarget.id;
     let count = e.currentTarget.dataset.count;
     const value = e.detail.value;
-    if (value.length == count) {
+    if (value.length === count) {
       this.setData({
         [id]: value
       })
@@ -75,7 +75,7 @@ Page({
         });
         let pages = getCurrentPages();
         let prevPage = pages[pages.length - 2];
-        let products = prevPage.data.products;
+        let { products = [] } = prevPage.data;
         products = [content, ...products];
         prevPage.setData({
           products

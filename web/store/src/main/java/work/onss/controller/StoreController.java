@@ -196,13 +196,13 @@ public class StoreController {
 
     /**
      * @param file 文件
-     * @param cid  营业员ID
+     * @param id   商户ID
      * @return 文件存储路径
      * @throws Exception 文件上传失败异常
      */
-    @PostMapping("stores/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam String cid) throws Exception {
-        String path = Utils.upload(file, systemConfig.getFilePath(), cid);
+    @PostMapping("stores/{id}/uploadPicture")
+    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
+        String path = Utils.upload(file, systemConfig.getFilePath(), id);
         return Work.success("上传成功", path);
     }
 }

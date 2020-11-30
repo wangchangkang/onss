@@ -22,18 +22,21 @@ Page({
     }
   },
 
-  onLoad: function () {
-    checkStore().then(({ authorization, info }) => {
-      wxRequest({
-        url: `${domain}/products?sid=${info.sid}`,
-        header: { authorization, info: JSON.stringify(info) },
-      }).then(({ content }) => {
-        console.log(content);
-        this.setData(
-          { products: content }
-        )
+  onShow: function () {
+    let { products = [] } = this.data;
+    if (products.length === 0) {
+      checkStore().then(({ authorization, info }) => {
+        wxRequest({
+          url: `${domain}/products?sid=${info.sid}`,
+          header: { authorization, info: JSON.stringify(info) },
+        }).then(({ content }) => {
+          console.log(content);
+          this.setData(
+            { products: content }
+          )
+        })
       })
-    })
+    }
   },
 
   bindShow: function (e) {
