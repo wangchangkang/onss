@@ -91,57 +91,6 @@
 	</view>
 </view>
 
-<view class="weui-cells__title">商户图标</view>
-<view class="weui-cells weui-cells_after-title">
-	<image wx:if="{{trademark == null}}" src="/images/logo3.png" mode="widthFix" style="width:100%"
-		bindtap="chooseImage" id="trademark"></image>
-	<icon wx:if="{{trademark!=null}}" type="cancel" bindtap="deletePicture" id="trademark"></icon>
-	<image wx:if="{{trademark!=null}}" src="{{prefix}}{{trademark}}" mode="aspectFit" style="width:100%"></image>
-	<input id="trademark" name="trademark" value="{{trademark}}" hidden></input>
-</view>
-
-<view class="weui-cells__title">商户特点</view>
-<view class="weui-cells weui-cells_after-title">
-	<view class="weui-cell">
-		<view class="weui-cell__bd">
-			<view class="weui-uploader">
-				<view class="weui-uploader__hd">
-					<view class="weui-uploader__overview">
-						<view class="weui-uploader__title">图片</view>
-						<view class="weui-uploader__info">{{pictures.length}}/5 <icon bindtap="clearPictues" id="pictures"
-								type="clear" size="21"></icon>
-						</view>
-					</view>
-				</view>
-				<view class="weui-uploader__bd">
-					<view class="weui-uploader__files" id="uploaderFiles">
-						<block wx:for="{{pictures}}" wx:key="*this">
-							<view class="weui-uploader__file">
-								<icon type="cancel" bindtap="deletePictures" id="pictures" data-index="{{index}}"></icon>
-								<image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
-							</view>
-						</block>
-					</view>
-					<view hidden="{{pictures.length>=5}}" class="weui-uploader__input-box">
-						<view class="weui-uploader__input" bindtap="chooseImages" id="pictures" data-count="5"></view>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
-	<view class="weui-cell ">
-		<view class="weui-cell__bd">
-			<textarea class="weui-input" id="videos" name="videos" value="{{videos}}" bindinput="videosBindInput"
-				placeholder="请用逗号分隔多个视频" auto-height="true"></textarea>
-		</view>
-	</view>
-	<swiper hidden="{{videos.length == 0}}" style="height:{{windowWidth}}px;">
-		<swiper-item wx:for="{{videos}}" wx:for-item='video' wx:key="index">
-			<txv vid="{{video}}" playerid="{{video}}" height="100%" />
-		</swiper-item>
-	</swiper>
-</view>
-
 <view class="weui-flex">
 	<button class="weui-flex__item" type="default" bindtap="resetForm">重置</button>
 	<button class="weui-flex__item" type="primary" form-type='submit'>保存</button>
