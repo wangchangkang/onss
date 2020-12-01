@@ -83,7 +83,11 @@
             <artifactId>hutool-crypto</artifactId>
             <version>5.4.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-apache-httpclient</artifactId>
+            <version>0.2.1</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
