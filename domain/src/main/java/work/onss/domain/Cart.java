@@ -43,7 +43,6 @@ public class Cart implements Serializable {
      */
     @NotBlank(message = "商品ID不能为空")
     private String pid;
-
     /**
      * 购物车数量
      */

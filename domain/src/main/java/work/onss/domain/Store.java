@@ -27,7 +27,6 @@ import java.util.List;
 @ToString
 @Document
 public class Store implements Serializable {
-
     @Id
     private String id;
     /**

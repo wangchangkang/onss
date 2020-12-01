@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document
 public class Prefer implements Serializable {
-
     @Id
     private String id;
     /**

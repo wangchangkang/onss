@@ -31,7 +31,6 @@ import java.util.Map;
 @Data
 @Document
 public class Score implements Serializable {
-
     @Id
     private String id;
     /**

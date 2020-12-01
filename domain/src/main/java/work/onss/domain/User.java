@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document
 public class User implements Serializable {
-
     @Id
     private String id;
     /**

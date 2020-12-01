@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document
 public class Customer implements Serializable {
-
     @Id
     private String id;
     /**

@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document
 public class Address implements Serializable {
-
     @Id
     private String id;
     /**
