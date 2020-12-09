@@ -31,6 +31,7 @@ public class Customer implements Serializable {
     /**
      * 营业员微信用户openid
      */
+    @Indexed(unique = true)
     private String openid;
     /**
      * 小程序APPID

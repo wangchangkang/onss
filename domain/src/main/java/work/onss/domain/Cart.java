@@ -25,6 +25,9 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Document
+@CompoundIndexes(@CompoundIndex(
+        name = "user_product", def = "{'uid':1,'pid':-1}", unique = true
+))
 public class Cart implements Serializable {
 
     @Id

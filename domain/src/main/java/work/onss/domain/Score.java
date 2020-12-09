@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.ScoreEnum;
 import work.onss.exception.ServiceException;
@@ -88,14 +89,17 @@ public class Score implements Serializable {
     /**
      * 订单编号
      */
+    @Indexed(unique = true)
     private String outTradeNo;
     /**
      * 微信支付ID
      */
+    @Indexed(unique = true)
     private String prepayId;
     /**
      * 微信订单ID
      */
+    @Indexed(unique = true)
     private String transactionId;
 
     /**

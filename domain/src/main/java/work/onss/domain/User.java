@@ -25,10 +25,12 @@ public class User implements Serializable {
     /**
      * 用户手机号
      */
+    @Indexed(unique = true)
     private String phone;
     /**
      * 用户微信openid
      */
+    @Indexed(unique = true)
     private String openid;
     /**
      * 小程序APPID
