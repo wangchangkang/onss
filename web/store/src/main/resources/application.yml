@@ -13,16 +13,14 @@ spring:
   profiles:
     active: develop
 wechat:
-  appid: 'ww3372b680c877b9bf'
-  key: '07_QVA4TFlMaJCK3J83U-RHnLzd_gJ6B0rUBllLpwtY'
-  mchid: '1573972751'
-  serialno: '155B5E15AF0B644879126A37A8E2C878A1A048FC'
-  keys: {
-    wx950ae546eec14733: '5a606f06b6ebe2715bd598db26c2d55a',
-    wx095ba1a3f9396476: '7692f5acd04248d1ac84c55799c4bc9b',
-    wxe78290c2a5313de3: 'c0874a7afed78170601218d82d9dc1b3'
-  }
-  notify-url: ''
+  cp:
+    corpId: ww1954801118238ef6
+    appConfigs:
+      - agentId: 1000001
+        secret: 1111
+        token: 111
+        aesKey: 111
+
 system:
   logo: 'picture/logo.png'
   public-key-str: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgDi5IbifNfGmyqnR36CZRG+n29Ff4YnC72I3a4Om52Hl9IWvBD8jFbT2qgKM3U7rK/BtzXPGB/tChEq3f0/8b3SPr42tL3aj7KrJixqX+h5pDJZgQO3dk8WVV4jXYuzYC79oe99jaa4sacaA1xPx+B5E2YO2EHlpcm/hr1nHaePIk5pRC4kUYdg5i5hEmn5cjzWeGYFJGWrMwJGx79ZwEMVWIY4J0bDUN1Xy3PkUpaVa/zfhCj/Q2AMmOcm6OPqLAdmfoym+YkgVXLhwT4V6UMAUR0vqVqoViZBL4rG7gSmcdSMoQDJEcbi8Rkk4yWaw93BTKZQZNTUrQ9KNIkRxpwIDAQAB'

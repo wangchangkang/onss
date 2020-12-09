@@ -117,15 +117,24 @@ public class StoreController {
             mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
             return Work.success("操作成功", status);
         } else {
-            return switch (store.getState()) {
-                case APPLYMENT_STATE_EDITTING, APPLYMENT_STATE_REJECTED -> Work.fail("1977.merchant.not_register", "请完善商户资质");
-                case APPLYMENT_STATE_AUDITING -> Work.fail("正在审核中,请耐心等待");
-                case APPLYMENT_STATE_TO_BE_CONFIRMED -> Work.fail("请及时验证账户");
-                case APPLYMENT_STATE_TO_BE_SIGNED -> Work.fail("请及时签约特约商户");
-                case APPLYMENT_STATE_SIGNING -> Work.fail("开通权限中,请耐心等待");
-                case APPLYMENT_STATE_CANCELED -> Work.fail("申请特约商户已作废");
-                default -> Work.fail("系统异常,请立刻联系客服");
-            };
+            StoreStateEnum state = store.getState();
+            switch (state) {
+                case APPLYMENT_STATE_EDITTING:
+                case APPLYMENT_STATE_REJECTED:
+                    return Work.fail("1977.merchant.not_register", "请完善商户资质");
+                case APPLYMENT_STATE_AUDITING:
+                    return Work.fail("正在审核中,请耐心等待");
+                case APPLYMENT_STATE_TO_BE_CONFIRMED:
+                    return Work.fail("请及时验证账户");
+                case APPLYMENT_STATE_TO_BE_SIGNED:
+                    return Work.fail("请及时签约特约商户");
+                case APPLYMENT_STATE_SIGNING:
+                    return Work.fail("开通权限中,请耐心等待");
+                case APPLYMENT_STATE_CANCELED:
+                    return Work.fail("申请特约商户已作废");
+                default:
+                    return Work.fail("系统异常,请立刻联系客服");
+            }
         }
     }
 

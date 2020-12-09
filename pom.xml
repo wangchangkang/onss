@@ -123,11 +123,11 @@
 <!--            <artifactId>weixin-java-mp</artifactId>-->
 <!--            <version>4.0.0</version>-->
 <!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.binarywang</groupId>-->
-<!--            <artifactId>weixin-java-cp</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-cp</artifactId>
+            <version>${binarywang.version}</version>
+        </dependency>
 
     </dependencies>
 
