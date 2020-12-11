@@ -13,9 +13,6 @@ import java.util.Map;
 
 @Log4j2
 @Data
-@ConfigurationProperties(prefix = "wechat")
-@EnableConfigurationProperties(WeChatConfig.class)
-@Configuration
 public class WeChatConfig implements WXPayConfig,Serializable {
 
     private String appID;

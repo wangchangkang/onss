@@ -1,5 +1,5 @@
 server:
-  port: 8020
+  port: 80
   servlet:
     context-path: /store
     encoding:
@@ -13,13 +13,13 @@ spring:
   profiles:
     active: develop
 wechat:
-  cp:
+  cptp:
     corpId: ww1954801118238ef6
     appConfigs:
-      - agentId: 1000001
-        secret: 1111
-        token: 111
-        aesKey: 111
+      - suiteId: ww3372b680c877b9bf
+        secret: 07_QVA4TFlMaJCK3J83U-RHnLzd_gJ6B0rUBllLpwtY
+        token: BFvCKhHU7A
+        aesKey: dYEf7vLNFWI0OkWH1Xo4gzrtapEhzyXARJ84X8cnnXb
 
 system:
   logo: 'picture/logo.png'

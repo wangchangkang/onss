@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author wangchanghao
  */
 @Log4j2
-@EnableAsync
 @SpringBootApplication
 public class StoreApplication {
 
