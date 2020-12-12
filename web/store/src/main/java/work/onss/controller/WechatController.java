@@ -61,6 +61,8 @@ public class WechatController {
                 WxCpTpXmlPackage tpXmlPackage = WxCpTpXmlPackage.fromXml(decryptMsgs);
                 log.info(JsonUtils.toJson(tpXmlPackage));
                 wxCpTpService.setSuiteTicket(tpXmlPackage.getAllFieldsMap().get("SuiteTicket").toString());
+                String suiteAccessToken = wxCpTpService.getSuiteAccessToken(false);
+                log.info("suiteAccessToken:{}",suiteAccessToken);
                 wxCpTpService.setWxCpTpConfigStorage(wxCpTpConfigStorage);
                 WxCpTpConfiguration.setCpTpService(suiteid, wxCpTpService);
                 return "success";
