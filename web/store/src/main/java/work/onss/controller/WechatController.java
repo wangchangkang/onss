@@ -1,24 +1,23 @@
 package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
-import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.bean.WxCpTpXmlPackage;
+import me.chanjar.weixin.cp.config.WxCpTpConfigStorage;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
 import me.chanjar.weixin.cp.util.crypto.WxCpTpCryptUtil;
-import org.checkerframework.checker.units.qual.A;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.WxCpTpConfiguration;
 import work.onss.config.WxCpTpProperties;
-import work.onss.vo.Work;
+import work.onss.utils.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 营业员登录
@@ -34,30 +33,52 @@ public class WechatController {
     @Autowired
     private WxCpTpConfiguration wxCpTpConfiguration;
 
-    @GetMapping(value = {"wechat/{suiteid}"})
+    @RequestMapping(value = {"wechat/{suiteid}"}, produces = {"text/xml"})
     public String wechat(
             @PathVariable String suiteid,
             @RequestParam(name = "msg_signature", required = false) String signature,
-                               @RequestParam(name = "timestamp", required = false) String timestamp,
-                               @RequestParam(name = "nonce", required = false) String nonce,
-                               @RequestParam(name = "echostr", required = false) String echostr,
-                               HttpServletRequest request) throws WxErrorException, IOException {
-//        wxCpTpConfiguration.initServices();
-//        List<WxCpTpProperties.AppConfig> appConfigs = wxCpTpProperties.getAppConfigs();
-//        log.info("数据回调");
-//        log.info("signature = [{}], timestamp = [{}], nonce = [{}], echostr = [{}]", signature, timestamp, nonce, echostr);
-//        WxCpTpService wxCpTpService = WxCpTpConfiguration.getCpTpService(suiteid);
-//
-//        BufferedReader reader = request.getReader();
-//        StringBuffer buffer = new StringBuffer();
-//        String line = " ";
-//        while (null != (line = reader.readLine())) {
-//            buffer.append(line);
-//        }
-//        String postData = buffer.toString();
-//        String decryptMsgs = new WxCpTpCryptUtil(wxCpTpService.getWxCpTpConfigStorage()).decrypt(signature, timestamp, nonce, postData);
-//        WxCpTpXmlPackage tpXmlPackage = WxCpTpXmlPackage.fromXml(decryptMsgs);
+            @RequestParam(name = "timestamp", required = false) String timestamp,
+            @RequestParam(name = "nonce", required = false) String nonce,
+            @RequestParam(name = "echostr", required = false) String echostr,
+            HttpServletRequest request) throws IOException {
+        wxCpTpConfiguration.initServices();
 
+        log.info("数据回调");
+        log.info("signature = [{}], timestamp = [{}], nonce = [{}], echostr = [{}]", signature, timestamp, nonce, echostr);
+        WxCpTpService wxCpTpService = WxCpTpConfiguration.getCpTpService(suiteid);
+        WxCpTpConfigStorage wxCpTpConfigStorage = wxCpTpService.getWxCpTpConfigStorage();
+
+        log.info("数据回调");
+        log.info("signature = [{}], timestamp = [{}], nonce = [{}], echostr = [{}]", signature, timestamp, nonce, echostr);
+
+        String xml = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
+
+        if (StringUtils.hasLength(xml)) {
+            try {
+                log.info("xml:{}", xml);
+                String decryptMsgs = new WxCpTpCryptUtil(wxCpTpConfigStorage).decrypt(signature, timestamp, nonce, xml);
+                log.info("数据回调-解密后的xml数据:{}", decryptMsgs);
+                WxCpTpXmlPackage tpXmlPackage = WxCpTpXmlPackage.fromXml(decryptMsgs);
+                log.info(JsonUtils.toJson(tpXmlPackage));
+                wxCpTpService.setSuiteTicket(tpXmlPackage.getAllFieldsMap().get("SuiteTicket").toString());
+                wxCpTpService.setWxCpTpConfigStorage(wxCpTpConfigStorage);
+                WxCpTpConfiguration.setCpTpService(suiteid, wxCpTpService);
+                return "success";
+            } catch (Exception e) {
+                log.error("校验失败：{}", e.getMessage());
+                return "success";
+            }
+        }
+
+        try {
+            if (wxCpTpService.checkSignature(signature, timestamp, nonce, echostr)) {
+                String decrypt = new WxCpTpCryptUtil(wxCpTpConfigStorage).decrypt(echostr);
+                log.info("数据回调-解密后的xml数据:{}", decrypt);
+                return decrypt;
+            }
+        } catch (Exception e) {
+            log.error("校验签名失败：{}", e.getMessage());
+        }
         return "success";
     }
 

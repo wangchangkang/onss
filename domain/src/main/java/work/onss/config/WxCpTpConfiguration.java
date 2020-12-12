@@ -21,10 +21,14 @@ public class WxCpTpConfiguration {
     @Autowired
     private WxCpTpProperties wxCpTpProperties;
 
-    private static final Map<String, WxCpTpService> wxCpTpServiceMap = Maps.newHashMap();
+    private static Map<String, WxCpTpService> wxCpTpServiceMap = Maps.newHashMap();
 
     public static WxCpTpService getCpTpService(String suiteId) {
         return wxCpTpServiceMap.get(suiteId);
+    }
+
+    public static void setCpTpService(String suiteId,WxCpTpService wxCpTpService){
+        wxCpTpServiceMap.put(suiteId,wxCpTpService);
     }
 
     @PostConstruct
