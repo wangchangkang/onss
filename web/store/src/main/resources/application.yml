@@ -20,7 +20,14 @@ wechat:
         secret: 07_QVA4TFlMaJCK3J83U-RHnLzd_gJ6B0rUBllLpwtY
         token: BFvCKhHU7A
         aesKey: dYEf7vLNFWI0OkWH1Xo4gzrtapEhzyXARJ84X8cnnXb
-
+wx:
+  pay:
+    appId: wxb7dc92a3570afc3e
+    mchId: 1573972751
+    mchKey: 78a64d9313cc7e93fcddc3de90139d39
+    subAppId: wxe78290c2a5313de3
+    subMchId: #服务商模式下的子商户号
+    keyPath: classpath:1573972751.p12
 system:
   logo: 'picture/logo.png'
   public-key-str: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgDi5IbifNfGmyqnR36CZRG+n29Ff4YnC72I3a4Om52Hl9IWvBD8jFbT2qgKM3U7rK/BtzXPGB/tChEq3f0/8b3SPr42tL3aj7KrJixqX+h5pDJZgQO3dk8WVV4jXYuzYC79oe99jaa4sacaA1xPx+B5E2YO2EHlpcm/hr1nHaePIk5pRC4kUYdg5i5hEmn5cjzWeGYFJGWrMwJGx79ZwEMVWIY4J0bDUN1Xy3PkUpaVa/zfhCj/Q2AMmOcm6OPqLAdmfoym+YkgVXLhwT4V6UMAUR0vqVqoViZBL4rG7gSmcdSMoQDJEcbi8Rkk4yWaw93BTKZQZNTUrQ9KNIkRxpwIDAQAB'

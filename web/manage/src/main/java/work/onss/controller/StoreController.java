@@ -18,6 +18,7 @@ import work.onss.enums.StoreStateEnum;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @Log4j2
@@ -135,8 +136,9 @@ public class StoreController {
      */
     @PostMapping("stores/{id}/uploadPicture")
     public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @PathVariable(name = "id") String id) throws Exception {
-        String path = Utils.upload(file, systemConfig.getFilePath(), id);
-        return Work.success("上传成功", path);
+        Path path = Utils.upload(file, systemConfig.getFilePath(), id);
+        String filePath = Utils.upload(file, path, 3);
+        return Work.success("上传成功", filePath);
     }
 
 }

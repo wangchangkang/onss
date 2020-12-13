@@ -41,7 +41,7 @@ public class CustomerController {
             return Work.fail("用户不存在", null);
         }
         //微信用户手机号
-        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSession_key(), wxRegister.getIv());
+        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSessionKey(), wxRegister.getIv());
         if (encryptedData == null) {
             return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
         }

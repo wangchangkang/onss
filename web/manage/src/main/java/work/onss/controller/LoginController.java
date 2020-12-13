@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Info;
-import work.onss.service.MiniProgramService;
 import work.onss.utils.JsonMapper;
 import work.onss.vo.QYWXSession;
 import work.onss.vo.WXLogin;
@@ -29,10 +28,6 @@ import java.util.Map;
 public class LoginController {
 
     @Autowired
-    private MiniProgramService miniProgramService;
-    @Autowired
-    private WeChatConfig weChatConfig;
-    @Autowired
     private SystemConfig systemConfig;
 
     /**
@@ -41,8 +36,8 @@ public class LoginController {
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
-        Map<String, String> gettoken = miniProgramService.gettoken(weChatConfig.getAppID(), weChatConfig.getKey());
-        QYWXSession qywxSession = miniProgramService.jscode2session(wxLogin.getCode(), gettoken.get("access_token"));
+        Map<String, String> gettoken = null;
+        QYWXSession qywxSession = null;
         Info info = new Info();
         info.setUserid(qywxSession.getUserid());
         info.setLastTime(LocalDateTime.now());

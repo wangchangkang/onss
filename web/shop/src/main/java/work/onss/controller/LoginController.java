@@ -20,13 +20,11 @@ import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.Info;
 import work.onss.domain.User;
-import work.onss.service.MiniProgramService;
 import work.onss.utils.JsonMapper;
 import work.onss.vo.WXLogin;
 import work.onss.vo.WXSession;
 import work.onss.vo.Work;
 
-import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,9 +35,6 @@ import java.util.stream.Collectors;
 @Log4j2
 @RestController
 public class LoginController {
-
-    @Autowired
-    private MiniProgramService miniProgramService;
 
     @Autowired
     private WeChatConfig weChatConfig;
@@ -54,8 +49,8 @@ public class LoginController {
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
-        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), weChatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
-
+//        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), weChatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
+        WXSession wxSession = new WXSession();
         Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
 

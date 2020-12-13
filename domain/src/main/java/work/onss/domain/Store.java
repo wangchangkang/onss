@@ -1,6 +1,7 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
@@ -68,7 +69,7 @@ public class Store implements Serializable {
     /**
      * 商户宣传册
      */
-    private Collection<String> pictures;
+    private Collection<Picture> pictures;
     /**
      * 商户微视频
      */
@@ -80,7 +81,7 @@ public class Store implements Serializable {
     /**
      * 商户营业执照
      */
-    private String licenseCopy;
+    private Picture licenseCopy;
     /**
      * 商户开门时间
      */
@@ -98,7 +99,7 @@ public class Store implements Serializable {
     /**
      * 商户审核状态
      */
-    private StoreStateEnum state;
+    private ApplymentStateEnum state;
     /**
      * 商户审核驳回原因
      */

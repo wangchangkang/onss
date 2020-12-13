@@ -28,8 +28,6 @@ import java.security.spec.AlgorithmParameterSpec;
 public class Utils {
 
 
-
-
     public static String getEncryptedData(String encryptedData, String sessionKey, String iv) {
         byte[] dataByte = Base64Utils.decodeFromString(encryptedData);
         byte[] keyByte = Base64Utils.decodeFromString(sessionKey);
@@ -47,7 +45,7 @@ public class Utils {
         return null;
     }
 
-    public static String upload(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
+    public static Path upload(MultipartFile file, String dir, String... more) throws IOException, ServiceException {
         String filename = file.getOriginalFilename();
         if (filename == null) {
             throw new ServiceException("fail", "上传失败!");
@@ -61,14 +59,17 @@ public class Utils {
             throw new ServiceException("fail", "上传失败!");
         }
         String md5 = DigestUtils.md5DigestAsHex(file.getInputStream());
-        path = path.resolve(md5.concat(filename.substring(index)));
+        return path.resolve(md5.concat(filename.substring(index)));
+    }
+
+    public static String upload(MultipartFile file, Path path, Integer count) throws IOException {
         // 判断文件是否存在
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
         int nameCount = path.getNameCount();
 
-        return StringUtils.cleanPath(path.subpath(nameCount - more.length - 2, nameCount).toString());
+        return StringUtils.cleanPath(path.subpath(nameCount - count, nameCount).toString());
     }
 
     public static String rsaEncryptOAEP(String message, X509Certificate certificate) throws IllegalBlockSizeException {

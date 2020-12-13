@@ -1,17 +1,21 @@
 package work.onss.domain;
 
+import com.github.binarywang.wxpay.bean.applyment.enums.BankAccountTypeEnum;
+import com.github.binarywang.wxpay.bean.applyment.enums.IdTypeEnum;
+import com.github.binarywang.wxpay.bean.applyment.enums.SubjectTypeEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import work.onss.vo.WXAddress;
-import work.onss.vo.wx.SpeciallyMerchant;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.binarywang.wxpay.bean.applyment.enums.IdTypeEnum.IDENTIFICATION_TYPE_IDCARD;
 
 @Log4j2
 @Data
@@ -20,7 +24,7 @@ import java.util.List;
 public class Merchant implements Serializable {
 
     @NotBlank(message = "服务商小程序APPID不能为空")
-    private String miniProgramSubAppid; // 服务商小程序APPID
+    private String miniProgramAppid; // 服务商小程序APPID
 
     //超级管理员
     @NotBlank(message = "请填写管理员姓名")
@@ -37,9 +41,9 @@ public class Merchant implements Serializable {
 
     //营业执照
     @NotNull(message = "请选择主体类型")
-    private SpeciallyMerchant.SubjectEnum subjectType;//主体类型
+    private SubjectTypeEnum subjectType;//主体类型
     @NotBlank(message = "请上传营业执照副本")
-    private String licenseCopy;//五证合一
+    private Picture licenseCopy;//五证合一
     @NotBlank(message = "请填写营业执照编号")
     @Pattern(regexp = "[^_IOZSVa-z\\W]{2}\\d{6}[^_IOZSVa-z\\W]{10}", message = "营业执照编号格式错误")
     private String licenseNumber;//社会信用代码
@@ -49,16 +53,16 @@ public class Merchant implements Serializable {
     private String legalPerson;//经营者姓名
 
     //法人信息
-    private SpeciallyMerchant.CardEnum idDocType = SpeciallyMerchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//法人证件类型
+    private IdTypeEnum idDocType = IDENTIFICATION_TYPE_IDCARD;//法人证件类型
     @NotBlank(message = "请上传法人身份证正面")
-    private String idCardCopy;//身份证正面
+    private Picture idCardCopy;//身份证正面
     @NotBlank(message = "请填写管理员18位身份证号")
     @Pattern(regexp = "^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$", message = "管理员身份证格式错误")
     private String idCardNumber;//身份证号
     @NotBlank(message = "请填写管理员姓名")
     private String idCardName;//姓名
     @NotBlank(message = "请上传法人身份证反面")
-    private String idCardNational;//身份证反面
+    private Picture idCardNational;//身份证反面
     @NotBlank(message = "请填写法人身份证注册日期")
     private String cardPeriodBegin;//开始时间
     @NotBlank(message = "请填写法人身份证过期日期")
@@ -66,10 +70,10 @@ public class Merchant implements Serializable {
     @NotNull(message = "法人是否是最终受益人")
     private Boolean owner;//是否是最终受益人
 
-    private SpeciallyMerchant.CardEnum idType = SpeciallyMerchant.CardEnum.IDENTIFICATION_TYPE_IDCARD;//证件类型
-    private String idCardA;//身份证人像面照片
-    private String idCardB;//身份证国徽面照片
-    private String idDocCopy;//证件照片
+    private IdTypeEnum idType = IDENTIFICATION_TYPE_IDCARD;//证件类型
+    private Picture idCardA;//身份证人像面照片
+    private Picture idCardB;//身份证国徽面照片
+    private Picture idDocCopy;//证件照片
     private String beneficiary;//受益人姓名
     private String idNumber;//证件号码
     private String idPeriodBegin;//证件有效期开始时间
@@ -88,11 +92,11 @@ public class Merchant implements Serializable {
     @NotNull(message = "请选择所属行业")
     private String qualificationType;//所属行业
     @Size(min = 1, max = 5, message = "请上传1~5张特殊资质图片")
-    private List<String> qualifications = new ArrayList<>(0);//特殊资质图片
+    private List<Picture> qualifications = new ArrayList<>(0);//特殊资质图片
 
     //结算银行账户
     @NotNull(message = "请填写账户类型")
-    private SpeciallyMerchant.BankAccountEnum bankAccountType;//账户类型 个人 公户
+    private BankAccountTypeEnum bankAccountType;//账户类型 个人 公户
     @NotBlank(message = "请填写开户名称")
     private String accountName;//开户名称
     @NotNull(message = "请选择开户银行")
