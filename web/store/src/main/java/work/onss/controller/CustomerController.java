@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.Customer;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
@@ -45,10 +45,11 @@ public class CustomerController {
         if (encryptedData == null) {
             return Work.fail("1977.session.expire", "session_key已过期,请重新登陆");
         }
-        PhoneEncryptedData phoneEncryptedData = JsonMapper.fromJson(encryptedData, PhoneEncryptedData.class);
+        PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
         //添加用户手机号
-        Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), Customer.class);
+        Query queryCustomer = Query.query(Criteria.where("id").is(id));
+        Update updateCustomer = Update.update("phone", phoneEncryptedData.getPhoneNumber());
+        mongoTemplate.updateFirst(queryCustomer, updateCustomer, Customer.class);
         customer.setPhone(phoneEncryptedData.getPhoneNumber());
         return Work.success("授权成功");
     }

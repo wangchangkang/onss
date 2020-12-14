@@ -42,8 +42,8 @@ public class ProductController {
      */
     @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        Product product = mongoTemplate.findOne(query, Product.class);
+        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+        Product product = mongoTemplate.findOne(queryProduct, Product.class);
         return Work.success("加载成功", product);
     }
 
@@ -53,8 +53,8 @@ public class ProductController {
      */
     @GetMapping(value = {"products"})
     public Work<List<Product>> products(@RequestParam(name = "sid") String sid) {
-        Query query = Query.query(Criteria.where("sid").is(sid));
-        List<Product> products = mongoTemplate.find(query, Product.class);
+        Query queryProduct = Query.query(Criteria.where("sid").is(sid));
+        List<Product> products = mongoTemplate.find(queryProduct, Product.class);
         return Work.success("加载成功", products);
 
     }
@@ -80,8 +80,8 @@ public class ProductController {
      */
     @PutMapping(value = {"products/{id}"})
     public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        mongoTemplate.findAndReplace(query, product);
+        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+        mongoTemplate.findAndReplace(queryProduct, product);
         return Work.success("编辑成功", product);
     }
 
@@ -93,8 +93,8 @@ public class ProductController {
      */
     @PutMapping(value = {"products/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        mongoTemplate.updateFirst(query, Update.update("status", status), Product.class);
+        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+        mongoTemplate.updateFirst(queryProduct, Update.update("status", status), Product.class);
         return Work.success("操作成功", status);
     }
 
@@ -107,8 +107,8 @@ public class ProductController {
     @Transactional
     @PutMapping(value = {"products"})
     public Work<Boolean> updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
-        Query query = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.updateMulti(query, Update.update("status", status), Product.class);
+        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
+        mongoTemplate.updateMulti(queryProduct, Update.update("status", status), Product.class);
         return Work.success("操作成功", status);
     }
 
@@ -119,8 +119,8 @@ public class ProductController {
      */
     @DeleteMapping(value = {"products/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
-        Query query = Query.query(Criteria.where("sid").is(sid).and("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
+        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").is(id));
+        mongoTemplate.updateFirst(queryProduct, Update.update("sid", null), Product.class);
         return Work.success("删除成功", true);
     }
 
@@ -131,8 +131,8 @@ public class ProductController {
      */
     @DeleteMapping(value = {"products"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
-        Query query = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.updateFirst(query, Update.update("sid", null), Product.class);
+        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
+        mongoTemplate.updateFirst(queryProduct, Update.update("sid", null), Product.class);
         return Work.success("删除成功", true);
     }
 

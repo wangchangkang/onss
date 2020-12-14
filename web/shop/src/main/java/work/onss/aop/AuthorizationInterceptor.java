@@ -13,7 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import work.onss.config.SystemConfig;
 import work.onss.domain.User;
 import work.onss.exception.ServiceException;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

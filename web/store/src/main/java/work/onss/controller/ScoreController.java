@@ -34,8 +34,8 @@ public class ScoreController {
      */
     @GetMapping(value = {"scores/{id}"})
     public Work<Score> score(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        Score score = mongoTemplate.findOne(query, Score.class);
+        Query queryScore = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
+        Score score = mongoTemplate.findOne(queryScore, Score.class);
         return Work.success("加载成功", score);
     }
 
@@ -46,8 +46,8 @@ public class ScoreController {
      */
     @GetMapping(value = {"scores"})
     public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<String> status) {
-        Query query = Query.query(Criteria.where("sid").is(sid).and("status").in(status));
-        List<Score> scores = mongoTemplate.find(query, Score.class);
+        Query queryScore = Query.query(Criteria.where("sid").is(sid).and("status").in(status));
+        List<Score> scores = mongoTemplate.find(queryScore, Score.class);
         return Work.success("加载成功", scores);
     }
 

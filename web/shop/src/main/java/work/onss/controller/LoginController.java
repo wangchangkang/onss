@@ -20,7 +20,7 @@ import work.onss.config.WeChatConfig;
 import work.onss.domain.Cart;
 import work.onss.domain.Info;
 import work.onss.domain.User;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.WXSession;
 import work.onss.vo.Work;
@@ -67,7 +67,7 @@ public class LoginController {
             user = mongoTemplate.insert(user);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -78,7 +78,7 @@ public class LoginController {
             mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getUpdateTime()), User.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
@@ -89,7 +89,7 @@ public class LoginController {
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
-            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+            byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);
             result.put("cartsPid", cartsPid);

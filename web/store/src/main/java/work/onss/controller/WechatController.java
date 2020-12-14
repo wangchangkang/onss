@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.WxCpTpConfiguration;
-import work.onss.config.WxCpTpProperties;
-import work.onss.utils.JsonUtils;
+import work.onss.utils.JsonMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class WechatController {
                 String decryptMsgs = new WxCpTpCryptUtil(wxCpTpConfigStorage).decrypt(signature, timestamp, nonce, xml);
                 log.info("数据回调-解密后的xml数据:{}", decryptMsgs);
                 WxCpTpXmlPackage tpXmlPackage = WxCpTpXmlPackage.fromXml(decryptMsgs);
-                log.info(JsonUtils.toJson(tpXmlPackage));
+                log.info(JsonMapperUtils.toJson(tpXmlPackage));
                 wxCpTpService.setSuiteTicket(tpXmlPackage.getAllFieldsMap().get("SuiteTicket").toString());
                 String suiteAccessToken = wxCpTpService.getSuiteAccessToken(true);
                 wxCpTpConfigStorage.updateSuiteAccessToken(suiteAccessToken, 7000);

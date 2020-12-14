@@ -20,7 +20,7 @@ import work.onss.domain.Cart;
 import work.onss.domain.Info;
 import work.onss.domain.Prefer;
 import work.onss.domain.User;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
@@ -54,7 +54,7 @@ public class UserController {
 
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSession_key(), wxRegister.getIv());
-        PhoneEncryptedData phoneEncryptedData = JsonMapper.fromJson(encryptedData, PhoneEncryptedData.class);
+        PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号
         Query query = Query.query(Criteria.where("id").is(id));
@@ -71,7 +71,7 @@ public class UserController {
         Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
         Info info = new Info(user.getId(),user.getUpdateTime());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("cartsPid", cartsPid);
         result.put("prefersPid", prefersPid);

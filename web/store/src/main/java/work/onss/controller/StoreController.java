@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
@@ -62,8 +62,8 @@ public class StoreController {
      */
     @GetMapping(value = {"stores"})
     public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
-        Query query = Query.query(Criteria.where("customers.id").is(cid));
-        List<Store> stores = mongoTemplate.find(query, Store.class);
+        Query queryStore = Query.query(Criteria.where("customers.id").is(cid));
+        List<Store> stores = mongoTemplate.find(queryStore, Store.class);
         return Work.success("加载成功", stores);
     }
 
@@ -74,8 +74,8 @@ public class StoreController {
      */
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        Store store = mongoTemplate.findOne(query, Store.class);
+        Query queryStore = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
+        Store store = mongoTemplate.findOne(queryStore, Store.class);
         return Work.success("加载成功", store);
     }
 
@@ -90,8 +90,8 @@ public class StoreController {
         if (customer == null) {
             return Work.fail("该用户已不存在，请联系客服");
         }
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        Store store = mongoTemplate.findOne(query, Store.class);
+        Query queryStore = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
+        Store store = mongoTemplate.findOne(queryStore, Store.class);
         if (store == null) {
             return Work.fail("该商户已不存在，请联系客服!");
         }
@@ -102,7 +102,7 @@ public class StoreController {
         info.setSid(store.getId());
         info.setApplymentId(store.getApplymentId());
         info.setSubMchId(store.getSubMchId());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("info", info);
         return Work.success("登陆成功", result);
@@ -116,8 +116,8 @@ public class StoreController {
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
     public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) {
-        Query qProduct = Query.query(Criteria.where("sid").is(id));
-        boolean productExists = mongoTemplate.exists(qProduct, Product.class);
+        Query queryProduct = Query.query(Criteria.where("sid").is(id));
+        boolean productExists = mongoTemplate.exists(queryProduct, Product.class);
         if (!productExists) {
             return Work.fail("1977.products.zero", "请添加预售商品");
         }
@@ -125,8 +125,8 @@ public class StoreController {
         if (store == null) {
             return Work.fail("该商户不存在,请立刻截图联系客服");
         } else if (store.getState() == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
-            Query storeQuery = Query.query(Criteria.where("id").is(id));
-            mongoTemplate.updateFirst(storeQuery, Update.update("status", status), Store.class);
+            Query queryStore = Query.query(Criteria.where("id").is(id));
+            mongoTemplate.updateFirst(queryStore, Update.update("status", status), Store.class);
             return Work.success("操作成功", status);
         } else {
             ApplymentStateEnum state = store.getState();
@@ -158,8 +158,8 @@ public class StoreController {
      */
     @PutMapping(value = {"stores/{id}"})
     public Work<Store> update(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @Validated @RequestBody Store store) {
-        Query query = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
-        Update update = Update
+        Query queryStore = Query.query(Criteria.where("id").is(id).and("customers.id").is(cid));
+        Update updateStore = Update
                 .update("name", store.getName())
                 .set("description", store.getDescription())
                 .set("address", store.getAddress())
@@ -172,7 +172,7 @@ public class StoreController {
                 .set("videos", store.getVideos())
                 .set("openTime", store.getOpenTime())
                 .set("closeTime", store.getCloseTime());
-        mongoTemplate.updateFirst(query, update, Store.class);
+        mongoTemplate.updateFirst(queryStore, updateStore, Store.class);
         return Work.success("更新成功", store);
     }
 
@@ -207,7 +207,9 @@ public class StoreController {
     @Transactional
     @PostMapping(value = {"stores/{id}/setMerchant"})
     public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) throws ServiceException, WxPayException {
-        Query query = Query.query(Criteria.where("id").is(id).and("state").in(ApplymentStateEnum.APPLYMENT_STATE_REJECTED, ApplymentStateEnum.APPLYMENT_STATE_EDITTING, null));
+        Query queryStore = Query.query(Criteria
+                .where("id").is(id)
+                .and("state").in(ApplymentStateEnum.APPLYMENT_STATE_REJECTED, ApplymentStateEnum.APPLYMENT_STATE_EDITTING, null));
         Merchant merchant = store.getMerchant();
 
         Applyment4SubService applyment4SubService = new Applyment4SubServiceImpl(wxPayService);
@@ -289,13 +291,13 @@ public class StoreController {
         WxPayApplymentCreateResult wxPayApplymentCreateResult = applyment4SubService.createApply(wxPayApplyment4SubCreateRequest);
 
 
-        Update update = Update.update("merchant", merchant)
+        Update updateStore = Update.update("merchant", merchant)
                 .set("state", store.getState())
                 .set("updateTime", LocalDateTime.now())
                 .set("licenseNumber", merchant.getLicenseNumber())
                 .set("licenseCopy", merchant.getLicenseCopy())
                 .set("applymentId",wxPayApplymentCreateResult.getApplymentId());
-        mongoTemplate.updateFirst(query, update, Store.class);
+        mongoTemplate.updateFirst(queryStore, updateStore, Store.class);
 
         return Work.success("编辑成功", store);
     }
@@ -314,8 +316,8 @@ public class StoreController {
         if (!Files.exists(path)) {
             file.transferTo(path);
         }
-        Query query = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
-        Picture picture = mongoTemplate.findOne(query, Picture.class);
+        Query pictureQuery = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
+        Picture picture = mongoTemplate.findOne(pictureQuery, Picture.class);
         if (picture == null) {
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);
             ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(path.toFile());

@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class JsonMapper {
+public class JsonMapperUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

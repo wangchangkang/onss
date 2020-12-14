@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.config.WeChatConfig;
 import work.onss.domain.Info;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.QYWXSession;
 import work.onss.vo.WXLogin;
 import work.onss.vo.Work;
@@ -42,7 +42,7 @@ public class LoginController {
         info.setUserid(qywxSession.getUserid());
         info.setLastTime(LocalDateTime.now());
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("info", info);

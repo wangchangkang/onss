@@ -22,7 +22,7 @@ import work.onss.config.WxCpTpConfiguration;
 import work.onss.domain.Customer;
 import work.onss.domain.Info;
 import work.onss.domain.Store;
-import work.onss.utils.JsonMapper;
+import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.Work;
 
@@ -52,27 +52,32 @@ public class LoginController {
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
 
-        WxCpTpService cpTpService = WxCpTpConfiguration.getCpTpService(wxLogin.getSuiteId());
-        WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult = cpTpService.jsCode2Session(wxLogin.getCode());
-        Query query = Query.query(Criteria.where("userid").is(wxCpMaJsCode2SessionResult.getUserId()).and("appId").is(wxLogin.getAppid()).and("suiteId").is(wxLogin.getSuiteId()));
-        Customer customer = mongoTemplate.findOne(query, Customer.class);
+        WxCpTpService wxCpTpService = WxCpTpConfiguration.getCpTpService(wxLogin.getSuiteId());
+        WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult = wxCpTpService.jsCode2Session(wxLogin.getCode());
+        Query queryCustomer = Query.query(Criteria
+                .where("userid").is(wxCpMaJsCode2SessionResult.getUserId())
+                .and("appId").is(wxLogin.getAppid())
+                .and("suiteId").is(wxLogin.getSuiteId()));
+
+        Customer customer = mongoTemplate.findOne(queryCustomer, Customer.class);
         Map<String, Object> result = new HashMap<>();
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
         Info info = new Info();
         LocalDateTime now = LocalDateTime.now();
         boolean exists = false;
         if (customer == null) {
-            customer = new Customer(wxCpMaJsCode2SessionResult,wxLogin,now);
+            customer = new Customer(wxCpMaJsCode2SessionResult, wxLogin, now);
             customer = mongoTemplate.insert(customer);
         } else {
-            query.addCriteria(Criteria.where("id").is(customer.getId()));
-            mongoTemplate.updateFirst(query, Update.update("lastTime", now), Customer.class);
+            queryCustomer.addCriteria(Criteria.where("id").is(customer.getId()));
+            Update updateCustomer = Update.update("lastTime", now);
+            mongoTemplate.updateFirst(queryCustomer, updateCustomer, Customer.class);
             Query storeQuery = Query.query(Criteria.where("customers.id").is(customer.getId()));
             exists = mongoTemplate.exists(storeQuery, Store.class);
         }
         info.setCid(customer.getId());
         info.setLastTime(now);
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapper.toJson(info)).getBytes(StandardCharsets.UTF_8));
+        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("info", info);
         if (exists) {

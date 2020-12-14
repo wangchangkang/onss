@@ -75,7 +75,7 @@ public class StoreController {
 //                weChatConfig.getMchId(),
 //                weChatConfig.getSerialNo(), "",
 //                weChatConfig.getV3CertPemPath(),
-//                JsonMapper.toJson(data),
+//                JsonMapperUtils.toJson(data),
 //                path.toFile());
     //        Map<String, Object> certificates = WxPayApi.v3Execution(
 //                RequestMethod.GET,
@@ -95,7 +95,7 @@ public class StoreController {
 
 
 //        Map<String, Object> result = WxPayApi.v3Execution(RequestMethod.POST, WxDomain.CHINA.getType(), WxApiType.APPLY_4_SUB.getType(),
-//                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), JsonMapper.toJson("speciallyMerchant"));
+//                weChatConfig.getMchId(), weChatConfig.getSerialNo(), weChatConfig.getKeyPemPath(), JsonMapperUtils.toJson("speciallyMerchant"));
 //        merchant.setApplymentId(Long.valueOf(result.get("applyment_id").toString()));
 //        Query query = Query.query(Criteria.where("id").is(merchant.getId()));
 //        mongoTemplate.upsert(query, Update.update("applymentId", merchant.getApplymentId()), Merchant.class);
