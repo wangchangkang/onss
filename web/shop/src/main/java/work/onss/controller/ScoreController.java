@@ -1,9 +1,11 @@
 package work.onss.controller;
 
 
-import com.github.wxpay.sdk.WXPay;
-import com.github.wxpay.sdk.WXPayConstants;
-import com.github.wxpay.sdk.WXPayUtil;
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.v3.util.SignUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import work.onss.config.WeChatConfig;
 import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
@@ -24,19 +25,23 @@ import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.github.binarywang.wxpay.constant.WxPayConstants.SignType.HMAC_SHA256;
 
 @Log4j2
 @RestController
 public class ScoreController {
 
     @Autowired
+    private WxPayService wxPayService;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private WeChatConfig weChatConfig;
 
     /**
      * @param id  主键
@@ -69,7 +74,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<Map<String, String>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws Exception {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws Exception {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
@@ -90,46 +95,28 @@ public class ScoreController {
         Set<String> pids = productMap.keySet();
         Query query = Query.query(Criteria.where("id").in(pids).and("sid").is(score.getSid()));
         List<Product> products = mongoTemplate.find(query, Product.class);
-
-        WXPay wxPay = new WXPay(weChatConfig, WXPayConstants.SignType.HMACSHA256,true);
         String ip = InetAddress.getLocalHost().getHostAddress();
-        Map<String, String> params = score.createUnifiedOrder(
-                uid,
-                ip,
-                store.getSubMchId(),
-                weChatConfig.getNotifyUrl(),
-                WXPayUtil.generateNonceStr(),
-                store.getName(),
-                productMap,
-                products
-        );
+
+        String nonceStr = SignUtils.genRandomStr();
+        WxPayConfig wxPayConfig = wxPayService.getConfig();
+        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = score.createUnifiedOrder(uid, ip, store.getSubMchId(), wxPayConfig.getNotifyUrl(), nonceStr, store.getName(), productMap, products);
 
         if (0 == products.size() && score.getTotal().equals(BigDecimal.ZERO)) {
             return Work.fail("请选择购买的商品!");
         }
-        Map<String, String> order = wxPay.unifiedOrder(params);
+        WxPayMpOrderResult wxPayMpOrderResult = wxPayService.createOrder(wxPayUnifiedOrderRequest);
 
-        if (!order.get("return_code").equals(WXPayConstants.SUCCESS) && !order.get("result_code").equals(WXPayConstants.SUCCESS)) {
-            log.error(order);
-//            return Work.fail(resultMap.get("return_msg"));
-        }
-        // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
-        String prepayId = order.getOrDefault("prepay_id", params.get("sign"));
-
-        // 二次签名，构建公众号唤起支付的参数,这里的签名方式要与上面统一下单请求签名方式保持一致
-        score.setPrepayId(prepayId);
+        score.setPrepayId(wxPayMpOrderResult.getPackageValue());
         mongoTemplate.insert(score);
-        Map<String, String> packageParams = new HashMap<>();
-        WXPayUtil.generateSignature(packageParams,weChatConfig.getKey(),WXPayConstants.SignType.HMACSHA256);
-        packageParams.put("id", score.getId());
-        return Work.success("创建订单成功", packageParams);
+        return Work.success("创建订单成功", wxPayMpOrderResult);
     }
 
 
     @PostMapping(value = {"scores/continuePay"})
-    public Work<Map<String, String>> pay(@RequestBody Score score) {
-        Map<String, String> packageParams = new HashMap<>();
-//        Map<String, String> packageParams = WxPayKit.miniAppPrepayIdCreateSign(score.getSubAppId(), score.getPrepayId(), weChatConfig.getApiKey(), SignType.HMACSHA256);
-        return Work.success("生成订单成功", packageParams);
+    public Work<WxPayMpOrderResult> pay(@RequestBody Score score) {
+        String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
+        String nonceStr = SignUtils.genRandomStr();
+        WxPayMpOrderResult payResult = WxPayMpOrderResult.builder().appId(score.getSubAppId()).timeStamp(timestamp).nonceStr(nonceStr).packageValue(score.getPrepayId()).signType(HMAC_SHA256).build();
+        return Work.success("生成订单成功", payResult);
     }
 }

@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 public class LoginController {
 
     @Autowired
-    private WeChatConfig weChatConfig;
-    @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;

@@ -1,6 +1,7 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.github.binarywang.wxpay.constant.WxPayConstants.TradeType.JSAPI;
 
 /**
  * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
@@ -111,7 +114,7 @@ public class Score implements Serializable {
      * @param body             商品描述
      * @return 微信支付参数
      */
-    public Map<String, String> createUnifiedOrder(
+    public WxPayUnifiedOrderRequest createUnifiedOrder(
             String uid,
             String spbill_create_ip,
             String sub_mch_id,
@@ -133,28 +136,28 @@ public class Score implements Serializable {
             product.setTotal(product.getAverage().multiply(new BigDecimal(cart.getNum())));
             total = total.add(product.getTotal());
         }
-        this.products = products;
 
-        HashMap<String, String> unifiedOrder = new HashMap<>();
-        unifiedOrder.put("sub_mch_id", sub_mch_id);
-        unifiedOrder.put("out_trade_no", out_trade_no);
-        unifiedOrder.put("spbill_create_ip", spbill_create_ip);
-        unifiedOrder.put("notify_url", notify_url);
-        unifiedOrder.put("trade_type", "JSAPI");
 
-        unifiedOrder.put("sub_appid", this.subAppId);
-        unifiedOrder.put("sub_openid", this.openid);
+        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = new WxPayUnifiedOrderRequest();
+        wxPayUnifiedOrderRequest.setSubMchId(sub_mch_id);
+        wxPayUnifiedOrderRequest.setOutTradeNo(out_trade_no);
+        wxPayUnifiedOrderRequest.setSpbillCreateIp(spbill_create_ip);
+        wxPayUnifiedOrderRequest.setNotifyUrl(notify_url);
+        wxPayUnifiedOrderRequest.setTradeType(JSAPI);
+        wxPayUnifiedOrderRequest.setSubAppId(this.subAppId);
+        wxPayUnifiedOrderRequest.setSubOpenid(this.getOpenid());
+        wxPayUnifiedOrderRequest.setTotalFee(total.movePointRight(2).intValue());
+        wxPayUnifiedOrderRequest.setBody(body);
 
-        this.total = total;
-        unifiedOrder.put("total_fee", String.valueOf(total.movePointRight(2).intValue()));
-        this.name = body;
-        unifiedOrder.put("body", body);
 
         LocalDateTime now = LocalDateTime.now();
         this.insertTime = now;
         this.payTime = now;
         this.updateTime = now;
         this.uid = uid;
-        return unifiedOrder;
+        this.products = products;
+        this.total = total;
+        this.name = body;
+        return wxPayUnifiedOrderRequest;
     }
 }
