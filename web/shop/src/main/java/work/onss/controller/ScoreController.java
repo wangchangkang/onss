@@ -101,7 +101,7 @@ public class ScoreController {
         WxPayConfig wxPayConfig = wxPayService.getConfig();
         WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = score.createUnifiedOrder(uid, ip, store.getSubMchId(), wxPayConfig.getNotifyUrl(), nonceStr, store.getName(), productMap, products);
 
-        if (0 == products.size() && score.getTotal().equals(BigDecimal.ZERO)) {
+        if (products.isEmpty() && score.getTotal().equals(BigDecimal.ZERO)) {
             return Work.fail("请选择购买的商品!");
         }
         WxPayMpOrderResult wxPayMpOrderResult = wxPayService.createOrder(wxPayUnifiedOrderRequest);
