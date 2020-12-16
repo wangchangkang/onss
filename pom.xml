@@ -56,6 +56,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
@@ -75,21 +79,15 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.wxpay</groupId>
-            <artifactId>wxpay-sdk</artifactId>
-            <version>0.0.3</version>
-        </dependency>
-        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
             <version>5.4.4</version>
         </dependency>
         <dependency>
-            <groupId>com.github.wechatpay-apiv3</groupId>
-            <artifactId>wechatpay-apache-httpclient</artifactId>
-            <version>0.2.1</version>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-cp</artifactId>
+            <version>${binarywang.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>wx-java-pay-spring-boot-starter</artifactId>
@@ -107,27 +105,6 @@
             <version>${binarywang.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.github.binarywang</groupId>-->
-<!--            <artifactId>weixin-java-miniapp</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.github.binarywang</groupId>-->
-<!--            <artifactId>weixin-java-pay</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.binarywang</groupId>-->
-<!--            <artifactId>weixin-java-mp</artifactId>-->
-<!--            <version>4.0.0</version>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>com.github.binarywang</groupId>
-            <artifactId>weixin-java-cp</artifactId>
-            <version>${binarywang.version}</version>
-        </dependency>
 
     </dependencies>
 

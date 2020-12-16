@@ -38,9 +38,12 @@ import static com.github.binarywang.wxpay.constant.WxPayConstants.SignType.HMAC_
 public class ScoreController {
 
     @Autowired
-    private WxPayService wxPayService;
-    @Autowired
     private MongoTemplate mongoTemplate;
+
+
+    @Autowired
+    private WxPayService wxPayService;
+
 
 
     /**
@@ -116,7 +119,13 @@ public class ScoreController {
     public Work<WxPayMpOrderResult> pay(@RequestBody Score score) {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
         String nonceStr = SignUtils.genRandomStr();
-        WxPayMpOrderResult payResult = WxPayMpOrderResult.builder().appId(score.getSubAppId()).timeStamp(timestamp).nonceStr(nonceStr).packageValue(score.getPrepayId()).signType(HMAC_SHA256).build();
+        WxPayMpOrderResult payResult = WxPayMpOrderResult.builder()
+                .appId(score.getSubAppId())
+                .timeStamp(timestamp)
+                .nonceStr(nonceStr)
+                .packageValue(score.getPrepayId())
+                .signType(HMAC_SHA256)
+                .build();
         return Work.success("生成订单成功", payResult);
     }
 }

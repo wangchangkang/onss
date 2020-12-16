@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
-import work.onss.config.WeChatConfig;
 import work.onss.domain.Info;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.QYWXSession;
