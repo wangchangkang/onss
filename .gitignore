@@ -48,3 +48,4 @@ tessdata-4.0.0/
 .DS_Store
 *.gz
 *.log
+resources/
