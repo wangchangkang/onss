@@ -57,8 +57,6 @@ public class WechatController {
                 WxCpTpXmlPackage tpXmlPackage = WxCpTpXmlPackage.fromXml(decryptMsgs);
                 log.info(JsonMapperUtils.toJson(tpXmlPackage));
                 wxCpTpService.setSuiteTicket(tpXmlPackage.getAllFieldsMap().get("SuiteTicket").toString());
-                String suiteAccessToken = wxCpTpService.getSuiteAccessToken(true);
-                wxCpTpConfigStorage.updateSuiteAccessToken(suiteAccessToken, 7000);
                 wxCpTpService.setWxCpTpConfigStorage(wxCpTpConfigStorage);
                 WxCpTpConfiguration.setCpTpService(suiteid, wxCpTpService);
                 return "success";
@@ -70,11 +68,6 @@ public class WechatController {
 
         try {
             if (wxCpTpService.checkSignature(signature, timestamp, nonce, echostr)) {
-                String suiteAccessToken = wxCpTpService.getSuiteAccessToken(false);
-                wxCpTpConfigStorage.updateSuiteAccessToken(suiteAccessToken, 7000);
-                wxCpTpService.setWxCpTpConfigStorage(wxCpTpConfigStorage);
-                WxCpTpConfiguration.setCpTpService(suiteid, wxCpTpService);
-                log.info("suiteAccessToken:{}", suiteAccessToken);
                 String decrypt = new WxCpTpCryptUtil(wxCpTpConfigStorage).decrypt(echostr);
                 log.info("数据回调-解密后的xml数据:{}", decrypt);
                 return decrypt;

@@ -41,7 +41,7 @@ public class ScoreController {
     private MongoTemplate mongoTemplate;
 
 
-    @Autowired
+    @Autowired(required = false)
     private WxPayService wxPayService;
 
 

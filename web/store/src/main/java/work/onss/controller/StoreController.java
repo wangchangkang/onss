@@ -15,6 +15,10 @@ import com.github.binarywang.wxpay.service.MerchantMediaService;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.Applyment4SubServiceImpl;
 import com.github.binarywang.wxpay.service.impl.MerchantMediaServiceImpl;
+import com.github.binarywang.wxpay.v3.auth.AutoUpdateCertificatesVerifier;
+import com.github.binarywang.wxpay.v3.auth.PrivateKeySigner;
+import com.github.binarywang.wxpay.v3.auth.WxPayCredentials;
+import com.github.binarywang.wxpay.v3.util.PemUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,9 +38,11 @@ import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.PrivateKey;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -195,7 +201,7 @@ public class StoreController {
         return Work.success("操作成功", store);
     }
 
-    @Autowired
+    @Autowired(required = false)
     private WxPayService wxPayService;
 
     /**
@@ -296,7 +302,7 @@ public class StoreController {
                 .set("updateTime", LocalDateTime.now())
                 .set("licenseNumber", merchant.getLicenseNumber())
                 .set("licenseCopy", merchant.getLicenseCopy())
-                .set("applymentId",wxPayApplymentCreateResult.getApplymentId());
+                .set("applymentId", wxPayApplymentCreateResult.getApplymentId());
         mongoTemplate.updateFirst(queryStore, updateStore, Store.class);
 
         return Work.success("编辑成功", store);
@@ -319,6 +325,15 @@ public class StoreController {
         Query pictureQuery = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
         Picture picture = mongoTemplate.findOne(pictureQuery, Picture.class);
         if (picture == null) {
+            String mchId = ""; // 商户号
+            String certSerialNo = ""; // 商户证书序列号
+            String apiV3Key = ""; // api密钥
+            String privateKeyStr = "商户私钥";
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(privateKeyStr.getBytes(StandardCharsets.UTF_8));
+            PrivateKey privateKey = PemUtils.loadPrivateKey(byteArrayInputStream);
+            PrivateKeySigner privateKeySigner = new PrivateKeySigner(certSerialNo, privateKey);
+            WxPayCredentials wxPayCredentials = new WxPayCredentials(mchId, privateKeySigner);
+            AutoUpdateCertificatesVerifier autoUpdateCertificatesVerifier = new AutoUpdateCertificatesVerifier(wxPayCredentials, apiV3Key.getBytes(StandardCharsets.UTF_8));
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);
             ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(path.toFile());
             picture = new Picture(path.getFileName().toString(), filePath, id, imageUploadResult.getMediaId());
