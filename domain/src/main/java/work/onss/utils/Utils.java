@@ -1,5 +1,6 @@
 package work.onss.utils;
 
+import cn.hutool.crypto.SecureUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.DigestUtils;
@@ -70,6 +71,30 @@ public class Utils {
         int nameCount = path.getNameCount();
 
         return StringUtils.cleanPath(path.subpath(nameCount - count, nameCount).toString());
+    }
+
+
+    public static String uploadFile(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
+        String filename = file.getOriginalFilename();
+        if (filename == null) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        int index = filename.lastIndexOf(".");
+        if (index == -1) {
+            throw new ServiceException("fail", "文件格式错误!");
+        }
+        Path path = Paths.get(dir, more);
+        if (!Files.exists(path) && !path.toFile().mkdirs()) {
+            throw new ServiceException("fail", "上传失败!");
+        }
+        String sha256 = SecureUtil.sha256(file.getInputStream());
+        path = path.resolve(sha256.concat(filename.substring(index)));
+        // 判断文件是否存在
+        if (!Files.exists(path)) {
+            file.transferTo(path);
+        }
+        int nameCount = path.getNameCount();
+        return StringUtils.cleanPath(path.subpath(nameCount - more.length - 2, nameCount).toString());
     }
 
     public static String rsaEncryptOAEP(String message, X509Certificate certificate) throws IllegalBlockSizeException {

@@ -16,10 +16,10 @@ Page({
     licenseNumber: '92330411MA2JDMCK9H',
     merchantName: '嘉兴市秀洲区洪合镇依茗纱服饰经营部',
     legalPerson: '谷圣齐',
-    licenseCopy: 'picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg',
-    idCardCopy: 'picture/5f8c11f5669d3c156d6446bb/e017fae920c6ce6ba405a00bdca89aae.jpg',
-    idCardNational: 'picture/5f8c11f5669d3c156d6446bb/e2a536e37bf02292ed99c84a6d237964.jpg',
-    qualifications: ['picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg'],
+    // licenseCopy: 'picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg',
+    // idCardCopy: 'picture/5f8c11f5669d3c156d6446bb/e017fae920c6ce6ba405a00bdca89aae.jpg',
+    // idCardNational: 'picture/5f8c11f5669d3c156d6446bb/e2a536e37bf02292ed99c84a6d237964.jpg',
+    // qualifications: ['picture/5f8c11f5669d3c156d6446bb/e99abf526cc228add0a4cc1e6f2c1766.jpg'],
 
     idCardNumber: '371523199111201292',
     idCardName: '谷圣齐',
@@ -115,7 +115,7 @@ Page({
       let count = e.currentTarget.dataset.count
       const length = this.data[id].length;
       count = count - length;
-      chooseImages(authorization, info, count, `${domain}/stores/${info.cid}/uploadPicture`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/stores/${info.sid}/imageUploadV3`).then((data) => {
         this.setData({
           [`${id}[${length}]`]: data
         })
@@ -126,7 +126,7 @@ Page({
   chooseImage: function (e) {
     const id = e.currentTarget.id;
     checkCustomer().then(({ authorization, info }) => {
-      chooseImage(authorization, info, `${domain}/stores/${info.sid}/uploadPicture`,).then((data) => {
+      chooseImage(authorization, info, `${domain}/stores/${info.sid}/imageUploadV3`,).then((data) => {
         this.setData({
           [`${id}`]: data
         })

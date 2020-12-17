@@ -315,13 +315,20 @@ public class StoreController {
      * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/{id}/uploadPicture")
-    public Work<Picture> upload(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
-        Path path = Utils.upload(file, systemConfig.getFilePath(), id);
-        int nameCount = path.getNameCount();
-        String filePath = StringUtils.cleanPath(path.subpath(nameCount - 3, nameCount).toString());
-        if (!Files.exists(path)) {
-            file.transferTo(path);
-        }
+    public Work<String> uploadPicture(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
+        String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
+        return Work.success("上传成功", filePath);
+    }
+
+    /**
+     * @param file 文件
+     * @param id   商户ID
+     * @return 文件存储路径
+     * @throws Exception 文件上传失败异常
+     */
+    @PostMapping("stores/{id}/imageUploadV3")
+    public Work<Picture> imageUploadV3(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
+        String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
         Query pictureQuery = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
         Picture picture = mongoTemplate.findOne(pictureQuery, Picture.class);
         if (picture == null) {
@@ -337,8 +344,8 @@ public class StoreController {
 //            AutoUpdateCertificatesVerifier autoUpdateCertificatesVerifier = new AutoUpdateCertificatesVerifier(wxPayCredentials, apiV3Key.getBytes(StandardCharsets.UTF_8));
 
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);
-            ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(path.toFile());
-            picture = new Picture(path.getFileName().toString(), filePath, id, imageUploadResult.getMediaId());
+            ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(file.getInputStream(), file.getName());
+            picture = new Picture(file.getName(), filePath, id, imageUploadResult.getMediaId());
             mongoTemplate.insert(picture);
         }
         return Work.success("上传成功", picture);
