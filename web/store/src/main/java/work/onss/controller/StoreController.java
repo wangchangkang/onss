@@ -9,6 +9,7 @@ import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
 import com.github.binarywang.wxpay.bean.applyment.enums.IdTypeEnum;
 import com.github.binarywang.wxpay.bean.applyment.enums.SalesScenesTypeEnum;
 import com.github.binarywang.wxpay.bean.media.ImageUploadResult;
+import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.Applyment4SubService;
 import com.github.binarywang.wxpay.service.MerchantMediaService;
@@ -219,7 +220,14 @@ public class StoreController {
         Merchant merchant = store.getMerchant();
 
         Applyment4SubService applyment4SubService = new Applyment4SubServiceImpl(wxPayService);
+        WxPayConfig wxPayConfig = wxPayService.getConfig();
 
+        WxPayApplyment4SubCreateRequest.ContactInfo contactInfo = WxPayApplyment4SubCreateRequest.ContactInfo.builder()
+                .contactEmail(merchant.getContactEmail())
+                .contactIdNumber(merchant.getContactIdNumber())
+                .contactName(merchant.getContactName())
+                .mobilePhone(merchant.getMobilePhone())
+                .build();
         /* 营业执照 */
         WxPayApplyment4SubCreateRequest.SubjectInfo.BusinessLicenseInfo businessLicenseInfo = WxPayApplyment4SubCreateRequest.SubjectInfo.BusinessLicenseInfo.builder()
                 .legalPerson(merchant.getLegalPerson())
@@ -254,7 +262,7 @@ public class StoreController {
         /* 小程序场景 */
         WxPayApplyment4SubCreateRequest.BusinessInfo.SalesInfo.MiniProgramInfo miniProgramInfo = WxPayApplyment4SubCreateRequest.BusinessInfo.SalesInfo.MiniProgramInfo.builder()
                 .miniProgramAppid(merchant.getMiniProgramAppid())
-                .miniProgramPics(merchant.getMiniProgramPics())
+                .miniProgramPics(merchant.getMiniProgramPics().stream().map(Picture::getMediaId).collect(Collectors.toList()))
                 .build();
 
         /* 经营场景 */
@@ -287,17 +295,20 @@ public class StoreController {
                 .bankAddressCode(Arrays.stream(merchant.getBankAddress().getCode()).skip(code.length - 1).findFirst().orElseThrow(() -> new ServiceException("fail", "银行地址编号错误")))
                 .bankName(merchant.getBankName())
                 .build();
+        String businessCode = wxPayConfig.getMchId().concat("_").concat(id);
         WxPayApplyment4SubCreateRequest wxPayApplyment4SubCreateRequest = WxPayApplyment4SubCreateRequest.builder()
+                .contactInfo(contactInfo)
                 .subjectInfo(subjectInfo)
                 .businessInfo(businessInfo)
                 .settlementInfo(settlementInfo)
                 .bankAccountInfo(bankAccountInfo)
-                .businessCode("")
+                .businessCode(businessCode)
                 .build();
         WxPayApplymentCreateResult wxPayApplymentCreateResult = applyment4SubService.createApply(wxPayApplyment4SubCreateRequest);
 
 
         Update updateStore = Update.update("merchant", merchant)
+                .set("businessCode",businessCode)
                 .set("state", store.getState())
                 .set("updateTime", LocalDateTime.now())
                 .set("licenseNumber", merchant.getLicenseNumber())
@@ -344,8 +355,8 @@ public class StoreController {
 //            AutoUpdateCertificatesVerifier autoUpdateCertificatesVerifier = new AutoUpdateCertificatesVerifier(wxPayCredentials, apiV3Key.getBytes(StandardCharsets.UTF_8));
 
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);
-            ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(file.getInputStream(), file.getName());
-            picture = new Picture(file.getName(), filePath, id, imageUploadResult.getMediaId());
+            ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(file.getInputStream(), file.getOriginalFilename());
+            picture = new Picture(file.getOriginalFilename(), filePath, id, imageUploadResult.getMediaId());
             mongoTemplate.insert(picture);
         }
         return Work.success("上传成功", picture);

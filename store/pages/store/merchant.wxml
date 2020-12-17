@@ -1,10 +1,5 @@
 <form bindsubmit='saveMerchant'>
 
-  <input type="text" hidden="true" name="licenseCopy" value="{{licenseCopy}}" />
-  <input type="text" hidden="true" name="idCardCopy" value="{{idCardCopy}}" />
-  <input type="text" hidden="true" name="idCardNational" value="{{idCardNational}}" />
-  <input type="text" hidden="true" name="idCardA" value="{{idCardA}}" />
-  <input type="text" hidden="true" name="idCardB" value="{{idCardB}}" />
   <block wx:if="{{state === 'APPLYMENT_STATE_REJECTED'}}">
     <view class="weui-cells__title">驳回原因</view>
     <view class="weui-cells weui-cells_after-title">
@@ -71,7 +66,7 @@
     <image wx:if="{{licenseCopy == null}}" src="/images/license.png" mode="aspectFit" style="width:100%"
       bindtap="chooseImage" id="licenseCopy"></image>
     <icon wx:if="{{licenseCopy!=null}}" type="cancel" bindtap="deletePicture" id="licenseCopy"></icon>
-    <image wx:if="{{licenseCopy!=null}}" src="{{prefix}}{{licenseCopy}}" mode="aspectFit" style="width:100%"></image>
+    <image wx:if="{{licenseCopy!=null}}" src="{{prefix}}{{licenseCopy.filePath}}" mode="aspectFit" style="width:100%"></image>
 
     <view class="weui-cell ">
       <view class="weui-cell__hd">
@@ -121,7 +116,7 @@
     <image wx:if="{{idCardCopy == null}}" src="/images/idCardA.png" mode="aspectFit" style="width:100%"
       bindtap="chooseImage" id="idCardCopy"></image>
     <icon wx:if="{{idCardCopy!=null}}" type="cancel" bindtap="deletePicture" id="idCardCopy"></icon>
-    <image wx:if="{{idCardCopy!=null}}" src="{{prefix}}{{idCardCopy}}" mode="aspectFit" style="width:100%"></image>
+    <image wx:if="{{idCardCopy!=null}}" src="{{prefix}}{{idCardCopy.filePath}}" mode="aspectFit" style="width:100%"></image>
     <view class="weui-cell ">
       <view class="weui-cell__hd">
         <view class="weui-label">法人证件号</view>
@@ -141,7 +136,7 @@
     <image wx:if="{{idCardNational == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%"
       bindtap="chooseImage" id="idCardNational"></image>
     <icon wx:if="{{idCardNational!=null}}" type="cancel" bindtap="deletePicture" id="idCardNational"></icon>
-    <image wx:if="{{idCardNational!=null}}" src="{{prefix}}{{idCardNational}}" mode="aspectFit" style="width:100%">
+    <image wx:if="{{idCardNational!=null}}" src="{{prefix}}{{idCardNational.filePath}}" mode="aspectFit" style="width:100%">
     </image>
     <view class="weui-cell ">
       <view class="weui-cell__hd">
@@ -177,7 +172,7 @@
     <image wx:if="{{idCardA == null}}" src="/images/idCardA.png" mode="aspectFit" style="width:100%"
       bindtap="chooseImage" id="idCardA"></image>
     <icon wx:if="{{idCardA!=null}}" type="cancel" bindtap="deletePicture" id="idCardA"></icon>
-    <image wx:if="{{idCardA!=null}}" src="{{prefix}}{{idCardA}}" mode="aspectFit" style="width:100%"></image>
+    <image wx:if="{{idCardA!=null}}" src="{{prefix}}{{idCardA.filePath}}" mode="aspectFit" style="width:100%"></image>
     <view class="weui-cell ">
       <view class="weui-cell__hd">
         <view class="weui-label">法人证件号</view>
@@ -197,7 +192,7 @@
     <image wx:if="{{idCardB == null}}" src="/images/idCardB.png" mode="aspectFit" style="width:100%"
       bindtap="chooseImage" id="idCardB"></image>
     <icon wx:if="{{idCardB!=null}}" type="cancel" bindtap="deletePicture" id="idCardB"></icon>
-    <image wx:if="{{idCardB!=null}}" src="{{prefix}}{{idCardB}}" mode="aspectFit" style="width:100%"></image>
+    <image wx:if="{{idCardB!=null}}" src="{{prefix}}{{idCardB.filePath}}" mode="aspectFit" style="width:100%"></image>
     <view class="weui-cell ">
       <view class="weui-cell__hd">
         <view class="weui-label">开始时间</view>
@@ -227,8 +222,7 @@
         <view class="weui-label">所属行业</view>
       </view>
       <view class="weui-cell__bd">
-        <picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}" name="qualificationType"
-          value="{{qualificationType}}">
+        <picker bindchange="qualificationTypeChange" range="{{qualification[subjectType]}}" range-key="qualificationType">
           <view>{{qualificationType?qualificationType:'请选择所属行业'}}</view>
         </picker>
       </view>
@@ -249,7 +243,7 @@
               <block wx:for="{{qualifications}}" wx:key="*this">
                 <view class="weui-uploader__file" id="{{item}}">
                   <icon type="cancel" bindtap="deletePictures" id="qualifications"></icon>
-                  <image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
+                  <image class="weui-uploader__img" src="{{prefix}}{{item.filePath}}" mode="aspectFill" />
                 </view>
               </block>
             </view>
@@ -277,7 +271,7 @@
               <block wx:for="{{miniProgramPics}}" wx:key="*this">
                 <view class="weui-uploader__file" id="{{item}}">
                   <icon type="cancel" bindtap="deletePictures" id="miniProgramPics"></icon>
-                  <image class="weui-uploader__img" src="{{prefix}}{{item}}" mode="aspectFill" />
+                  <image class="weui-uploader__img" src="{{prefix}}{{item.filePath}}" mode="aspectFill" />
                 </view>
               </block>
             </view>

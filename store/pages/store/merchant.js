@@ -35,11 +35,11 @@ Page({
     merchantShortname: '依茗纱服饰经营部',
     servicePhone: '15314906861',
 
-    qualificationType: '零售批发/生活娱乐/其他',
+    // qualificationType: '零售批发/生活娱乐/其他',
 
     bankAccountType: 'BANK_ACCOUNT_TYPE_PERSONAL',
-    accountName: '嘉兴市秀洲区洪合镇依茗纱服饰经营部',
-    accountBank: '工商银行',
+    accountName: '谷圣齐',
+    accountBank: '其他银行',
     bankAddress: {
       code: ["330000", "330400", "330411"],
       postcode: "314001",
@@ -53,15 +53,20 @@ Page({
   saveMerchant: function (e) {
     wx.showLoading({ title: '加载中。。。' });
     checkStore().then(({ authorization, info }) => {
-      const { bankAddress, qualifications, miniProgramPics } = this.data
+      const { bankAddress, qualifications, miniProgramPics,licenseCopy,idCardCopy,idCardNational,settlementId,qualificationType } = this.data
       console.log(e.detail.value);
       const data = {
         merchant: {
           ...e.detail.value,
-          miniProgramSubAppid: appid,
+          miniProgramAppid: appid,
           bankAddress,
           qualifications,
-          miniProgramPics
+          miniProgramPics,
+          licenseCopy,
+          idCardCopy,
+          idCardNational,
+          settlementId,
+          qualificationType
         },
         state: e.detail.target.id
       };
@@ -166,8 +171,9 @@ Page({
 
   /** 所属行业 */
   qualificationTypeChange: function (e) {
+    const {settlementId,qualificationType} = qualification[this.data.subjectType][e.detail.value];
     this.setData({
-      qualificationType: qualification[this.data.subjectType][e.detail.value]
+      settlementId,qualificationType
     })
   },
 
