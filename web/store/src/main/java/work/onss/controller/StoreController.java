@@ -62,7 +62,7 @@ public class StoreController {
      */
     @GetMapping(value = {"stores"})
     public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
-        Query queryStore = Query.query(Criteria.where("customers.id").is(cid));
+        Query queryStore = Query.query(Criteria.where("customers.id").is(cid).and("state").ne(ApplymentStateEnum.APPLYMENT_STATE_CANCELED));
         List<Store> stores = mongoTemplate.find(queryStore, Store.class);
         return Work.success("加载成功", stores);
     }
