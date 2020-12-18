@@ -5,10 +5,10 @@
 		</view>
 		<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
 			<view class="weui-media-box__title weui-flex">
-				<view class="weui-flex__item" style="line-height:2">{{name}}</view> <button type="default" size="mini"
-					bindtap="updateStatus">{{status?'营业中':'休息中'}}</button>
+				<view class="weui-flex__item" style="line-height:2">{{name}}</view>
 			</view>
 			<view class="weui-media-box__desc">联系方式：{{username}} {{phone}} </view>
+			<button size='mini' style="font-size:28rpx" bindtap="updateStatus">{{status?'营业中':'休息中'}}</button>
 		</view>
 	</view>
 	<view class="weui-cell">
