@@ -57,9 +57,9 @@
       <view class="weui-cell__bd">
         <radio-group class="weui-input radio-group" bindchange="radioChange" id='subjectType' name="subjectType">
           <label class="radio">
-            <radio value="SUBJECT_TYPE_INDIVIDUAL" checked="{{subjectType == 'SUBJECT_TYPE_INDIVIDUAL'}}" />个体 </label>
+            <radio value="SUBJECT_TYPE_INDIVIDUAL" checked="{{subjectType === 'SUBJECT_TYPE_INDIVIDUAL'}}" />个体 </label>
           <label class="radio">
-            <radio value="SUBJECT_TYPE_ENTERPRISE" checked="{{subjectType == 'SUBJECT_TYPE_ENTERPRISE'}}" />企业 </label>
+            <radio value="SUBJECT_TYPE_ENTERPRISE" checked="{{subjectType === 'SUBJECT_TYPE_ENTERPRISE'}}" />企业 </label>
         </radio-group>
       </view>
     </view>
@@ -255,33 +255,33 @@
       </view>
     </view>
 
-    <view class="weui-cell">
-      <view class="weui-cell__bd">
-        <view class="weui-uploader">
-          <view class="weui-uploader__hd">
-            <view class="weui-uploader__overview">
-              <view class="weui-uploader__title">小程序截图</view>
-              <view class="weui-uploader__info">{{miniProgramPics?miniProgramPics.length:0}}/5 <icon
-                  bindtap="clearPictues" id="miniProgramPics" type="clear" size="21"></icon>
-              </view>
-            </view>
-          </view>
-          <view class="weui-uploader__bd">
-            <view class="weui-uploader__files" id="uploaderFiles">
-              <block wx:for="{{miniProgramPics}}" wx:key="*this">
-                <view class="weui-uploader__file" id="{{item}}">
-                  <icon type="cancel" bindtap="deletePictures" id="miniProgramPics"></icon>
-                  <image class="weui-uploader__img" src="{{prefix}}{{item.filePath}}" mode="aspectFill" />
-                </view>
-              </block>
-            </view>
-            <view wx:if="{{!miniProgramPics||miniProgramPics.length<5}}" class="weui-uploader__input-box">
-              <view class="weui-uploader__input" bindtap="chooseImages" id="miniProgramPics" data-count="5"></view>
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
+<!--    <view class="weui-cell">-->
+<!--      <view class="weui-cell__bd">-->
+<!--        <view class="weui-uploader">-->
+<!--          <view class="weui-uploader__hd">-->
+<!--            <view class="weui-uploader__overview">-->
+<!--              <view class="weui-uploader__title">小程序截图</view>-->
+<!--              <view class="weui-uploader__info">{{miniProgramPics?miniProgramPics.length:0}}/5 <icon-->
+<!--                  bindtap="clearPictues" id="miniProgramPics" type="clear" size="21"></icon>-->
+<!--              </view>-->
+<!--            </view>-->
+<!--          </view>-->
+<!--          <view class="weui-uploader__bd">-->
+<!--            <view class="weui-uploader__files" id="uploaderFiles">-->
+<!--              <block wx:for="{{miniProgramPics}}" wx:key="*this">-->
+<!--                <view class="weui-uploader__file" id="{{item}}">-->
+<!--                  <icon type="cancel" bindtap="deletePictures" id="miniProgramPics"></icon>-->
+<!--                  <image class="weui-uploader__img" src="{{prefix}}{{item.filePath}}" mode="aspectFill" />-->
+<!--                </view>-->
+<!--              </block>-->
+<!--            </view>-->
+<!--            <view wx:if="{{!miniProgramPics||miniProgramPics.length<5}}" class="weui-uploader__input-box">-->
+<!--              <view class="weui-uploader__input" bindtap="chooseImages" id="miniProgramPics" data-count="5"></view>-->
+<!--            </view>-->
+<!--          </view>-->
+<!--        </view>-->
+<!--      </view>-->
+<!--    </view>-->
   </view>
   <view class="weui-cells__title">结算银行账户</view>
   <view class="weui-cells weui-cells_after-title" style="font-size:27rpx">
@@ -293,9 +293,9 @@
         <radio-group class="weui-input radio-group" bindchange="radioChange" id="bankAccountType"
           name="bankAccountType">
           <label class="radio"></label>
-          <radio value="BANK_ACCOUNT_TYPE_PERSONAL" checked="{{bankAccountType == 'BANK_ACCOUNT_TYPE_PERSONAL'}}" />个人
+          <radio value="BANK_ACCOUNT_TYPE_PERSONAL" checked="{{bankAccountType === 'BANK_ACCOUNT_TYPE_PERSONAL'}}" />个人
           <label class="radio"></label>
-          <radio value="BANK_ACCOUNT_TYPE_CORPORATE" checked="{{bankAccountType == 'BANK_ACCOUNT_TYPE_CORPORATE'}}" />公户
+          <radio value="BANK_ACCOUNT_TYPE_CORPORATE" checked="{{bankAccountType === 'BANK_ACCOUNT_TYPE_CORPORATE'}}" />公户
         </radio-group>
       </view>
     </view>
