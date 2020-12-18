@@ -135,35 +135,4 @@ public class ProductController {
         mongoTemplate.updateFirst(queryProduct, Update.update("sid", null), Product.class);
         return Work.success("删除成功", true);
     }
-
-    /**
-     * @param file 文件
-     * @param sid  商户ID
-     * @return 文件存储路径
-     * @throws Exception 文件上传失败异常
-     */
-    @PostMapping("products/uploadPicture")
-    public Work<String> upload(@RequestParam(value = "file") MultipartFile file, @RequestParam(name = "sid") String sid) throws Exception {
-
-        String filename = file.getOriginalFilename();
-        if (filename == null) {
-            return Work.fail("上传失败!");
-        }
-        int index = filename.lastIndexOf(".");
-        if (index == -1) {
-            return Work.fail("文件格式错误!");
-        }
-        String md5 = SecureUtil.md5(file.getInputStream());
-
-        Path path = Paths.get(systemConfig.getFilePath(), sid, "products", md5.concat(filename.substring(index)));
-        Path parent = path.getParent();
-        if (!Files.exists(parent) && !parent.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
-        }
-        // 判断文件是否存在
-        if (!Files.exists(path)) {
-            file.transferTo(path);
-        }
-        return Work.success("上传成功", path.toString());
-    }
 }

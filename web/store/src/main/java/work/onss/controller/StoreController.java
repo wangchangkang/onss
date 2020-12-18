@@ -136,7 +136,7 @@ public class StoreController {
 
             Update updateStore = Update.update("state", applymentStateEnum);
             if (applymentStateEnum == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
-                updateStore.set("subMchId",applymentStateQueryResult.getSubMchid());
+                updateStore.set("subMchId", applymentStateQueryResult.getSubMchid());
                 updateStore.set("status", true);
             } else {
                 updateStore.set("status", false);
@@ -326,7 +326,7 @@ public class StoreController {
      * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/{id}/uploadPicture")
-    public Work<String> uploadPicture(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
+    public Work<String> uploadPicture(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
         String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
         return Work.success("上传成功", filePath);
     }
@@ -338,7 +338,7 @@ public class StoreController {
      * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/{id}/imageUploadV3")
-    public Work<Picture> imageUploadV3(@RequestParam(value = "file") MultipartFile file, @PathVariable String id) throws Exception {
+    public Work<Picture> imageUploadV3(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
         String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
         Query pictureQuery = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
         Picture picture = mongoTemplate.findOne(pictureQuery, Picture.class);
