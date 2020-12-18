@@ -28,7 +28,7 @@ public class Info {
     /**
      * 微信支付申请单号
      */
-    private Long applymentId;
+    private String applymentId;
     /**
      * 微信支付商户号
      */
