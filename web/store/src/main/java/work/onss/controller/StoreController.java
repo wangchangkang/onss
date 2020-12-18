@@ -136,6 +136,7 @@ public class StoreController {
 
             Update updateStore = Update.update("state", applymentStateEnum);
             if (applymentStateEnum == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
+                updateStore.set("subMchId",applymentStateQueryResult.getSubMchid());
                 updateStore.set("status", true);
             } else {
                 updateStore.set("status", false);
