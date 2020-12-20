@@ -1,10 +1,14 @@
 package work.onss.controller;
 
 
+import cn.binarywang.wx.miniapp.api.WxMaService;
+import cn.binarywang.wx.miniapp.api.WxMaUserService;
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import lombok.extern.log4j.Log4j2;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,7 +25,6 @@ import work.onss.domain.Info;
 import work.onss.domain.User;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXLogin;
-import work.onss.vo.WXSession;
 import work.onss.vo.Work;
 
 import java.nio.charset.StandardCharsets;
@@ -40,15 +43,20 @@ public class LoginController {
     @Autowired
     private SystemConfig systemConfig;
 
+    @Autowired(required = false)
+    private WxMaService wxMaService;
+
     /**
      * @param wxLogin 微信登陆信息
      * @return 密钥
      */
     @PostMapping(value = {"wxLogin"})
-    public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) {
-//        WXSession wxSession = miniProgramService.jscode2session(wxLogin.getAppid(), weChatConfig.getKeys().get(wxLogin.getAppid()), wxLogin.getCode());
-        WXSession wxSession = new WXSession();
-        Query query = Query.query(Criteria.where("openid").is(wxSession.getOpenid()));
+    public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
+        wxMaService = wxMaService.switchoverTo(wxLogin.getAppid());
+        WxMaUserService userService = wxMaService.getUserService();
+
+        WxMaJscode2SessionResult wxMaJscode2SessionResult =userService.getSessionInfo(wxLogin.getCode());
+        Query query = Query.query(Criteria.where("openid").is(wxMaJscode2SessionResult.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
 
         Map<String, Object> result = new HashMap<>();
@@ -56,8 +64,8 @@ public class LoginController {
 
         if (user == null) {
             user = new User();
-            user.setOpenid(wxSession.getOpenid());
-            user.setSession_key(wxSession.getSession_key());
+            user.setOpenid(wxMaJscode2SessionResult.getOpenid());
+            user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setAppid(wxLogin.getAppid());
             user.setInsertTime(now);
             user.setUpdateTime(now);
@@ -70,9 +78,9 @@ public class LoginController {
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else if (user.getPhone() == null) {
             query.addCriteria(Criteria.where("id").is(user.getId()));
-            user.setSession_key(wxSession.getSession_key());
+            user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setUpdateTime(now);
-            mongoTemplate.updateFirst(query, Update.update("session_key", user.getSession_key()).set("lastTime", user.getUpdateTime()), User.class);
+            mongoTemplate.updateFirst(query, Update.update("sessionKey", user.getSessionKey()).set("lastTime", user.getUpdateTime()), User.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
             Info info = new Info(user.getId(),now);
             byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));

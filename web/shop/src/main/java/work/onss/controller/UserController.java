@@ -53,7 +53,7 @@ public class UserController {
         }
 
         //微信用户手机号
-        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSession_key(), wxRegister.getIv());
+        String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSessionKey(), wxRegister.getIv());
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
 
         //添加用户手机号

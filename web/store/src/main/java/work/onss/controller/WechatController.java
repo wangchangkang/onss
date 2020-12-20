@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.config.WxCpTpConfiguration;
+import work.onss.config.WechatConfiguration;
 import work.onss.utils.JsonMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ import java.io.IOException;
 public class WechatController {
 
     @Autowired
-    private WxCpTpConfiguration wxCpTpConfiguration;
+    private WechatConfiguration wechatConfiguration;
 
     @RequestMapping(value = {"wechat/{suiteid}"}, produces = {"text/xml"})
     public String wechat(
@@ -38,11 +38,11 @@ public class WechatController {
             @RequestParam(name = "nonce", required = false) String nonce,
             @RequestParam(name = "echostr", required = false) String echostr,
             HttpServletRequest request) throws IOException {
-        wxCpTpConfiguration.initServices();
+        wechatConfiguration.initServices();
 
         log.info("数据回调");
         log.info("signature = [{}], timestamp = [{}], nonce = [{}], echostr = [{}]", signature, timestamp, nonce, echostr);
-        WxCpTpService wxCpTpService = WxCpTpConfiguration.getCpTpService(suiteid);
+        WxCpTpService wxCpTpService = WechatConfiguration.wxCpTpServiceMap.get(suiteid);
         WxCpTpConfigStorage wxCpTpConfigStorage = wxCpTpService.getWxCpTpConfigStorage();
         log.info("数据回调");
         log.info("signature = [{}], timestamp = [{}], nonce = [{}], echostr = [{}]", signature, timestamp, nonce, echostr);
@@ -58,7 +58,7 @@ public class WechatController {
                 log.info(JsonMapperUtils.toJson(tpXmlPackage));
                 wxCpTpService.setSuiteTicket(tpXmlPackage.getAllFieldsMap().get("SuiteTicket").toString());
                 wxCpTpService.setWxCpTpConfigStorage(wxCpTpConfigStorage);
-                WxCpTpConfiguration.setCpTpService(suiteid, wxCpTpService);
+                WechatConfiguration.wxCpTpServiceMap.put(suiteid, wxCpTpService);
                 return "success";
             } catch (Exception e) {
                 log.error("校验失败：{}", e.getMessage());

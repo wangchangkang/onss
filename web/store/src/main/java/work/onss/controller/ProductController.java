@@ -1,6 +1,5 @@
 package work.onss.controller;
 
-import cn.hutool.crypto.SecureUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,15 +9,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Product;
-import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 

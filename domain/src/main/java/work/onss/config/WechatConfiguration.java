@@ -1,0 +1,69 @@
+package work.onss.config;
+
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
+import com.google.common.collect.Maps;
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
+import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
+import me.chanjar.weixin.cp.tp.service.WxCpTpService;
+import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+
+@Data
+@Log4j2
+@Configuration
+public class WechatConfiguration {
+    @Autowired
+    private WechatMpProperties wechatMpProperties;
+    @Autowired
+    private WechatOpenProperties wechatOpenProperties;
+    @Autowired
+    private WechatWorkProperties wechatWorkProperties;
+
+    public static Map<String, WxCpTpService> wxCpTpServiceMap = Maps.newHashMap();
+    public static Map<String, WxPayService> wxPayServiceMap = Maps.newHashMap();
+
+
+    @PostConstruct
+    public void initServices() {
+        List<WechatOpenProperties.AppConfig> appConfigs = this.wechatOpenProperties.getAppConfigs();
+        appConfigs.forEach(appConfig -> {
+            WxCpTpDefaultConfigImpl wxCpTpDefaultConfig = new WxCpTpDefaultConfigImpl();
+            wxCpTpDefaultConfig.setSuiteId(appConfig.getSuiteId());
+            wxCpTpDefaultConfig.setAesKey(appConfig.getAesKey());
+            wxCpTpDefaultConfig.setToken(appConfig.getToken());
+            wxCpTpDefaultConfig.setSuiteSecret(appConfig.getSecret());
+            wxCpTpDefaultConfig.setCorpId(wechatOpenProperties.getCorpId());
+            WxCpTpService tpService = new WxCpTpServiceImpl();
+            tpService.setWxCpTpConfigStorage(wxCpTpDefaultConfig);
+            wxCpTpServiceMap.put(appConfig.getSuiteId(), tpService);
+        });
+        wechatMpProperties.getAppConfigs().forEach(appConfig -> {
+            WxPayConfig wxPayConfig = new WxPayConfig();
+            wxPayConfig.setAppId(wechatMpProperties.getAppId());
+            wxPayConfig.setMchId(wechatMpProperties.getMchId());
+            wxPayConfig.setMchKey(wechatMpProperties.getMchKey());
+            wxPayConfig.setSubAppId(appConfig.getSubAppId());
+            wxPayConfig.setSubMchId(appConfig.getSubMchId());
+            wxPayConfig.setKeyPath(wechatMpProperties.getKeyPath());
+            //以下是apiv3以及支付分相关
+            wxPayConfig.setServiceId(wechatMpProperties.getServiceId());
+            wxPayConfig.setPayScoreNotifyUrl(wechatMpProperties.getPayScoreNotifyUrl());
+            wxPayConfig.setPrivateKeyPath(wechatMpProperties.getPrivateKeyPath());
+            wxPayConfig.setPrivateCertPath(wechatMpProperties.getPrivateCertPath());
+            wxPayConfig.setCertSerialNo(wechatMpProperties.getCertSerialNo());
+            wxPayConfig.setApiV3Key(wechatMpProperties.getApiv3Key());
+            WxPayService wxPayService = new WxPayServiceImpl();
+            wxPayService.setConfig(wxPayConfig);
+            wxPayServiceMap.put(appConfig.getSubAppId(), wxPayService);
+        });
+
+    }
+}

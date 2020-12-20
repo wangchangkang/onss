@@ -10,19 +10,30 @@ import java.util.List;
 
 @Log4j2
 @Data
-@ConfigurationProperties(prefix = "wechat.cptp")
-@EnableConfigurationProperties(WxCpTpProperties.class)
+@ConfigurationProperties(prefix = "wechat.mp")
+@EnableConfigurationProperties(WechatMpProperties.class)
 @Configuration
-public class WxCpTpProperties {
-    private String corpId;
+public class WechatMpProperties {
+    private String appId;
+    private String mchId;
+    private String mchKey;
+    private String keyPath;
+    private String serviceId;
+    private String certSerialNo;
+    private String apiv3Key;
+    private String payScoreNotifyUrl;
+    private String privateKeyPath;
+    private String privateCertPath;
     private List<AppConfig> appConfigs;
 
     @Data
     public static class AppConfig {
-        private String suiteId;
+        private String subAppId;
+        private String subMchId;
         private String secret;
         private String token;
         private String aesKey;
     }
-}
 
+
+}

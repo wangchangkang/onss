@@ -39,7 +39,7 @@ public class User implements Serializable {
     /**
      * 小程序session_key
      */
-    private String session_key;
+    private String sessionKey;
     /**
      * 用户创建时间
      */
