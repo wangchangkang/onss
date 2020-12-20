@@ -45,13 +45,15 @@ public class LoginController {
     @Autowired
     private SystemConfig systemConfig;
 
+    @Autowired
+    private WechatConfiguration wechatConfiguration;
     /**
      * @param wxLogin 微信用户CODE及小程序APPID
      * @return 密钥及营业员信息
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
-
+        wechatConfiguration.initServices();
         WxCpTpService wxCpTpService = WechatConfiguration.wxCpTpServiceMap.get(wxLogin.getSuiteId());
         WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult = wxCpTpService.jsCode2Session(wxLogin.getCode());
         Query queryCustomer = Query.query(Criteria

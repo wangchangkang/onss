@@ -33,8 +33,7 @@ public class WechatConfiguration {
 
     @PostConstruct
     public void initServices() {
-        List<WechatOpenProperties.AppConfig> appConfigs = this.wechatOpenProperties.getAppConfigs();
-        appConfigs.forEach(appConfig -> {
+        wechatOpenProperties.getAppConfigs().forEach(appConfig -> {
             WxCpTpDefaultConfigImpl wxCpTpDefaultConfig = new WxCpTpDefaultConfigImpl();
             wxCpTpDefaultConfig.setSuiteId(appConfig.getSuiteId());
             wxCpTpDefaultConfig.setAesKey(appConfig.getAesKey());

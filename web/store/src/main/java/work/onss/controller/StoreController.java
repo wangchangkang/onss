@@ -30,6 +30,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import work.onss.config.SystemConfig;
+import work.onss.config.WechatConfiguration;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
@@ -129,6 +130,8 @@ public class StoreController {
             mongoTemplate.updateFirst(queryStore, Update.update("status", status), Store.class);
             return Work.success("操作成功", status);
         } else {
+            wechatConfiguration.initServices();
+            WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
             Applyment4SubService applyment4SubService = new Applyment4SubServiceImpl(wxPayService);
             ApplymentStateQueryResult applymentStateQueryResult = applyment4SubService.queryApplyStatusByApplymentId(store.getApplymentId());
             ApplymentStateEnum applymentStateEnum = applymentStateQueryResult.getApplymentState();
@@ -209,8 +212,8 @@ public class StoreController {
         return Work.success("操作成功", store);
     }
 
-    @Autowired(required = false)
-    private WxPayService wxPayService;
+    @Autowired
+    private WechatConfiguration wechatConfiguration;
 
     /**
      * @param id    商户ID
@@ -291,6 +294,8 @@ public class StoreController {
                 .bankAddressCode(Arrays.stream(merchant.getBankAddress().getCode()).skip(code.length - 1).findFirst().orElseThrow(() -> new ServiceException("fail", "银行地址编号错误")))
                 .bankName(merchant.getBankName())
                 .build();
+        wechatConfiguration.initServices();
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
         WxPayConfig wxPayConfig = wxPayService.getConfig();
         String businessCode = wxPayConfig.getMchId().concat("_").concat(id);
         WxPayApplyment4SubCreateRequest wxPayApplyment4SubCreateRequest = WxPayApplyment4SubCreateRequest.builder()
@@ -354,6 +359,8 @@ public class StoreController {
 //            WxPayCredentials wxPayCredentials = new WxPayCredentials(mchId, privateKeySigner);
 //            AutoUpdateCertificatesVerifier autoUpdateCertificatesVerifier = new AutoUpdateCertificatesVerifier(wxPayCredentials, apiV3Key.getBytes(StandardCharsets.UTF_8));
 
+            wechatConfiguration.initServices();
+            WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);
             ImageUploadResult imageUploadResult = merchantMediaService.imageUploadV3(file.getInputStream(), file.getOriginalFilename());
             picture = new Picture(file.getOriginalFilename(), filePath, id, imageUploadResult.getMediaId());
