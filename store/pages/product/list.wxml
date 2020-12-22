@@ -1,21 +1,21 @@
 <form>
 	<view class="weui-cells__title">
 		<view class="weui-flex">
-			<icon class="weui-flex__item">
-				<button size='mini' style="font-size:28rpx" form-type="reset">重置</button>
-			</icon>
-			<icon type="success" bindtap="up">
-				<button size='mini' style="font-size:28rpx" form-type="reset">上架</button>
-			</icon>
-			<icon type="cancel" bindtap="lower">
-				<button size='mini' style="font-size:28rpx" form-type="reset">下架</button>
-			</icon>
-			<icon type="clear" bindtap="delete">
-				<button size='mini' style="font-size:28rpx" form-type="reset">删除</button>
-			</icon>
+			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset">
+				<icon type="cancel"></icon>重置
+			</button>
+			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="up">
+				<icon type="success"></icon>上架
+			</button>
 
+			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="lower">
+				<icon type="cancel"></icon>下架
+			</button>
+			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="delete">
+				<icon type="clear"></icon>删除
+			</button>
 			<navigator class="weui-flex__item weui-cell__ft" url="/pages/product/create">
-				<button size='mini' style="font-size:28rpx" bindtap='createProduct'>+</button>
+				<button style="font-size:25rpx">+</button>
 			</navigator>
 		</view>
 	</view>
