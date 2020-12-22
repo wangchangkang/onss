@@ -58,7 +58,7 @@ Page({
       const data = {
         merchant: {
           ...e.detail.value,
-          miniProgramAppid: appid,
+          miniProgramAppid: "wxe78290c2a5313de3",
           bankAddress,
           qualifications,
           miniProgramPics,
