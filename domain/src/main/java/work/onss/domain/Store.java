@@ -69,7 +69,7 @@ public class Store implements Serializable {
     /**
      * 商户宣传册
      */
-    private Collection<Picture> pictures;
+    private Collection<String> pictures;
     /**
      * 商户微视频
      */

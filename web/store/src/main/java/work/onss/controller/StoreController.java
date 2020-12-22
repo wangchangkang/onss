@@ -129,6 +129,8 @@ public class StoreController {
             Query queryStore = Query.query(Criteria.where("id").is(id));
             mongoTemplate.updateFirst(queryStore, Update.update("status", status), Store.class);
             return Work.success("操作成功", status);
+        } else if (store.getState() == ApplymentStateEnum.APPLYMENT_STATE_EDITTING || store.getState() == ApplymentStateEnum.APPLYMENT_STATE_REJECTED) {
+            return Work.fail("1977.merchant.not_register", "请完善商户资质");
         } else {
             wechatConfiguration.initServices();
             WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
@@ -137,18 +139,11 @@ public class StoreController {
             ApplymentStateEnum applymentStateEnum = applymentStateQueryResult.getApplymentState();
             Query queryStore = Query.query(Criteria.where("id").is(id));
 
-            Update updateStore = Update.update("state", applymentStateEnum);
-            if (applymentStateEnum == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
-                updateStore.set("subMchId", applymentStateQueryResult.getSubMchid());
-                updateStore.set("status", true);
-            } else {
-                updateStore.set("status", false);
-            }
+            Update updateStore = Update.update("state", applymentStateEnum)
+                    .set("subMchId", applymentStateQueryResult.getSubMchid())
+                    .set("status", applymentStateEnum == ApplymentStateEnum.APPLYMENT_STATE_FINISHED);
             mongoTemplate.updateFirst(queryStore, updateStore, Store.class);
             switch (applymentStateEnum) {
-                case APPLYMENT_STATE_EDITTING:
-                case APPLYMENT_STATE_REJECTED:
-                    return Work.fail("1977.merchant.not_register", "请完善商户资质");
                 case APPLYMENT_STATE_AUDITING:
                     return Work.fail("正在审核中,请耐心等待");
                 case APPLYMENT_STATE_TO_BE_CONFIRMED:
