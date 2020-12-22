@@ -78,8 +78,8 @@ public class StoreController {
                 .near(point, Metrics.KILOMETERS)
                 .spherical(false)
                 .maxDistance(new Distance(r, Metrics.KILOMETERS))
-                .with(pageable)
-                .query(query);
+                .query(query)
+                .with(pageable);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         return Work.success("加载成功", storeGeoResults.getContent());
 

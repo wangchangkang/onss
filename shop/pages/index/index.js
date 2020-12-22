@@ -52,13 +52,13 @@ Page({
       const { latitude, longitude, number } = this.data;
       if (latitude && longitude) {
         getStores(longitude, latitude, null, number + 1).then((data) => {
-          if (data.content.length == 0) {
+          if (data.content.length === 0) {
             this.setData({
               last: true,
             });
           } else {
             this.setData({
-              number,
+              number: number + 1,
               stores: [...this.data.stores, ...data.content],
             });
           }
@@ -74,7 +74,7 @@ Page({
                 });
               } else {
                 this.setData({
-                  number,
+                  number: number + 1,
                   stores: [...this.data.stores, ...data.content],
                 });
               }
