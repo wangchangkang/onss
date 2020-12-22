@@ -26,7 +26,7 @@
 	</view>
 </view>
 <view class="weui-flex">
-	<button class="weui-flex__item" type="primary">
-		<navigator url="/pages/product/edit?id={{product.id}}&index={{index}}">编辑</navigator>
-	</button>
+	<navigator class="weui-flex__item" url="/pages/product/edit?id={{product.id}}&index={{index}}">
+		<button type="primary">编辑</button>
+	</navigator>
 </view>

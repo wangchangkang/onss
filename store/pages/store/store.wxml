@@ -41,7 +41,7 @@
 </swiper>
 
 <view class="weui-flex">
-	<button class="weui-flex__item" type="primary">
-		<navigator url="/pages/store/edit?id={{id}}">编辑</navigator>
-	</button>
+	<navigator class="weui-flex__item" url="/pages/store/edit?id={{id}}">
+		<button type="primary">编辑</button>
+	</navigator>
 </view>
