@@ -6,14 +6,11 @@ import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import me.chanjar.weixin.cp.config.impl.WxCpTpDefaultConfigImpl;
 import me.chanjar.weixin.cp.tp.service.WxCpTpService;
-import me.chanjar.weixin.cp.tp.service.impl.WxCpTpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -31,19 +28,12 @@ public class WechatConfiguration {
     public static Map<String, WxPayService> wxPayServiceMap = Maps.newHashMap();
 
 
+
+
+
     @PostConstruct
     public void initServices() {
-        wechatOpenProperties.getAppConfigs().forEach(appConfig -> {
-            WxCpTpDefaultConfigImpl wxCpTpDefaultConfig = new WxCpTpDefaultConfigImpl();
-            wxCpTpDefaultConfig.setSuiteId(appConfig.getSuiteId());
-            wxCpTpDefaultConfig.setAesKey(appConfig.getAesKey());
-            wxCpTpDefaultConfig.setToken(appConfig.getToken());
-            wxCpTpDefaultConfig.setSuiteSecret(appConfig.getSecret());
-            wxCpTpDefaultConfig.setCorpId(wechatOpenProperties.getCorpId());
-            WxCpTpService tpService = new WxCpTpServiceImpl();
-            tpService.setWxCpTpConfigStorage(wxCpTpDefaultConfig);
-            wxCpTpServiceMap.put(appConfig.getSuiteId(), tpService);
-        });
+
         wechatMpProperties.getAppConfigs().forEach(appConfig -> {
             WxPayConfig wxPayConfig = new WxPayConfig();
             wxPayConfig.setAppId(wechatMpProperties.getAppId());
