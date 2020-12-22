@@ -43,7 +43,7 @@ public class LoginController {
     @Autowired
     private SystemConfig systemConfig;
 
-    @Autowired(required = false)
+    @Autowired
     private WxMaService wxMaService;
 
     /**
@@ -52,7 +52,7 @@ public class LoginController {
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
-        wxMaService = wxMaService.switchoverTo(wxLogin.getAppid());
+        WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getAppid());
         WxMaUserService userService = wxMaService.getUserService();
 
         WxMaJscode2SessionResult wxMaJscode2SessionResult =userService.getSessionInfo(wxLogin.getCode());

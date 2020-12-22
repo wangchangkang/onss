@@ -1,5 +1,6 @@
 package work.onss.controller;
 
+import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +60,7 @@ public class StoreController {
                                               @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
         Query query = new Query();
+        query.addCriteria(Criteria.where("state").in(ApplymentStateEnum.APPLYMENT_STATE_FINISHED,ApplymentStateEnum.APPLYMENT_STATE_TO_BE_SIGNED));
         query.fields()
                 .exclude("customers")
                 .exclude("products")
