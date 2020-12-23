@@ -38,12 +38,14 @@ public class WechatConfiguration {
 
         wechatMpProperties.getAppConfigs().forEach(appConfig -> {
             WxPayConfig wxPayConfig = new WxPayConfig();
+            wxPayConfig.setUseSandboxEnv(wechatMpProperties.getUseSandboxEnv());
             wxPayConfig.setAppId(wechatMpProperties.getAppId());
             wxPayConfig.setMchId(wechatMpProperties.getMchId());
             wxPayConfig.setMchKey(wechatMpProperties.getMchKey());
             wxPayConfig.setSubAppId(appConfig.getSubAppId());
             wxPayConfig.setSubMchId(appConfig.getSubMchId());
             wxPayConfig.setKeyPath(wechatMpProperties.getKeyPath());
+            wxPayConfig.setNotifyUrl(wechatMpProperties.getNotifyUrl());
             //以下是apiv3以及支付分相关
             wxPayConfig.setServiceId(wechatMpProperties.getServiceId());
             wxPayConfig.setPayScoreNotifyUrl(wechatMpProperties.getPayScoreNotifyUrl());

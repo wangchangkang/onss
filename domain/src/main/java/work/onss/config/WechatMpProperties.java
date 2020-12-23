@@ -16,6 +16,8 @@ import java.util.List;
 public class WechatMpProperties {
     private String appId;
     private String mchId;
+    private String notifyUrl;
+    private Boolean useSandboxEnv;
     private String mchKey;
     private String keyPath;
     private String serviceId;

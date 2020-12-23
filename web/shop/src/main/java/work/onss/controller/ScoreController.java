@@ -1,9 +1,12 @@
 package work.onss.controller;
 
 
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.v3.util.SignUtils;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import work.onss.config.WechatConfiguration;
 import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
@@ -41,9 +45,8 @@ public class ScoreController {
     private MongoTemplate mongoTemplate;
 
 
-    @Autowired(required = false)
-    private WxPayService wxPayService;
-
+    @Autowired
+    private WechatConfiguration wechatConfiguration;
 
 
     /**
@@ -101,6 +104,8 @@ public class ScoreController {
         String ip = InetAddress.getLocalHost().getHostAddress();
 
         String nonceStr = SignUtils.genRandomStr();
+        wechatConfiguration.initServices();
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
         WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = score.createUnifiedOrder(uid, ip, store.getSubMchId(), wxPayConfig.getNotifyUrl(), nonceStr, store.getName(), productMap, products);
 
@@ -115,6 +120,10 @@ public class ScoreController {
     }
 
 
+    /**
+     * @param score 订单详情
+     * @return 小程序支付参数
+     */
     @PostMapping(value = {"scores/continuePay"})
     public Work<WxPayMpOrderResult> pay(@RequestBody Score score) {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
@@ -127,5 +136,20 @@ public class ScoreController {
                 .signType(HMAC_SHA256)
                 .build();
         return Work.success("生成订单成功", payResult);
+    }
+
+
+    /**
+     * @param body 微信支付通知请求信息
+     * @return 成功 或 失败
+     * @throws WxPayException 微信异常
+     */
+    @PostMapping(value = {"scores/notify"}, produces = {"text/xml"})
+    public String firstNotify(@RequestBody String body) throws WxPayException {
+        wechatConfiguration.initServices();
+        WxPayOrderNotifyResult result = WxPayOrderNotifyResult.fromXML(body);
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(result.getSubAppId());
+        result.checkResult(wxPayService, result.getSignType(), false);
+        return WxPayNotifyResponse.success("处理成功!");
     }
 }
