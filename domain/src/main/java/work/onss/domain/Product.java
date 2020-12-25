@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -75,19 +74,19 @@ public class Product implements Serializable {
      */
     @NotNull(message = "请填写库存数量")
     @Min(value = 1,message = "库存不能小于{value}")
-    private BigInteger stock;
+    private Integer stock;
     /**
      * 商品最小购买数量
      */
     @NotNull(message = "请填写最小购买数量")
     @Min(value = 1, message = "最小购买数量不能小于{value}")
-    private BigInteger min;
+    private Integer min;
     /**
      * 商品最大购买数量
      */
     @NotNull(message = "请填写最大购买数量")
     @Min(value = 1, message = "最大购买数量不能小于{value}")
-    private BigInteger max;
+    private Integer max;
     /**
      * 商品是否需要称重
      */
@@ -112,7 +111,7 @@ public class Product implements Serializable {
      * 商品购买数量
      */
     @Min(value = 1,message = "购买数量不能小于{value}",groups = Cart.class)
-    private BigInteger num = BigInteger.ZERO;// 购买数量
+    private Integer num = 0;// 购买数量
     /**
      * 商品小计
      */

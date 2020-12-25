@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.domain.Cart;
 import work.onss.domain.Prefer;
 import work.onss.domain.Product;
 import work.onss.vo.Work;

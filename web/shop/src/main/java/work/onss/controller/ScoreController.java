@@ -1,10 +1,10 @@
 package work.onss.controller;
 
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -20,9 +20,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
+import work.onss.domain.Cart;
 import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
+import work.onss.vo.WXScore;
 import work.onss.vo.Work;
 
 import java.math.BigDecimal;
@@ -31,7 +33,6 @@ import java.text.MessageFormat;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -80,11 +81,11 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws Exception {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @Validated @RequestBody Score score) throws Exception {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
-        Store store = mongoTemplate.findById(score.getSid(), Store.class);
+        Store store = mongoTemplate.findById(sid, Store.class);
 
         if (store == null) {
             return Work.fail("该店铺不存,请联系客服!");
@@ -97,22 +98,37 @@ public class ScoreController {
             String message = MessageFormat.format("营业时间:{0}-{1}", store.getOpenTime(), store.getCloseTime());
             return Work.fail(message);
         }
-        Map<String, Product> productMap = score.getProducts().stream().collect(Collectors.toMap(Product::getId, Function.identity()));
-        Set<String> pids = productMap.keySet();
-        Query query = Query.query(Criteria.where("id").in(pids).and("sid").is(score.getSid()));
-        List<Product> products = mongoTemplate.find(query, Product.class);
-        String ip = InetAddress.getLocalHost().getHostAddress();
 
+        Query cartQuery = Query.query(Criteria.where("uid").in(uid).and("sid").is(sid).and("checked").is(true));
+        List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+        Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, Function.identity()));
+
+        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet()).and("sid").is(sid));
+        List<Product> products = mongoTemplate.find(productQuery, Product.class);
+
+
+        String ip = InetAddress.getLocalHost().getHostAddress();
         String nonceStr = SignUtils.genRandomStr();
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
-        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = score.createUnifiedOrder(uid, ip, store.getSubMchId(), wxPayConfig.getNotifyUrl(), nonceStr, store.getName(), productMap, products);
-
+        BigDecimal total = score.checkTotal(productMap);
+        WXScore.WXScoreBuilder wxScoreBuilder = WXScore.builder();
+        /* 订单金额 */
+        WXScore.Amount amount = WXScore.Amount.builder()
+                .currency("CNY")
+                .total(total.movePointRight(2).intValue())
+                .build();
+        WXScore.Payer.builder()
+                .spOpenid(score.getOpenid())
+                .subOpenid();
         if (products.isEmpty() && score.getTotal().equals(BigDecimal.ZERO)) {
             return Work.fail("请选择购买的商品!");
         }
-        WxPayMpOrderResult wxPayMpOrderResult = wxPayService.createOrder(wxPayUnifiedOrderRequest);
+
+
+        WXScore wxScore = wxScoreBuilder.amount(amount).build();
+        String s = wxPayService.postV3("", wxScore.toString());
 
         score.setPrepayId(wxPayMpOrderResult.getPackageValue());
         mongoTemplate.insert(score);

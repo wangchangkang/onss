@@ -1,42 +1,127 @@
 package work.onss.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import work.onss.enums.ScoreEnum;
 import work.onss.exception.ServiceException;
+import work.onss.utils.JsonMapperUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.binarywang.wxpay.constant.WxPayConstants.TradeType.JSAPI;
-
-/**
- * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
- * <p>
- * 用户创建订单为待支付
- * 用户支付成功为待配货
- * 商户配货成功时判断是否需要补全差价
- * 如果需要补全差价则通知用户补全差价
- * 如果不需要补全差价则退款通知用户为待发货
- * 如果有配送者为待签收
- * 用户签收后为完成
- */
-@NoArgsConstructor
+@Builder
 @Data
 @Document
 public class Score implements Serializable {
     @Id
     private String id;
+    private String timeExpire;
+    private Score.Amount amount;
+    private Score.SettleInfo settleInfo;
+    /* 服务商 */
+    private String spMchid;
+    private String spAppid;
+
+    private String description;
+    private String subAppid;
+    private String notifyUrl;
+    private Score.Payer payer;
+    private String outTradeNo;
+    private String goodsTag;
+    private String subMchid;
+    private String attach;
+    private Score.Detail detail;
+    private Score.SceneInfo sceneInfo;
+
+
+
+    public static Score.ScoreBuilder builder(List<Product> products, Map<String, Cart> cartMap) {
+        return new Score.ScoreBuilder(new JsonMapper(streamFactory));
+    }
+    @Builder
+    @NoArgsConstructor
+    @Data
+    public static class Amount implements Serializable {
+
+        private BigDecimal total;
+        private String currency;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @Data
+    public static class SettleInfo implements Serializable {
+
+        private Boolean profitSharing;
+        private BigDecimal subsidyAmount;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @Data
+    public static class Payer implements Serializable {
+
+        private String spOpenid;
+        private String subOpenid;
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @Data
+    public static class Detail implements Serializable {
+
+        private String invoiceId;
+        private BigDecimal costPrice;
+        private List<Score.Detail.GoodsDetail> goodsDetail;
+
+        @Builder
+        @NoArgsConstructor
+        @Data
+        public static class GoodsDetail implements Serializable {
+
+            private BigDecimal subtotal;
+            private String goodsName;
+            private String wechatpayGoodsId;
+            private Integer quantity;
+            private String merchantGoodsId;
+            private BigDecimal unitPrice;
+        }
+    }
+
+    @Builder
+    @NoArgsConstructor
+    @Data
+    public static class SceneInfo implements Serializable {
+
+        private Score.SceneInfo.StoreInfo storeInfo;
+        private String deviceId;
+        private String payerClientIp;
+
+        @Builder
+        @NoArgsConstructor
+        @Data
+        public static class StoreInfo implements Serializable {
+
+            private String address;
+            private String areaCode;
+            private String name;
+            private String id;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return JsonMapperUtils.toJson(this, PropertyNamingStrategy.SNAKE_CASE);
+    }
+
     /**
      * 用户ID
      */
@@ -45,55 +130,11 @@ public class Score implements Serializable {
      * 商户ID
      */
     private String sid;
-    /**
-     * 发起微信支付的小程序APPID
-     */
-    private String subAppId;
-    /**
-     * 用户微信openid
-     */
-    private String openid;
-    /**
-     * 订单状态
-     */
-    private ScoreEnum status = ScoreEnum.PAY;
-    /**
-     * 订单总金额
-     */
-    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
-    private BigDecimal total;
-    /**
-     * 订单明细
-     */
-    private List<Product> products;
+
     /**
      * 订单接收地址
      */
     private Address address;
-    /**
-     * 订单创建时间
-     */
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private LocalDateTime insertTime;
-    /**
-     * 订单更新时间
-     */
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private LocalDateTime updateTime;
-    /**
-     * 订单支付时间
-     */
-    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss")
-    private LocalDateTime payTime;
-    /**
-     * 商户简称
-     */
-    private String name;
-    /**
-     * 订单编号
-     */
-    @Indexed(unique = true)
-    private String outTradeNo;
     /**
      * 微信支付ID
      */
@@ -114,50 +155,23 @@ public class Score implements Serializable {
      * @param body             商品描述
      * @return 微信支付参数
      */
-    public WxPayUnifiedOrderRequest createUnifiedOrder(
-            String uid,
-            String spbill_create_ip,
-            String sub_mch_id,
-            String notify_url,
-            String out_trade_no,
-            String body, Map<String, Product> productMap,
-            List<Product> products) throws ServiceException {
+    public BigDecimal checkTotal(Map<String, Product> productMap) throws ServiceException {
         BigDecimal total = BigDecimal.ZERO;
-        for (Product product : products) {
-            Product cart = productMap.get(product.getId());
-            if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
-                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", product.getName(), product.getMin(), product.getMax());
+        for (Score.Detail.GoodsDetail goodsDetail : this.detail.getGoodsDetail()) {
+            Product cart = productMap.get(goodsDetail.getMerchantGoodsId());
+            if (cart.getNum().compareTo(goodsDetail.getMax()) > 0 || cart.getNum().compareTo(goodsDetail.getMin()) < 0) {
+                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", goodsDetail.getGoodsName(), goodsDetail.getMin(), goodsDetail.getMax());
                 throw new ServiceException("fail", message);
-            } else if (cart.getNum().compareTo(product.getStock()) > 0) {
-                String message = MessageFormat.format("[{0}]库存不足!", product.getName());
+            } else if (cart.getNum().compareTo(goodsDetail.getQuantity()) > 0) {
+                String message = MessageFormat.format("[{0}]库存不足!", goodsDetail.getGoodsName());
                 throw new ServiceException("fail", message);
             }
-            product.setNum(cart.getNum());
-            product.setTotal(product.getAverage().multiply(new BigDecimal(cart.getNum())));
-            total = total.add(product.getTotal());
+
+            BigDecimal subtotal = goodsDetail.getUnitPrice().multiply(BigDecimal.valueOf(cart.getNum()));
+            goodsDetail.setQuantity(cart.getNum());
+            goodsDetail.setSubtotal(subtotal);
+            total = total.add(subtotal);
         }
-
-
-        WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest = new WxPayUnifiedOrderRequest();
-        wxPayUnifiedOrderRequest.setSubMchId(sub_mch_id);
-        wxPayUnifiedOrderRequest.setOutTradeNo(out_trade_no);
-        wxPayUnifiedOrderRequest.setSpbillCreateIp(spbill_create_ip);
-        wxPayUnifiedOrderRequest.setNotifyUrl(notify_url);
-        wxPayUnifiedOrderRequest.setTradeType(JSAPI);
-        wxPayUnifiedOrderRequest.setSubAppId(this.subAppId);
-        wxPayUnifiedOrderRequest.setSubOpenid(this.getOpenid());
-        wxPayUnifiedOrderRequest.setTotalFee(total.movePointRight(2).intValue());
-        wxPayUnifiedOrderRequest.setBody(body);
-
-
-        LocalDateTime now = LocalDateTime.now();
-        this.insertTime = now;
-        this.payTime = now;
-        this.updateTime = now;
-        this.uid = uid;
-        this.products = products;
-        this.total = total;
-        this.name = body;
-        return wxPayUnifiedOrderRequest;
+        return total;
     }
 }
