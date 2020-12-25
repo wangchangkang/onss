@@ -50,7 +50,7 @@ public class Cart implements Serializable {
      * 购物车数量
      */
     @Min(value = 0, message = "购买数量不能小于{value}")
-    private BigInteger num = BigInteger.ZERO;
+    private Integer num = 0;
     /**
      * 购物车小计
      */

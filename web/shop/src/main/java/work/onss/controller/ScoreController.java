@@ -1,7 +1,6 @@
 package work.onss.controller;
 
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
@@ -20,14 +19,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
-import work.onss.domain.Cart;
-import work.onss.domain.Product;
-import work.onss.domain.Score;
-import work.onss.domain.Store;
-import work.onss.vo.WXScore;
+import work.onss.domain.*;
 import work.onss.vo.Work;
 
-import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.time.LocalTime;
@@ -81,8 +75,8 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @Validated @RequestBody Score score) throws Exception {
-        if (score.getAddress() == null) {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @Validated @RequestBody Address address) throws Exception {
+        if (address == null) {
             return Work.fail("请选择收货地址");
         }
         Store store = mongoTemplate.findById(sid, Store.class);
@@ -110,29 +104,29 @@ public class ScoreController {
         String ip = InetAddress.getLocalHost().getHostAddress();
         String nonceStr = SignUtils.genRandomStr();
         wechatConfiguration.initServices();
-        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
         WxPayConfig wxPayConfig = wxPayService.getConfig();
-        BigDecimal total = score.checkTotal(productMap);
-        WXScore.WXScoreBuilder wxScoreBuilder = WXScore.builder();
+//        BigDecimal total = score.checkTotal(productMap);
+//        WXScore.WXScoreBuilder wxScoreBuilder = WXScore.builder();
         /* 订单金额 */
-        WXScore.Amount amount = WXScore.Amount.builder()
-                .currency("CNY")
-                .total(total.movePointRight(2).intValue())
-                .build();
-        WXScore.Payer.builder()
-                .spOpenid(score.getOpenid())
-                .subOpenid();
-        if (products.isEmpty() && score.getTotal().equals(BigDecimal.ZERO)) {
-            return Work.fail("请选择购买的商品!");
-        }
+//        WXScore.Amount amount = WXScore.Amount.builder()
+//                .currency("CNY")
+//                .total(total.movePointRight(2).intValue())
+//                .build();
+//        WXScore.Payer.builder()
+//                .spOpenid(score.getOpenid())
+//                .subOpenid();
+//        if (products.isEmpty() && score.getTotal().equals(BigDecimal.ZERO)) {
+//            return Work.fail("请选择购买的商品!");
+//        }
 
 
-        WXScore wxScore = wxScoreBuilder.amount(amount).build();
-        String s = wxPayService.postV3("", wxScore.toString());
-
-        score.setPrepayId(wxPayMpOrderResult.getPackageValue());
-        mongoTemplate.insert(score);
-        return Work.success("创建订单成功", wxPayMpOrderResult);
+//        WXScore wxScore = wxScoreBuilder.amount(amount).build();
+//        String s = wxPayService.postV3("", wxScore.toString());
+//
+//        score.setPrepayId(wxPayMpOrderResult.getPackageValue());
+//        mongoTemplate.insert(score);
+        return Work.success("创建订单成功", null);
     }
 
 
@@ -145,7 +139,7 @@ public class ScoreController {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
         String nonceStr = SignUtils.genRandomStr();
         WxPayMpOrderResult payResult = WxPayMpOrderResult.builder()
-                .appId(score.getSubAppId())
+                .appId("wxe78290c2a5313de3")
                 .timeStamp(timestamp)
                 .nonceStr(nonceStr)
                 .packageValue(score.getPrepayId())

@@ -1,8 +1,6 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -13,40 +11,33 @@ import work.onss.utils.JsonMapperUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-@Builder
+@NoArgsConstructor
 @Data
 @Document
 public class Score implements Serializable {
     @Id
     private String id;
     private String timeExpire;
-    private Score.Amount amount;
-    private Score.SettleInfo settleInfo;
-    /* 服务商 */
+    private Amount amount;
+    private SettleInfo settleInfo;
     private String spMchid;
     private String spAppid;
 
     private String description;
     private String subAppid;
     private String notifyUrl;
-    private Score.Payer payer;
+    private Payer payer;
     private String outTradeNo;
     private String goodsTag;
     private String subMchid;
     private String attach;
-    private Score.Detail detail;
-    private Score.SceneInfo sceneInfo;
+    private Detail detail;
+    private SceneInfo sceneInfo;
 
 
-
-    public static Score.ScoreBuilder builder(List<Product> products, Map<String, Cart> cartMap) {
-        return new Score.ScoreBuilder(new JsonMapper(streamFactory));
-    }
-    @Builder
     @NoArgsConstructor
     @Data
     public static class Amount implements Serializable {
@@ -55,7 +46,7 @@ public class Score implements Serializable {
         private String currency;
     }
 
-    @Builder
+
     @NoArgsConstructor
     @Data
     public static class SettleInfo implements Serializable {
@@ -64,7 +55,7 @@ public class Score implements Serializable {
         private BigDecimal subsidyAmount;
     }
 
-    @Builder
+
     @NoArgsConstructor
     @Data
     public static class Payer implements Serializable {
@@ -73,16 +64,16 @@ public class Score implements Serializable {
         private String subOpenid;
     }
 
-    @Builder
+
     @NoArgsConstructor
     @Data
     public static class Detail implements Serializable {
 
         private String invoiceId;
-        private BigDecimal costPrice;
-        private List<Score.Detail.GoodsDetail> goodsDetail;
+        private Double costPrice;
+        private List<GoodsDetail> goodsDetail;
 
-        @Builder
+
         @NoArgsConstructor
         @Data
         public static class GoodsDetail implements Serializable {
@@ -96,16 +87,16 @@ public class Score implements Serializable {
         }
     }
 
-    @Builder
+
     @NoArgsConstructor
     @Data
     public static class SceneInfo implements Serializable {
 
-        private Score.SceneInfo.StoreInfo storeInfo;
+        private StoreInfo storeInfo;
         private String deviceId;
         private String payerClientIp;
 
-        @Builder
+
         @NoArgsConstructor
         @Data
         public static class StoreInfo implements Serializable {
@@ -157,15 +148,15 @@ public class Score implements Serializable {
      */
     public BigDecimal checkTotal(Map<String, Product> productMap) throws ServiceException {
         BigDecimal total = BigDecimal.ZERO;
-        for (Score.Detail.GoodsDetail goodsDetail : this.detail.getGoodsDetail()) {
+        for (Detail.GoodsDetail goodsDetail : this.detail.getGoodsDetail()) {
             Product cart = productMap.get(goodsDetail.getMerchantGoodsId());
-            if (cart.getNum().compareTo(goodsDetail.getMax()) > 0 || cart.getNum().compareTo(goodsDetail.getMin()) < 0) {
-                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", goodsDetail.getGoodsName(), goodsDetail.getMin(), goodsDetail.getMax());
-                throw new ServiceException("fail", message);
-            } else if (cart.getNum().compareTo(goodsDetail.getQuantity()) > 0) {
-                String message = MessageFormat.format("[{0}]库存不足!", goodsDetail.getGoodsName());
-                throw new ServiceException("fail", message);
-            }
+//            if (cart.getNum().compareTo(goodsDetail.getMax()) > 0 || cart.getNum().compareTo(goodsDetail.getMin()) < 0) {
+//                String message = MessageFormat.format("[{0}]每次限购{1}-{2}", goodsDetail.getGoodsName(), goodsDetail.getMin(), goodsDetail.getMax());
+//                throw new ServiceException("fail", message);
+//            } else if (cart.getNum().compareTo(goodsDetail.getQuantity()) > 0) {
+//                String message = MessageFormat.format("[{0}]库存不足!", goodsDetail.getGoodsName());
+//                throw new ServiceException("fail", message);
+//            }
 
             BigDecimal subtotal = goodsDetail.getUnitPrice().multiply(BigDecimal.valueOf(cart.getNum()));
             goodsDetail.setQuantity(cart.getNum());
