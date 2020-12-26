@@ -1,7 +1,8 @@
 package work.onss.domain;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
@@ -21,9 +22,10 @@ import java.time.LocalDateTime;
  *
  * @author wangchanghao
  */
+@Builder
 @Log4j2
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 @Document
 public class Address implements Serializable {
     @Id

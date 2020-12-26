@@ -99,13 +99,30 @@ public class ScoreController {
 
         Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet()).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        User user = mongoTemplate.findById(uid, User.class);
+        if (user == null){
+            return Work.fail("该用户不存在!");
+        }
 
-
-        String ip = InetAddress.getLocalHost().getHostAddress();
-        String nonceStr = SignUtils.genRandomStr();
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
         WxPayConfig wxPayConfig = wxPayService.getConfig();
+
+        Score.Detail detail = new Score.Detail(products, cartMap);
+        Score.Amount amount = Score.Amount.builder().currency("CNY").total(detail.getCostPrice()).build();
+        Score.Payer payer = Score.Payer.builder().subOpenid(user.getSubOpenid()).build();
+        Score.builder()
+                .detail(detail)
+                .amount(amount)
+                .payer(payer)
+                .spAppid(wxPayConfig.getAppId())
+                .spMchid(wxPayConfig.getMchId())
+                .subAppid(wxPayConfig.getSubAppId())
+                .subMchid(store.getSubMchId())
+                .description(store.getName())
+        ;
+        String nonceStr = SignUtils.genRandomStr();
+
 //        BigDecimal total = score.checkTotal(productMap);
 //        WXScore.WXScoreBuilder wxScoreBuilder = WXScore.builder();
         /* 订单金额 */
