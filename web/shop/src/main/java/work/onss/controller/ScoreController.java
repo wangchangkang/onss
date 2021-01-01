@@ -75,7 +75,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @Validated @RequestBody Address address) throws Exception {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid,@RequestParam(name = "appid") String appid, @Validated @RequestBody Address address) throws Exception {
         if (address == null) {
             return Work.fail("请选择收货地址");
         }
@@ -105,7 +105,7 @@ public class ScoreController {
         }
 
         wechatConfiguration.initServices();
-        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(appid);
         WxPayConfig wxPayConfig = wxPayService.getConfig();
 //
 //        Score.Detail detail = new Score.Detail(products, cartMap);
