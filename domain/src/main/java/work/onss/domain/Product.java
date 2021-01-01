@@ -111,12 +111,12 @@ public class Product implements Serializable {
      * 商品购买数量
      */
     @Min(value = 1,message = "购买数量不能小于{value}",groups = Cart.class)
-    private Integer num = 0;// 购买数量
+    private Integer num = 0;
     /**
      * 商品小计
      */
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
-    private BigDecimal total = BigDecimal.ZERO;// 小计
+    private BigDecimal total = BigDecimal.ZERO;
     /**
      * 商品是否喜欢
      */

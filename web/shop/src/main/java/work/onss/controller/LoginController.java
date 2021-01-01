@@ -64,7 +64,7 @@ public class LoginController {
 
         if (user == null) {
             user = new User();
-            user.setOpenid(wxMaJscode2SessionResult.getOpenid());
+            user.setSubOpenid(wxMaJscode2SessionResult.getOpenid());
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setAppid(wxLogin.getAppid());
             user.setInsertTime(now);

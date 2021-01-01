@@ -107,20 +107,20 @@ public class ScoreController {
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
         WxPayConfig wxPayConfig = wxPayService.getConfig();
+//
+//        Score.Detail detail = new Score.Detail(products, cartMap);
+//        Score.Amount amount = Score.Amount.builder().currency("CNY").total(detail.getCostPrice()).build();
+//        Score.Payer payer = Score.Payer.builder().subOpenid(user.getSubOpenid()).build();
+//        Score.builder()
+//                .detail(detail)
+//                .amount(amount)
+//                .payer(payer)
+//                .spAppid(wxPayConfig.getAppId())
+//                .spMchid(wxPayConfig.getMchId())
+//                .subAppid(wxPayConfig.getSubAppId())
+//                .subMchid(store.getSubMchId())
+//                .description(store.getName())
 
-        Score.Detail detail = new Score.Detail(products, cartMap);
-        Score.Amount amount = Score.Amount.builder().currency("CNY").total(detail.getCostPrice()).build();
-        Score.Payer payer = Score.Payer.builder().subOpenid(user.getSubOpenid()).build();
-        Score.builder()
-                .detail(detail)
-                .amount(amount)
-                .payer(payer)
-                .spAppid(wxPayConfig.getAppId())
-                .spMchid(wxPayConfig.getMchId())
-                .subAppid(wxPayConfig.getSubAppId())
-                .subMchid(store.getSubMchId())
-                .description(store.getName())
-        ;
         String nonceStr = SignUtils.genRandomStr();
 
 //        BigDecimal total = score.checkTotal(productMap);
