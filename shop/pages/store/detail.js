@@ -6,7 +6,7 @@ Page({
   onLoad: function (options) {
     const authorization = wx.getStorageSync('authorization');
     const info = wx.getStorageSync('info');
-    getProduct(options.id, authorization, info.uid).then((data) => {
+    getProduct(options.id, authorization,info, info.uid).then((data) => {
       console.log(data.content);
       this.setData({
         ...data.content

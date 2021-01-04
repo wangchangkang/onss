@@ -63,7 +63,7 @@ public class Product implements Serializable {
     @DecimalMin(value = "0.00",message = "商品均价不能小于{value}元")
     @Digits(fraction = 2,message = "单价小数位不能大于{value}", integer = 10)
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
-    private BigDecimal average;
+    private Double average;
     /**
      * 商品均价单位
      */
@@ -116,7 +116,7 @@ public class Product implements Serializable {
      * 商品小计
      */
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
-    private BigDecimal total = BigDecimal.ZERO;
+    private Double total = 0.0;
     /**
      * 商品是否喜欢
      */

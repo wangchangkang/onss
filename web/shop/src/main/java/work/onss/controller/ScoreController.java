@@ -75,11 +75,11 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid,@RequestParam(name = "appid") String appid, @Validated @RequestBody Address address) throws Exception {
-        if (address == null) {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) {
+        if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
-        Store store = mongoTemplate.findById(sid, Store.class);
+        Store store = mongoTemplate.findById(score.getSid(), Store.class);
 
         if (store == null) {
             return Work.fail("该店铺不存,请联系客服!");
@@ -93,11 +93,9 @@ public class ScoreController {
             return Work.fail(message);
         }
 
-        Query cartQuery = Query.query(Criteria.where("uid").in(uid).and("sid").is(sid).and("checked").is(true));
-        List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
-        Map<String, Cart> cartMap = carts.stream().collect(Collectors.toMap(Cart::getPid, Function.identity()));
+        Map<String, Product> cartMap = score.getProducts().stream().collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet()).and("sid").is(sid));
+        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet()).and("sid").is(score.getSid()));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
         User user = mongoTemplate.findById(uid, User.class);
         if (user == null){
@@ -105,7 +103,7 @@ public class ScoreController {
         }
 
         wechatConfiguration.initServices();
-        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(appid);
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
 //
 //        Score.Detail detail = new Score.Detail(products, cartMap);

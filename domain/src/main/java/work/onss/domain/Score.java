@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
@@ -70,7 +73,7 @@ public class Score implements Serializable {
      * 订单总金额
      */
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
-    private BigDecimal total;
+    private Double total;
     /**
      * 订单明细
      */
@@ -113,5 +116,17 @@ public class Score implements Serializable {
      */
     @Indexed(unique = true)
     private String transactionId;
+
+    public void updateProduct(List<Product> products) {
+        Map<String, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
+        double total = 0.0;
+        for (Product product : this.getProducts()) {
+            Product price = productMap.get(product.getId());
+            product.setTotal(price.getAverage() * product.getNum());
+            product.setAverage(price.getAverage());
+            total = total + product.getTotal();
+        }
+        this.total = total;
+    }
 
 }
