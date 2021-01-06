@@ -37,9 +37,13 @@ public class User implements Serializable {
      */
     private String subOpenid;
     /**
-     * 小程序APPID
+     * 服务商公众号ID
      */
-    private String appid;
+    private String spAppId;
+    /**
+     * 子商户公众号ID
+     */
+    private String subAppId;
     /**
      * 小程序session_key
      */
