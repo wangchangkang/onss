@@ -19,10 +19,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
-import work.onss.domain.*;
+import work.onss.domain.Product;
+import work.onss.domain.Score;
+import work.onss.domain.Store;
+import work.onss.domain.User;
 import work.onss.vo.Work;
 
-import java.net.InetAddress;
 import java.text.MessageFormat;
 import java.time.LocalTime;
 import java.util.List;

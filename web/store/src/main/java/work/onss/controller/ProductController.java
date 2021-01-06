@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import work.onss.config.SystemConfig;
 import work.onss.domain.Product;
 import work.onss.vo.Work;
 
@@ -26,8 +25,6 @@ import java.util.List;
 public class ProductController {
     @Autowired
     protected MongoTemplate mongoTemplate;
-    @Autowired
-    private SystemConfig systemConfig;
 
     /**
      * @param id  商品ID

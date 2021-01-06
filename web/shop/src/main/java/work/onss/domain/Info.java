@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class Info {
 
     private String uid;
-    private String openid;
     private LocalDateTime lastTime;
 
     public Info(String uid, LocalDateTime lastTime) {

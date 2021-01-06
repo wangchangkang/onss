@@ -65,7 +65,7 @@ public class Customer implements Serializable {
 
     public Customer(WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult, WXLogin wxLogin, LocalDateTime now) {
         this.userid = wxCpMaJsCode2SessionResult.getUserId();
-        this.appId = wxLogin.getAppid();
+        this.appId = wxLogin.getSubAppId();
         this.suiteId = wxLogin.getSuiteId();
         this.corpId = wxCpMaJsCode2SessionResult.getCorpId();
         this.sessionKey = wxCpMaJsCode2SessionResult.getSessionKey();

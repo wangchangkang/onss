@@ -55,7 +55,6 @@ public class LoginController {
         WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult = wxCpTpService.jsCode2Session(wxLogin.getCode());
         Query queryCustomer = Query.query(Criteria
                 .where("userid").is(wxCpMaJsCode2SessionResult.getUserId())
-                .and("appId").is(wxLogin.getAppid())
                 .and("suiteId").is(wxLogin.getSuiteId()));
 
         Customer customer = mongoTemplate.findOne(queryCustomer, Customer.class);

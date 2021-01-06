@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class WXLogin implements Serializable {
-    private String appid;
+    private String subAppId;
     private String suiteId;
     private String code;
 }

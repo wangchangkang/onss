@@ -52,11 +52,11 @@ public class LoginController {
      */
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
-        WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getAppid());
+        WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getSubAppId());
         WxMaUserService userService = wxMaService.getUserService();
 
         WxMaJscode2SessionResult wxMaJscode2SessionResult =userService.getSessionInfo(wxLogin.getCode());
-        Query query = Query.query(Criteria.where("openid").is(wxMaJscode2SessionResult.getOpenid()));
+        Query query = Query.query(Criteria.where("subOpenid").is(wxMaJscode2SessionResult.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
 
         Map<String, Object> result = new HashMap<>();
@@ -66,7 +66,7 @@ public class LoginController {
             user = new User();
             user.setSubOpenid(wxMaJscode2SessionResult.getOpenid());
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
-            user.setAppid(wxLogin.getAppid());
+            user.setSpAppId(wxLogin.getSubAppId());
             user.setInsertTime(now);
             user.setUpdateTime(now);
             user = mongoTemplate.insert(user);
