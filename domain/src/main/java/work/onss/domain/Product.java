@@ -63,7 +63,7 @@ public class Product implements Serializable {
     @DecimalMin(value = "0.00",message = "商品均价不能小于{value}元")
     @Digits(fraction = 2,message = "单价小数位不能大于{value}", integer = 10)
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
-    private Double average;
+    private BigDecimal average;
     /**
      * 商品均价单位
      */
@@ -74,19 +74,19 @@ public class Product implements Serializable {
      */
     @NotNull(message = "请填写库存数量")
     @Min(value = 1,message = "库存不能小于{value}")
-    private Integer stock;
+    private BigDecimal stock;
     /**
      * 商品最小购买数量
      */
     @NotNull(message = "请填写最小购买数量")
     @Min(value = 1, message = "最小购买数量不能小于{value}")
-    private Integer min;
+    private BigDecimal min = BigDecimal.ONE;
     /**
      * 商品最大购买数量
      */
     @NotNull(message = "请填写最大购买数量")
     @Min(value = 1, message = "最大购买数量不能小于{value}")
-    private Integer max;
+    private BigDecimal max = BigDecimal.ONE;
     /**
      * 商品是否需要称重
      */
@@ -111,12 +111,12 @@ public class Product implements Serializable {
      * 商品购买数量
      */
     @Min(value = 1,message = "购买数量不能小于{value}",groups = Cart.class)
-    private Integer num = 0;
+    private BigDecimal num;
     /**
      * 商品小计
      */
     @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
-    private Double total = 0.0;
+    private BigDecimal total = BigDecimal.ZERO;
     /**
      * 商品是否喜欢
      */

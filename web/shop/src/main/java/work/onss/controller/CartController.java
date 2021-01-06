@@ -58,7 +58,7 @@ public class CartController {
             if (null != cart.getId()) {
                 cartQuery.addCriteria(Criteria.where("id").is(cart.getId()));
             }
-            BigDecimal total = product.getAverage().multiply(new BigDecimal(cart.getNum()));
+            BigDecimal total = product.getAverage().multiply(cart.getNum());
             Cart oldCart = mongoTemplate.findOne(cartQuery, Cart.class);
             if (oldCart != null) {
                 oldCart.setNum(cart.getNum());
@@ -76,6 +76,7 @@ public class CartController {
             return Work.fail("该商品不存在");
         }
     }
+
     /**
      * @param uid 用户ID
      * @return 购物车商户

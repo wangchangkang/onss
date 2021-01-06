@@ -41,30 +41,7 @@ public class Score implements Serializable {
      * 商户ID
      */
     private String sid;
-    /**
-     * 服务商户号
-     */
-    private String spMchid;
-    /**
-     * 子商户号
-     */
-    private String subMchid;
-    /**
-     * 服务商公众号ID
-     */
-    private String spAppid;
-    /**
-     * 子商户公众号ID
-     */
-    private String subAppId;
-    /**
-     * 用户服务标识
-     */
-    private String spOpenid;
-    /**
-     * 用户子标识
-     */
-    private String subOpenid;
+
     /**
      * 订单状态
      */
@@ -73,7 +50,7 @@ public class Score implements Serializable {
      * 订单总金额
      */
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
-    private Double total;
+    private BigDecimal total = BigDecimal.ZERO;
     /**
      * 订单明细
      */
@@ -119,12 +96,12 @@ public class Score implements Serializable {
 
     public void updateProduct(List<Product> products) {
         Map<String, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
-        double total = 0.0;
+        BigDecimal total = BigDecimal.ZERO;
         for (Product product : this.getProducts()) {
             Product price = productMap.get(product.getId());
-            product.setTotal(price.getAverage() * product.getNum());
+            product.setTotal(price.getAverage().multiply(product.getNum()));
             product.setAverage(price.getAverage());
-            total = total + product.getTotal();
+            total = total.add(product.getTotal());
         }
         this.total = total;
     }

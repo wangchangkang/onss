@@ -13,7 +13,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 /**
@@ -50,7 +49,7 @@ public class Cart implements Serializable {
      * 购物车数量
      */
     @Min(value = 0, message = "购买数量不能小于{value}")
-    private Integer num = 0;
+    private BigDecimal num;
     /**
      * 购物车小计
      */
