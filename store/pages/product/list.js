@@ -166,5 +166,10 @@ Page({
         })
       })
     })
+  },
+  add: function () {
+    wx.navigateTo({
+      url: '/pages/product/create',
+    })
   }
 })

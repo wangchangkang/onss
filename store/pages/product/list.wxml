@@ -1,22 +1,12 @@
 <form>
 	<view class="weui-cells__title">
 		<view class="weui-flex">
-			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset">
-				<icon type="cancel"></icon>重置
-			</button>
-			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="up">
-				<icon type="success"></icon>上架
-			</button>
+			<button size='mini' form-type="reset">重置</button>
+			<button size='mini' form-type="reset" bindtap="up">上架</button>
+			<button size='mini' form-type="reset" bindtap="lower">下架</button>
+			<button size='mini' form-type="reset" bindtap="delete">删除</button>
+			<button size='mini' bindtap="add">+</button>
 
-			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="lower">
-				<icon type="cancel"></icon>下架
-			</button>
-			<button class="weui-flex__item" size='mini' style="font-size:20rpx" form-type="reset" bindtap="delete">
-				<icon type="clear"></icon>删除
-			</button>
-			<navigator class="weui-flex__item weui-cell__ft" url="/pages/product/create">
-				<button style="font-size:25rpx">+</button>
-			</navigator>
 		</view>
 	</view>
 	<view class="weui-panel">

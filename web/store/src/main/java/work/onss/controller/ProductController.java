@@ -59,8 +59,6 @@ public class ProductController {
     @PostMapping(value = {"products"})
     public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         product.setSid(sid);
-        product.setAverageUnit(product.getAverageUnit().concat("/元"));
-        product.setPriceUnit(product.getPriceUnit().concat("/元"));
         product = mongoTemplate.insert(product);
         return Work.success("创建成功", product);
     }
