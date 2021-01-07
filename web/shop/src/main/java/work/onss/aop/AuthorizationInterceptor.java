@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import work.onss.config.SystemConfig;
+import work.onss.domain.Info;
 import work.onss.domain.User;
 import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
@@ -25,13 +26,19 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     private SystemConfig systemConfig;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServiceException {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
-            if (StringUtils.hasLength(authorization)) {
-                String info = request.getHeader("info");
-                Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-                return sign.verify(StringUtils.trimAllWhitespace(info).getBytes(), Base64Utils.decodeFromString(authorization));
+            String uid = request.getParameter("uid");
+            if (StringUtils.hasLength(authorization) && StringUtils.hasLength(uid)) {
+                String infoStr = request.getHeader("info");
+                Info info = JsonMapperUtils.fromJson(infoStr, Info.class);
+                if (info.getOpen()) {
+                    Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
+                    return sign.verify(StringUtils.trimAllWhitespace(infoStr).getBytes(), Base64Utils.decodeFromString(authorization));
+                } else {
+                    throw new ServiceException("1977.user.notfound", "请绑定手机号");
+                }
             }
         }
         return true;

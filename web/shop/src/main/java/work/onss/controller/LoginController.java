@@ -55,7 +55,7 @@ public class LoginController {
         WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getSubAppId());
         WxMaUserService userService = wxMaService.getUserService();
 
-        WxMaJscode2SessionResult wxMaJscode2SessionResult =userService.getSessionInfo(wxLogin.getCode());
+        WxMaJscode2SessionResult wxMaJscode2SessionResult = userService.getSessionInfo(wxLogin.getCode());
         Query query = Query.query(Criteria.where("subOpenid").is(wxMaJscode2SessionResult.getOpenid()));
         User user = mongoTemplate.findOne(query, User.class);
 
@@ -71,7 +71,7 @@ public class LoginController {
             user.setUpdateTime(now);
             user = mongoTemplate.insert(user);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            Info info = new Info(user.getId(),now);
+            Info info = new Info(user.getId(), false, now);
             byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);
@@ -82,7 +82,7 @@ public class LoginController {
             user.setUpdateTime(now);
             mongoTemplate.updateFirst(query, Update.update("sessionKey", user.getSessionKey()).set("lastTime", user.getUpdateTime()), User.class);
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            Info info = new Info(user.getId(),now);
+            Info info = new Info(user.getId(), false, now);
             byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);
@@ -93,7 +93,7 @@ public class LoginController {
             List<Cart> carts = mongoTemplate.find(Query.query(Criteria.where("uid").is(user.getId())), Cart.class);
             Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
             Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-            Info info = new Info(user.getId(),now);
+            Info info = new Info(user.getId(), true, now);
             byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
             result.put("authorization", Base64Utils.encodeToString(authorization));
             result.put("info", info);

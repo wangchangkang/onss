@@ -26,7 +26,6 @@ import work.onss.vo.PhoneEncryptedData;
 import work.onss.vo.WXRegister;
 import work.onss.vo.Work;
 
-import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +40,7 @@ public class UserController {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SystemConfig systemConfig;
+
     /**
      * @param wxRegister 注册信息
      * @return 密钥及用户信息
@@ -70,7 +70,7 @@ public class UserController {
         List<Prefer> prefers = mongoTemplate.find(preferQuery, Prefer.class);
         Map<String, String> prefersPid = prefers.stream().collect(Collectors.toMap(Prefer::getPid, Prefer::getId));
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        Info info = new Info(user.getId(),user.getUpdateTime());
+        Info info = new Info(user.getId(), true, user.getUpdateTime());
         byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
         result.put("authorization", Base64Utils.encodeToString(authorization));
         result.put("cartsPid", cartsPid);

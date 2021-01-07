@@ -1,5 +1,6 @@
 package work.onss.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,13 +17,13 @@ public class JsonMapperUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    static  {
+    static {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         objectMapper.registerModule(new JavaTimeModule());
     }
 
 
-    public static  <T> String toJson(T t) {
+    public static <T> String toJson(T t) {
         String result = null;
         try {
             result = objectMapper.writeValueAsString(t);
@@ -32,7 +33,19 @@ public class JsonMapperUtils {
         return result;
     }
 
-    public static  <T> String toJson(T t,PropertyNamingStrategy propertyNamingStrategy) {
+    public static <T> String toJson(T t, JsonInclude.Include incl, PropertyNamingStrategy propertyNamingStrategy) {
+        String result = null;
+        try {
+            objectMapper.setPropertyNamingStrategy(propertyNamingStrategy);
+            objectMapper.setSerializationInclusion(incl);
+            result = objectMapper.writeValueAsString(t);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static <T> String toJson(T t, PropertyNamingStrategy propertyNamingStrategy) {
         String result = null;
         try {
             objectMapper.setPropertyNamingStrategy(propertyNamingStrategy);
@@ -54,10 +67,10 @@ public class JsonMapperUtils {
     }
 
 
-    public static <T> List<T> fromCollectionJson(String json, Class<Collection<T>> collectionClass,Class<T> tClass) {
+    public static <T> List<T> fromCollectionJson(String json, Class<Collection<T>> collectionClass, Class<T> tClass) {
         List<T> result = null;
         try {
-            JavaType type = objectMapper.getTypeFactory().constructCollectionType(collectionClass,tClass);
+            JavaType type = objectMapper.getTypeFactory().constructCollectionType(collectionClass, tClass);
             result = objectMapper.readValue(json, type);
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,8 +78,8 @@ public class JsonMapperUtils {
         return result;
     }
 
-    public static <K,V> Map<K,V> fromJson(String json, Class<K> key, Class<V> value) {
-        Map<K,V> result = null;
+    public static <K, V> Map<K, V> fromJson(String json, Class<K> key, Class<V> value) {
+        Map<K, V> result = null;
         try {
             JavaType type = objectMapper.getTypeFactory().constructMapLikeType(Map.class, key, value);
             result = objectMapper.readValue(json, type);

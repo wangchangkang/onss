@@ -44,7 +44,7 @@ function wxLogin() {
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
-            data: { code, appid }
+            data: { code, subAppId:appid }
           }).then(({ content }) => {
             wx.setStorageSync('authorization', content.authorization);
             wx.setStorageSync('info', content.info);
@@ -71,11 +71,11 @@ function wxLogin() {
  * @param {string} encryptedData 微信用户密文
  * @param {string} iv 偏移量
  */
-function setPhone(id, authorization, info, encryptedData, iv) {
+function setPhone( authorization, info, encryptedData, iv) {
   return wxRequest({
-    url: `${domain}/users/${id}/setPhone`,
+    url: `${domain}/users/${info.uid}/setPhone`,
     method: 'POST',
-    data: { appid, encryptedData, iv },
+    data: { encryptedData, iv },
     header: { authorization, info: JSON.stringify(info) },
   })
 }
@@ -145,8 +145,11 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             resolve(data)
             break;
           case '1977.user.notfound':
-            wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('info', content.info);
+            console.log(content);
+            if(content){
+              wx.setStorageSync('authorization', content.authorization);
+              wx.setStorageSync('info', content.info);
+            }
             wx.reLaunch({
               url: '/pages/login'
             })

@@ -78,6 +78,8 @@ public class Score implements Serializable {
      * 商户简称
      */
     private String name;
+
+    private String subAppId;
     /**
      * 订单编号
      */

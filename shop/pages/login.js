@@ -4,7 +4,7 @@ Page({
   getAuthorization: function (e) {
     const authorization = wx.getStorageSync('authorization');
     const info = wx.getStorageSync('info');
-    setPhone(info.uid, authorization, e.detail.encryptedData, e.detail.iv).then((data) => {
+    setPhone( authorization,info, e.detail.encryptedData, e.detail.iv).then((data) => {
       const { authorization, info, cartsPid } = data.content
       wx.setStorageSync('authorization', authorization);
       wx.setStorageSync('info', info);

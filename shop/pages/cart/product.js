@@ -5,31 +5,31 @@ Page({
     store: {},
     cartsPid: {},
     products: [],
-    total: '0.00',
+    total: 0,
     checkAll: false
   },
   onLoad: function (options) {
     if (options.id) {
       getStore(options.id).then((data1) => {
-        wxLogin().then(({  authorization,info, cartsPid }) => {
+        wxLogin().then(({ authorization, info, cartsPid }) => {
           wxRequest({
             url: `${domain}/carts?uid=${info.uid}&sid=${options.id}&pids=${Object.keys(cartsPid)}`,
             header: { authorization, info: JSON.stringify(info) },
           }).then((data2) => {
             let checkeds = [];
-            let total = 0.00;
+            let total = 0;
             data2.content.forEach((product) => {
               const cart = cartsPid[product.id];
               let sum = product.average * 100 * cart.num;
               cartsPid[product.id].total = sum / 100;
               if (cart.checked) {
                 checkeds.push(product.id);
-                total = total + sum / 100;
+                total = total + sum;
               }
             });
             this.setData({
               checkAll: checkeds.length === 0 ? false : checkeds.length === data2.content.length,
-              total: total.toFixed(2),
+              total: total/100,
               store: data1.content,
               cartsPid,
               products: data2.content
@@ -54,7 +54,7 @@ Page({
 
   updateCart: function (index, count) {
     let checkeds = [];
-    let total = 0.00;
+    let total = 0;
     wxLogin().then(() => {
       let { cartsPid, products } = this.data;
       console.log(cartsPid);
@@ -67,9 +67,8 @@ Page({
           cart.total = sum / 100;
         }
         if (cart.checked) {
-          total = cart.total + total;
+          total = cart.total * 100 + total;
           checkeds.push(product.id);
-
         }
         const key = `cartsPid.${product.id}`;
         this.setData({
@@ -78,7 +77,7 @@ Page({
       });
       this.setData({
         checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
-        total: total.toFixed(2)
+        total: total / 100
       });
       wx.setStorageSync('cartsPid', this.data.cartsPid);
     });
@@ -90,29 +89,29 @@ Page({
   cartChange: function (e) {
     const checkeds = e.detail.value;
     const { cartsPid, products } = this.data;
-    let total = 0.00;
+    let total = 0;
     products.forEach((product) => {
       let cart = cartsPid[product.id];
       const isChecked = checkeds.includes(product.id);
       cart.checked = isChecked;
-      cart.total = product.average * cart.num;
+      cart.total = (product.average * 100 * cart.num) / 100;
       const key = `cartsPid.${product.id}`;
       this.setData({
         [key]: cart
       });
       if (isChecked) {
-        total = total + cart.total;
+        total = total + cart.total * 100;
       }
     });
     this.setData({
       checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
-      total: total.toFixed(2)
+      total: total / 100
     });
   },
 
   checkAll: function (e) {
     const checkAll = e.detail.value;
-    let total = 0.00;
+    let total = 0;
     let { cartsPid, products } = this.data;
     if (checkAll) {
       products.forEach((product) => {
@@ -120,7 +119,7 @@ Page({
         this.setData({
           [key]: checkAll
         });
-        total = total + cartsPid[product.id].num * product.average;
+        total = total + product.average * 100 * cartsPid[product.id].num;
       });
     } else {
       products.forEach((product) => {
@@ -132,7 +131,7 @@ Page({
     }
     this.setData({
       checkAll,
-      total: total.toFixed(2)
+      total: total / 100
     });
   }
 })

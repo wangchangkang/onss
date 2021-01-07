@@ -24,10 +24,10 @@ Page({
       console.log(products);
 
       wxRequest({
-        url: `${domain}/scores?uid=${info.id}`,
+        url: `${domain}/scores?uid=${info.uid}`,
         header: { authorization, info: JSON.stringify(info) },
         method: "POST",
-        data: { sid: store.id, address, products, subAppId: appid, openid: info.openid },
+        data: { sid: store.id, address, products, subAppId: appid, },
       }).then((data) => {
         console.log(data.content);
 
