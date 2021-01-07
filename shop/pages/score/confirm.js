@@ -22,7 +22,6 @@ Page({
         return cartsPid[product.id].checked && store.id === product.sid
       });
       console.log(products);
-
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}`,
         header: { authorization, info: JSON.stringify(info) },
@@ -30,10 +29,9 @@ Page({
         data: { sid: store.id, address, products, subAppId: appid, },
       }).then((data) => {
         console.log(data.content);
-
         wx.requestPayment(
           {
-            ...data.content,
+            ...data.content, package: data.content.packageValue,
             'success': (res) => {
               console.log(res);
             },
@@ -42,7 +40,7 @@ Page({
             },
             'complete': (res) => {
               wx.reLaunch({
-                url: `/pages/score/detail?id=${data.content.id}`,
+                url: `/pages/score/detail?id=${data.content.nonceStr}`,
               })
             }
           })

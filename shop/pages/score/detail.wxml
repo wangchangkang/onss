@@ -1,7 +1,7 @@
 <view class="weui-cells__title weui-flex">
-	<view class="weui-flex__item">编号:{{score.outTradeNo}}</view>
+	<view class="weui-flex__item">订单编号：{{score.outTradeNo}}</view>
 	<view class="weui-">
-		<button type="primary" size='mini' style="font-size:13rpx" bindtap='clipBoard'>复制</button>
+		<button type="primary" size='mini' style="font-size:18rpx" bindtap='clipBoard'>复制</button>
 	</view>
 </view>
 <view class="weui-panel weui-cells userinfo">

@@ -143,8 +143,7 @@ public class ScoreController {
         score.setPayTime(localDateTime);
         mongoTemplate.insert(score);
         String timestamp = String.valueOf(localDateTime.getSecond() / 1000L);
-        String nonceStr = SignUtils.genRandomStr();
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(timestamp, nonceStr, wxPayConfig.getVerifier().getValidCertificate());
+        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(timestamp, score.getId(), wxPayConfig.getVerifier().getValidCertificate());
         log.info(wxPayMpOrderResult);
         return Work.success("创建订单成功", wxPayMpOrderResult);
     }

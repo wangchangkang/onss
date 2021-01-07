@@ -45,21 +45,10 @@ Page({
               })
             },
             'fail': (res) => {
-              if (index) {
-                let pages = getCurrentPages();//当前页面栈
-                let prevPage = pages[pages.length - 2];//上一页面
-                const data = prevPage.data;
-                console.log(data);
-                prevPage.setData({
-                  [`scores[${index}].status`]: 1
-                })
-              }
-              this.setData({
-                [`score.status`]: 1
-              })
               console.log(res);
             },
             'complete': (res) => {
+              console.log(res);
             }
           })
       });
