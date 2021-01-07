@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http:///127.0.0.1:80/shop';
+const domain = 'http://192.168.103.184:80/shop';
 const appid = "wxe78290c2a5313de3";
-const prefix = 'http:///127.0.0.1:80/';
+const prefix = 'http://192.168.103.184:80/';
 
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
@@ -172,7 +172,8 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             break;
         }
       },
-      fail: () => {
+      fail: (res) => {
+        console.log(res);
         wx.showModal({
           title: '警告',
           content: '加载失败',
@@ -180,7 +181,9 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           showCancel: false,
         });
       },
-      complete: () => { },
+      complete: (res) => {
+        console.log(res);
+       },
       enableCache: true,
       enableHttp2: true,
       enableQuic: true,

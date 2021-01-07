@@ -9,11 +9,11 @@ Page({
     checkAll: false
   },
   onLoad: function (options) {
-    if (options.id) {
-      getStore(options.id).then((data1) => {
+    if (options.sid) {
+      getStore(options.sid).then((data1) => {
         wxLogin().then(({ authorization, info, cartsPid }) => {
           wxRequest({
-            url: `${domain}/carts?uid=${info.uid}&sid=${options.id}&pids=${Object.keys(cartsPid)}`,
+            url: `${domain}/carts?uid=${info.uid}&sid=${options.sid}&pids=${Object.keys(cartsPid)}`,
             header: { authorization, info: JSON.stringify(info) },
           }).then((data2) => {
             let checkeds = [];
