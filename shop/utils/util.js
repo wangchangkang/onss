@@ -129,6 +129,10 @@ function getProduct(id, authorization, info, uid) {
 
 function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', responseType = 'text', timeout = 0 }) {
   return new Promise((resolve) => {
+    wx.showLoading({
+      title: '加载中',
+      mask:true
+    })
     wx.request({
       url,
       data,
@@ -182,6 +186,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
         });
       },
       complete: (res) => {
+        wx.hideLoading()
         console.log(res);
        },
       enableCache: true,

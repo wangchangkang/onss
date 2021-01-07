@@ -39,7 +39,7 @@ Page({
               console.log(res);
             },
             'complete': (res) => {
-              wx.reLaunch({
+              wx.navigateTo({
                 url: `/pages/score/detail?id=${data.content.nonceStr}`,
               })
             }

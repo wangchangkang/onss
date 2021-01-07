@@ -29,7 +29,7 @@ Page({
             });
             this.setData({
               checkAll: checkeds.length === 0 ? false : checkeds.length === data2.content.length,
-              total: total/100,
+              total: total / 100,
               store: data1.content,
               cartsPid,
               products: data2.content
@@ -62,9 +62,20 @@ Page({
       products.forEach((product, k) => {
         let cart = cartsPid[product.id];
         if (index == k) {
-          cart.num = cart.num + count;
-          let sum = product.average * 100 * cart.num;
-          cart.total = sum / 100;
+          count = cart.num + count;
+          if (count > product.max || count < product.min) {
+            console.log(product);
+            wx.showModal({
+              title: '警告',
+              content: `每次仅限购买${product.min}至${product.max}`,
+              confirmColor: '#e64340',
+              showCancel: false,
+            })
+          } else {
+            cart.num = count
+            let sum = product.average * 100 * cart.num;
+            cart.total = sum / 100;
+          }
         }
         if (cart.checked) {
           total = cart.total * 100 + total;
