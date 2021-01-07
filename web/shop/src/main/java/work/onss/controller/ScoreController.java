@@ -1,8 +1,6 @@
 package work.onss.controller;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
@@ -25,7 +23,6 @@ import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
 import work.onss.domain.User;
-import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXScore;
 import work.onss.vo.Work;
 
@@ -39,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static com.github.binarywang.wxpay.constant.WxPayConstants.SignType.HMAC_SHA256;
 
 @Log4j2
 @RestController
