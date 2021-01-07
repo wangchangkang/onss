@@ -2,6 +2,7 @@ package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
+import com.github.binarywang.wxpay.v3.util.RsaCryptoUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -9,8 +10,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.ScoreEnum;
 
+import javax.crypto.IllegalBlockSizeException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -109,13 +112,16 @@ public class Score implements Serializable {
         this.total = total;
     }
 
-    public WxPayMpOrderResult get(String timestamp, String nonceStr) {
+    public WxPayMpOrderResult getWxPayMpOrderResult(String timestamp, String nonceStr, X509Certificate x509Certificate) throws IllegalBlockSizeException {
+        String data = this.getSubAppId() + "\n" + timestamp + "\n" + nonceStr + "\n" + this.prepayId;
+        String sign = RsaCryptoUtil.encryptOAEP(data, x509Certificate);
         return WxPayMpOrderResult.builder()
                 .appId(this.getSubAppId())
                 .timeStamp(timestamp)
                 .nonceStr(nonceStr)
-                .packageValue(this.getPrepayId())
+                .packageValue(this.prepayId)
                 .signType("RSA")
+                .paySign(sign)
                 .build();
     }
 

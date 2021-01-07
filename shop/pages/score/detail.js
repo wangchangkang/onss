@@ -19,9 +19,9 @@ Page({
   },
 
   pay: function () {
-    wxLogin().then(({ authorization,info }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
-        url: `${domain}/scores/pay`,
+        url: `${domain}/scores/continuePay?uid=${info.uid}`,
         method: 'POST',
         data: this.data.score,
         header: { authorization, info: JSON.stringify(info) },
@@ -29,7 +29,7 @@ Page({
         const index = this.data.index;
         wx.requestPayment(
           {
-            ...data.content,
+            ...data.content, package: data.content.packageValue,
             'success': (res) => {
               if (index) {
                 let pages = getCurrentPages();//当前页面栈
