@@ -136,9 +136,14 @@ public class ScoreController {
         String wxScoreStr = JsonMapperUtils.toJson(wxScore, JsonInclude.Include.NON_NULL, PropertyNamingStrategy.SNAKE_CASE);
         String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
         log.info(transactionStr);
-//        score.setPrepayId(wxPayMpOrderResult.getPackageValue());
-//        mongoTemplate.insert(score);
-        return Work.success("创建订单成功", null);
+        Map<String, String> prepayMap = JsonMapperUtils.fromJson(transactionStr, String.class, String.class);
+        score.setPrepayId(prepayMap.get("prepayId"));
+        mongoTemplate.insert(score);
+        String timestamp = String.valueOf(localDateTime.getSecond() / 1000L);
+        String nonceStr = SignUtils.genRandomStr();
+        WxPayMpOrderResult wxPayMpOrderResult = score.get(timestamp, nonceStr);
+        log.info(wxPayMpOrderResult);
+        return Work.success("创建订单成功", wxPayMpOrderResult);
     }
 
 
@@ -150,14 +155,8 @@ public class ScoreController {
     public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) {
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
         String nonceStr = SignUtils.genRandomStr();
-        WxPayMpOrderResult payResult = WxPayMpOrderResult.builder()
-                .appId(score.getSubAppId())
-                .timeStamp(timestamp)
-                .nonceStr(nonceStr)
-                .packageValue(score.getPrepayId())
-                .signType(HMAC_SHA256)
-                .build();
-        return Work.success("生成订单成功", payResult);
+        WxPayMpOrderResult wxPayMpOrderResult = score.get(timestamp, nonceStr);
+        return Work.success("生成订单成功", wxPayMpOrderResult);
     }
 
 

@@ -1,6 +1,7 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -106,6 +107,16 @@ public class Score implements Serializable {
             total = total.add(product.getTotal());
         }
         this.total = total;
+    }
+
+    public WxPayMpOrderResult get(String timestamp, String nonceStr) {
+        return WxPayMpOrderResult.builder()
+                .appId(this.getSubAppId())
+                .timeStamp(timestamp)
+                .nonceStr(nonceStr)
+                .packageValue(this.getPrepayId())
+                .signType("RSA")
+                .build();
     }
 
 }
