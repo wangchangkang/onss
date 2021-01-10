@@ -10,11 +10,11 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ServiceException extends Exception {
     private String code;
-    private String msg;
+    private String message;
     private Object data;
 
-    public ServiceException(String code, String msg) {
+    public ServiceException(String code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
 }

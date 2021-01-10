@@ -20,16 +20,16 @@ public class CommonException {
 
     @ExceptionHandler(ServiceException.class)
     public Work<Object> serviceException(ServiceException e) {
-        return Work.fail(e.getCode(), e.getMsg());
+        return Work.fail(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Work<Object> methodArgumentNotValidException(MethodArgumentNotValidException e) {
-        StringJoiner msg = new StringJoiner(",", "[", "]");
+        StringJoiner message = new StringJoiner(",", "[", "]");
         e.getBindingResult().getAllErrors().forEach(item -> {
-            msg.add(item.getDefaultMessage());
+            message.add(item.getDefaultMessage());
         });
-        return Work.fail(msg.toString());
+        return Work.fail(message.toString());
     }
 
 

@@ -191,7 +191,7 @@ function chooseImages(authorization, info, count, url) {
               } else {
                 wx.showModal({
                   title: '提示',
-                  content: data.msg,
+                  content: data.message,
                   showCancel: false,
                 })
               }
@@ -235,7 +235,7 @@ function chooseImage(authorization, info, url) {
             } else {
               wx.showModal({
                 title: '提示',
-                content: data.msg,
+                content: data.message,
                 showCancel: false,
               })
             }
@@ -263,7 +263,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
       success: ({ data }) => {
         wx.hideLoading()
-        const { code, msg, content } = data;
+        const { code, message, content } = data;
         console.log(data)
         switch (code) {
           case 'success':
@@ -272,7 +272,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           default:
             wx.showModal({
               title: '警告',
-              content: msg,
+              content: message,
               confirmColor: '#e64340',
               showCancel: false,
             })

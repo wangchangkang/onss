@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
 import work.onss.domain.User;
+import work.onss.enums.ScoreEnum;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXNotify;
 import work.onss.vo.WXScore;
@@ -128,7 +130,7 @@ public class ScoreController {
                 .subAppid(wxPayConfig.getSubAppId())
                 .subMchid(store.getSubMchId())
                 .timeExpire(timeExpire)
-                .notifyUrl("http://u18141i766.iask.in/shop/scores/notify")
+                .notifyUrl("https://1977.work/shop/scores/notify")
                 .description(store.getName())
                 .outTradeNo(code)
                 .build();
@@ -175,7 +177,7 @@ public class ScoreController {
      * @throws WxPayException 微信异常
      */
     @PostMapping(value = {"scores/notify"})
-    public String firstNotify(@RequestBody WXNotify wxNotify) {
+    public Work<String> firstNotify(@RequestBody WXNotify wxNotify) {
         String decryptToString;
         try {
             WXNotify.Resource resource = wxNotify.getResource();
@@ -184,17 +186,14 @@ public class ScoreController {
             String ciphertext = resource.getCiphertext();
             String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
-        } catch (Exception e) {
-//            e.printStackTrace();
-            decryptToString = "{\"transaction_id\":\"1217752501201407033233368018\",\"amount\":{\"payer_total\":100,\"total\":100,\"currency\":\"CNY\",\"payer_currency\":\"CNY\"},\"mchid\":\"1230000109\",\"trade_state\":\"SUCCESS\",\"bank_type\":\"CMC\",\"promotion_detail\":[{\"amount\":100,\"wechatpay_contribute\":0,\"coupon_id\":\"109519\",\"scope\":\"GLOBALSINGLE\",\"merchant_contribute\":0,\"name\":\"单品惠-6\",\"other_contribute\":0,\"currency\":\"CNY\",\"type\":\"CASHNOCASH\",\"stock_id\":\"931386\",\"goods_detail\":[{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100},{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100}]},{\"amount\":100,\"wechatpay_contribute\":0,\"coupon_id\":\"109519\",\"scope\":\"GLOBALSINGLE\",\"merchant_contribute\":0,\"name\":\"单品惠-6\",\"other_contribute\":0,\"currency\":\"CNY\",\"type\":\"CASHNOCASH\",\"stock_id\":\"931386\",\"goods_detail\":[{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100},{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100}]}],\"success_time\":\"2018-06-08T10:34:56+08:00\",\"payer\":{\"openid\":\"oUpF8uMuAJO_M2pxb1Q9zNjWeS6o\"},\"out_trade_no\":\"1217752501201407033233368018\",\"appid\":\"wxd678efh567hg6787\",\"trade_state_desc\":\"支付失败，请重新下单支付\",\"trade_type\":\"MICROPAY\",\"attach\":\"自定义数据\",\"scene_info\":{\"device_id\":\"013467007045764\"}}";
-        }
-        try {
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
-            log.info(wxTransaction);
+            Query query = Query.query(Criteria.where("outTradeNo").is(wxTransaction.getOutTradeNo()));
+            Update update = Update.update("transactionId", wxTransaction.getTransactionId()).set("status", ScoreEnum.PACKAGE);
+            mongoTemplate.updateFirst(query, update, Score.class);
+            return Work.message("SUCCESS", "支付成功", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return WxPayNotifyResponse.success("处理成功!");
+        return Work.message("FAIL", "支付失败", null);
     }
 }

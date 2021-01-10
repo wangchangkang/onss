@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'https://1977.work/shop';
+const domain = 'http://127.0.0.1/shop';
 const appid = "wxe78290c2a5313de3";
-const prefix = 'https://1977.work/';
+const prefix = 'http://127.0.0.1/';
 
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
@@ -142,7 +142,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       timeout,
       header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
       success: ({ data }) => {
-        const { code, msg, content } = data;
+        const { code, message, content } = data;
         console.log(data)
         switch (code) {
           case 'success':
@@ -169,7 +169,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           default:
             wx.showModal({
               title: '警告',
-              content: msg,
+              content: message,
               confirmColor: '#e64340',
               showCancel: false,
             })
