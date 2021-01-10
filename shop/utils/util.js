@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.184:80/shop';
+const domain = 'https://1977.work/shop';
 const appid = "wxe78290c2a5313de3";
-const prefix = 'http://192.168.103.184:80/';
+const prefix = 'https://1977.work/';
 
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"

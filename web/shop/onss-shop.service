@@ -1,0 +1,9 @@
+[Unit]
+Description=service-shop
+After=syslog.target network.target
+
+[Service]
+ExecStart=/usr/bin/java -jar /home/onss/service-shop-0.0.1-SNAPSHOT.jar --server.port=8010 --spring.profiles.active=master
+
+[Install]
+WantedBy=multi-user.target
