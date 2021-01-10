@@ -2,11 +2,11 @@ package work.onss.controller;
 
 
 import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
-import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.v3.util.AesUtils;
 import com.github.binarywang.wxpay.v3.util.SignUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,10 @@ import work.onss.domain.Product;
 import work.onss.domain.Score;
 import work.onss.domain.Store;
 import work.onss.domain.User;
+import work.onss.utils.JsonMapperUtils;
+import work.onss.vo.WXNotify;
 import work.onss.vo.WXScore;
+import work.onss.vo.WXTransaction;
 import work.onss.vo.Work;
 
 import javax.crypto.IllegalBlockSizeException;
@@ -80,7 +83,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException, IllegalBlockSizeException {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
@@ -167,16 +170,31 @@ public class ScoreController {
 
 
     /**
-     * @param body 微信支付通知请求信息
+     * @param wxNotify 微信支付通知请求信息
      * @return 成功 或 失败
      * @throws WxPayException 微信异常
      */
-    @PostMapping(value = {"scores/notify"}, produces = {"text/xml"})
-    public String firstNotify(@RequestBody String body) throws WxPayException {
-        wechatConfiguration.initServices();
-        WxPayOrderNotifyResult result = WxPayOrderNotifyResult.fromXML(body);
-        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(result.getSubAppId());
-        result.checkResult(wxPayService, result.getSignType(), false);
+    @PostMapping(value = {"scores/notify"})
+    public String firstNotify(@RequestBody WXNotify wxNotify) {
+        String decryptToString;
+        try {
+            WXNotify.Resource resource = wxNotify.getResource();
+            String associatedData = resource.getAssociatedData();
+            String nonce = resource.getNonce();
+            String ciphertext = resource.getCiphertext();
+            String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
+            decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            decryptToString = "{\"transaction_id\":\"1217752501201407033233368018\",\"amount\":{\"payer_total\":100,\"total\":100,\"currency\":\"CNY\",\"payer_currency\":\"CNY\"},\"mchid\":\"1230000109\",\"trade_state\":\"SUCCESS\",\"bank_type\":\"CMC\",\"promotion_detail\":[{\"amount\":100,\"wechatpay_contribute\":0,\"coupon_id\":\"109519\",\"scope\":\"GLOBALSINGLE\",\"merchant_contribute\":0,\"name\":\"单品惠-6\",\"other_contribute\":0,\"currency\":\"CNY\",\"type\":\"CASHNOCASH\",\"stock_id\":\"931386\",\"goods_detail\":[{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100},{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100}]},{\"amount\":100,\"wechatpay_contribute\":0,\"coupon_id\":\"109519\",\"scope\":\"GLOBALSINGLE\",\"merchant_contribute\":0,\"name\":\"单品惠-6\",\"other_contribute\":0,\"currency\":\"CNY\",\"type\":\"CASHNOCASH\",\"stock_id\":\"931386\",\"goods_detail\":[{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100},{\"goods_remark\":\"商品备注信息\",\"quantity\":1,\"discount_amount\":1,\"goods_id\":\"M1006\",\"unit_price\":100}]}],\"success_time\":\"2018-06-08T10:34:56+08:00\",\"payer\":{\"openid\":\"oUpF8uMuAJO_M2pxb1Q9zNjWeS6o\"},\"out_trade_no\":\"1217752501201407033233368018\",\"appid\":\"wxd678efh567hg6787\",\"trade_state_desc\":\"支付失败，请重新下单支付\",\"trade_type\":\"MICROPAY\",\"attach\":\"自定义数据\",\"scene_info\":{\"device_id\":\"013467007045764\"}}";
+        }
+        try {
+            WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
+            log.info(wxTransaction);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return WxPayNotifyResponse.success("处理成功!");
     }
 }

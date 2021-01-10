@@ -1,13 +1,15 @@
 package work.onss.vo;
 
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Builder
 @Data
 public class WXScore implements Serializable {
@@ -48,6 +50,7 @@ public class WXScore implements Serializable {
     private SceneInfo sceneInfo;
 
 
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
     public static class Amount implements Serializable {
@@ -60,6 +63,7 @@ public class WXScore implements Serializable {
         private String currency;
     }
 
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
     public static class SettleInfo implements Serializable {
@@ -70,6 +74,7 @@ public class WXScore implements Serializable {
         private boolean profitSharing;
     }
 
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
     public static class Payer implements Serializable {
@@ -82,6 +87,7 @@ public class WXScore implements Serializable {
         private String subOpenid;
     }
 
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
     public static class Detail implements Serializable {
@@ -95,6 +101,7 @@ public class WXScore implements Serializable {
         private int costPrice;
         private List<GoodsDetail> goodsDetail;
 
+        @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
         @Builder
         @Data
         public static class GoodsDetail implements Serializable {
@@ -114,6 +121,7 @@ public class WXScore implements Serializable {
         }
     }
 
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
     public static class SceneInfo implements Serializable {
@@ -127,6 +135,7 @@ public class WXScore implements Serializable {
         private String deviceId;
         private String payerClientIp;
 
+        @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
         @Builder
         @Data
         public static class StoreInfo implements Serializable {
