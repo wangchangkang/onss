@@ -103,11 +103,11 @@ public class Score implements Serializable {
     public void updateProduct(List<Product> products) {
         Map<String, Product> productMap = products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
         BigDecimal total = BigDecimal.ZERO;
-        for (Product product : this.getProducts()) {
-            Product price = productMap.get(product.getId());
-            product.setTotal(price.getAverage().multiply(product.getNum()));
-            product.setAverage(price.getAverage());
-            total = total.add(product.getTotal());
+        for (Product cart : this.getProducts()) {
+            Product product = productMap.get(cart.getId());
+            cart.setTotal(product.getAverage().multiply(cart.getNum()));
+            cart.setAverage(product.getAverage());
+            total = total.add(cart.getTotal());
         }
         this.total = total;
     }

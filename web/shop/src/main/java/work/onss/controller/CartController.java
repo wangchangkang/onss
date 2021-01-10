@@ -73,7 +73,7 @@ public class CartController {
                 return Work.success("加入购物车成功", cart);
             }
         } else {
-            return Work.fail("该商品不存在");
+            return Work.fail("该商品已下架");
         }
     }
 

@@ -113,7 +113,7 @@ public class ProductController {
     @DeleteMapping(value = {"products/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
         Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").is(id));
-        mongoTemplate.updateFirst(queryProduct, Update.update("sid", null), Product.class);
+        mongoTemplate.remove(queryProduct, Product.class);
         return Work.success("删除成功", true);
     }
 
@@ -125,7 +125,7 @@ public class ProductController {
     @DeleteMapping(value = {"products"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
         Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.updateFirst(queryProduct, Update.update("sid", null), Product.class);
+        mongoTemplate.remove(queryProduct, Product.class);
         return Work.success("删除成功", true);
     }
 }
