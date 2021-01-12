@@ -60,7 +60,11 @@ public class StoreController {
                                               @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("state").in(ApplymentStateEnum.APPLYMENT_STATE_FINISHED,ApplymentStateEnum.APPLYMENT_STATE_TO_BE_SIGNED));
+        query.addCriteria(Criteria.where("state").in(
+                ApplymentStateEnum.APPLYMENT_STATE_FINISHED,
+                ApplymentStateEnum.APPLYMENT_STATE_TO_BE_SIGNED,
+                ApplymentStateEnum.APPLYMENT_STATE_AUDITING,
+                ApplymentStateEnum.APPLYMENT_STATE_EDITTING));
         query.fields()
                 .exclude("customers")
                 .exclude("products")

@@ -203,6 +203,7 @@ public class StoreController {
         store.setUpdateTime(now);
         store.setStatus(false);
         store.setState(ApplymentStateEnum.APPLYMENT_STATE_EDITTING);
+        store.setTrademark(systemConfig.getLogo());
         mongoTemplate.insert(store);
         return Work.success("操作成功", store);
     }
@@ -343,17 +344,6 @@ public class StoreController {
         Query pictureQuery = Query.query(Criteria.where("sid").is(id).and("filePath").is(filePath));
         Picture picture = mongoTemplate.findOne(pictureQuery, Picture.class);
         if (picture == null) {
-
-//            String mchId = ""; // 商户号
-//            String certSerialNo = ""; // 商户证书序列号
-//            String apiV3Key = ""; // api密钥
-//            String privateKeyStr = "商户私钥";
-//            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(privateKeyStr.getBytes(StandardCharsets.UTF_8));
-//            PrivateKey privateKey = PemUtils.loadPrivateKey(byteArrayInputStream);
-//            PrivateKeySigner privateKeySigner = new PrivateKeySigner(certSerialNo, privateKey);
-//            WxPayCredentials wxPayCredentials = new WxPayCredentials(mchId, privateKeySigner);
-//            AutoUpdateCertificatesVerifier autoUpdateCertificatesVerifier = new AutoUpdateCertificatesVerifier(wxPayCredentials, apiV3Key.getBytes(StandardCharsets.UTF_8));
-
             wechatConfiguration.initServices();
             WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
             MerchantMediaService merchantMediaService = new MerchantMediaServiceImpl(wxPayService);

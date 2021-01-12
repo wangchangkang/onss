@@ -23,7 +23,7 @@
 	</view>
 	<view class="weui-gallery {{istrue ? 'weui-gallery_show' : ''}}" bindtap="closeGallery">
 		<view class="weui-gallery__img__wrp">
-			<image mode="aspectFit" class="weui-gallery__img" src="{{prefix}}{{store.licenseCopy}}"></image>
+			<image mode="aspectFit" class="weui-gallery__img" src="{{prefix}}{{store.licenseCopy.filePath}}"></image>
 		</view>
 	</view>
 	<view class="weui-media-box">
