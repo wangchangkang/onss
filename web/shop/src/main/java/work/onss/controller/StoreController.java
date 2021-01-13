@@ -55,7 +55,7 @@ public class StoreController {
     @GetMapping(path = "stores/{x}-{y}/near")
     public Work<List<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
                                               @PathVariable(name = "y") Double y,
-                                              @RequestParam(name = "r", defaultValue = "100") Double r,
+                                              @RequestParam(name = "r", defaultValue = "1000000") Double r,
                                               @RequestParam(required = false) Integer type,
                                               @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
