@@ -1,7 +1,7 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'https://1977.work/store';
+const domain = 'https://1977.work/store/2.0.2';
 const appid = "wx950ae546eec14733";
 const suiteId = "ww3372b680c877b9bf";
 const prefix = 'http://1977.work/';
