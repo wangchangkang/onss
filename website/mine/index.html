@@ -1,66 +1,74 @@
 <!doctype html>
 <html class="no-js" lang="">
 <head>
-  <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../css/weui.min.css">
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/weui.min.css">
 </head>
 <body>
 
-<a href="javascript:" class="weui-media-box weui-media-box_appmsg">
-  <div class="weui-media-box__hd">
-    <img class="weui-media-box__thumb" src="../img/logo2.png" alt="">
-  </div>
-  <div class="weui-media-box__bd">
-    <h4 class="weui-media-box__title">王先生</h4>
-    <p class="weui-media-box__desc">星美城市广场 15063517240</p>
-  </div>
-</a>
-
-<div class="weui-cells">
-  <a class="weui-cell  weui-cell_access weui-cell_example" href="javascript:">
-    <div class="weui-cell__hd"><img src="../img/scores.png" alt="" style="width: 20px; margin-right: 16px; display: block;"></div>
-    <div class="weui-cell__bd">
-      <p>我的订单</p>
+<div class="weui-tab">
+    <div class="weui-tab__panel">
+        <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__hd">
+                <img class="weui-media-box__thumb" src="../img/logo2.png" alt="">
+            </div>
+            <div class="weui-media-box__bd">
+                <h4 class="weui-media-box__title">王先生</h4>
+                <p class="weui-media-box__desc">星美城市广场 15063517240</p>
+            </div>
+        </a>
+        <div class="weui-cells">
+            <a class="weui-cell  weui-cell_access weui-cell_example" href="javascript:">
+                <div class="weui-cell__hd"><img src="../img/scores.png" alt=""
+                                                style="width: 20px; margin-right: 16px; display: block;"></div>
+                <div class="weui-cell__bd">
+                    <p>我的订单</p>
+                </div>
+                <div class="weui-cell__ft"></div>
+            </a>
+            <a class="weui-cell  weui-cell_access weui-cell_example" href="../address/index.html">
+                <div class="weui-cell__hd"><img src="../img/position.png" alt=""
+                                                style="width: 20px; margin-right: 16px; display: block;"></div>
+                <div class="weui-cell__bd">
+                    <p>收货地址</p>
+                </div>
+                <div class="weui-cell__ft"></div>
+            </a>
+            <a class="weui-cell  weui-cell_access weui-cell_example" href="javascript:">
+                <div class="weui-cell__hd"><img src="../img/logo2.png" alt=""
+                                                style="width: 20px; margin-right: 16px; display: block;"></div>
+                <div class="weui-cell__bd">
+                    <p>我的收藏</p>
+                </div>
+                <div class="weui-cell__ft"></div>
+            </a>
+        </div>
     </div>
-    <div class="weui-cell__ft"></div>
-  </a>
-  <a class="weui-cell  weui-cell_access weui-cell_example" href="javascript:">
-    <div class="weui-cell__hd"><img src="../img/position.png" alt="" style="width: 20px; margin-right: 16px; display: block;"></div>
-    <div class="weui-cell__bd">
-      <p>收货地址</p>
+    <div class="weui-tabbar">
+        <a class="weui-tabbar__item " href="../index.html">
+            <div style="display: inline-block; position: relative;">
+                <img src="../img/index1.png" alt="" class="weui-tabbar__icon">
+            </div>
+            <p class="weui-tabbar__label">首页</p>
+        </a>
+        <a class="weui-tabbar__item" href="../cart/index.html">
+            <img src="../img/cart1.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">购物车</p>
+        </a>
+        <a class="weui-tabbar__item" href="../mine/index.html">
+            <img src="../img/mine1.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">我的</p>
+        </a>
     </div>
-    <div class="weui-cell__ft"></div>
-  </a>
-  <a class="weui-cell  weui-cell_access weui-cell_example" href="javascript:">
-    <div class="weui-cell__hd"><img src="../img/logo2.png" alt="" style="width: 20px; margin-right: 16px; display: block;"></div>
-    <div class="weui-cell__bd">
-      <p>我的收藏</p>
-    </div>
-    <div class="weui-cell__ft"></div>
-  </a>
 </div>
 
-<div class="weui-tabbar weui-footer_fixed-bottom" style="position: fixed;bottom: 0">
-  <a class="weui-tabbar__item" href="../index.html">
-    <div style="display: inline-block; position: relative;">
-      <img src="../img/index1.png" alt="" class="weui-tabbar__icon">
-    </div>
-    <p class="weui-tabbar__label">首页</p>
-  </a>
-  <a class="weui-tabbar__item" href="../cart/index.html">
-    <img src="../img/cart1.png" alt="" class="weui-tabbar__icon">
-    <p class="weui-tabbar__label">购物车</p>
-  </a>
-  <a class="weui-tabbar__item" href="../mine/index.html">
-    <img src="../img/mine1.png" alt="" class="weui-tabbar__icon">
-    <p class="weui-tabbar__label">我的</p>
-  </a>
-</div>
 <script src="../js/zepto.min.js"></script>
 <script>
+    let h = document.documentElement.clientHeight;
+    $("body").css("height", h);
 </script>
 </body>
 
