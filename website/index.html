@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="css/weui.min.css">
 </head>
 <body>
+<div id="loadingToast" style="opacity: 0; display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+            <span class="weui-primary-loading weui-primary-loading_transparent weui-icon_toast">
+              <span class="weui-primary-loading__dot"></span>
+            </span>
+        <p class="weui-toast__content">加载中</p>
+    </div>
+</div>
+
 <div class="weui-tab">
     <div class="weui-panel">
         <div class="weui-grids">
@@ -52,195 +62,16 @@
     <div class="weui-cells__title">附近商家</div>
     <div class="weui-tab__panel">
         <div class="weui-panel">
-            <div class="weui-panel__bd">
-                <a class="weui-media-box weui-media-box_appmsg">
+            <div id="content" class="weui-panel__bd">
+                <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg"
+                   href="store/product.html">
                     <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
                         <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
                     </div>
                     <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="./img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">壹玖柒柒</div>
-                        <div class="weui-media-box__desc">软件开发、技术服务</div>
-                        <div class="weui-media-box__desc">100km</div>
+                        <div class="weui-media-box__title">{{item.content.name}}</div>
+                        <div class="weui-media-box__desc">{{item.content.description}}</div>
+                        <div class="weui-media-box__desc">{{item.distance.value}}km</div>
                     </div>
                 </a>
             </div>
@@ -265,9 +96,19 @@
 </div>
 
 <script src="js/zepto.min.js"></script>
-<script>
-    let h = document.documentElement.clientHeight;
-    $("body").css("height", h);
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+    import {getData} from "./js/onss.js";
+    getData({url: "https://1977.work/shop/2.0.0/stores/1-1/near"}).then((res) => {
+        console.log(res.content[0].content)
+        var content = new Vue({
+            el: '#content',
+            data: {
+                items: res.content
+            }
+        })
+        console.log(res)
+    });
 </script>
 </body>
 
