@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="../css/weui.min.css">
 </head>
 <body>
+<div id="loadingToast" style="opacity: 0; display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+            <span class="weui-primary-loading weui-primary-loading_transparent weui-icon_toast">
+              <span class="weui-primary-loading__dot"></span>
+            </span>
+        <p class="weui-toast__content">加载中</p>
+    </div>
+</div>
+
 <div class="weui-tab">
     <div class="weui-panel">
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
@@ -22,140 +32,25 @@
     </div>
     <div class="weui-tab__panel">
         <div class="weui-panel">
-            <div class="weui-panel__bd">
-                <a class="weui-media-box weui-media-box_appmsg">
+            <div id="content" class="weui-panel__bd">
+                <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg">
                     <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
+                        <span class="weui-badge" style="position: absolute;">{{item.num}}</span>
                         <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
                     </div>
                     <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
+                        <div class="weui-media-box__title">{{item.name}}</div>
+                        <div class="weui-media-box__desc">{{item.description}}</div>
                         <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
+                            <label class="weui-cell_warn">{{item.price}}{{item.priceUnit}}</label>
+                            <span style="float: right">
+                                小计：<label class="weui-cell_warn">{{item.price * item.num}}元</label>
+                            </span>
                         </div>
                     </div>
                 </a>
-
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">8</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">10元/公斤</label>
-                            <span style="float: right">小计：<label class="weui-cell_warn">10元</label></span>
-                        </div>
-                    </div>
-                </a>
-
             </div>
-
         </div>
-
     </div>
 
     <div class=" weui-flex ">
@@ -190,9 +85,18 @@
 </div>
 
 <script src="../js/zepto.min.js"></script>
-<script>
-    let h = document.documentElement.clientHeight;
-    $("body").css("height", h);
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+    import {getData} from "../js/onss.js";
+    getData({url: "https://1977.work/shop/2.0.0/stores/60067604818c62551715d849/getProducts"}).then((res) => {
+        console.log(res.content)
+        var content = new Vue({
+            el: '#content',
+            data: {
+                items: res.content
+            }
+        })
+    });
 </script>
 </body>
 
