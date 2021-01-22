@@ -31,27 +31,10 @@
         </a>
     </div>
     <div class="weui-tab__panel">
-        <div class="weui-panel">
-            <div id="content" class="weui-panel__bd">
-                <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg" href="detail.html">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <span class="weui-badge" style="position: absolute;">{{item.num}}</span>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">{{item.name}}</div>
-                        <div class="weui-media-box__desc">{{item.description}}</div>
-                        <div class="weui-media-box__desc">
-                            <label class="weui-cell_warn">{{item.price}}{{item.priceUnit}}</label>
-                            <span style="float: right">
-                                小计：<label class="weui-cell_warn">{{item.price * item.num}}元</label>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
+        <a  class="weui-media-box weui-media-box_appmsg">
+            <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+            <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+    </a>
     </div>
 
     <div class=" weui-flex ">
