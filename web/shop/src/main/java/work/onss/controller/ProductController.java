@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.Cart;
 import work.onss.domain.Prefer;
 import work.onss.domain.Product;
+import work.onss.domain.Store;
 import work.onss.vo.Work;
 
 import java.math.BigDecimal;
@@ -33,11 +34,20 @@ public class ProductController {
     @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id, @RequestParam(required = false) String uid) {
         Product product = mongoTemplate.findById(id, Product.class);
-        if (product != null && uid != null) {
-            Query query = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
-            Prefer prefer = mongoTemplate.findOne(query, Prefer.class);
-            if (prefer != null) {
-                product.setIsLike(prefer.getId());
+        if (product != null) {
+            Store store = mongoTemplate.findById(product.getSid(), Store.class);
+            product.setStore(store);
+            if (uid != null) {
+                Query query = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
+                Prefer prefer = mongoTemplate.findOne(query, Prefer.class);
+                if (prefer != null) {
+                    product.setIsLike(prefer.getId());
+                }
+                Cart cart = mongoTemplate.findOne(query, Cart.class);
+                if (cart != null) {
+                    product.setNum(cart.getNum());
+                    product.setTotal(cart.getTotal());
+                }
             }
         }
         return Work.success("加载成功", product);

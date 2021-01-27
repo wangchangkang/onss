@@ -18,35 +18,41 @@
     </div>
 </div>
 
-<div class="weui-tab">
-    <div class="weui-panel">
+<div id="content" class="weui-tab">
+    <div class="weui-tab__panel">
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__hd">
                 <img class="weui-media-box__thumb" src="../img/logo2.png" alt="">
             </div>
             <div class="weui-media-box__bd">
-                <h4 class="weui-media-box__title">壹玖柒柒</h4>
-                <p class="weui-media-box__desc">软件开发、技术服务</p>
+                <h4 class="weui-media-box__title">{{item.store.name}}</h4>
+                <p class="weui-media-box__desc">{{item.store.description}}</p>
             </div>
         </a>
-    </div>
-    <div class="weui-tab__panel">
         <a class="weui-media-box weui-media-box_appmsg">
             <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-            <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+        </a>
+        <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                <div class="weui-media-box__title">{{item.name}}</div>
+                <div class="weui-media-box__desc">{{item.description}}</div>
+                <div class="weui-media-box__desc">
+                    <label class="weui-cell_warn">{{item.price}}{{item.priceUnit}}</label>
+                    <span style="float: right">小计：<label class="weui-cell_warn">{{item.total}}元</label></span>
+                </div>
+            </div>
         </a>
     </div>
 
     <div class=" weui-flex ">
         <div class='weui-flex__item weui-cell'>
-            <div class="weui-cell__hd">
-                <label class="checkbox" for="checkbox">
-                    <input class="checkbox" name="checkAll" type='checkbox' id="checkbox">全选
-                </label>
+            <a href="javascript:" class="weui-cell__hd"><img src="../img/index1.png" alt=""/></a>
+            <a href="javascript:" class='weui-cell__bd'><img src="../img/cart1.png" alt=""/></a>
+            <div class='weui-cell__ft'>
+                <a href="javascript:" class="weui-btn  weui-btn_primary" style="width: auto">
+                    加入购物车(<span class="weui-cell_warn">{{item.num}}</span>)
+                </a>
             </div>
-            <div class="weui-cell__bd"></div>
-            <div class='weui-cell__ft'>合计：<label class="weui-cell_warn">10</label>元</div>
-            <div class='weui-cell__ft'><a href="javascript:" class="weui-btn  weui-btn_primary">立即下单</a></div>
         </div>
 
     </div>
@@ -73,12 +79,12 @@
 <script type="module">
     import {getData} from "../js/onss.js";
 
-    getData({url: "shop/stores/60067604818c62551715d849/getProducts"}).then((res) => {
+    getData({url: "shop/products/60067615818c62551715d84a?uid=600eaca339fa156d4189cb51"}).then((res) => {
         console.log(res.content)
         var content = new Vue({
             el: '#content',
             data: {
-                items: res.content
+                item: res.content
             }
         })
     });

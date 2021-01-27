@@ -119,6 +119,7 @@ public class Product implements Serializable {
     private BigDecimal total = BigDecimal.ZERO;
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal sum = BigDecimal.ZERO;
+    private Store store;
     /**
      * 商品是否喜欢
      */
