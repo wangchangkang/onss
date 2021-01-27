@@ -1,9 +1,8 @@
 package work.onss.domain;
 
-import com.querydsl.core.annotations.QueryEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
@@ -28,7 +27,6 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @Document
-@QueryEntity
 public class Address implements Serializable {
     @Id
     private String id;

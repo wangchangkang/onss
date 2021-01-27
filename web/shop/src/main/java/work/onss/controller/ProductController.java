@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import work.onss.domain.Cart;
 import work.onss.domain.Prefer;
 import work.onss.domain.Product;
 import work.onss.vo.Work;
 
-import java.util.Collection;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -41,13 +44,32 @@ public class ProductController {
     }
 
     /**
-     * @param ids 商品主键
+     * @param sid 商户ID
+     * @param uid 用户ID
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<List<Product>> product(@RequestParam(name = "ids") Collection<String> ids) {
-        Query queryProduct = Query.query(Criteria.where("id").in(ids));
-        List<Product> products = mongoTemplate.find(queryProduct, Product.class);
+    public Work<List<Product>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid) {
+        List<Product> products;
+        if (sid != null) {
+            Query queryProduct = Query.query(Criteria.where("sid").is(sid));
+            products = mongoTemplate.find(queryProduct, Product.class);
+        } else {
+            products = mongoTemplate.findAll(Product.class);
+        }
+        if (uid != null && products.size() > 0) {
+            Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
+            List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+            Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+            BigDecimal sum = BigDecimal.ZERO;
+            for (Product product : products) {
+                Cart cart = cartsPid.get(product.getId());
+                product.setNum(cart.getNum());
+                product.setTotal(cart.getTotal());
+                sum = sum.add(cart.getTotal());
+                product.setSum(sum);
+            }
+        }
         return Work.success("加载成功", products);
     }
 }

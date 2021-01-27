@@ -99,7 +99,8 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script type="module">
     import {getData} from "./js/onss.js";
-    getData({url: "https://1977.work/shop/2.0.0/stores/1-1/near"}).then((res) => {
+
+    getData({url: "shop/stores/1-1/near"}).then((res) => {
         var content = new Vue({
             el: '#content',
             data: {

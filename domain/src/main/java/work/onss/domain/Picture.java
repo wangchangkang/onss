@@ -1,6 +1,5 @@
 package work.onss.domain;
 
-import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,7 +17,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @Document
-@QueryEntity
 public class Picture implements Serializable {
 
     @Id

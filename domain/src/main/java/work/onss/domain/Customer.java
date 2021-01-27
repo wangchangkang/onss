@@ -1,6 +1,5 @@
 package work.onss.domain;
 
-import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +21,6 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Document
-@QueryEntity
 public class Customer implements Serializable {
     @Id
     private String id;

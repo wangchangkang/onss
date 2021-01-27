@@ -1,3 +1,4 @@
+const domain = 'http://127.0.0.1'
 let h = document.documentElement.clientHeight;
 $("body").css("height", h);
 
@@ -6,7 +7,7 @@ function getData({type = 'GET', url, data = {}, dataType = 'json'}) {
     $loadingToast.fadeIn(1000);
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url,
+            url:`${domain}/${url}`,
             data,
             type,
             dataType,
@@ -22,4 +23,4 @@ function getData({type = 'GET', url, data = {}, dataType = 'json'}) {
         });
     });
 }
-export { getData }
+export { getData,domain }

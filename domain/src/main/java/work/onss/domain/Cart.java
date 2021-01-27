@@ -1,7 +1,6 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +24,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Document
-@CompoundIndexes(@CompoundIndex( name = "user_product", def = "{'uid':1,'pid':-1}", unique = true))
-@QueryEntity
+@CompoundIndexes(@CompoundIndex(name = "user_product", def = "{'uid':1,'pid':-1}", unique = true))
 public class Cart implements Serializable {
 
     @Id

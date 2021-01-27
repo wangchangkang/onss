@@ -109,6 +109,14 @@ public class CartController {
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         Query productQuery = Query.query(Criteria.where("id").in(cartsPid.keySet()).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (Product product : products) {
+            Cart cart = cartsPid.get(product.getId());
+            product.setNum(cart.getNum());
+            product.setTotal(cart.getTotal());
+            sum = sum.add(cart.getTotal());
+            product.setSum(sum);
+        }
         return Work.success("加载成功", products);
     }
 }

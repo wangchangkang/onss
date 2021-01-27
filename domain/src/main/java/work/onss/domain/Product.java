@@ -1,7 +1,6 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +22,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Document
-@QueryEntity
 public class Product implements Serializable {
     @Id
     private String id;
@@ -49,9 +47,9 @@ public class Product implements Serializable {
      * 商品单价
      */
     @NotNull(message = "单价不能为空")
-    @DecimalMin(value = "0.00",message = "商品单价不能小于{value}元")
-    @Digits(fraction = 2,message = "单价小数位不能大于{value}", integer = 10)
-    @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
+    @DecimalMin(value = "0.00", message = "商品单价不能小于{value}元")
+    @Digits(fraction = 2, message = "单价小数位不能大于{value}", integer = 10)
+    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal price;
     /**
      * 商品单价单位
@@ -62,9 +60,9 @@ public class Product implements Serializable {
      * 商品均价
      */
     @NotNull(message = "均价不能为空")
-    @DecimalMin(value = "0.00",message = "商品均价不能小于{value}元")
-    @Digits(fraction = 2,message = "单价小数位不能大于{value}", integer = 10)
-    @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
+    @DecimalMin(value = "0.00", message = "商品均价不能小于{value}元")
+    @Digits(fraction = 2, message = "单价小数位不能大于{value}", integer = 10)
+    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal average;
     /**
      * 商品均价单位
@@ -75,7 +73,7 @@ public class Product implements Serializable {
      * 商品库存
      */
     @NotNull(message = "请填写库存数量")
-    @Min(value = 1,message = "库存不能小于{value}")
+    @Min(value = 1, message = "库存不能小于{value}")
     private BigDecimal stock;
     /**
      * 商品最小购买数量
@@ -112,13 +110,15 @@ public class Product implements Serializable {
     /**
      * 商品购买数量
      */
-    @Min(value = 1,message = "购买数量不能小于{value}",groups = Cart.class)
+    @Min(value = 1, message = "购买数量不能小于{value}", groups = Cart.class)
     private BigDecimal num;
     /**
      * 商品小计
      */
-    @JsonFormat(pattern = "#.00",shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal total = BigDecimal.ZERO;
+    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
+    private BigDecimal sum = BigDecimal.ZERO;
     /**
      * 商品是否喜欢
      */
