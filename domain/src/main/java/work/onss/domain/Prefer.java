@@ -1,5 +1,6 @@
 package work.onss.domain;
 
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @CompoundIndexes(@CompoundIndex(
         name = "store_product_user", def = "{'sid':1,'pid':-1,'uid':1}", unique = true
 ))
+@QueryEntity
 public class Prefer implements Serializable {
 
     @Id

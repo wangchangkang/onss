@@ -1,5 +1,6 @@
 package work.onss.domain;
 
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Builder;
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @Document
+@QueryEntity
 public class Address implements Serializable {
     @Id
     private String id;

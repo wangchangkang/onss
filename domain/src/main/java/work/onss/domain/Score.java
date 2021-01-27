@@ -3,6 +3,7 @@ package work.onss.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.v3.util.RsaCryptoUtil;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Data
 @Document
+@QueryEntity
 public class Score implements Serializable {
     @Id
     private String id;

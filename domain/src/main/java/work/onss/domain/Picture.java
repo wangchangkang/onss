@@ -1,10 +1,13 @@
 package work.onss.domain;
 
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.Serializable;
 
 /**
  * 图片
@@ -15,7 +18,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @Document
-public class Picture {
+@QueryEntity
+public class Picture implements Serializable {
 
     @Id
     private String id;

@@ -1,6 +1,7 @@
 package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Document
+@QueryEntity
 public class Product implements Serializable {
     @Id
     private String id;

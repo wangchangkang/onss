@@ -2,12 +2,13 @@ package work.onss.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
+import com.querydsl.core.annotations.QueryEntities;
+import com.querydsl.core.annotations.QueryEntity;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.mapping.Document;
-import work.onss.enums.StoreStateEnum;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Document
+@QueryEntity
 public class Store implements Serializable {
     @Id
     private String id;
