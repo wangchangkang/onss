@@ -22,11 +22,11 @@
     <div class="weui-panel">
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__hd">
-                <img class="weui-media-box__thumb" src="../img/logo2.png" alt="">
+                <img class="weui-media-box__thumb" :src="store.trademark" alt="">
             </div>
             <div class="weui-media-box__bd">
-                <h4 class="weui-media-box__title">壹玖柒柒</h4>
-                <p class="weui-media-box__desc">软件开发、技术服务</p>
+                <h4 class="weui-media-box__title">{{store.name}}</h4>
+                <p class="weui-media-box__desc">{{store.description}}</p>
             </div>
         </a>
     </div>
@@ -61,7 +61,7 @@
                 </label>
             </div>
             <div class="weui-cell__bd"></div>
-            <div class='weui-cell__ft'>合计：<label class="weui-cell_warn">{{items[0].sum}}</label>元</div>
+            <div class='weui-cell__ft'>合计：<label class="weui-cell_warn">{{items[0]?.sum}}</label>元</div>
             <div class='weui-cell__ft'>
                 <a href="javascript:" class="weui-btn  weui-btn_primary" style="width: auto">立即下单</a>
             </div>
@@ -91,15 +91,21 @@
 <script type="module">
     import {getData, domain} from "../js/onss.js";
 
+    let vue = new Vue({
+        el: '#content',
+        data: {
+            domain,
+            items: [],
+            store: {}
+        }
+    });
     getData({url: "shop/products?sid=60067604818c62551715d849&uid=600eaca339fa156d4189cb51"}).then((res) => {
-        console.log(res.content)
-        new Vue({
-            el: '#content',
-            data: {
-                domain,
-                items: res.content
-            }
-        })
+        vue.items = res.content;
+    });
+    getData({url: "shop/stores/60067604818c62551715d849"}).then((res) => {
+        let store = res.content;
+        store.trademark = `${domain}/${store.trademark}`;
+        vue.store = store;
     });
 </script>
 </body>

@@ -22,7 +22,7 @@
     <div class="weui-tab__panel">
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__hd">
-                <img class="weui-media-box__thumb" src="../img/logo2.png" alt="">
+                <img class="weui-media-box__thumb" :src="`${domain}/${item.store.trademark}`" alt="">
             </div>
             <div class="weui-media-box__bd">
                 <h4 class="weui-media-box__title">{{item.store.name}}</h4>
@@ -30,7 +30,7 @@
             </div>
         </a>
         <a class="weui-media-box weui-media-box_appmsg">
-            <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+            <img class="weui-media-box__thumb" :src="`${domain}/${item.pictures[0]}`" alt=""/>
         </a>
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
@@ -77,13 +77,13 @@
 <script src="../js/zepto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script type="module">
-    import {getData} from "../js/onss.js";
+    import {getData, domain} from "../js/onss.js";
 
     getData({url: "shop/products/60067615818c62551715d84a?uid=600eaca339fa156d4189cb51"}).then((res) => {
-        console.log(res.content)
         var content = new Vue({
             el: '#content',
             data: {
+                domain,
                 item: res.content
             }
         })

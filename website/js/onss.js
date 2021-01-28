@@ -24,6 +24,7 @@ function getData({type = 'GET', url, data = {}, dataType = 'json'}) {
             type,
             dataType,
             success: function (res) {
+                console.log(res.content)
                 resolve(res);
             },
             error: function (err) {
