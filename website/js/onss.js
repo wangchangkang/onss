@@ -1,4 +1,4 @@
-const domain = 'http://127.0.0.1';
+const domain = 'https://1977.work';
 const types = [
     {id: 1, title: '服装', icon: "/images/clothing.png"},
     {id: 2, title: '美食', icon: "/images/delicious.png"},
