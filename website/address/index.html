@@ -8,39 +8,26 @@
     <link rel="stylesheet" href="../css/weui.min.css">
 </head>
 <body>
-<div class="weui-tab">
+<div id="loadingToast" style="opacity: 0; display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+            <span class="weui-primary-loading weui-primary-loading_transparent weui-icon_toast">
+              <span class="weui-primary-loading__dot"></span>
+            </span>
+        <p class="weui-toast__content">加载中</p>
+    </div>
+</div>
+<div id="content" class="weui-tab">
     <div class="weui-cells__title">常用地址</div>
     <div class="weui-tab__panel">
         <div class="weui-panel weui-cells_radio">
-            <label class="weui-cell weui-cell_active weui-check__label" for="x11">
+            <label v-for="item in items" :key="item.id" class="weui-cell weui-cell_active weui-check__label" for="x11">
                 <div class="weui-cell__bd">
-                    <p>王先生 15063517240</p>
-                    <p>银座中心1#</p>
+                    <p>{{item.username}} {{item.phone}}</p>
+                    <p>{{item.detail}}</p>
                 </div>
                 <div class="weui-cell__ft">
                     <input type="radio" class="weui-check" name="radio1" id="x11">
-                    <span class="weui-icon-checked"></span>
-                </div>
-            </label>
-
-            <label class="weui-cell weui-cell_active weui-check__label" for="x12">
-                <div class="weui-cell__bd">
-                    <p>王先生 15063517240</p>
-                    <p>银座中心1#</p>
-                </div>
-                <div class="weui-cell__ft">
-                    <input type="radio" class="weui-check" name="radio1" id="x12">
-                    <span class="weui-icon-checked"></span>
-                </div>
-            </label>
-
-            <label class="weui-cell weui-cell_active weui-check__label" for="x13">
-                <div class="weui-cell__bd">
-                    <p>王先生 15063517240</p>
-                    <p>银座中心1#</p>
-                </div>
-                <div class="weui-cell__ft">
-                    <input type="radio" class="weui-check" name="radio1" id="x13">
                     <span class="weui-icon-checked"></span>
                 </div>
             </label>
@@ -67,9 +54,18 @@
     </div>
 </div>
 <script src="../js/zepto.min.js"></script>
-<script>
-    let h = document.documentElement.clientHeight;
-    $("body").css("height", h);
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+    import {getData} from "../js/onss.js";
+
+    getData({url: "shop/addresses?uid=600eaca339fa156d4189cb51"}).then((res) => {
+        var content = new Vue({
+            el: '#content',
+            data: {
+                items: res.content
+            }
+        })
+    });
 </script>
 </body>
 

@@ -8,69 +8,19 @@
     <link rel="stylesheet" href="../css/weui.min.css">
 </head>
 <body>
-<div class="weui-tab">
+<div id="content" class="weui-tab">
     <div class="weui-cells__title">我的收藏</div>
     <div class="weui-tab__panel">
         <div class="weui-panel">
             <div class="weui-panel__bd">
-                <a class="weui-media-box weui-media-box_appmsg">
+                <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg">
                     <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+                        <img class="weui-media-box__thumb" :src="`${domain}/${item.pictures[0]}`" alt=""/>
                     </div>
                     <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
-                    </div>
-                </a>
-                <a class="weui-media-box weui-media-box_appmsg">
-                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
-                    </div>
-                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-                        <div class="weui-media-box__title">苹果</div>
-                        <div class="weui-media-box__desc">香甜可口</div>
-                        <div class="weui-media-box__desc">10元/公斤</div>
+                        <div class="weui-media-box__title">{{item.name}}</div>
+                        <div class="weui-media-box__desc">{{item.description}}</div>
+                        <div class="weui-media-box__desc">{{item.price}}/{{item.priceUnit}}</div>
                     </div>
                 </a>
             </div>
@@ -94,9 +44,19 @@
     </div>
 </div>
 <script src="../js/zepto.min.js"></script>
-<script>
-    let h = document.documentElement.clientHeight;
-    $("body").css("height", h);
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+    import {getData, domain} from "../js/onss.js";
+
+    getData({url: "shop/prefers?uid=600eaca339fa156d4189cb51"}).then((res) => {
+        new Vue({
+            el: '#content',
+            data: {
+                domain,
+                items: res.content
+            }
+        })
+    });
 </script>
 </body>
 
