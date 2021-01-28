@@ -22,7 +22,7 @@
     <div class="weui-panel">
         <a href="javascript:" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__hd">
-                <img class="weui-media-box__thumb" :src="store.trademark" alt="">
+                <img v-if="store.trademark" class="weui-media-box__thumb" :src="`${domain}/${store.trademark}`" alt="">
             </div>
             <div class="weui-media-box__bd">
                 <h4 class="weui-media-box__title">{{store.name}}</h4>
@@ -103,9 +103,7 @@
         vue.items = res.content;
     });
     getData({url: "shop/stores/60067604818c62551715d849"}).then((res) => {
-        let store = res.content;
-        store.trademark = `${domain}/${store.trademark}`;
-        vue.store = store;
+        vue.store = res.content;
     });
 </script>
 </body>
