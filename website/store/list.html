@@ -26,7 +26,7 @@
                 <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg"
                    href="product.html">
                     <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+                        <img class="weui-media-box__thumb" :src="`${domain}/${item.content.trademark}`" alt=""/>
                     </div>
                     <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
                         <div class="weui-media-box__title">{{item.content.name}}</div>
@@ -58,7 +58,7 @@
 <script src="../js/zepto.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script type="module">
-    import {getData,getType} from "../js/onss.js";
+    import {getData,getType,domain} from "../js/onss.js";
 
     getData({url: "shop/stores/1-1/near?type=1"}).then((res) => {
         console.log(res.content)
@@ -67,6 +67,7 @@
         var content = new Vue({
             el: '#content',
             data: {
+                domain,
                 type,
                 items: res.content
             }
