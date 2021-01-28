@@ -1,0 +1,78 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/weui.min.css">
+</head>
+<body>
+<div id="loadingToast" style="opacity: 0; display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+            <span class="weui-primary-loading weui-primary-loading_transparent weui-icon_toast">
+              <span class="weui-primary-loading__dot"></span>
+            </span>
+        <p class="weui-toast__content">加载中</p>
+    </div>
+</div>
+
+<div id="content" class="weui-tab">
+    <div class="weui-cells__title">附近商家-{{type.title}}</div>
+    <div class="weui-tab__panel">
+        <div class="weui-panel">
+            <div class="weui-panel__bd">
+                <a v-for="item in items" :key="item.id" class="weui-media-box weui-media-box_appmsg"
+                   href="product.html">
+                    <div class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+                        <img class="weui-media-box__thumb" src="../img/logo2.png" alt=""/>
+                    </div>
+                    <div class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+                        <div class="weui-media-box__title">{{item.content.name}}</div>
+                        <div class="weui-media-box__desc">{{item.content.description}}</div>
+                        <div class="weui-media-box__desc">{{item.distance.value}}km</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="weui-tabbar">
+        <a class="weui-tabbar__item " href="../index.html">
+            <div style="display: inline-block; position: relative;">
+                <img src="../img/index1.png" alt="" class="weui-tabbar__icon">
+            </div>
+            <p class="weui-tabbar__label">首页</p>
+        </a>
+        <a class="weui-tabbar__item" href="../cart/index.html">
+            <img src="../img/cart1.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">购物车</p>
+        </a>
+        <a class="weui-tabbar__item" href="../mine/index.html">
+            <img src="../img/mine1.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">我的</p>
+        </a>
+    </div>
+</div>
+
+<script src="../js/zepto.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="module">
+    import {getData,getType} from "../js/onss.js";
+
+    getData({url: "shop/stores/1-1/near?type=1"}).then((res) => {
+        console.log(res.content)
+        const type = getType(1)
+        console.log(type)
+        var content = new Vue({
+            el: '#content',
+            data: {
+                type,
+                items: res.content
+            }
+        })
+    });
+</script>
+</body>
+
+</html>

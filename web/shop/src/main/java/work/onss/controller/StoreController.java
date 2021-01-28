@@ -88,7 +88,6 @@ public class StoreController {
                 .with(pageable);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         return Work.success("加载成功", storeGeoResults.getContent());
-
     }
 
     /**
