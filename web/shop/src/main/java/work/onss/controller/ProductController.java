@@ -2,9 +2,11 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,13 +61,14 @@ public class ProductController {
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<List<Product>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid) {
+    public Work<List<Product>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) {
         List<Product> products;
+        Query queryProduct = new Query();
         if (sid != null) {
-            Query queryProduct = Query.query(Criteria.where("sid").is(sid));
+            queryProduct = Query.query(Criteria.where("sid").is(sid)).with(pageable);
             products = mongoTemplate.find(queryProduct, Product.class);
         } else {
-            products = mongoTemplate.findAll(Product.class);
+            products = mongoTemplate.find(queryProduct.with(pageable), Product.class);
         }
         if (uid != null && products.size() > 0) {
             Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));

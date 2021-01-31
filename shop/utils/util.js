@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'https://1977.work/shop/2.0.0';
+const domain = 'http://127.0.0.1/shop';
 const appid = "wxe78290c2a5313de3";
-const prefix = 'https://1977.work/';
+const prefix = 'http://127.0.0.1/';
 
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
@@ -44,7 +44,7 @@ function wxLogin() {
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
-            data: { code, subAppId:appid }
+            data: { code, subAppId: appid }
           }).then(({ content }) => {
             wx.setStorageSync('authorization', content.authorization);
             wx.setStorageSync('info', content.info);
@@ -71,7 +71,7 @@ function wxLogin() {
  * @param {string} encryptedData 微信用户密文
  * @param {string} iv 偏移量
  */
-function setPhone( authorization, info, encryptedData, iv) {
+function setPhone(authorization, info, encryptedData, iv) {
   return wxRequest({
     url: `${domain}/users/${info.uid}/setPhone`,
     method: 'POST',
@@ -85,8 +85,15 @@ function setPhone( authorization, info, encryptedData, iv) {
  * @param {Number} number 分页数 
  */
 function getProducts(sid, number = 0) {
-  return wxRequest({ url: `${domain}/stores/${sid}/getProducts?page=${number}&size=${size}` })
+  const authorization = wx.getStorageSync('authorization');
+  const info = wx.getStorageSync('info');
+  if (authorization && info) {
+    return wxRequest({ url: `${domain}/products?sid=${sid}&uid=${info.uid}&page=${number}&size=${size}`, header:{ authorization, info: JSON.stringify(info) } })
+  } else {
+    return wxRequest({ url: `${domain}/products?sid=${sid}&page=${number}&size=${size}` })
+  }
 }
+
 /** 根据经纬度分页获取商户
  * @param {Number} longitude 经度
  * @param {Number} latitude 维度
@@ -131,7 +138,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
   return new Promise((resolve) => {
     wx.showLoading({
       title: '加载中',
-      mask:true
+      mask: true
     })
     wx.request({
       url,
@@ -150,7 +157,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             break;
           case '1977.user.notfound':
             console.log(content);
-            if(content){
+            if (content) {
               wx.setStorageSync('authorization', content.authorization);
               wx.setStorageSync('info', content.info);
             }
@@ -188,7 +195,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       complete: (res) => {
         wx.hideLoading()
         console.log(res);
-       },
+      },
       enableCache: true,
       enableHttp2: true,
       enableQuic: true,
