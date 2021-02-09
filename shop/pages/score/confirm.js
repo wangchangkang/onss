@@ -15,13 +15,8 @@ Page({
 
   saveScore: function (e) {
     wxLogin().then(({ authorization, info }) => {
-      let { address, cartsPid, store, products } = this.data;
-      products = products.filter((product) => {
-        const cart = cartsPid[product.id];
-        product.num = cart.num;
-        return cartsPid[product.id].checked && store.id === product.sid
-      });
-      console.log(products);
+      let { address, store, products } = this.data;
+      products = products.filter((product) => product.cart.checked);
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}`,
         header: { authorization, info: JSON.stringify(info) },

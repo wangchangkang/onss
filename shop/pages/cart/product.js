@@ -1,4 +1,4 @@
-import { prefix, wxLogin, domain, wxRequest, getStore } from '../../utils/util.js';
+import { prefix, wxLogin, domain, wxRequest } from '../../utils/util.js';
 Page({
   data: {
     prefix,
@@ -10,33 +10,16 @@ Page({
   },
   onLoad: function (options) {
     if (options.sid) {
-      getStore(options.sid).then((data1) => {
-        wxLogin().then(({ authorization, info, cartsPid }) => {
-          wxRequest({
-            url: `${domain}/carts?uid=${info.uid}&sid=${options.sid}&pids=${Object.keys(cartsPid)}`,
-            header: { authorization, info: JSON.stringify(info) },
-          }).then((data2) => {
-            let checkeds = [];
-            let total = 0;
-            data2.content.forEach((product) => {
-              const cart = cartsPid[product.id];
-              let sum = product.average * 100 * cart.num;
-              cartsPid[product.id].total = sum / 100;
-              if (cart.checked) {
-                checkeds.push(product.id);
-                total = total + sum;
-              }
-            });
-            this.setData({
-              checkAll: checkeds.length === 0 ? false : checkeds.length === data2.content.length,
-              total: total / 100,
-              store: data1.content,
-              cartsPid,
-              products: data2.content
-            })
+      wxLogin().then(({ authorization, info }) => {
+        wxRequest({
+          url: `${domain}/carts?uid=${info.uid}&sid=${options.sid}`,
+          header: { authorization, info: JSON.stringify(info) },
+        }).then((data2) => {
+          this.setData({
+            ...data2.content
           })
         })
-      });
+      })
     } else {
       wx.reLaunch({
         url: '/pages/cart/cart'
@@ -45,104 +28,112 @@ Page({
   },
 
   addCount: function (e) {
-    this.updateCart(e.currentTarget.id, 1);
+    const id = e.currentTarget.id;
+    this.updateCart(id, 1);
   },
 
   subtractCount: function (e) {
-    this.updateCart(e.currentTarget.id, -1);
+    const id = e.currentTarget.id;
+    this.updateCart(id, -1);
   },
 
   updateCart: function (index, count) {
-    let checkeds = [];
-    let total = 0;
-    wxLogin().then(() => {
-      let { cartsPid, products } = this.data;
-      console.log(cartsPid);
-      console.log(products);
-      products.forEach((product, k) => {
-        let cart = cartsPid[product.id];
-        if (index == k) {
-          count = cart.num + count;
-          if (count > product.max || count < product.min) {
-            console.log(product);
-            wx.showModal({
-              title: '警告',
-              content: `每次仅限购买${product.min}至${product.max}`,
-              confirmColor: '#e64340',
-              showCancel: false,
-            })
-          } else {
-            cart.num = count
-            let sum = product.average * 100 * cart.num;
-            cart.total = sum / 100;
+    wxLogin().then(({ authorization, info }) => {
+      let { products, sum } = this.data;
+      let product = products[index];
+      let cart = product.cart;
+      if (cart) {
+        wxRequest({
+          url: `${domain}/carts?uid=${info.uid}`,
+          method: 'POST',
+          header: { authorization, info: JSON.stringify(info) },
+          data: { id: product.cart.id, sid: product.sid, pid: product.id, num: product.cart.num + count },
+        }).then((data) => {
+          if (cart.checked) {
+            sum = parseFloat(sum) + parseFloat(product.average * count);
+            sum = sum.toFixed(2)
           }
-        }
-        if (cart.checked) {
-          total = cart.total * 100 + total;
-          checkeds.push(product.id);
-        }
-        const key = `cartsPid.${product.id}`;
-        this.setData({
-          [key]: cart
+          this.setData({
+            [`products[${index}].cart`]: data.content,
+            [`sum`]: sum,
+          });
         });
-      });
-      this.setData({
-        checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
-        total: total / 100
-      });
-      wx.setStorageSync('cartsPid', this.data.cartsPid);
-    });
-  },
-
-  /** 购物车复选框 onChange
-   * @param {Object} e 
-   */
-  cartChange: function (e) {
-    const checkeds = e.detail.value;
-    const { cartsPid, products } = this.data;
-    let total = 0;
-    products.forEach((product) => {
-      let cart = cartsPid[product.id];
-      const isChecked = checkeds.includes(product.id);
-      cart.checked = isChecked;
-      cart.total = (product.average * 100 * cart.num) / 100;
-      const key = `cartsPid.${product.id}`;
-      this.setData({
-        [key]: cart
-      });
-      if (isChecked) {
-        total = total + cart.total * 100;
+      } else {
+        wxRequest({
+          url: `${domain}/carts?uid=${info.uid}`,
+          method: 'POST',
+          header: { authorization, info: JSON.stringify(info) },
+          data: { sid: product.sid, pid: product.id, num: 1 },
+        }).then((data) => {
+          sum = parseFloat(sum) + parseFloat(product.average * count);
+          this.setData({
+            [`products[${index}].cart`]: data.content,
+            sum: sum.toFixed(2)
+          });
+        });
       }
-    });
-    this.setData({
-      checkAll: checkeds.length === 0 ? false : checkeds.length === products.length,
-      total: total / 100
-    });
+    })
   },
 
-  checkAll: function (e) {
-    const checkAll = e.detail.value;
-    let total = 0;
-    let { cartsPid, products } = this.data;
-    if (checkAll) {
-      products.forEach((product) => {
-        const key = `cartsPid.${product.id}.checked`;
+  checkedChange: function (e) {
+    const index = e.currentTarget.dataset.index;
+    let { products, sum, checkAll, store } = this.data;
+    let product = products[index];
+    let cart = product.cart;
+    wxLogin().then(({ authorization, info }) => {
+      if (cart) {
+        wxRequest({
+          url: `${domain}/carts/${cart.id}/setChecked?checked=${cart.checked}&uid=${info.uid}&sid=${store.id}`,
+          method: 'POST',
+          header: { authorization, info: JSON.stringify(info) },
+        }).then((data) => {
+          const total = parseFloat(cart.total);
+          sum = parseFloat(sum);
+          if (cart.checked) {
+            sum = sum - total;
+            cart.checked = false;
+            checkAll = false
+          } else {
+            sum = sum + total;
+            cart.checked = true;
+            if (data.content >= products.length) {
+              checkAll = true
+            }
+          }
+          this.setData({
+            sum: sum.toFixed(2), checkAll, [`products[${index}].cart`]: cart
+          })
+        })
+      } else {
         this.setData({
-          [key]: checkAll
-        });
-        total = total + product.average * 100 * cartsPid[product.id].num;
-      });
-    } else {
-      products.forEach((product) => {
-        const checked = `cartsPid.${product.id}.checked`;
+          checkAll, [`products[${index}].cart`]: cart
+        })
+      }
+    })
+  },
+
+  switchChange: function (e) {
+    wxLogin().then(({ authorization, info }) => {
+      let { store, products } = this.data;
+      const checkAll = e.detail.value;
+      wxRequest({
+        url: `${domain}/carts/setCheckAll?checkAll=${checkAll}&uid=${info.uid}&sid=${store.id}`,
+        method: 'POST',
+        header: { authorization, info: JSON.stringify(info) },
+      }).then((data) => {
+        products.forEach((product, index) => {
+          let cart = product.cart;
+          if (cart && cart.checked != checkAll) {
+            this.setData({
+              [`products[${index}].cart.checked`]: checkAll
+            })
+          }
+        })
         this.setData({
-          [checked]: checkAll
-        });
-      });
-    }
-    this.setData({
-      checkAll,
-      total: total / 100
-    });
+          sum: data.content,
+          checkAll
+        })
+      })
+    })
   }
 })

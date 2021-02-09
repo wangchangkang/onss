@@ -18,6 +18,7 @@ import work.onss.domain.Store;
 import work.onss.vo.Work;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,12 +44,12 @@ public class ProductController {
                 Query query = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
                 Prefer prefer = mongoTemplate.findOne(query, Prefer.class);
                 if (prefer != null) {
-                    product.setIsLike(prefer.getId());
+                    product.setPrefer(prefer);
                 }
                 Cart cart = mongoTemplate.findOne(query, Cart.class);
                 if (cart != null) {
-                    product.setNum(cart.getNum());
-                    product.setTotal(cart.getTotal());
+                    cart.setTotal(cart.getNum().multiply(product.getAverage()));
+                    product.setCart(cart);
                 }
             }
         }
@@ -61,28 +62,44 @@ public class ProductController {
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<List<Product>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) {
+    public Work<Map<String, Object>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) {
         List<Product> products;
+        Store store = null;
         Query queryProduct = new Query();
         if (sid != null) {
             queryProduct = Query.query(Criteria.where("sid").is(sid)).with(pageable);
             products = mongoTemplate.find(queryProduct, Product.class);
+            store = mongoTemplate.findById(sid, Store.class);
         } else {
             products = mongoTemplate.find(queryProduct.with(pageable), Product.class);
         }
-        if (uid != null && products.size() > 0) {
+        BigDecimal sum = new BigDecimal("0.00");
+        boolean checkAll = true;
+        if (store != null && uid != null && products.size() > 0) {
             Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
             List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
-            Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-            BigDecimal sum = BigDecimal.ZERO;
-            for (Product product : products) {
-                Cart cart = cartsPid.get(product.getId());
-                product.setNum(cart.getNum());
-                product.setTotal(cart.getTotal());
-                sum = sum.add(cart.getTotal());
-                product.setSum(sum);
+            if (carts.size() > 0) {
+                Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+                for (Product product : products) {
+                    Cart cart = cartsPid.get(product.getId());
+                    if (cart == null) {
+                        checkAll = false;
+                        continue;
+                    }
+                    if (cart.getChecked()) {
+                        sum = sum.add(cart.getTotal());
+                    } else {
+                        checkAll = false;
+                    }
+                    product.setCart(cart);
+                }
             }
         }
-        return Work.success("加载成功", products);
+        Map<String, Object> data = new HashMap<>();
+        data.put("checkAll", checkAll);
+        data.put("sum", sum.toPlainString());
+        data.put("store", store);
+        data.put("products", products);
+        return Work.success("加载成功", data);
     }
 }

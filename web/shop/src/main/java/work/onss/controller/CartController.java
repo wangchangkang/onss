@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Cart;
@@ -14,6 +15,7 @@ import work.onss.vo.Work;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -103,20 +105,56 @@ public class CartController {
      * @return 购物车
      */
     @GetMapping(value = {"carts"})
-    public Work<List<Product>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) {
+    public Work<Map<String, Object>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) {
         Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
         List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         Query productQuery = Query.query(Criteria.where("id").in(cartsPid.keySet()).and("sid").is(sid));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
-        BigDecimal sum = BigDecimal.ZERO;
+        Store store = mongoTemplate.findById(sid, Store.class);
+        BigDecimal sum = new BigDecimal("0.00");
+        boolean checkAll = true;
         for (Product product : products) {
             Cart cart = cartsPid.get(product.getId());
-            product.setNum(cart.getNum());
-            product.setTotal(cart.getTotal());
-            sum = sum.add(cart.getTotal());
-            product.setSum(sum);
+            product.setCart(cart);
+            if (cart.getChecked()) {
+                sum = sum.add(cart.getTotal());
+            } else {
+                checkAll = false;
+            }
         }
-        return Work.success("加载成功", products);
+        Map<String, Object> data = new HashMap<>();
+        data.put("checkAll", checkAll);
+        data.put("sum", sum.toPlainString());
+        data.put("products", products);
+        data.put("store", store);
+        return Work.success("加载成功", data);
+    }
+
+    @Transactional
+    @PostMapping(value = {"carts/{id}/setChecked"})
+    public Work<Long> setChecked(@PathVariable String id, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @RequestParam(name = "checked") Boolean checked) {
+        Query cartQuery1 = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
+        Update update1 = Update.update("checked", !checked);
+        mongoTemplate.updateMulti(cartQuery1, update1, Cart.class);
+        Query cartQuery2 = Query.query(Criteria.where("sid").is(sid).and("uid").is(uid).and("checked").is(true));
+        long count = mongoTemplate.count(cartQuery2, Cart.class);
+        return Work.success("更新成功", count);
+    }
+
+    @Transactional
+    @PostMapping(value = {"carts/setCheckAll"})
+    public Work<Object> setCheckAll(@RequestParam Boolean checkAll, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
+        Query cartQuery = Query.query(Criteria.where("sid").in(sid).and("uid").is(uid));
+        Update update = Update.update("checked", checkAll);
+        mongoTemplate.updateMulti(cartQuery, update, Cart.class);
+        BigDecimal sum = new BigDecimal("0.00");
+        if (checkAll) {
+            List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+            for (Cart cart : carts) {
+                sum = sum.add(cart.getTotal());
+            }
+        }
+        return Work.success("更新成功", sum.toPlainString());
     }
 }

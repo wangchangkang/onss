@@ -107,23 +107,16 @@ public class Product implements Serializable {
     @NotEmpty(message = "请上传商品图片")
     @Size(min = 1, max = 9, message = "商品图片数量为{min}-{max}")
     private List<String> pictures;
-    /**
-     * 商品购买数量
-     */
-    @Min(value = 1, message = "购买数量不能小于{value}", groups = Cart.class)
-    private BigDecimal num;
-    /**
-     * 商品小计
-     */
-    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
-    private BigDecimal total = BigDecimal.ZERO;
-    @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
-    private BigDecimal sum = BigDecimal.ZERO;
+
     private Store store;
     /**
      * 商品是否喜欢
      */
-    private String isLike;
+    private Prefer prefer;
+    /**
+     * 购物车
+     */
+    private Cart cart;
     /**
      * 创建时间
      */

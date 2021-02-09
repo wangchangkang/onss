@@ -1,7 +1,7 @@
 import { domain, wxLogin, wxRequest } from '../../utils/util.js';
 Page({
   data: {
-    location: {}
+    point: {}
   },
 
   onLoad: function (options) {
@@ -16,14 +16,15 @@ Page({
   },
 
   chooseLocation: function (e) {
-    const { location, detail } = this.data;
-    if (location && location.x && location.y) {
+    const { point, detail } = this.data;
+    if (point && point.x && point.y) {
       wx.chooseLocation({
-        longitude: location.x,
-        latitude: location.y,
+        longitude: point.x,
+        latitude: point.y,
         name: detail,
         success: (res) => {
-          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } });
+          console.log(res);
+          this.setData({ point: { x: res.longitude, y: res.latitude }, detail: res.address, name: res.name });
         }
       })
     } else {
@@ -34,7 +35,8 @@ Page({
             longitude: parseFloat(res.longitude),
             latitude: parseFloat(res.latitude),
             success: (res) => {
-              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } });
+              console.log(res);
+              this.setData({ point: { x: res.longitude, y: res.latitude }, detail: res.address, name: res.name });
             }
           })
         }
@@ -44,9 +46,9 @@ Page({
 
   saveAddress: function (e) {
     wxLogin().then(({ authorization, info }) => {
-      const { location, index } = this.data;
+      const { point, index } = this.data;
       let address = e.detail.value;
-      address.location = location;
+      address.point = point;
       wxRequest({
         url: `${domain}/addresses?uid=${info.uid}`,
         header: { authorization, info: JSON.stringify(info) },

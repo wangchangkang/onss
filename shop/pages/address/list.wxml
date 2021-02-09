@@ -8,8 +8,8 @@
 			<view class="weui-media-box__hd_in-appmsg">
 				<radio value="{{index}}" />
 			</view>
-			<navigator url="/pages/address/detail?index={{index}}"
-				class="weui-media-box__bd weui-media-box__bd_in-appmsg weui-cell__ft_in-access">
+			<navigator url="/pages/address/detail?index={{index}}" class="weui-media-box__bd weui-media-box__bd_in-appmsg weui-cell__ft_in-access">
+				<view class="weui-media-box__desc">{{address.name}}</view>
 				<view class="weui-media-box__title">{{address.username}} {{address.phone}}</view>
 				<view class="weui-media-box__desc">{{address.detail}}</view>
 			</navigator>

@@ -105,9 +105,9 @@ public class Score implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
         for (Product cart : this.getProducts()) {
             Product product = productMap.get(cart.getId());
-            cart.setTotal(product.getAverage().multiply(cart.getNum()));
+            cart.getCart().setTotal(product.getAverage().multiply(cart.getCart().getNum()));
             cart.setAverage(product.getAverage());
-            total = total.add(cart.getTotal());
+            total = total.add(cart.getCart().getTotal());
         }
         this.total = total;
     }

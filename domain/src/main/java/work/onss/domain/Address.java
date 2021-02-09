@@ -41,6 +41,7 @@ public class Address implements Serializable {
     @NotBlank(message = "手机号不能为空")
     @Pattern(regexp = "^[1][34578][0-9]{9}$", message = "手机号格式错误")
     private String phone;
+    private String name;
     /**
      * 地址详情
      */
@@ -52,7 +53,7 @@ public class Address implements Serializable {
      */
     @NotNull(message = "请重新定位收货地址")
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
-    private Point location;
+    private Point point;
     /**
      * 地址用户ID
      */
