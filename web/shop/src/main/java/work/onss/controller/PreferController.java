@@ -9,12 +9,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import work.onss.domain.Cart;
 import work.onss.domain.Prefer;
 import work.onss.domain.Product;
 import work.onss.vo.Work;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -54,12 +56,26 @@ public class PreferController {
      * @return 所有收藏
      */
     @GetMapping(value = {"prefers"})
-    public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid,@PageableDefault Pageable pageable) {
+    public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid, @PageableDefault Pageable pageable) {
         Query query = Query.query(Criteria.where("uid").is(uid)).with(pageable);
         List<Prefer> prefers = mongoTemplate.find(query, Prefer.class);
         List<String> pids = prefers.stream().map(Prefer::getPid).collect(Collectors.toList());
         Query productQuery = Query.query(Criteria.where("id").in(pids));
         List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        if (uid != null && products.size() > 0) {
+            Query cartQuery = Query.query(Criteria.where("uid").is(uid));
+            List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+            if (carts.size() > 0) {
+                Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
+                for (Product product : products) {
+                    Cart cart = cartsPid.get(product.getId());
+                    if (cart == null) {
+                        continue;
+                    }
+                    product.setCart(cart);
+                }
+            }
+        }
         return Work.success("加载成功", products);
     }
 }

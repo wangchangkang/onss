@@ -3,7 +3,7 @@
 	<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
 		<navigator url="/pages/store/detail?id={{product.id}}" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-				<view class="weui-badge">{{cartsPid[product.id]?cartsPid[product.id].num:0}}</view>
+				<view class="weui-badge">{{product.cart.num}}</view>
 				<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 			</view>
 			<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
@@ -13,9 +13,9 @@
 			</view>
 		</navigator>
 		<view class="weui-cell__ft">
-			<button type="default" size="mini" disabled="{{!cartsPid[product.id].num>0}}" bindtap="subtractCount" id='{{index}}'>减</button>
+			<button type="default" size="mini" disabled="{{product.cart.num<=0}}" bindtap="subtractCount" id='{{index}}'>减</button>
 			<button type="default" size="mini" disabled="true">
-				<text class="weui-cell_warn">{{cartsPid[product.id]?cartsPid[product.id].num:0}}</text>
+				<text class="weui-cell_warn">{{product.cart.num}}</text>
 			</button>
 			<button type="default" size="mini" bindtap="addCount" id="{{index}}">加</button>
 		</view>

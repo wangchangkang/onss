@@ -6,14 +6,13 @@ Page({
   },
 
   onLoad: function (options) {
-    wxLogin().then(({ authorization, info, cartsPid }) => {
+    wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/prefers?uid=${info.uid}&page=0&size=${size}`,
         header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
         console.log(data);
         this.setData({
-          cartsPid,
           number: 0,
           last: false,
           products: data.content
@@ -46,7 +45,6 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
     wxLogin().then(({ authorization, info }) => {
       const number = this.data.number + 1;
       wxRequest({
@@ -77,19 +75,18 @@ Page({
 
   updateCart: function (index, count) {
     wxLogin().then(({ authorization, info }) => {
-      let product = this.data.products[index]
-      const { cartsPid } = this.data;
-      if (cartsPid[product.id]) {
+      let { products } = this.data;
+      let product = products[index];
+      let cart = product.cart;
+      if (cart) {
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
           header: { authorization, info: JSON.stringify(info) },
-          data: { id: cartsPid[product.id].id, sid: product.sid, pid: product.id, num: cartsPid[product.id].num + count },
+          data: { id: product.cart.id, sid: product.sid, pid: product.id, num: product.cart.num + count },
         }).then((data) => {
-          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
-          wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
-            cartsPid
+            [`products[${index}].cart`]: data.content,
           });
         });
       } else {
@@ -99,14 +96,12 @@ Page({
           header: { authorization, info: JSON.stringify(info) },
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
-          const cartsPid = { ...this.data.cartsPid, [product.id]: data.content };
-          wx.setStorageSync('cartsPid', cartsPid);
           this.setData({
-            cartsPid
+            [`products[${index}].cart`]: data.content,
           });
         });
       }
     })
-  }
+  },
 
 })
