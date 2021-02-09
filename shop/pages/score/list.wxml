@@ -15,7 +15,7 @@
 				</view>
 				<view class="weui-media-box__title">{{score.address.username}} {{score.address.phone}}</view>
 				<view class="weui-media-box__desc">{{score.address.detail}}</view>
-				<view class="weui-media-box__desc">{{score.payTime}} <label class='status'>合计:{{score.total}}元</label></view>
+				<view class="weui-media-box__desc">{{score.payTime}}</view>
 			</view>
 		</view>
 	</navigator>
