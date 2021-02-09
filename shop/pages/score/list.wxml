@@ -5,7 +5,7 @@
 		<view class=" weui-media-box_appmsg">
 			<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<swiper-item wx:for="{{score.products}}" wx:for-item='product' wx:key="index" class="weui-media-box__thumb">
-					<view class="weui-badge">{{product.num}}</view>
+					<view class="weui-badge">{{product.cart.num}}</view>
 					<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 				</swiper-item>
 			</swiper>

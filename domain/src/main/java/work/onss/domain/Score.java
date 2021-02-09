@@ -112,12 +112,12 @@ public class Score implements Serializable {
         this.total = total;
     }
 
-    public WxPayMpOrderResult getWxPayMpOrderResult(String timestamp, String nonceStr, X509Certificate x509Certificate) throws IllegalBlockSizeException {
+    public WxPayMpOrderResult getWxPayMpOrderResult(Integer timestamp, String nonceStr, X509Certificate x509Certificate) throws IllegalBlockSizeException {
         String data = this.getSubAppId() + "\n" + timestamp + "\n" + nonceStr + "\n" + this.prepayId;
         String sign = RsaCryptoUtil.encryptOAEP(data, x509Certificate);
         return WxPayMpOrderResult.builder()
                 .appId(this.getSubAppId())
-                .timeStamp(timestamp)
+                .timeStamp(String.valueOf(timestamp))
                 .nonceStr(nonceStr)
                 .packageValue(this.prepayId)
                 .signType("RSA")

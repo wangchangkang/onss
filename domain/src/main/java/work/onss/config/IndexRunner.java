@@ -20,7 +20,7 @@ public class IndexRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        GeospatialIndex location = new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE);
+        GeospatialIndex location = new GeospatialIndex("point").typed(GeoSpatialIndexType.GEO_2DSPHERE);
         mongoTemplate.indexOps(Store.class).ensureIndex(location);
         mongoTemplate.indexOps(Address.class).ensureIndex(location);
 

@@ -64,7 +64,7 @@ public class Store implements Serializable {
     /**
      * 商户坐标
      */
-    private Point location;
+    private Point point;
     /**
      * 商户宣传册
      */

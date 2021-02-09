@@ -1,7 +1,8 @@
 package work.onss.controller;
 
 
-import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -134,7 +135,8 @@ public class ScoreController {
                 .description(store.getName())
                 .outTradeNo(code)
                 .build();
-//        String wxScoreStr = JsonMapperUtils.toJson(wxScore, JsonInclude.Include.NON_NULL, PropertyNamingStrategy.SNAKE_CASE);
+        String wxScoreStr = JsonMapperUtils.toJson(wxScore, JsonInclude.Include.NON_NULL, PropertyNamingStrategy.SNAKE_CASE);
+        log.info(wxScoreStr);
 //        String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
 //        log.info(transactionStr);
 //        Map<String, String> prepayMap = JsonMapperUtils.fromJson(transactionStr, String.class, String.class);
@@ -147,8 +149,7 @@ public class ScoreController {
         score.setUpdateTime(localDateTime);
         score.setPayTime(localDateTime);
         mongoTemplate.insert(score);
-        String timestamp = String.valueOf(localDateTime.getSecond() / 1000L);
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(timestamp, score.getId(), wxPayConfig.getVerifier().getValidCertificate());
+        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(localDateTime.getSecond(), score.getId(), wxPayConfig.getVerifier().getValidCertificate());
         log.info(wxPayMpOrderResult);
         return Work.success("创建订单成功", wxPayMpOrderResult);
     }
@@ -160,12 +161,11 @@ public class ScoreController {
      */
     @PostMapping(value = {"scores/continuePay"})
     public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws IllegalBlockSizeException {
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
         String nonceStr = SignUtils.genRandomStr();
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(timestamp, nonceStr, wxPayConfig.getVerifier().getValidCertificate());
+        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(LocalDateTime.now().getSecond(), nonceStr, wxPayConfig.getVerifier().getValidCertificate());
         log.info(wxPayMpOrderResult);
         return Work.success("生成订单成功", wxPayMpOrderResult);
     }
