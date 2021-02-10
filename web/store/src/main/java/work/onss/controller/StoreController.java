@@ -179,7 +179,7 @@ public class StoreController {
                 .set("username", store.getUsername())
                 .set("phone", store.getPhone())
                 .set("type", store.getType())
-                .set("location", store.getLocation())
+                .set("point", store.getPoint())
                 .set("pictures", store.getPictures())
                 .set("videos", store.getVideos())
                 .set("openTime", store.getOpenTime())
