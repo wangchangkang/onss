@@ -1,0 +1,40 @@
+[
+  {
+    "_id": {"$oid": "60067615818c62551715d84a"},
+    "average": "1.20",
+    "averageUnit": "元/个",
+    "description": "描述",
+    "label": "水果",
+    "max": "10",
+    "min": "1",
+    "name": "苹果",
+    "pictures": ["picture/5f7718b17df1fd2713364cfc/f1e5b71b609a059f09d58660f5a77c64.png"],
+    "price": "10",
+    "priceUnit": "元/公斤",
+    "quality": true,
+    "sid": "60067604818c62551715d849",
+    "status": true,
+    "stock": "100",
+    "total": "0",
+    "vid": "l09179f499o"
+  },
+  {
+    "_id": {"$oid": "601febd8220507239b393b8f"},
+    "average": "1.20",
+    "averageUnit": "元/个",
+    "description": "描述",
+    "label": "水果",
+    "max": "10",
+    "min": "1",
+    "name": "苹果",
+    "pictures": ["picture/5f7718b17df1fd2713364cfc/f1e5b71b609a059f09d58660f5a77c64.png"],
+    "price": "10",
+    "priceUnit": "元/公斤",
+    "quality": true,
+    "sid": "60067604818c62551715d849",
+    "status": true,
+    "stock": "100",
+    "total": "0",
+    "vid": "l09179f499o"
+  }
+]

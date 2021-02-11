@@ -26,11 +26,17 @@ Page({
         data: this.data.score,
         header: { authorization, info: JSON.stringify(info) },
       }).then((data) => {
+        const { content } = data;
         const index = this.data.index;
         wx.requestPayment(
           {
-            ...data.content, package: data.content.packageValue,
-            'success': (res) => {
+            appId:content.appId,
+            timeStamp: content.timeStamp,
+            nonceStr: content.nonceStr,
+            package: content.packageValue,
+            signType: 'RSA',
+            paySign: content.paySign,
+            success: (res) => {
               if (index) {
                 let pages = getCurrentPages();//当前页面栈
                 let prevPage = pages[pages.length - 2];//上一页面
@@ -44,10 +50,10 @@ Page({
                 [`score.status`]: 1
               })
             },
-            'fail': (res) => {
+            fail: (res) => {
               console.log(res);
             },
-            'complete': (res) => {
+            complete: (res) => {
               console.log(res);
             }
           })

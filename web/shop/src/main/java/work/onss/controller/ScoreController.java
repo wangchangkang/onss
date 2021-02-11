@@ -32,11 +32,13 @@ import work.onss.vo.WXScore;
 import work.onss.vo.WXTransaction;
 import work.onss.vo.Work;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +88,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException {
+    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
@@ -117,8 +119,8 @@ public class ScoreController {
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
-
-        WXScore.Amount amount = WXScore.Amount.builder().currency("CNY").total(score.getTotal().movePointRight(2).stripTrailingZeros().intValue()).build();
+        wxPayConfig.initApiV3HttpClient();
+        WXScore.Amount amount = WXScore.Amount.builder().currency("CNY").total(1).build();
         WXScore.Payer payer = WXScore.Payer.builder().subOpenid(user.getSubOpenid()).build();
         LocalDateTime localDateTime = LocalDateTime.now();
         String timeExpire = localDateTime.plusHours(2).atZone(ZoneId.of("+08:00")).toString();
@@ -137,11 +139,10 @@ public class ScoreController {
                 .build();
         String wxScoreStr = JsonMapperUtils.toJson(wxScore, JsonInclude.Include.NON_NULL, PropertyNamingStrategy.SNAKE_CASE);
         log.info(wxScoreStr);
-//        String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
-//        log.info(transactionStr);
-//        Map<String, String> prepayMap = JsonMapperUtils.fromJson(transactionStr, String.class, String.class);
-//        score.setPrepayId(prepayMap.get("prepayId"));
-        score.setPrepayId("prepay_id=wx201410272009395522657a690389285100");
+        String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
+        log.info(transactionStr);
+        Map<String, String> prepayMap = JsonMapperUtils.fromJson(transactionStr, String.class, String.class);
+        score.setPrepayId(prepayMap.get("prepay_id"));
         score.setOutTradeNo(code);
         score.setUid(uid);
         score.setName(store.getName());
@@ -149,23 +150,32 @@ public class ScoreController {
         score.setUpdateTime(localDateTime);
         score.setPayTime(localDateTime);
         mongoTemplate.insert(score);
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(localDateTime.getSecond(), score.getId(), wxPayConfig.getVerifier().getValidCertificate());
+        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
+                score.getSubAppId(),
+                String.valueOf(localDateTime.toEpochSecond(ZoneOffset.ofHours(8))),
+                SignUtils.genRandomStr(),
+                "prepay_id=" + score.getPrepayId()
+        );
         log.info(wxPayMpOrderResult);
         return Work.success("创建订单成功", wxPayMpOrderResult);
     }
-
 
     /**
      * @param score 订单详情
      * @return 小程序支付参数
      */
     @PostMapping(value = {"scores/continuePay"})
-    public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws IllegalBlockSizeException {
-        String nonceStr = SignUtils.genRandomStr();
+    public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(LocalDateTime.now().getSecond(), nonceStr, wxPayConfig.getVerifier().getValidCertificate());
+        wxPayConfig.initApiV3HttpClient();
+        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
+                score.getSubAppId(),
+                String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8))),
+                SignUtils.genRandomStr(),
+                "prepay_id=" + score.getPrepayId()
+        );
         log.info(wxPayMpOrderResult);
         return Work.success("生成订单成功", wxPayMpOrderResult);
     }

@@ -1,0 +1,20 @@
+[
+  {
+    "_id": {"$oid": "600675dc818c62551715d848"},
+    "corpId": "ww1954801118238ef6",
+    "insertTime": {"$date": "2021-01-19T06:02:04.869Z"},
+    "lastTime": {"$date": "2021-02-11T01:06:33.102Z"},
+    "sessionKey": "lgJE/ci3mG+mVm/RkGnFYg==",
+    "suiteId": "ww3372b680c877b9bf",
+    "updateTime": {"$date": "2021-01-19T06:02:04.869Z"},
+    "userid": "WangZhangHao"
+  },
+  {
+    "_id": {"$oid": "601a14fc85989747287d0e05"},
+    "insertTime": {"$date": "2021-02-03T03:14:04.065Z"},
+    "sessionKey": "VpbuZ37dLaSD+2upJmNoaA==",
+    "updateTime": {"$date": "2021-02-03T03:14:04.065Z"},
+    "appId": "wx950ae546eec14733",
+    "openid": "o7oyo5AmS4vwMXDBtjCrND4QADoE"
+  }
+]
