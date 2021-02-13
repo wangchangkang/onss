@@ -105,3 +105,7 @@ systemctl -u onss-shop.service -f
 #查看端口
 netstat -tnlp | grep 80
 ```
+
+删除收到货地址
+取消订单
+删除收藏
