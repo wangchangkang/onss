@@ -40,6 +40,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -88,7 +89,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<WxPayMpOrderResult> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
+    public Work<Map<String,Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
@@ -157,7 +158,10 @@ public class ScoreController {
                 "prepay_id=" + score.getPrepayId()
         );
         log.info(wxPayMpOrderResult);
-        return Work.success("创建订单成功", wxPayMpOrderResult);
+        Map<String,Object> data = new HashMap<>();
+        data.put("order",wxPayMpOrderResult);
+        data.put("score",score);
+        return Work.success("创建订单成功", data);
     }
 
     /**

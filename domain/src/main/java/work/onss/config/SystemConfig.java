@@ -19,6 +19,7 @@ import java.util.Map;
 public class SystemConfig implements Serializable {
     private String filePath;
     private String logo;
+    private String secret;
     private String publicKeyStr;
     private String privateKeyStr;
     private List<String> banks;

@@ -26,7 +26,7 @@ Page({
         console.log(data.content);
         wx.requestPayment(
           {
-            ...data.content, package: data.content.packageValue,
+            ...data.content.order, package: data.content.order.packageValue,
             'success': (res) => {
               console.log(res);
             },
@@ -35,7 +35,7 @@ Page({
             },
             'complete': (res) => {
               wx.navigateTo({
-                url: `/pages/score/detail?id=${data.content.nonceStr}`,
+                url: `/pages/score/detail?id=${data.content.score.id}`,
               })
             }
           })
