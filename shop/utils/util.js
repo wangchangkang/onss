@@ -168,7 +168,6 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
           case '1977.session.expire':
             wx.removeStorageSync('authorization');
             wx.removeStorageSync('info');
-            wx.removeStorageSync('cartsPid');
             wx.reLaunch({
               url: '/pages/index/index'
             })

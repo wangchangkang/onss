@@ -1,5 +1,6 @@
 package work.onss.exception;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,5 +43,11 @@ public class CommonException {
     public Work<Object> exception(Exception e) {
         e.printStackTrace();
         return Work.fail(e.getMessage() != null ? e.getMessage() : "服务器发生错误!");
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+    public Work<Object> exception(JWTVerificationException e) {
+        e.printStackTrace();
+        return Work.fail("1977.session.expire", "请重新登录");
     }
 }
