@@ -1,6 +1,7 @@
 package work.onss.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @Builder
 @Data
@@ -50,6 +52,7 @@ public class WXScore implements Serializable {
     private SceneInfo sceneInfo;
 
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
@@ -63,6 +66,7 @@ public class WXScore implements Serializable {
         private String currency;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
@@ -74,6 +78,7 @@ public class WXScore implements Serializable {
         private boolean profitSharing;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
@@ -87,6 +92,7 @@ public class WXScore implements Serializable {
         private String subOpenid;
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
@@ -101,6 +107,7 @@ public class WXScore implements Serializable {
         private int costPrice;
         private List<GoodsDetail> goodsDetail;
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
         @Builder
         @Data
@@ -121,6 +128,7 @@ public class WXScore implements Serializable {
         }
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @Builder
     @Data
@@ -135,6 +143,7 @@ public class WXScore implements Serializable {
         private String deviceId;
         private String payerClientIp;
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
         @Builder
         @Data

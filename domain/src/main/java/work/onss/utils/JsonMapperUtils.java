@@ -1,10 +1,8 @@
 package work.onss.utils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -26,29 +24,6 @@ public class JsonMapperUtils {
     public static <T> String toJson(T t) {
         String result = null;
         try {
-            result = objectMapper.writeValueAsString(t);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static <T> String toJson(T t, JsonInclude.Include incl, PropertyNamingStrategy propertyNamingStrategy) {
-        String result = null;
-        try {
-            objectMapper.setPropertyNamingStrategy(propertyNamingStrategy);
-            objectMapper.setSerializationInclusion(incl);
-            result = objectMapper.writeValueAsString(t);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static <T> String toJson(T t, PropertyNamingStrategy propertyNamingStrategy) {
-        String result = null;
-        try {
-            objectMapper.setPropertyNamingStrategy(propertyNamingStrategy);
             result = objectMapper.writeValueAsString(t);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

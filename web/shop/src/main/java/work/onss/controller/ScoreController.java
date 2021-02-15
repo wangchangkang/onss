@@ -136,7 +136,7 @@ public class ScoreController {
                 .description(store.getName())
                 .outTradeNo(code)
                 .build();
-        String wxScoreStr = JsonMapperUtils.toJson(wxScore, JsonInclude.Include.NON_NULL, PropertyNamingStrategy.SNAKE_CASE);
+        String wxScoreStr = JsonMapperUtils.toJson(wxScore);
         log.info(wxScoreStr);
         String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
         log.info(transactionStr);
