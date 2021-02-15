@@ -16,7 +16,7 @@
 				<view class="weui-label">姓名</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input class="weui-input" name="username" value="{{username}}" placeholder="请填写姓名" maxlength="12" />
+				<input class="weui-input" name="addressUsername" value="{{address.username}}" placeholder="请填写姓名" maxlength="12" />
 			</view>
 		</view>
 		<view class="weui-cell ">
@@ -24,21 +24,23 @@
 				<view class="weui-label">电话</view>
 			</view>
 			<view class="weui-cell__bd">
-				<input class="weui-input" name="phone" value="{{phone}}" placeholder="请填写联系方式" maxlength="12" />
+				<input class="weui-input" name="addressPhone" value="{{address.phone}}" placeholder="请填写联系方式" maxlength="12" />
 			</view>
 		</view>
 
-		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}"
-			data-name="{{address}}">
-			<view class="weui-cell__hd">
-				<view class="weui-label">坐标</view>
-			</view>
+		<view class="weui-cell" bindtap='chooseLocation'>
 			<view class="weui-cell__bd">
-				<view>{{location.x}}</view>
-				<view>{{location.y}}</view>
+				<input name="addressName" id="addressName" value="{{address.name}}" placeholder="请选择地址"></input>
 			</view>
 			<view class="weui-cell__ft">
-				<image src="/images/position.png" style="height:1em;width:1em;" />
+				<image mode="aspectFit" src="/images/position.png" style="height:1em;width:1em" />
+			</view>
+		</view>
+
+		<view class="weui-cell">
+			<view class="weui-cell__bd">
+				<textarea name="addressDetail" id="addressDetail" cols="20" rows="5" value="{{address.detail}}"
+					placeholder="请输入详细地址"></textarea>
 			</view>
 		</view>
 	
@@ -55,14 +57,6 @@
 			</view>
 		</view>
 
-		<view class="weui-cell ">
-			<view class="weui-cell__hd">
-				<view class="weui-label">地址</view>
-			</view>
-			<view class="weui-cell__bd">
-				<input class="weui-input" name="address" value="{{address}}" placeholder="请填写详细地址" maxlength="12" />
-			</view>
-		</view>
 		<view class="weui-cell">
 			<view class="weui-cell__hd">
 				<view class="weui-label">营业时间</view>

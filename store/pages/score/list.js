@@ -20,7 +20,7 @@ Page({
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/scores?sid=${info.sid}&status=${options.status}&page=0&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         this.setData({
           scores: content

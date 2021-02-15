@@ -68,7 +68,7 @@ Page({
         url: `${domain}/products?sid=${info.sid}`,
         data,
         method: "POST",
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         this.setData({
           ...content

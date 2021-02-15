@@ -72,7 +72,7 @@ Page({
       };
       wxRequest({
         url: `${domain}/stores/${info.sid}/setMerchant?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
         method: 'POST',
         data: data,
       }).then(() => {
@@ -189,7 +189,7 @@ Page({
 
       wxRequest({
         url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
         method: 'GET',
       }).then(({ content }) => {
         console.log(content);

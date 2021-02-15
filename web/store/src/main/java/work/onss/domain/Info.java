@@ -21,6 +21,7 @@ public class Info {
      * 营业员ID
      */
     private String cid;
+    private Boolean open;
     /**
      * 商户ID
      */
@@ -37,4 +38,19 @@ public class Info {
      * 营业员登录时间
      */
     private LocalDateTime lastTime;
+
+    public Info(String cid, Boolean open, LocalDateTime lastTime) {
+        this.cid = cid;
+        this.open = open;
+        this.lastTime = lastTime;
+    }
+
+    public Info(String cid, Boolean open, String sid, String applymentId, String subMchId, LocalDateTime lastTime) {
+        this.cid = cid;
+        this.open = open;
+        this.sid = sid;
+        this.applymentId = applymentId;
+        this.subMchId = subMchId;
+        this.lastTime = lastTime;
+    }
 }

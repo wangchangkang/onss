@@ -7,7 +7,7 @@ Page({
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/stores/${info.sid}/updateStatus?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info), status: (!this.data.status).toString() },
+        header: { authorization, status: (!this.data.status).toString() },
         method: 'PUT'
       }).then(({ content }) => {
         console.log(content);
@@ -33,7 +33,7 @@ Page({
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         this.setData({
           ...content

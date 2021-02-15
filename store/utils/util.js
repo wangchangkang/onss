@@ -1,10 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.101.104/store';
+const domain = 'http://192.168.103.184/store';
 const appid = "wx950ae546eec14733";
-const suiteId = "ww3372b680c877b9bf";
-const prefix = 'http://192.168.101.104/';
+const prefix = 'http://192.168.103.184/';
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
 };
@@ -141,12 +140,12 @@ function checkStore() {
         });
       }
     } else {
-      wx.qy.login({
+      wx.login({
         success: ({ code }) => {
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
-            data: { code, appid,suiteId }
+            data: { code, subAppId:appid }
           }).then((data) => {
             const { authorization, info } = data.content;
             wx.setStorageSync('authorization', authorization);
@@ -218,7 +217,7 @@ function setPhone(id, authorization, info, encryptedData, iv, lastTime) {
       method: 'POST',
       data: { appid, encryptedData, iv, lastTime: lastTime },
       header: {
-        authorization, info: JSON.stringify(info)
+        authorization
       },
     }).then((data) => {
       const { authorization, info } = data.content;
@@ -251,7 +250,7 @@ function chooseImages(authorization, info, count, url) {
         })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
-            header: { authorization, info: JSON.stringify(info) },
+            header: { authorization },
             url,
             filePath: filePath,
             name: 'file',
@@ -293,7 +292,7 @@ function chooseImage(authorization, info, url) {
           mask: true
         })
         wx.uploadFile({
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           url,
           filePath: res.tempFilePaths[0],
           name: 'file',
@@ -342,8 +341,6 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             resolve(data)
             break;
           case '1977.customer.notfound':
-            wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('info', content.info);
             wx.reLaunch({
               url: '/pages/login/login'
             })

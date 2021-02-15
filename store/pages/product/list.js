@@ -28,7 +28,7 @@ Page({
       checkStore().then(({ authorization, info }) => {
         wxRequest({
           url: `${domain}/products?sid=${info.sid}`,
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
         }).then(({ content }) => {
           console.log(content);
           this.setData(
@@ -62,7 +62,7 @@ Page({
             wxRequest({
               url: `${domain}/products/${id}/updateStatus?sid=${info.sid}&status=${!status}`,
               method: 'PUT',
-              header: { authorization, info: JSON.stringify(info) },
+              header: { authorization },
             }).then(({ content }) => {
               this.setData({
                 [`products[${index}].status`]: content
@@ -86,7 +86,7 @@ Page({
             wxRequest({
               url: `${domain}/products/${id}?sid=${info.sid}`,
               method: 'DELETE',
-              header: { authorization, info: JSON.stringify(info) },
+              header: { authorization },
             }).then(() => {
               this.data.products.splice(index, 1)
               this.setData({
@@ -119,7 +119,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${info.sid}&ids=${ids}&status=true`,
         method: 'PUT',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -141,7 +141,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${info.sid}&ids=${ids}&status=false`,
         method: 'PUT',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(() => {
         this.setData({
           products, ids: []
@@ -158,7 +158,7 @@ Page({
       wxRequest({
         url: `${domain}/products?sid=${info.sid}&ids=${ids}`,
         method: 'DELETE',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(() => {
         products = this.data.products.filter((value) => !ids.includes(value.id));
         this.setData({

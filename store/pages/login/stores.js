@@ -16,7 +16,7 @@ Page({
       wxRequest({
         url: `${domain}/stores/${id}/bind?cid=${info.cid}`,
         method: 'POST',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         wx.setStorageSync('authorization', content.authorization);
         wx.setStorageSync('info', content.info);
@@ -35,7 +35,7 @@ Page({
     checkCustomer().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/stores?cid=${info.cid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         console.log(content);
         if (content.length > 0) {

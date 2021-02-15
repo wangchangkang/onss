@@ -8,7 +8,7 @@
 				<view class="weui-flex__item" style="line-height:2">{{name}}</view>
 				<view class="weui- weui-cell__ft_in-access"></view>
 			</navigator>
-			<view class="weui-media-box__desc">联系方式：{{username}} {{phone}} </view>
+			<view class="weui-media-box__desc">联系方式：{{address.username}} {{address.phone}} </view>
 			<button size='mini' style="font-size:28rpx" bindtap="updateStatus">{{status?'营业中':'休息中'}}</button>
 		</view>
 		<view>
@@ -22,7 +22,7 @@
 		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}"
 			data-name="{{address}}">
 			<view class="weui-cell__hd">店铺地址：</view>
-			<view class="weui-cell__bd">{{address}}</view>
+			<view class="weui-cell__bd">{{address.name}}</view>
 			<view class="weui-cell__ft">
 				<image src="/images/position.png" style="height:1em;width:1em;" />
 			</view>

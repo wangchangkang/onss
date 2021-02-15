@@ -70,7 +70,7 @@ Page({
         url: `${domain}/products/${id}?sid=${info.sid}`,
         method: "PUT",
         data: product,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         this.setData({
           ...content,
@@ -94,7 +94,7 @@ Page({
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/products/${options.id}?sid=${info.sid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         this.setData({
           index: options.index,

@@ -3,11 +3,9 @@ package work.onss.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import me.chanjar.weixin.cp.bean.WxCpMaJsCode2SessionResult;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import work.onss.vo.WXLogin;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,23 +31,19 @@ public class Customer implements Serializable {
      * 营业员微信用户openid
      */
     @Indexed(unique = true)
-    private String openid;
+    private String spOpenid;
     /**
-     * 企业微信用户ID
+     * 用户子标识
      */
-    private String userid;
+    private String subOpenid;
     /**
-     * 小程序APPID
+     * 服务商公众号ID
      */
-    private String appId;
+    private String spAppId;
     /**
-     * 企业微信应用SuiteID
+     * 子商户公众号ID
      */
-    private String suiteId;
-    /**
-     * 企业微信corpid
-     */
-    private String corpId;
+    private String subAppId;
     /**
      * 小程序session_key
      */
@@ -62,15 +56,4 @@ public class Customer implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
-
-    public Customer(WxCpMaJsCode2SessionResult wxCpMaJsCode2SessionResult, WXLogin wxLogin, LocalDateTime now) {
-        this.userid = wxCpMaJsCode2SessionResult.getUserId();
-        this.appId = wxLogin.getSubAppId();
-        this.suiteId = wxLogin.getSuiteId();
-        this.corpId = wxCpMaJsCode2SessionResult.getCorpId();
-        this.sessionKey = wxCpMaJsCode2SessionResult.getSessionKey();
-        this.insertTime = now;
-        this.updateTime = now;
-    }
 }
- 

@@ -1,14 +1,15 @@
 import { prefix, windowWidth, checkCustomer, domain, wxRequest, types, chooseImages, chooseImage } from '../../utils/util.js';
 Page({
   data: {
-    prefix, domain, windowWidth, types, videos: [],pictures:[], openTime: '07:30', closeTime: '22:30',
+    prefix, domain, windowWidth, types, videos: [], pictures: [], openTime: '07:30', closeTime: '22:30',
     name: "依茗纱服饰经营部",
     description: "零售批发/生活娱乐/其他",
     trademark: "picture/logo.png",
     username: "谷圣齐",
     phone: "15314906861",
     status: false,
-    licenseNumber: "92330411MA2JDMCK9H"
+    licenseNumber: "92330411MA2JDMCK9H",
+    address: {}
   },
   bindPickerChange: function (e) {
     const id = e.currentTarget.id;
@@ -21,17 +22,18 @@ Page({
       [index]: value
     })
   },
-  getLocation: function (e) {
-    const y = e.currentTarget.dataset.y;
-    const x = e.currentTarget.dataset.x;
-    const name = e.currentTarget.dataset.name;
-    if (x && y) {
+
+  chooseLocation: function (e) {
+    console.log(this.data.address);
+    const { point, detail } = this.data.address;
+    if (point && point.x && point.y) {
       wx.chooseLocation({
-        longitude: x,
-        latitude: y,
-        name: name,
+        longitude: point.x,
+        latitude: point.y,
+        name: detail,
         success: (res) => {
-          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
+          console.log(res);
+          this.setData({ ['address.point']: { x: res.longitude, y: res.latitude }, ['address.detail']: res.address, ['address.name']: res.name });
         }
       })
     } else {
@@ -42,13 +44,13 @@ Page({
             longitude: parseFloat(res.longitude),
             latitude: parseFloat(res.latitude),
             success: (res) => {
-              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
+              console.log(res);
+              this.setData({ ['address.point']: { x: res.longitude, y: res.latitude }, ['address.detail']: res.address, ['address.name']: res.name });
             }
           })
         }
-      })
+      });
     }
-
   },
 
   chooseImages: function (e) {
@@ -57,7 +59,7 @@ Page({
     const length = this.data[id].length;
     count = count - length;
     checkCustomer().then(({ authorization, info }) => {
-      chooseImages(authorization, info, count,  `${domain}/stores/uploadPicture?cid=${info.cid}`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/stores/uploadPicture?cid=${info.cid}`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -110,21 +112,19 @@ Page({
   },
 
   createStore: function (e) {
-
-    console.log(e.detail.value)
+    const { name, type, openTime, closeTime, description, videos, address } = this.data;
+    const { addressUsername, addressPhone, addressName, addressDetail } = e.detail.value;
     const store = {
-      ...e.detail.value,
-      location: this.data.location,
-      pictures: this.data.pictures,
-      videos: this.data.videos
+      address: { username: addressUsername, phone: addressPhone, name: addressName, detail: addressDetail, point: address.point },
+      name, type, openTime, closeTime, description, videos
     }
-
+    console.log(store);
     checkCustomer().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/stores?cid=${info.cid}`,
         data: store,
         method: "POST",
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then(({ content }) => {
         wx.reLaunch({
           url: `/pages/login/stores?cid=${info.cid}`

@@ -4,10 +4,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,19 +46,11 @@ public class Store implements Serializable {
     /**
      * 商户地址
      */
-    private String address;
+    private Address address;
     /**
      * 商户图标
      */
     private String trademark;
-    /**
-     * 商户联系人姓名
-     */
-    private String username;
-    /**
-     * 商户联系人电话
-     */
-    private String phone;
     /**
      * 商户状态
      */
@@ -61,10 +59,6 @@ public class Store implements Serializable {
      * 商户分类
      */
     private Integer type;
-    /**
-     * 商户坐标
-     */
-    private Point point;
     /**
      * 商户宣传册
      */
@@ -127,4 +121,33 @@ public class Store implements Serializable {
      * 商户入住资质
      */
     private Merchant merchant;
+
+    @NoArgsConstructor
+    @Data
+    public static class Address implements Serializable {
+        /**
+         * 地址联系人姓名
+         */
+        @NotBlank(message = "姓名不能为空")
+        private String username;
+        /**
+         * 地址联系人电话
+         */
+        @NotBlank(message = "手机号不能为空")
+        @Pattern(regexp = "^[1][34578][0-9]{9}$", message = "手机号格式错误")
+        private String phone;
+        private String name;
+        /**
+         * 地址详情
+         */
+        @NotBlank(message = "详细地址不能为空")
+        @Length(min = 3, max = 50, message = "请尽可能填写详细地址")
+        private String detail;
+        /**
+         * 地址坐标
+         */
+        @NotNull(message = "请重新定位收货地址")
+        @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
+        private Point point;
+    }
 }

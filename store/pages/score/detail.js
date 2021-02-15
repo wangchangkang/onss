@@ -8,7 +8,7 @@ Page({
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/scores/${options.id}?sid=${info.sid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         console.log(data.content);
 

@@ -1,8 +1,7 @@
 package work.onss.controller;
 
-import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.Sign;
-import cn.hutool.crypto.asymmetric.SignAlgorithm;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.github.binarywang.wxpay.bean.applyment.ApplymentStateQueryResult;
 import com.github.binarywang.wxpay.bean.applyment.WxPayApplyment4SubCreateRequest;
 import com.github.binarywang.wxpay.bean.applyment.WxPayApplymentCreateResult;
@@ -24,8 +23,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Base64Utils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,8 +34,8 @@ import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,14 +94,19 @@ public class StoreController {
             return Work.fail("该商户已不存在，请联系客服!");
         }
         Map<String, Object> result = new HashMap<>();
-        Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
-        Info info = new Info();
-        info.setCid(customer.getId());
-        info.setSid(store.getId());
-        info.setApplymentId(store.getApplymentId());
-        info.setSubMchId(store.getSubMchId());
-        byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));
-        result.put("authorization", Base64Utils.encodeToString(authorization));
+        LocalDateTime now = LocalDateTime.now();
+        Info info = new Info(customer.getId(), true, store.getId(), store.getApplymentId(), store.getSubMchId(), now);
+        Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
+        String authorization = JWT.create()
+                .withIssuer("1977")
+                .withAudience("WeChat")
+                .withExpiresAt(Date.from(now.toInstant(ZoneOffset.ofHours(6))))
+                .withNotBefore(Date.from(now.toInstant(ZoneOffset.ofHours(8))))
+                .withIssuedAt(Date.from(now.toInstant(ZoneOffset.ofHours(8))))
+                .withSubject(JsonMapperUtils.toJson(info))
+                .withJWTId(customer.getId())
+                .sign(algorithm);
+        result.put("authorization", authorization);
         result.put("info", info);
         return Work.success("登陆成功", result);
     }
@@ -174,12 +176,9 @@ public class StoreController {
         Update updateStore = Update
                 .update("name", store.getName())
                 .set("description", store.getDescription())
-                .set("address", store.getAddress())
                 .set("trademark", store.getTrademark())
-                .set("username", store.getUsername())
-                .set("phone", store.getPhone())
+                .set("address", store.getAddress())
                 .set("type", store.getType())
-                .set("point", store.getPoint())
                 .set("pictures", store.getPictures())
                 .set("videos", store.getVideos())
                 .set("openTime", store.getOpenTime())
