@@ -32,12 +32,9 @@ import work.onss.vo.WXScore;
 import work.onss.vo.WXTransaction;
 import work.onss.vo.Work;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -89,7 +86,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<Map<String,Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
+    public Work<Map<String, Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
@@ -124,7 +121,8 @@ public class ScoreController {
         WXScore.Amount amount = WXScore.Amount.builder().currency("CNY").total(1).build();
         WXScore.Payer payer = WXScore.Payer.builder().subOpenid(user.getSubOpenid()).build();
         LocalDateTime localDateTime = LocalDateTime.now();
-        String timeExpire = localDateTime.plusHours(2).atZone(ZoneId.of("+08:00")).toString();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String timeExpire = localDateTime.plusHours(2).atZone(ZoneOffset.ofHours(8)).format(dateTimeFormatter);
         String code = localDateTime.format(DateTimeFormatter.ofPattern("yyMMddHHmmssSSS"));
         WXScore wxScore = WXScore.builder()
                 .amount(amount)
@@ -134,7 +132,7 @@ public class ScoreController {
                 .subAppid(wxPayConfig.getSubAppId())
                 .subMchid(store.getSubMchId())
                 .timeExpire(timeExpire)
-                .notifyUrl("https://1977.work/shop/scores/notify")
+                .notifyUrl(wxPayConfig.getNotifyUrl())
                 .description(store.getName())
                 .outTradeNo(code)
                 .build();
@@ -158,9 +156,9 @@ public class ScoreController {
                 "prepay_id=" + score.getPrepayId()
         );
         log.info(wxPayMpOrderResult);
-        Map<String,Object> data = new HashMap<>();
-        data.put("order",wxPayMpOrderResult);
-        data.put("score",score);
+        Map<String, Object> data = new HashMap<>();
+        data.put("order", wxPayMpOrderResult);
+        data.put("score", score);
         return Work.success("创建订单成功", data);
     }
 
@@ -169,7 +167,7 @@ public class ScoreController {
      * @return 小程序支付参数
      */
     @PostMapping(value = {"scores/continuePay"})
-    public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws IllegalBlockSizeException, WxPayException, BadPaddingException {
+    public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws WxPayException {
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
@@ -188,11 +186,10 @@ public class ScoreController {
     /**
      * @param wxNotify 微信支付通知请求信息
      * @return 成功 或 失败
-     * @throws WxPayException 微信异常
      */
     @PostMapping(value = {"scores/notify"})
     public Work<String> firstNotify(@RequestBody WXNotify wxNotify) {
-        String decryptToString;
+        String decryptToString = null;
         try {
             WXNotify.Resource resource = wxNotify.getResource();
             String associatedData = resource.getAssociatedData();
@@ -200,6 +197,7 @@ public class ScoreController {
             String ciphertext = resource.getCiphertext();
             String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
+            log.warn(decryptToString);
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
             Query query = Query.query(Criteria.where("outTradeNo").is(wxTransaction.getOutTradeNo()));
             Update update = Update.update("transactionId", wxTransaction.getTransactionId()).set("status", ScoreEnum.PACKAGE);
@@ -207,6 +205,8 @@ public class ScoreController {
             return Work.message("SUCCESS", "支付成功", null);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            log.warn(decryptToString);
         }
         return Work.message("FAIL", "支付失败", null);
     }
