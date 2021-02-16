@@ -122,7 +122,12 @@
 					placeholder="请输入11位视频ID" maxlength="11" />
 			</view>
 		</view>
-
+		<view class="weui-cell weui-cell_switch">
+			<view class="weui-cell__bd">是否上架</view>
+			<view class="weui-cell__ft">
+				<switch checked="{{status}}" name="status" />
+			</view>
+		</view>
 	</view>
 
 	<view style="min-height:200rpx"></view>

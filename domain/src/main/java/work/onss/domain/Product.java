@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -106,16 +108,19 @@ public class Product implements Serializable {
      */
     @NotEmpty(message = "请上传商品图片")
     @Size(min = 1, max = 9, message = "商品图片数量为{min}-{max}")
-    private List<String> pictures;
+    private List<String> pictures = new ArrayList<>();
 
+    @Transient
     private Store store;
     /**
      * 商品是否喜欢
      */
+    @Transient
     private Prefer prefer;
     /**
      * 购物车
      */
+    @Transient
     private Cart cart;
     /**
      * 创建时间
