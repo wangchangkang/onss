@@ -17,6 +17,7 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Store implements Serializable {
     /**
      * 商户地址
      */
-    private Address address;
+    private Address address = new Address();
     /**
      * 商户图标
      */
@@ -62,11 +63,11 @@ public class Store implements Serializable {
     /**
      * 商户宣传册
      */
-    private Collection<String> pictures;
+    private Collection<String> pictures = new ArrayList<>();
     /**
      * 商户微视频
      */
-    private Collection<String> videos;
+    private Collection<String> videos= new ArrayList<>();;
     /**
      * 商户营业执照编号
      */
@@ -88,7 +89,7 @@ public class Store implements Serializable {
     /**
      * 商户营业员集合
      */
-    private List<Customer> customers;
+    private List<Customer> customers = new ArrayList<>();;
     /**
      * 商户审核状态
      */
@@ -120,7 +121,7 @@ public class Store implements Serializable {
     /**
      * 商户入住资质
      */
-    private Merchant merchant;
+    private Merchant merchant = new Merchant();
 
     @NoArgsConstructor
     @Data

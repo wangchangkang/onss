@@ -65,6 +65,7 @@ Page({
   updateProduct: function (e) {
     const { index, description, pictures, id } = this.data;
     const product = { ...e.detail.value, description, pictures, id }
+    console.log(product);
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/products/${id}?sid=${info.sid}`,

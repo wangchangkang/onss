@@ -176,7 +176,7 @@ public class StoreController {
         Update updateStore = Update
                 .update("name", store.getName())
                 .set("description", store.getDescription())
-                .set("trademark", store.getTrademark())
+                .set("trademark", store.getTrademark() == null ? systemConfig.getLogo() : store.getTrademark())
                 .set("address", store.getAddress())
                 .set("type", store.getType())
                 .set("pictures", store.getPictures())

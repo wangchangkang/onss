@@ -1,7 +1,7 @@
 import { prefix, windowWidth, checkStore, domain, wxRequest, types, chooseImages, chooseImage } from '../../utils/util.js';
 Page({
   data: {
-    prefix, domain, windowWidth, types, videos: [], openTime: '07:30', closeTime: '22:30',
+    prefix, domain, windowWidth, types, videos: [], openTime: '07:30', closeTime: '22:30', address: {},
   },
   bindPickerChange: function (e) {
     const id = e.currentTarget.id;
@@ -46,7 +46,7 @@ Page({
 
   chooseLocation: function (e) {
     console.log(this.data.address);
-    const { point, detail,name } = this.data.address;
+    const { point, name } = this.data.address;
     if (point && point.x && point.y) {
       wx.chooseLocation({
         longitude: point.x,
@@ -80,7 +80,7 @@ Page({
     const length = this.data[id].length;
     count = count - length;
     checkStore().then(({ authorization, info }) => {
-      chooseImages(authorization,info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -94,7 +94,7 @@ Page({
   chooseImage: function (e) {
     const id = e.currentTarget.id;
     checkStore().then(({ authorization, info }) => {
-      chooseImage(authorization,info, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
+      chooseImage(authorization, info, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         this.setData({
           [`${id}`]: data
         })
@@ -134,11 +134,11 @@ Page({
 
   updateStore: function (e) {
     console.log(e.detail.value)
-    const { name, type, openTime, closeTime, description, videos, address } = this.data;
+    const { name, type, openTime, closeTime, description, videos, address,trademark,pictures } = this.data;
     const { addressUsername, addressPhone, addressName, addressDetail } = e.detail.value;
     const store = {
       address: { username: addressUsername, phone: addressPhone, name: addressName, detail: addressDetail, point: address.point },
-      name, type, openTime, closeTime, description, videos
+      name, type, openTime, closeTime, description,trademark,pictures, videos
     }
     console.log(store);
 
