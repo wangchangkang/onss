@@ -8,10 +8,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import work.onss.domain.Cart;
-import work.onss.domain.Prefer;
-import work.onss.domain.Product;
-import work.onss.domain.Store;
+import work.onss.domain.*;
+import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
 
 import java.math.BigDecimal;
@@ -27,28 +25,32 @@ public class ProductController {
     @Autowired
     protected MongoTemplate mongoTemplate;
 
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private PreferRepository preferRepository;
+    @Autowired
+    private CartRepository cartRepository;
+
     /**
      * @param id 主键
      * @return 商品信息
      */
     @GetMapping(value = {"products/{id}"})
-    public Work<Product> product(@PathVariable String id, @RequestParam(required = false) String uid) {
-        Product product = mongoTemplate.findById(id, Product.class);
-        if (product != null) {
-            Store store = mongoTemplate.findById(product.getSid(), Store.class);
-            product.setStore(store);
-            if (uid != null) {
-                Query query = Query.query(Criteria.where("pid").is(id).and("uid").is(uid));
-                Prefer prefer = mongoTemplate.findOne(query, Prefer.class);
-                if (prefer != null) {
-                    product.setPrefer(prefer);
-                }
-                Cart cart = mongoTemplate.findOne(query, Cart.class);
-                if (cart != null) {
-                    cart.setTotal(cart.getNum().multiply(product.getAverage()));
-                    product.setCart(cart);
-                }
+    public Work<Product> product(@PathVariable String id, @RequestParam(required = false) String uid) throws ServiceException {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品已下架"));
+        Store store = storeRepository.findById(product.getSid()).orElseThrow(() -> new ServiceException("fail", "该商户已停用"));
+        product.setStore(store);
+        if (uid != null) {
+            Prefer prefer = preferRepository.findByPidAndUid(id, uid).orElse(null);
+            product.setPrefer(prefer);
+            Cart cart = cartRepository.findByUidAndPid(uid, id).orElse(null);
+            if (cart != null) {
+                cart.setTotal(cart.getNum().multiply(product.getAverage()));
             }
+            product.setCart(cart);
         }
         return Work.success("加载成功", product);
     }
@@ -59,22 +61,13 @@ public class ProductController {
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<Map<String, Object>> products(@RequestParam(required = false) String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) {
-        List<Product> products;
-        Store store = null;
-        Query queryProduct = new Query();
-        if (sid != null) {
-            queryProduct = Query.query(Criteria.where("sid").is(sid)).with(pageable);
-            products = mongoTemplate.find(queryProduct, Product.class);
-            store = mongoTemplate.findById(sid, Store.class);
-        } else {
-            products = mongoTemplate.find(queryProduct.with(pageable), Product.class);
-        }
+    public Work<Map<String, Object>> products(@RequestParam String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) throws ServiceException {
+        List<Product> products = productRepository.findBySid(sid, pageable);
+        Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("fail", "该商户已停用"));
         BigDecimal sum = new BigDecimal("0.00");
         boolean checkAll = true;
-        if (store != null && uid != null && products.size() > 0) {
-            Query cartQuery = Query.query(Criteria.where("uid").is(uid).and("sid").is(sid));
-            List<Cart> carts = mongoTemplate.find(cartQuery, Cart.class);
+        if (uid != null && products.size() > 0) {
+            List<Cart> carts = cartRepository.findByUidAndSid(uid, sid);
             if (carts.size() > 0) {
                 Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
                 for (Product product : products) {

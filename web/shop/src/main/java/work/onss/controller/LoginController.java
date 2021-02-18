@@ -10,16 +10,15 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Info;
 import work.onss.domain.User;
+import work.onss.domain.UserRepository;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.Work;
@@ -35,7 +34,7 @@ import java.util.Map;
 public class LoginController {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private UserRepository userRepository;
     @Autowired
     private SystemConfig systemConfig;
 
@@ -53,8 +52,7 @@ public class LoginController {
 
         WxMaJscode2SessionResult wxMaJscode2SessionResult = userService.getSessionInfo(wxLogin.getCode());
         Query query = Query.query(Criteria.where("subOpenid").is(wxMaJscode2SessionResult.getOpenid()));
-        User user = mongoTemplate.findOne(query, User.class);
-
+        User user = userRepository.findBySubOpenid(wxMaJscode2SessionResult.getOpenid()).orElse(null);
         Map<String, Object> result = new HashMap<>();
         LocalDateTime now = LocalDateTime.now();
         Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
@@ -71,7 +69,7 @@ public class LoginController {
             user.setSpAppId(wxLogin.getSubAppId());
             user.setInsertTime(now);
             user.setUpdateTime(now);
-            user = mongoTemplate.insert(user);
+            userRepository.insert(user);
             Info info = new Info(user.getId(), false, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
@@ -84,7 +82,7 @@ public class LoginController {
             query.addCriteria(Criteria.where("id").is(user.getId()));
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setUpdateTime(now);
-            mongoTemplate.updateFirst(query, Update.update("sessionKey", user.getSessionKey()).set("lastTime", user.getUpdateTime()), User.class);
+            userRepository.save(user);
             Info info = new Info(user.getId(), false, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
@@ -94,8 +92,8 @@ public class LoginController {
             result.put("authorization", authorization);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else {
-            query.addCriteria(Criteria.where("id").is(user.getId()));
-            mongoTemplate.updateFirst(query, Update.update("lastTime", now), User.class);
+            user.setUpdateTime(now);
+            userRepository.save(user);
             Info info = new Info(user.getId(), true, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))

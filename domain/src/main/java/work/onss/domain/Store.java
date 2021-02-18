@@ -151,4 +151,6 @@ public class Store implements Serializable {
         @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, useGeneratedName = true)
         private Point point;
     }
+
+
 }

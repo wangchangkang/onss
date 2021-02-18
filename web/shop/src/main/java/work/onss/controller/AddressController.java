@@ -2,14 +2,11 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Address;
+import work.onss.domain.AddressRepository;
 import work.onss.vo.Work;
 
 import java.time.LocalDateTime;
@@ -20,7 +17,7 @@ import java.util.List;
 public class AddressController {
 
     @Autowired
-    protected MongoTemplate mongoTemplate;
+    protected AddressRepository addressRepository;
 
     /**
      * @param uid     用户ID
@@ -33,18 +30,18 @@ public class AddressController {
         LocalDateTime now = LocalDateTime.now();
         address.setUpdateTime(now);
         if (StringUtils.hasLength(address.getId())) {
-            Address oldAddress = mongoTemplate.findById(address.getId(), Address.class);
+            Address oldAddress = addressRepository.findByIdAndUid(address.getId(), uid).orElse(null);
             if (oldAddress == null) {
                 return Work.fail("该数据不存在,请联系客服");
             } else if (!oldAddress.getUid().equals(address.getUid())) {
                 return Work.fail("请不要恶意攻击服务器");
             } else {
-                mongoTemplate.save(address);
+                addressRepository.save(address);
                 return Work.success("更新成功", address);
             }
         } else {
             address.setInsertTime(now);
-            mongoTemplate.insert(address);
+            addressRepository.insert(address);
             return Work.success("新增成功", address);
         }
     }
@@ -56,8 +53,7 @@ public class AddressController {
      */
     @DeleteMapping(value = {"addresses/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {
-        Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
-        mongoTemplate.remove(query, Address.class);
+        addressRepository.deleteByIdAndUid(id, uid);
         return Work.success("删除成功", true);
 
     }
@@ -69,8 +65,7 @@ public class AddressController {
      */
     @GetMapping(value = {"addresses/{id}"})
     public Work<Address> findOne(@RequestParam(name = "uid") String uid, @PathVariable String id) {
-        Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
-        Address address = mongoTemplate.findOne(query, Address.class);
+        Address address = addressRepository.findByIdAndUid(id, uid).orElse(null);
         return Work.success("加载成功", address);
     }
 
@@ -80,8 +75,7 @@ public class AddressController {
      */
     @GetMapping(value = {"addresses"})
     public Work<List<Address>> findAll(@RequestParam(name = "uid") String uid) {
-        Query query = Query.query(Criteria.where("uid").is(uid)).with(Sort.by(Sort.Order.desc("lastTime")));
-        List<Address> addresses = mongoTemplate.find(query, Address.class);
+        List<Address> addresses = addressRepository.findByUidOrderByUpdateTime(uid);
         return Work.success("加载成功", addresses);
     }
 }
