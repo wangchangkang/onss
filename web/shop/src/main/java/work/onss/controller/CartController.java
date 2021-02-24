@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
+import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
 import java.math.BigDecimal;
@@ -82,14 +83,16 @@ public class CartController {
      */
     @GetMapping(value = {"carts/getStores"})
     public Work<List<Store>> getStores(@RequestParam(name = "uid") String uid) {
-        Query query = Query.query(Criteria.where("uid").is(uid));
-        List<String> sids = mongoTemplate.findDistinct(query, "sid", Cart.class, String.class);
+        Query query = Query.query(Criteria.where(Utils.getName(Cart::getUid)).is(uid));
+        List<String> sids = mongoTemplate.findDistinct(query, Utils.getName(Cart::getSid), Cart.class, String.class);
         if (sids.size() == 0) {
             return Work.success("加载成功", null);
         } else {
-            Query storeQuery = Query.query(Criteria.where("id").in(sids));
-            storeQuery.fields()
-                    .exclude("customers","products","merchant");
+            Query storeQuery = Query.query(Criteria.where(Utils.getName(Store::getId)).in(sids));
+            List<String> names = Utils.getNames(Store::getCustomers, Store::getMerchant);
+            for (String name : names) {
+                storeQuery.fields().exclude(name);
+            }
             List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
             return Work.success("加载成功", stores);
         }
@@ -103,7 +106,7 @@ public class CartController {
     public Work<Map<String, Object>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) throws ServiceException {
         List<Cart> carts = cartRepository.findByUidAndSid(uid, sid);
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
-        List<Product> products = productRepository.findByIdIsInAndSid(cartsPid.keySet(), sid);
+        List<Product> products = productRepository.findByIdInAndSid(cartsPid.keySet(), sid);
         BigDecimal sum = new BigDecimal("0.00");
         boolean checkAll = true;
         for (Product product : products) {

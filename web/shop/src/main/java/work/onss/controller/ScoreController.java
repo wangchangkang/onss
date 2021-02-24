@@ -21,12 +21,11 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
-import work.onss.domain.Product;
-import work.onss.domain.Score;
-import work.onss.domain.Store;
-import work.onss.domain.User;
+import work.onss.domain.*;
 import work.onss.enums.ScoreEnum;
+import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
+import work.onss.utils.Utils;
 import work.onss.vo.WXNotify;
 import work.onss.vo.WXScore;
 import work.onss.vo.WXTransaction;
@@ -49,6 +48,14 @@ public class ScoreController {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private ScoreRepository scoreRepository;
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Autowired
@@ -61,9 +68,8 @@ public class ScoreController {
      * @return 订单信息
      */
     @GetMapping(value = {"scores/{id}"})
-    public Work<Score> score(@PathVariable String id, @RequestParam(name = "uid") String uid) {
-        Query query = Query.query(Criteria.where("id").is(id).and("uid").is(uid));
-        Score score = mongoTemplate.findOne(query, Score.class);
+    public Work<Score> score(@PathVariable String id, @RequestParam(name = "uid") String uid) throws ServiceException {
+        Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("fail", "该订单不存"));
         return Work.success("加载成功", score);
     }
 
@@ -75,8 +81,7 @@ public class ScoreController {
     @GetMapping(value = {"scores"})
     public Work<List<Score>> all(@RequestParam(name = "uid") String uid,
                                  @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        Query query = Query.query(Criteria.where("uid").is(uid)).with(pageable);
-        List<Score> scores = mongoTemplate.find(query, Score.class);
+        List<Score> scores = scoreRepository.findByUid(uid, pageable);
         return Work.success("加载成功", scores);
     }
 
@@ -86,15 +91,11 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
-    public Work<Map<String, Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException {
+    public Work<Map<String, Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException, ServiceException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
-        Store store = mongoTemplate.findById(score.getSid(), Store.class);
-
-        if (store == null) {
-            return Work.fail("该店铺不存,请联系客服!");
-        }
+        Store store = storeRepository.findById(score.getSid()).orElseThrow(() -> new ServiceException("fail", "该店铺不存,请联系客服!"));
         if (!store.getStatus()) {
             return Work.fail("正在准备中,请稍后重试!");
         }
@@ -106,13 +107,9 @@ public class ScoreController {
 
         Map<String, Product> cartMap = score.getProducts().stream().collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        Query productQuery = Query.query(Criteria.where("id").in(cartMap.keySet()).and("sid").is(score.getSid()));
-        List<Product> products = mongoTemplate.find(productQuery, Product.class);
+        List<Product> products = productRepository.findByIdInAndSid(cartMap.keySet(), score.getSid());
         score.updateProduct(products);
-        User user = mongoTemplate.findById(uid, User.class);
-        if (user == null) {
-            return Work.fail("该用户不存在!");
-        }
+        User user = userRepository.findById(uid).orElseThrow(() -> new ServiceException("fail", "该用户不存在!"));
 
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
@@ -148,7 +145,7 @@ public class ScoreController {
         score.setInsertTime(localDateTime);
         score.setUpdateTime(localDateTime);
         score.setPayTime(localDateTime);
-        mongoTemplate.insert(score);
+        scoreRepository.save(score);
         WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
                 score.getSubAppId(),
                 String.valueOf(localDateTime.toEpochSecond(ZoneOffset.ofHours(8))),
@@ -199,8 +196,9 @@ public class ScoreController {
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
             log.warn(decryptToString);
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
-            Query query = Query.query(Criteria.where("outTradeNo").is(wxTransaction.getOutTradeNo()));
-            Update update = Update.update("transactionId", wxTransaction.getTransactionId()).set("status", ScoreEnum.PACKAGE);
+            Query query = Query.query(Criteria.where(Utils.getName(Score::getOutTradeNo)).is(wxTransaction.getOutTradeNo()));
+            Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId())
+                    .set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
             mongoTemplate.updateFirst(query, update, Score.class);
             return Work.message("SUCCESS", "支付成功", null);
         } catch (Exception e) {

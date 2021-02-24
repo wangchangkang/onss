@@ -20,6 +20,7 @@ import work.onss.domain.Info;
 import work.onss.domain.User;
 import work.onss.domain.UserRepository;
 import work.onss.utils.JsonMapperUtils;
+import work.onss.utils.Utils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.Work;
 
@@ -51,7 +52,6 @@ public class LoginController {
         WxMaUserService userService = wxMaService.getUserService();
 
         WxMaJscode2SessionResult wxMaJscode2SessionResult = userService.getSessionInfo(wxLogin.getCode());
-        Query query = Query.query(Criteria.where("subOpenid").is(wxMaJscode2SessionResult.getOpenid()));
         User user = userRepository.findBySubOpenid(wxMaJscode2SessionResult.getOpenid()).orElse(null);
         Map<String, Object> result = new HashMap<>();
         LocalDateTime now = LocalDateTime.now();
@@ -79,7 +79,6 @@ public class LoginController {
             result.put("info", info);
             return Work.message("1977.user.notfound", "请绑定手机号", result);
         } else if (user.getPhone() == null) {
-            query.addCriteria(Criteria.where("id").is(user.getId()));
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setUpdateTime(now);
             userRepository.save(user);

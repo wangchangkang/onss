@@ -102,3 +102,5 @@ ln -s /home/shop-service-0.0.1-SNAPSHOT.jar /etc/init.d/shop
 
 chmod +x /home/store-service-0.0.1-SNAPSHOT.jar 
 ln -s /home/store-service-0.0.1-SNAPSHOT.jar /etc/init.d/store
+
+![img.png](img.png)

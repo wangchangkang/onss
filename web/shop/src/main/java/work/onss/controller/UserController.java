@@ -4,10 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Info;
 import work.onss.domain.User;
+import work.onss.domain.UserRepository;
+import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
@@ -32,7 +30,7 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private UserRepository userRepository;
     @Autowired
     private SystemConfig systemConfig;
 
@@ -41,17 +39,15 @@ public class UserController {
      * @return 密钥及用户信息
      */
     @PostMapping(value = {"users/{id}/setPhone"})
-    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) {
-        User user = mongoTemplate.findById(id, User.class);
-        if (user == null) {
-            return Work.fail("用户不存在", null);
-        }
+    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
+        User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在"));
+
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSessionKey(), wxRegister.getIv());
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
         //添加用户手机号
-        Query query = Query.query(Criteria.where("id").is(id));
-        mongoTemplate.updateFirst(query, Update.update("phone", phoneEncryptedData.getPhoneNumber()), User.class);
+        user.setPhone(phoneEncryptedData.getPhoneNumber());
+        userRepository.save(user);
         Map<String, Object> result = new HashMap<>();
         Info info = new Info(user.getId(), true, user.getUpdateTime());
         LocalDateTime now = LocalDateTime.now();

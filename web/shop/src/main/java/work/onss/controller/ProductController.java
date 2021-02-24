@@ -3,11 +3,11 @@ package work.onss.controller;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 @RestController
 public class ProductController {
 
-    @Autowired
-    protected MongoTemplate mongoTemplate;
 
     @Autowired
     private ProductRepository productRepository;

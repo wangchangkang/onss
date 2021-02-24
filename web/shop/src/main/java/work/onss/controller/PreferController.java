@@ -58,7 +58,7 @@ public class PreferController {
     public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid, @PageableDefault Pageable pageable) {
         List<Prefer> prefers = preferRepository.findByUid(uid);
         List<String> pids = prefers.stream().map(Prefer::getPid).collect(Collectors.toList());
-        List<Product> products = productRepository.findByIdIsIn(pids);
+        List<Product> products = productRepository.findByIdIn(pids);
         if (uid != null && products.size() > 0) {
             List<Cart> carts = cartRepository.findByUid(uid);
             if (carts.size() > 0) {

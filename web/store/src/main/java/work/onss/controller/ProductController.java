@@ -3,13 +3,12 @@ package work.onss.controller;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.domain.Product;
+import work.onss.domain.ProductRepository;
+import work.onss.exception.ServiceException;
 import work.onss.vo.Work;
 
 import java.util.Collection;
@@ -24,7 +23,7 @@ import java.util.List;
 @RestController
 public class ProductController {
     @Autowired
-    protected MongoTemplate mongoTemplate;
+    private ProductRepository productRepository;
 
     /**
      * @param id  商品ID
@@ -33,8 +32,7 @@ public class ProductController {
      */
     @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        Product product = mongoTemplate.findOne(queryProduct, Product.class);
+        Product product = productRepository.findByIdAndSid(id, sid).orElse(null);
         return Work.success("加载成功", product);
     }
 
@@ -44,10 +42,8 @@ public class ProductController {
      */
     @GetMapping(value = {"products"})
     public Work<List<Product>> products(@RequestParam(name = "sid") String sid) {
-        Query queryProduct = Query.query(Criteria.where("sid").is(sid));
-        List<Product> products = mongoTemplate.find(queryProduct, Product.class);
+        List<Product> products = productRepository.findBySid(sid);
         return Work.success("加载成功", products);
-
     }
 
 
@@ -59,7 +55,7 @@ public class ProductController {
     @PostMapping(value = {"products"})
     public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         product.setSid(sid);
-        product = mongoTemplate.insert(product);
+        productRepository.save(product);
         return Work.success("创建成功", product);
     }
 
@@ -70,11 +66,15 @@ public class ProductController {
      * @return 商品详情
      */
     @PutMapping(value = {"products/{id}"})
-    public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
-        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        product.setSid(sid);
-        mongoTemplate.findAndReplace(queryProduct, product);
-        return Work.success("编辑成功", product);
+    public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) throws ServiceException {
+        Product product1 = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品不存在"));
+        if (product1.getSid().equals(sid)) {
+            product.setSid(sid);
+            productRepository.save(product);
+            return Work.success("编辑成功", product);
+        } else {
+            return Work.fail("商品不属于当前商户");
+        }
     }
 
     /**
@@ -84,10 +84,15 @@ public class ProductController {
      * @return 商品状态
      */
     @PutMapping(value = {"products/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) {
-        Query queryProduct = Query.query(Criteria.where("id").is(id).and("sid").is(sid));
-        mongoTemplate.updateFirst(queryProduct, Update.update("status", status), Product.class);
-        return Work.success("操作成功", status);
+    public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) throws ServiceException {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品不存在"));
+        if (product.getSid().equals(sid)) {
+            product.setStatus(status);
+            productRepository.save(product);
+            return Work.success("编辑成功", status);
+        } else {
+            return Work.fail("商品不属于当前商户");
+        }
     }
 
     /**
@@ -99,8 +104,11 @@ public class ProductController {
     @Transactional
     @PutMapping(value = {"products"})
     public Work<Boolean> updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
-        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.updateMulti(queryProduct, Update.update("status", status), Product.class);
+        List<Product> products = productRepository.findByIdInAndSid(ids, sid);
+        products.forEach(product -> {
+            product.setStatus(status);
+        });
+        productRepository.saveAll(products);
         return Work.success("操作成功", status);
     }
 
@@ -111,8 +119,7 @@ public class ProductController {
      */
     @DeleteMapping(value = {"products/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
-        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").is(id));
-        mongoTemplate.remove(queryProduct, Product.class);
+        productRepository.deleteByIdAndSid(id,sid);
         return Work.success("删除成功", true);
     }
 
@@ -123,8 +130,7 @@ public class ProductController {
      */
     @DeleteMapping(value = {"products"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
-        Query queryProduct = Query.query(Criteria.where("sid").is(sid).and("id").in(ids));
-        mongoTemplate.remove(queryProduct, Product.class);
+        productRepository.deleteByIdInAndSid(ids,sid);
         return Work.success("删除成功", true);
     }
 }

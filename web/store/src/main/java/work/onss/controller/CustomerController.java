@@ -4,17 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.config.SystemConfig;
 import work.onss.domain.Customer;
+import work.onss.domain.CustomerRepository;
 import work.onss.domain.Info;
+import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
 import work.onss.vo.PhoneEncryptedData;
@@ -37,7 +35,7 @@ import java.util.Map;
 public class CustomerController {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private CustomerRepository customerRepository;
     @Autowired
     private SystemConfig systemConfig;
 
@@ -47,11 +45,8 @@ public class CustomerController {
      * @return 更新营业员手机是否成功
      */
     @PostMapping(value = {"customers/{id}/setPhone"})
-    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) {
-        Customer customer = mongoTemplate.findById(id, Customer.class);
-        if (customer == null) {
-            return Work.fail("用户不存在", null);
-        }
+    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在,请联系客服"));
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSessionKey(), wxRegister.getIv());
         if (encryptedData == null) {
@@ -59,9 +54,8 @@ public class CustomerController {
         }
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
         //添加用户手机号
-        Query queryCustomer = Query.query(Criteria.where("id").is(id));
-        Update updateCustomer = Update.update("phone", phoneEncryptedData.getPhoneNumber());
-        mongoTemplate.updateFirst(queryCustomer, updateCustomer, Customer.class);
+        customer.setPhone(phoneEncryptedData.getPhoneNumber());
+        customerRepository.save(customer);
         LocalDateTime now = LocalDateTime.now();
         Info info = new Info(customer.getId(), true, now);
         Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());

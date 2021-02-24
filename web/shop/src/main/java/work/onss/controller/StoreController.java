@@ -1,8 +1,12 @@
 package work.onss.controller;
 
 import com.github.binarywang.wxpay.bean.applyment.enums.ApplymentStateEnum;
+import com.google.common.base.Function;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.function.FailableFunction;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,8 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import work.onss.domain.Product;
-import work.onss.domain.Store;
+import work.onss.domain.*;
+import work.onss.utils.Utils;
 import work.onss.vo.Work;
 
 import java.util.List;
@@ -28,6 +32,8 @@ public class StoreController {
 
     @Autowired
     protected MongoTemplate mongoTemplate;
+    @Autowired
+    private ProductRepository productRepository;
 
     /**
      * @param id 主键
@@ -35,11 +41,11 @@ public class StoreController {
      */
     @GetMapping(value = {"stores/{id}"})
     public Work<Store> store(@PathVariable String id) {
-        Query storeQuery = Query.query(Criteria.where("id").is(id));
-        storeQuery.fields()
-                .exclude("customers")
-                .exclude("products")
-                .exclude("merchant");
+        Query storeQuery = Query.query(Criteria.where(Utils.getName(Store::getId)).is(id));
+        List<String> names = Utils.getNames(Store::getCustomers, Store::getMerchant);
+        for (String name : names) {
+            storeQuery.fields().exclude(name);
+        }
         Store store = mongoTemplate.findOne(storeQuery, Store.class);
         return Work.success("加载成功", store);
     }
@@ -60,22 +66,22 @@ public class StoreController {
                                               @RequestParam(required = false) String keyword,
                                               @PageableDefault Pageable pageable) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("state").in(
+        query.addCriteria(Criteria.where(Utils.getName(Store::getState)).in(
                 ApplymentStateEnum.APPLYMENT_STATE_FINISHED,
                 ApplymentStateEnum.APPLYMENT_STATE_TO_BE_SIGNED,
                 ApplymentStateEnum.APPLYMENT_STATE_AUDITING,
                 ApplymentStateEnum.APPLYMENT_STATE_EDITTING));
-        query.fields()
-                .exclude("customers")
-                .exclude("products")
-                .exclude("merchant");
+        List<String> names = Utils.getNames(Store::getCustomers, Store::getMerchant);
+        for (String name : names) {
+            query.fields().exclude(name);
+        }
         if (type != null) {
-            query.addCriteria(Criteria.where("type").is(type));
+            query.addCriteria(Criteria.where(Utils.getName(Store::getType)).is(type));
         }
         if (StringUtils.hasText(keyword)) {
             String regex = StringUtils.trimAllWhitespace(keyword).replaceAll("", "|");
-            Criteria name = Criteria.where("name").regex(regex);
-            Criteria description = Criteria.where("description").regex(regex);
+            Criteria name = Criteria.where(Utils.getName(Store::getName)).regex(regex);
+            Criteria description = Criteria.where(Utils.getName(Store::getDescription)).regex(regex);
             query.addCriteria(name);
             query.addCriteria(description);
         }
@@ -96,8 +102,7 @@ public class StoreController {
      */
     @GetMapping(value = {"stores/{id}/getProducts"})
     public Work<List<Product>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
-        Query query = Query.query(Criteria.where("sid").is(id).and("status").is(true)).with(pageable);
-        List<Product> products = mongoTemplate.find(query, Product.class);
+        List<Product> products = productRepository.findBySidAndStatus(id, true, pageable);
         return Work.success("加载成功", products);
     }
 
