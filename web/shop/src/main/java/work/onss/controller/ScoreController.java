@@ -1,8 +1,6 @@
 package work.onss.controller;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.github.binarywang.wxpay.bean.order.WxPayMpOrderResult;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.exception.WxPayException;
@@ -18,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
@@ -57,6 +56,8 @@ public class ScoreController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CartRepository cartRepository;
 
     @Autowired
     private WechatConfiguration wechatConfiguration;
@@ -91,6 +92,7 @@ public class ScoreController {
      * @return 订单信息
      */
     @PostMapping(value = {"scores"})
+    @Transactional
     public Work<Map<String, Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException, ServiceException {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
@@ -156,6 +158,7 @@ public class ScoreController {
         Map<String, Object> data = new HashMap<>();
         data.put("order", wxPayMpOrderResult);
         data.put("score", score);
+        cartRepository.deleteByUidAndSidAndPidIn(uid, score.getSid(), cartMap.keySet());
         return Work.success("创建订单成功", data);
     }
 

@@ -28,7 +28,7 @@
 		</navigator>
 		<view class="weui-flex">
 			<label class="checkbox" wx:if="{{product.cart}}">
-				<checkbox value="{{product.cart.id}}" checked="{{checkAll|product.cart.checked}}" bindtap="checkedChange" data-index="{{index}}" />
+				<checkbox value="{{product.cart.id}}" checked="{{checkAll||product.cart.checked}}" bindtap="checkedChange" data-index="{{index}}" />
 			</label>
 			<view class="weui-flex__item weui-cell__ft">
 				<button type="default" size="mini" disabled="{{product.cart.num<=0}}" bindtap="subtractCount"	id="{{index}}">减</button>

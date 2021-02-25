@@ -120,7 +120,6 @@ public class Product implements Serializable {
     /**
      * 购物车
      */
-    @Transient
     private Cart cart;
     /**
      * 创建时间

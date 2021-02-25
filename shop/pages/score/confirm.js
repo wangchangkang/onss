@@ -34,7 +34,7 @@ Page({
               console.log(res);
             },
             'complete': (res) => {
-              wx.navigateTo({
+              wx.reLaunch({
                 url: `/pages/score/detail?id=${data.content.score.id}`,
               })
             }

@@ -81,7 +81,11 @@ public class ProductController {
                     }
                     product.setCart(cart);
                 }
+            }else {
+                checkAll = false;
             }
+        } else {
+            checkAll = false;
         }
         Map<String, Object> data = new HashMap<>();
         data.put("checkAll", checkAll);
