@@ -24,7 +24,7 @@ public class IndexRunner implements CommandLineRunner {
         GeospatialIndex point = new GeospatialIndex("point").typed(GeoSpatialIndexType.GEO_2DSPHERE);
         mongoTemplate.indexOps(Address.class).ensureIndex(point);
 
-        HashedIndex licenseNumber = HashedIndex.hashed("licenseNumber");
+        HashedIndex licenseNumber = HashedIndex.hashed("license_number");
         mongoTemplate.indexOps(Store.class).ensureIndex(licenseNumber);
 
         Document document1 = new Document();
@@ -48,7 +48,7 @@ public class IndexRunner implements CommandLineRunner {
         mongoTemplate.indexOps(Store.class).ensureIndex(addressPoint);
         mongoTemplate.indexOps(Score.class).ensureIndex(addressPoint);
 
-        HashedIndex outTradeNo = HashedIndex.hashed("outTradeNo");
+        HashedIndex outTradeNo = HashedIndex.hashed("out_trade_no");
         mongoTemplate.indexOps(Score.class).ensureIndex(outTradeNo);
     }
 }
