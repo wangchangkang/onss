@@ -1,6 +1,6 @@
 <view class="weui-cells__title">我的收藏</view>
-<view class="weui-panel weui-media-box">
-	<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
+<view class="weui-panel">
+	<view class="weui-media-box" wx:for="{{products}}" wx:for-item='product' wx:key="index">
 		<navigator url="/pages/store/detail?id={{product.id}}" class=" weui-media-box_appmsg" hover-class="weui-cell_active">
 			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<view class="weui-badge">{{product.cart.num}}</view>
@@ -19,5 +19,5 @@
 			</button>
 			<button type="default" size="mini" bindtap="addCount" id="{{index}}">加</button>
 		</view>
-	</block>
+	</view>
 </view>
