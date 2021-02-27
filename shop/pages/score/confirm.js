@@ -16,7 +16,7 @@ Page({
   saveScore: function (e) {
     wxLogin().then(({ authorization, info }) => {
       let { address, store, products } = this.data;
-      products = products.filter((product) => product.cart.checked);
+      products = products.filter((product) => product.cart?.checked);
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}`,
         header: { authorization, info: JSON.stringify(info) },

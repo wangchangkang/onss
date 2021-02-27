@@ -187,6 +187,7 @@ public class ScoreController {
      * @param wxNotify 微信支付通知请求信息
      * @return 成功 或 失败
      */
+    @Transactional
     @PostMapping(value = {"scores/notify"})
     public Work<String> firstNotify(@RequestBody WXNotify wxNotify) {
         String decryptToString = null;
@@ -211,7 +212,7 @@ public class ScoreController {
             for (Product product : products) {
                 Update inc = new Update().inc(stock, product.getCart().getNum().negate());
                 Query query2 = Query.query(Criteria.where(id).is(product.getId()));
-                mongoTemplate.updateFirst(query2, inc, Score.class);
+                mongoTemplate.updateFirst(query2, inc, Product.class);
             }
 
             return Work.message("SUCCESS", "支付成功", null);
