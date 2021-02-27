@@ -45,8 +45,3 @@
 		</view>
 	</view>
 </view>
-<view style="min-height:150rpx"></view>
-
-<view wx:if="{{score.status === 'PAY'}}" class="weui-flex weui-footer_fixed-bottom">
-	<button class="weui-flex__item" type="primary" bindtap="pay">微信支付</button>
-</view>
