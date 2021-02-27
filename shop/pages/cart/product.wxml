@@ -36,7 +36,7 @@
 </view>
 <view style="height:230rpx"></view>
 
-<view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom">
+<view class="weui-cells weui-flex  weui-footer weui-footer_fixed-bottom" style="z-index:100">
 	<view class='weui-flex__item weui-cell'>
 		<view class="weui-cell__hd">
 			<switch class="checkbox" type='checkbox' bindchange="switchChange" checked="{{checkAll}}" />全选
