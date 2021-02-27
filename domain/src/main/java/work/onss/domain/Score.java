@@ -20,17 +20,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * 待支付 0 待配货 1 待补价 2 待发货 3 待签收 4 完成 5
- * <p>
- * 用户创建订单为待支付
- * 用户支付成功为待配货
- * 商户配货成功时判断是否需要补全差价
- * 如果需要补全差价则通知用户补全差价
- * 如果不需要补全差价则退款通知用户为待发货
- * 如果有配送者为待签收
- * 用户签收后为完成
- */
 @Log4j2
 @NoArgsConstructor
 @Data
@@ -46,7 +35,6 @@ public class Score implements Serializable {
      * 商户ID
      */
     private String sid;
-
     /**
      * 订单状态
      */
@@ -83,7 +71,9 @@ public class Score implements Serializable {
      * 商户简称
      */
     private String name;
-
+    /**
+     * 子商户公众号ID
+     */
     private String subAppId;
     /**
      * 订单编号
