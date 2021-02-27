@@ -23,11 +23,11 @@ Page({
     })
   },
   openLocation: function (e) {
-    const { point,address } = this.data.store;
+    const { address } = this.data.store;
     wx.openLocation({
-      latitude: parseFloat(point.y),
-      longitude: parseFloat(point.x),
-      name: address,
+      latitude: parseFloat(address.point.y),
+      longitude: parseFloat(address.point.x),
+      name: address.name,
       success(res) {
         console.log(res)
       }
