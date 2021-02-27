@@ -5,9 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import work.onss.domain.Score;
 import work.onss.domain.ScoreRepository;
-import work.onss.domain.StoreRepository;
+import work.onss.enums.ScoreEnum;
 import work.onss.vo.Work;
 
 import java.util.List;
@@ -49,7 +46,7 @@ public class ScoreController {
      * @return 订单列表
      */
     @GetMapping(value = {"scores"})
-    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<String> status, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<ScoreEnum> status, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         List<Score> scores = scoreRepository.findBySidAndStatusIn(sid, status, pageable);
         return Work.success("加载成功", scores);
     }

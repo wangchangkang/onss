@@ -197,17 +197,27 @@ public class ScoreController {
             String ciphertext = resource.getCiphertext();
             String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
-            log.warn(decryptToString);
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
-            Query query = Query.query(Criteria.where(Utils.getName(Score::getOutTradeNo)).is(wxTransaction.getOutTradeNo()));
-            Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId())
-                    .set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
-            mongoTemplate.updateFirst(query, update, Score.class);
+
+            Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("fail", "订单丢失!"));
+
+            Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
+            Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
+            mongoTemplate.updateFirst(query1, update, Score.class);
+
+            List<Product> products = score.getProducts();
+            String id = Utils.getName(Product::getId);
+            String stock = Utils.getName(Product::getStock);
+            for (Product product : products) {
+                Update inc = new Update().inc(stock, product.getCart().getNum().negate());
+                Query query2 = Query.query(Criteria.where(id).is(product.getId()));
+                mongoTemplate.updateFirst(query2, inc, Score.class);
+            }
+
             return Work.message("SUCCESS", "支付成功", null);
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             log.warn(decryptToString);
+            log.warn(e.getLocalizedMessage());
         }
         return Work.message("FAIL", "支付失败", null);
     }
