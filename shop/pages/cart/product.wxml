@@ -1,30 +1,37 @@
 <view class="weui-cells__title ">购物清单 - {{store.name}}</view>
 <view class="weui-panel">
 	<checkbox-group class="checkbox-group" name='index'>
-		<view wx:for="{{products}}" wx:for-item='product' wx:key="index" class="weui-media-box">
-			<view class=" weui-media-box_appmsg">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-badge">{{product.cart.num}}</view>
-					<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+		<block wx:for="{{products}}" wx:for-item='product' wx:key="index">
+			<mp-slideview buttons="{{deleteCart}}" id="{{index}}" show="{{index==currentID}}" bindshow="bindShow"
+				bindbuttontap="bindButtonTap">
+				<view class="weui-media-box">
+					<view class=" weui-media-box_appmsg">
+						<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+							<view class="weui-badge">{{product.cart.num}}</view>
+							<image class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
+						</view>
+						<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
+							<view class="weui-media-box__title">{{product.name}}</view>
+							<view class="weui-media-box__desc">{{product.description}}</view>
+							<view class="weui-media-box__desc"><label
+									class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label></view>
+						</view>
+					</view>
+					<view class="weui-flex">
+						<label class="checkbox">
+							<checkbox value="{{product.cart.id}}" checked="{{product.cart.checked}}" bindtap="checkedChange"
+								data-index="{{index}}" />
+						</label>
+						<view class="weui-flex__item weui-cell__ft">
+							<button type="default" size="mini" bindtap="subtractCount" id="{{index}}">减</button>
+							<button type="default" size="mini" disabled="true">{{product.cart.num}}</button>
+							<button type="default" size="mini" bindtap="addCount" id="{{index}}">加</button>
+						</view>
+					</view>
 				</view>
-				<view class="weui-media-box__bd weui-media-box__bd_in-appmsg">
-					<view class="weui-media-box__title">{{product.name}}</view>
-					<view class="weui-media-box__desc">{{product.description}}</view>
-					<view class="weui-media-box__desc"><label
-							class="weui-cell_warn">{{product.average}}{{product.averageUnit}}</label></view>
-				</view>
-			</view>
-			<view class="weui-flex">
-				<label class="checkbox">
-					<checkbox value="{{product.cart.id}}" checked="{{product.cart.checked}}" bindtap="checkedChange" data-index="{{index}}"/>
-				</label>
-				<view class="weui-flex__item weui-cell__ft">
-					<button type="default" size="mini" bindtap="subtractCount" id="{{index}}">减</button>
-					<button type="default" size="mini" disabled="true">{{product.cart.num}}</button>
-					<button type="default" size="mini" bindtap="addCount" id="{{index}}">加</button>
-				</view>
-			</view>
-		</view>
+			</mp-slideview>
+		</block>
+
 	</checkbox-group>
 </view>
 <view style="height:230rpx"></view>

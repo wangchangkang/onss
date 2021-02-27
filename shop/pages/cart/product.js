@@ -3,10 +3,17 @@ Page({
   data: {
     prefix,
     store: {},
-    cartsPid: {},
+    sum: '0.00',
     products: [],
-    total: 0,
-    checkAll: false
+    checkAll: false,
+    currentID: -1,
+    deleteCart: [
+      {
+        type: "default",
+        text: '删除',
+        extClass: 'default',
+      }
+    ],
   },
   onLoad: function (options) {
     if (options.sid) {
@@ -131,6 +138,41 @@ Page({
         })
         this.setData({
           sum: data.content,
+          checkAll
+        })
+      })
+    })
+  },
+  bindButtonTap: function (e) {
+    console.log(e);
+    wxLogin().then(({ authorization, info }) => {
+      let { products, sum, checkAll } = this.data;
+      const index = e.currentTarget.id;
+      const product = products[index];
+      const cart = product.cart;
+      wxRequest({
+        url: `${domain}/carts/${cart.id}?uid=${info.uid}`,
+        method: 'DELETE',
+        header: { authorization, info: JSON.stringify(info) },
+      }).then((data) => {
+        if (cart.checked) {
+          sum = parseFloat(sum) - parseFloat(product.average * cart.num);
+          sum = sum.toFixed(2);
+        }
+        products.splice(index, 1);
+        if (products.length == 0) {
+          checkAll = false;
+        } else {
+          products.forEach((product, index) => {
+            const cart = product.cart;
+            if (cart.checked == false) {
+              checkAll = false;
+            }
+          });
+        }
+        this.setData({
+          sum,
+          products,
           checkAll
         })
       })

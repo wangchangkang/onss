@@ -62,7 +62,7 @@ public class StoreController {
      */
     @GetMapping(value = {"stores"})
     public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
-        List<Store> stores = storeRepository.findByCustomersIdAndState(cid, ApplymentStateEnum.APPLYMENT_STATE_CANCELED);
+        List<Store> stores = storeRepository.findByCustomersIdAndStateNot(cid, ApplymentStateEnum.APPLYMENT_STATE_CANCELED);
         return Work.success("加载成功", stores);
     }
 

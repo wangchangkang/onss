@@ -2,7 +2,6 @@ package work.onss.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -115,7 +114,7 @@ public class ProductController {
     /**
      * @param sid 商户ID
      * @param id  商品ID
-     * @return 逻辑删除商品是否成功
+     * @return 删除商品是否成功
      */
     @DeleteMapping(value = {"products/{id}"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
@@ -126,7 +125,7 @@ public class ProductController {
     /**
      * @param sid 商户ID
      * @param ids 商品ID集合
-     * @return 批量逻辑删除商品是否成功
+     * @return 批量删除商品是否成功
      */
     @DeleteMapping(value = {"products"})
     public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {

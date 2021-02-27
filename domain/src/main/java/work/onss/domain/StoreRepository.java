@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface StoreRepository extends MongoRepository<Store, String> {
 
-    List<Store> findByCustomersIdAndState(String id, ApplymentStateEnum applymentStateEnum);
+    List<Store> findByCustomersIdAndStateNot(String id, ApplymentStateEnum applymentStateEnum);
 
     Optional<Store> findByIdAndCustomersId(String id, String cid);
 
