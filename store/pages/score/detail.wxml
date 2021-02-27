@@ -8,7 +8,8 @@
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">订单时间：</view>
 		<view class="weui-cell__bd">{{score.payTime}}</view>
-		<view class="weui-cell__ft"><label class='status status-{{score.status}}'>{{scoreStatus[score.status]}}</label></view>
+		<view class="weui-cell__ft"><label class='status status-{{score.status}}'>{{scoreStatus[score.status]}}</label>
+		</view>
 	</view>
 	<view class="weui-cell ">
 		<view class="weui-cell__hd">联系方式：</view>
@@ -30,17 +31,17 @@
 		<view class="weui-cell__hd">
 			<swiper class="weui-media-box__hd weui-media-box__hd_in-appmsg">
 				<swiper-item class="weui-media-box__thumb">
-					<view class="weui-badge">{{product.num}}</view>
+					<view class="weui-badge">{{product.cart.num}}</view>
 					<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 				</swiper-item>
 			</swiper>
 		</view>
 		<view class="weui-cell__bd">
 			<view class="weui-media-box__title">{{product.name}}</view>
-			<view wx:if="{{product.quality}}" class="weui-media-box__desc">均价:{{product.average}}{{product.averageUnit}}
-				<label class='status'>小计{{product.total}}元</label></view>
-			<view wx:else class="weui-media-box__desc">单价:{{product.average}}{{product.averageUnit}} <label
-					class='status'>小计{{product.total}}元</label></view>
+			<view class="weui-media-box__desc">
+				单价:{{product.average}}{{product.averageUnit}}
+				<label class='status'>小计{{product.cart.total}}元</label>
+			</view>
 		</view>
 	</view>
 </view>
