@@ -71,7 +71,6 @@ public class ProductController {
                 for (Product product : products) {
                     Cart cart = cartsPid.get(product.getId());
                     if (cart == null) {
-                        checkAll = false;
                         continue;
                     }
                     if (cart.getChecked()) {

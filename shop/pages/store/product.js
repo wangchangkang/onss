@@ -111,7 +111,7 @@ Page({
           } else {
             sum = sum + total;
             cart.checked = true;
-            if (data.content >= products.length) {
+            if (data.content == 0) {
               checkAll = true
             }
           }

@@ -103,7 +103,7 @@ Page({
           } else {
             sum = sum + total;
             cart.checked = true;
-            if (data.content >= products.length) {
+            if (data.content == 0) {
               checkAll = true
             }
           }
@@ -163,6 +163,7 @@ Page({
         if (products.length == 0) {
           checkAll = false;
         } else {
+          checkAll = true;
           products.forEach((product, index) => {
             const cart = product.cart;
             if (cart.checked == false) {

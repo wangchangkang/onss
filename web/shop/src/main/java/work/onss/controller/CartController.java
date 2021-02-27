@@ -133,7 +133,7 @@ public class CartController {
         Cart cart = cartRepository.findByUidAndId(uid, id).orElseThrow(() -> new ServiceException("fail", "请重新加入购物车"));
         cart.setChecked(!checked);
         cartRepository.save(cart);
-        long count = cartRepository.countByUidAndSidAndChecked(uid, sid, true);
+        long count = cartRepository.countByUidAndSidAndChecked(uid, sid, false);
         return Work.success("更新成功", count);
     }
 
