@@ -53,7 +53,7 @@ public class CartController {
         if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
             String message = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
             return Work.fail(message);
-        } else if (cart.getNum().compareTo(product.getStock()) > 0) {
+        } else if (cart.getNum().compareTo(BigDecimal.valueOf(product.getStock())) > 0) {
             return Work.fail("库存不足");
         } else if (!product.getStatus()) {
             return Work.fail("该商品已下架");

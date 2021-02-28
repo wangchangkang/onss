@@ -76,7 +76,7 @@ public class Product implements Serializable {
      */
     @NotNull(message = "请填写库存数量")
     @Min(value = 1, message = "库存不能小于{value}")
-    private BigDecimal stock;
+    private Integer stock;
     /**
      * 商品最小购买数量
      */

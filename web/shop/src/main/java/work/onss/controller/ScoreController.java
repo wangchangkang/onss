@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
@@ -201,22 +202,26 @@ public class ScoreController {
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
 
             Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("fail", "订单丢失!"));
+            String s = StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(score));
+            log.warn(s);
+            if (score.getStatus().equals(ScoreEnum.PAY)){
+                Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
+                Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
+                mongoTemplate.updateFirst(query1, update, Score.class);
 
-            Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
-            Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
-            mongoTemplate.updateFirst(query1, update, Score.class);
-
-            List<Product> products = score.getProducts();
-            String id = Utils.getName(Product::getId);
-            String stock = Utils.getName(Product::getStock);
-            for (Product product : products) {
-                Update inc = new Update().inc(stock, product.getCart().getNum().negate());
-                Query query2 = Query.query(Criteria.where(id).is(product.getId()));
-                mongoTemplate.updateFirst(query2, inc, Product.class);
+                List<Product> products = score.getProducts();
+                String id = Utils.getName(Product::getId);
+                String stock = Utils.getName(Product::getStock);
+                for (Product product : products) {
+                    Update inc = new Update().inc(stock, product.getCart().getNum().negate().intValue());
+                    Query query2 = Query.query(Criteria.where(id).is(product.getId()));
+                    mongoTemplate.updateFirst(query2, inc, Product.class);
+                }
             }
 
             return Work.message("SUCCESS", "支付成功", null);
         } catch (Exception e) {
+            log.warn(JsonMapperUtils.toJson(wxNotify));
             log.warn(decryptToString);
             log.warn(e.getLocalizedMessage());
         }
