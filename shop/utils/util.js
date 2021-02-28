@@ -36,8 +36,7 @@ function wxLogin() {
     const authorization = wx.getStorageSync('authorization');
     if (authorization) {
       const info = wx.getStorageSync('info');
-      const cartsPid = wx.getStorageSync('cartsPid');
-      resolve({ authorization, info, cartsPid });
+      resolve({ authorization, info });
     } else {
       wx.login({
         success: ({ code }) => {
@@ -48,7 +47,6 @@ function wxLogin() {
           }).then(({ content }) => {
             wx.setStorageSync('authorization', content.authorization);
             wx.setStorageSync('info', content.info);
-            wx.setStorageSync('cartsPid', content.cartsPid);
             resolve(content);
           });
         },
