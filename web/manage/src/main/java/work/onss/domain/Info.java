@@ -12,6 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class Info {
-    private String userid;
+
+    private String uid;
+    private Boolean open;
     private LocalDateTime lastTime;
+
+    public Info(String uid, Boolean open, LocalDateTime lastTime) {
+        this.uid = uid;
+        this.open = open;
+        this.lastTime = lastTime;
+    }
 }

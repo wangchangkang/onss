@@ -6,6 +6,7 @@ import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalDateTime;
+
 @Log4j2
 @Data
 @NoArgsConstructor
@@ -16,9 +17,9 @@ public class Info {
     private Boolean open;
     private LocalDateTime lastTime;
 
-    public Info(String uid,Boolean open, LocalDateTime lastTime) {
+    public Info(String uid, Boolean open, LocalDateTime lastTime) {
         this.uid = uid;
-        this.open =  open;
+        this.open = open;
         this.lastTime = lastTime;
     }
 }

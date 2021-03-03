@@ -38,7 +38,7 @@ public class LoginController {
         Map<String, String> gettoken = null;
         QYWXSession qywxSession = null;
         Info info = new Info();
-        info.setUserid(qywxSession.getUserid());
+        info.setUid(qywxSession.getUserid());
         info.setLastTime(LocalDateTime.now());
         Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, systemConfig.getPrivateKeyStr(), systemConfig.getPublicKeyStr());
         byte[] authorization = sign.sign(StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(info)).getBytes(StandardCharsets.UTF_8));

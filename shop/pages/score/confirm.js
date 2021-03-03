@@ -28,15 +28,20 @@ Page({
           {
             ...data.content.order, package: data.content.order.packageValue,
             'success': (res) => {
+              setTimeout(() => {
+                wx.reLaunch({
+                  url: `/pages/score/detail?id=${data.content.score.id}`,
+                })
+              }, 300);
               console.log(res);
             },
             'fail': (res) => {
-              console.log(res);
-            },
-            'complete': (res) => {
               wx.reLaunch({
                 url: `/pages/score/detail?id=${data.content.score.id}`,
               })
+            },
+            'complete': (res) => {
+              
             }
           })
       })
