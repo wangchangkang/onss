@@ -95,15 +95,4 @@ public class StoreController {
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
         return Work.success("加载成功", storeGeoResults.getContent());
     }
-
-    /**
-     * @param id 主键
-     * @return 店铺信息及所有商品
-     */
-    @GetMapping(value = {"stores/{id}/getProducts"})
-    public Work<List<Product>> getProducts(@PathVariable String id, @PageableDefault Pageable pageable) {
-        List<Product> products = productRepository.findBySidAndStatus(id, true, pageable);
-        return Work.success("加载成功", products);
-    }
-
 }
