@@ -20,7 +20,7 @@ Page({
       wxLogin().then(({ authorization, info }) => {
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}&sid=${options.sid}`,
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
         }).then((data2) => {
           this.setData({
             ...data2.content
@@ -53,7 +53,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { id: product.cart.id, sid: product.sid, pid: product.id, num: product.cart.num + count },
         }).then((data) => {
           if (cart.checked) {
@@ -69,7 +69,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
           sum = parseFloat(sum) + parseFloat(product.average * count);
@@ -92,7 +92,7 @@ Page({
         wxRequest({
           url: `${domain}/carts/${cart.id}/setChecked?checked=${cart.checked}&uid=${info.uid}&sid=${store.id}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
         }).then((data) => {
           const total = parseFloat(cart.total);
           sum = parseFloat(sum);
@@ -126,7 +126,7 @@ Page({
       wxRequest({
         url: `${domain}/carts/setCheckAll?checkAll=${checkAll}&uid=${info.uid}&sid=${store.id}`,
         method: 'POST',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         products.forEach((product, index) => {
           let cart = product.cart;
@@ -153,7 +153,7 @@ Page({
       wxRequest({
         url: `${domain}/carts/${cart.id}?uid=${info.uid}`,
         method: 'DELETE',
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         if (cart.checked) {
           sum = parseFloat(sum) - parseFloat(product.average * cart.num);

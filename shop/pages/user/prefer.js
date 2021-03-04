@@ -9,7 +9,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/prefers?uid=${info.uid}&page=0&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         console.log(data);
         this.setData({
@@ -29,7 +29,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/prefers?uid=${info.uid}&page=0&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         this.setData({
           number: 0,
@@ -49,7 +49,7 @@ Page({
       const number = this.data.number + 1;
       wxRequest({
         url: `${domain}/prefers?uid=${info.uid}&page=${number}&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         if (data.content.length == 0) {
           this.setData({
@@ -82,7 +82,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { id: product.cart.id, sid: product.sid, pid: product.id, num: product.cart.num + count },
         }).then((data) => {
           this.setData({
@@ -93,7 +93,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
           this.setData({

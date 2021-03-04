@@ -9,7 +9,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/addresses?uid=${info.uid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         this.setData({
           addresses: data.content

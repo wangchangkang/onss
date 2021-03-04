@@ -51,7 +51,7 @@ Page({
       address.point = point;
       wxRequest({
         url: `${domain}/addresses?uid=${info.uid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
         data: address,
         method: "POST",
       }).then((data) => {

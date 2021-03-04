@@ -7,7 +7,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/carts/getStores?uid=${info.uid}`,
-        header: { authorization, info: JSON.stringify(info) }
+        header: { authorization }
       }).then((data) => {
         this.setData({
           stores: data.content

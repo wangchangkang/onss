@@ -8,7 +8,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         console.log(data.content);
         this.setData({
@@ -22,7 +22,7 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         console.log(data.content);
         this.setData({
@@ -43,7 +43,7 @@ Page({
       wxLogin().then(({ authorization, info }) => {
         wxRequest({
           url: `${domain}/scores?uid=${info.uid}&page=${number}&size=${size}`,
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
         }).then((data) => {
           if (data.content.length == 0) {
             this.setData({

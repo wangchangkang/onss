@@ -19,7 +19,7 @@ Page({
       products = products.filter((product) => product.cart?.checked);
       wxRequest({
         url: `${domain}/scores?uid=${info.uid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
         method: "POST",
         data: { sid: store.id, address, products, subAppId: appid, },
       }).then((data) => {

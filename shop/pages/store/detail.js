@@ -21,7 +21,7 @@ Page({
         wxRequest({
           url: `${domain}/prefers?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { sid, pid: id, uid: info.uid }
         }).then((data) => {
           this.setData({
@@ -32,7 +32,7 @@ Page({
         wxRequest({
           url: `${domain}/prefers/${prefer.id}?uid=${info.uid}`,
           method: 'DELETE',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
         }).then(() => {
           this.setData({
             prefer: null
@@ -58,7 +58,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { ...cart, num: cart.num + count },
         }).then((data) => {
           this.setCart(data.content, index, average, count)
@@ -67,7 +67,7 @@ Page({
         wxRequest({
           url: `${domain}/carts?uid=${info.uid}`,
           method: 'POST',
-          header: { authorization, info: JSON.stringify(info) },
+          header: { authorization },
           data: { sid: sid, pid: id, num: 1 },
         }).then((data) => {
           this.setCart(data.content, index, average, count)

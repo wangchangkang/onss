@@ -8,10 +8,10 @@ Page({
     wxLogin().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/scores/${options.id}?uid=${info.uid}`,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         this.setData({
-          index: options.index,
+          ... options,
           score: data.content
         });
       });
@@ -24,7 +24,7 @@ Page({
         url: `${domain}/scores/continuePay?uid=${info.uid}`,
         method: 'POST',
         data: this.data.score,
-        header: { authorization, info: JSON.stringify(info) },
+        header: { authorization },
       }).then((data) => {
         const { content } = data;
         const index = this.data.index;

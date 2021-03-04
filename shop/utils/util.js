@@ -74,7 +74,7 @@ function setPhone(authorization, info, encryptedData, iv) {
     url: `${domain}/users/${info.uid}/setPhone`,
     method: 'POST',
     data: { encryptedData, iv },
-    header: { authorization, info: JSON.stringify(info) },
+    header: { authorization },
   })
 }
 
@@ -86,7 +86,7 @@ function getProducts(sid, number = 0) {
   const authorization = wx.getStorageSync('authorization');
   const info = wx.getStorageSync('info');
   if (authorization && info) {
-    return wxRequest({ url: `${domain}/products?sid=${sid}&uid=${info.uid}&page=${number}&size=${size}`, header:{ authorization, info: JSON.stringify(info) } })
+    return wxRequest({ url: `${domain}/products?sid=${sid}&uid=${info.uid}&page=${number}&size=${size}`, header:{ authorization } })
   } else {
     return wxRequest({ url: `${domain}/products?sid=${sid}&page=${number}&size=${size}` })
   }
@@ -125,7 +125,7 @@ function getProduct(id, authorization, info, uid) {
   let url = `${domain}/products/${id}`
   if (authorization && uid) {
     url = `${url}?uid=${uid}`
-    return wxRequest({ url, header: { authorization, info: JSON.stringify(info) } });
+    return wxRequest({ url, header: { authorization } });
   } else {
     return wxRequest({ url });
   }
