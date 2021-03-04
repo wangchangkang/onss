@@ -36,7 +36,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 String subject = decode.getSubject();
                 log.info(subject);
                 Info info = JsonMapperUtils.fromJson(subject, Info.class);
-                if (!info.getOpen()) {
+                if (info.getOpen()) {
                     throw new ServiceException("1977.user.notfound", "请绑定手机号");
                 }
             }

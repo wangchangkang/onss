@@ -47,6 +47,7 @@ public class CartController {
      * @param cart 购物车
      * @return 更新购车商品数量
      */
+    @Transactional
     @PostMapping(value = {"carts"})
     public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) throws ServiceException {
         Product product = productRepository.findById(cart.getPid()).orElseThrow(() -> new ServiceException("fail", "该商品已下架"));

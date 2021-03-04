@@ -10,8 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +19,6 @@ import work.onss.domain.Info;
 import work.onss.domain.User;
 import work.onss.domain.UserRepository;
 import work.onss.utils.JsonMapperUtils;
-import work.onss.utils.Utils;
 import work.onss.vo.WXLogin;
 import work.onss.vo.Work;
 
@@ -46,6 +44,7 @@ public class LoginController {
      * @param wxLogin 微信登陆信息
      * @return 密钥
      */
+    @Transactional
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
         WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getSubAppId());
@@ -70,7 +69,7 @@ public class LoginController {
             user.setInsertTime(now);
             user.setUpdateTime(now);
             userRepository.insert(user);
-            Info info = new Info(user.getId(), false, now);
+            Info info = new Info(user.getId(), true, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(user.getId())
@@ -82,7 +81,7 @@ public class LoginController {
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setUpdateTime(now);
             userRepository.save(user);
-            Info info = new Info(user.getId(), false, now);
+            Info info = new Info(user.getId(), true, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(user.getId())
@@ -93,7 +92,7 @@ public class LoginController {
         } else {
             user.setUpdateTime(now);
             userRepository.save(user);
-            Info info = new Info(user.getId(), true, now);
+            Info info = new Info(user.getId(), false, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(user.getId())

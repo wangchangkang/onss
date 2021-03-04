@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,7 @@ public class UserController {
      * @return 密钥及用户信息
      */
     @PostMapping(value = {"users/{id}/setPhone"})
+    @Transactional
     public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
         User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在"));
 
@@ -47,10 +49,11 @@ public class UserController {
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
         //添加用户手机号
         user.setPhone(phoneEncryptedData.getPhoneNumber());
+        LocalDateTime now = LocalDateTime.now();
+        user.setUpdateTime(now);
         userRepository.save(user);
         Map<String, Object> result = new HashMap<>();
-        Info info = new Info(user.getId(), true, user.getUpdateTime());
-        LocalDateTime now = LocalDateTime.now();
+        Info info = new Info(user.getId(), false, user.getUpdateTime());
         Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
         String authorization = JWT.create()
                 .withIssuer("1977")
