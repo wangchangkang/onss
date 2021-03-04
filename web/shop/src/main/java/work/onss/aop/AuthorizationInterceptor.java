@@ -35,9 +35,16 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 DecodedJWT decode = JWT.decode(authorization);
                 String subject = decode.getSubject();
                 log.info(subject);
-                Info info = JsonMapperUtils.fromJson(subject, Info.class);
-                if (info.getOpen()) {
-                    throw new ServiceException("1977.user.notfound", "请绑定手机号");
+                String uid = request.getParameter("uid");
+                if (StringUtils.hasLength(uid)) {
+                    Info info = JsonMapperUtils.fromJson(subject, Info.class);
+                    if (uid.equals(info.getUid())) {
+                        if (info.getOpen()) {
+                            throw new ServiceException("1977.user.notfound", "请绑定手机号");
+                        }
+                    } else {
+                        throw new ServiceException("1977.session.expire", "请重新登录");
+                    }
                 }
             }
         }
