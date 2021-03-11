@@ -66,6 +66,7 @@ public class CartController {
         BigDecimal total = product.getAverage().multiply(cart.getNum());
         Cart oldCart = cartRepository.findByUidAndPid(uid, cart.getPid()).orElse(null);
         if (oldCart == null) {
+            cart.setSid(product.getSid());
             cart.setUid(uid);
             cart.setTotal(total);
             cartRepository.insert(cart);

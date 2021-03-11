@@ -11,6 +11,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import work.onss.enums.ScoreEnum;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.PrivateKey;
@@ -34,6 +38,7 @@ public class Score implements Serializable {
     /**
      * 商户ID
      */
+    @NotBlank(message = "缺少商户参数")
     private String sid;
     /**
      * 订单状态
@@ -47,10 +52,13 @@ public class Score implements Serializable {
     /**
      * 订单明细
      */
+    @NotEmpty(message = "订单详情不能为空")
     private List<Product> products;
     /**
      * 订单接收地址
      */
+    @Valid
+    @NotNull(message = "请选择收货地址")
     private Address address;
     /**
      * 订单创建时间

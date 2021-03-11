@@ -33,19 +33,19 @@ public class Address implements Serializable {
     /**
      * 地址联系人姓名
      */
-    @NotBlank(message = "姓名不能为空")
+    @NotBlank(message = "请填写姓名")
     private String username;
     /**
      * 地址联系人电话
      */
-    @NotBlank(message = "手机号不能为空")
+    @NotBlank(message = "请填写手机号")
     @Pattern(regexp = "^[1][34578][0-9]{9}$", message = "手机号格式错误")
     private String phone;
     private String name;
     /**
      * 地址详情
      */
-    @NotBlank(message = "详细地址不能为空")
+    @NotBlank(message = "请填写地址详情")
     @Length(min = 3, max = 50, message = "请尽可能填写详细地址")
     private String detail;
     /**

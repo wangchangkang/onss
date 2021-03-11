@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -23,10 +24,12 @@ public class Prefer implements Serializable {
     /**
      * 商户ID
      */
+    @NotBlank(message = "缺少商户参数")
     private String sid;
     /**
      * 商品ID
      */
+    @NotBlank(message = "缺少商品参数")
     private String pid;
     /**
      * 用户ID

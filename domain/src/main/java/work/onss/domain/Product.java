@@ -50,7 +50,7 @@ public class Product implements Serializable {
      */
     @NotNull(message = "单价不能为空")
     @DecimalMin(value = "0.00", message = "商品单价不能小于{value}元")
-    @Digits(fraction = 2, message = "单价小数位不能大于{value}", integer = 10)
+    @Digits(fraction = 2, integer = 10, message = "单价小数位不能大于{fraction},整数不能大于{integer}")
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal price;
     /**
@@ -61,9 +61,9 @@ public class Product implements Serializable {
     /**
      * 商品均价
      */
-    @NotNull(message = "均价不能为空")
-    @DecimalMin(value = "0.00", message = "商品均价不能小于{value}元")
-    @Digits(fraction = 2, message = "单价小数位不能大于{value}", integer = 10)
+    @NotNull(message = "销售价不能为空")
+    @DecimalMin(value = "0.00", message = "销售价不能小于{value}元")
+    @Digits(fraction = 2, integer = 10, message = "销售价限制{integer}位整数和{fraction}位小数")
     @JsonFormat(pattern = "#.00", shape = JsonFormat.Shape.STRING)
     private BigDecimal average;
     /**
@@ -107,7 +107,7 @@ public class Product implements Serializable {
      * 商品图片集合
      */
     @NotEmpty(message = "请上传商品图片")
-    @Size(min = 1, max = 9, message = "商品图片数量为{min}-{max}")
+    @Size(min = 1, max = 9, message = "仅限上传{min}-{max}张图片")
     private List<String> pictures = new ArrayList<>();
 
     @Transient
