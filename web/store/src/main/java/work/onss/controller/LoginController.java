@@ -9,6 +9,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 营业员登录
- *
- * @author wangchanghao
- */
 @Log4j2
 @RestController
 public class LoginController {
@@ -47,6 +43,7 @@ public class LoginController {
      * @param wxLogin 微信登陆信息
      * @return 密钥
      */
+    @Transactional
     @PostMapping(value = {"wxLogin"})
     public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
         WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getSubAppId());
@@ -71,7 +68,7 @@ public class LoginController {
             customer.setInsertTime(now);
             customer.setUpdateTime(now);
             customerRepository.save(customer);
-            Info info = new Info(customer.getId(), false, now);
+            Info info = new Info(customer.getId(), true, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(customer.getId())
@@ -83,7 +80,7 @@ public class LoginController {
             customer.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             customer.setUpdateTime(now);
             customerRepository.save(customer);
-            Info info = new Info(customer.getId(), false, now);
+            Info info = new Info(customer.getId(), true, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(customer.getId())
@@ -93,7 +90,7 @@ public class LoginController {
             return Work.message("1977.customer.notfound", "请绑定手机号", result);
         } else {
             customerRepository.save(customer);
-            Info info = new Info(customer.getId(), true, now);
+            Info info = new Info(customer.getId(), false, now);
             String authorization = jwt
                     .withSubject(JsonMapperUtils.toJson(info))
                     .withJWTId(customer.getId())

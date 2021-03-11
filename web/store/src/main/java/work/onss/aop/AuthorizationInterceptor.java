@@ -28,7 +28,6 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServiceException {
         if (handler instanceof HandlerMethod) {
             String authorization = request.getHeader("authorization");
-            String open = request.getHeader("open");
             if (StringUtils.hasLength(authorization)) {
                 Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
                 JWTVerifier jwtVerifier = JWT.require(algorithm).build();
@@ -36,9 +35,16 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                 DecodedJWT decode = JWT.decode(authorization);
                 String subject = decode.getSubject();
                 log.info(subject);
-                Info info = JsonMapperUtils.fromJson(subject, Info.class);
-                if (open == null && !info.getOpen()) {
-                    throw new ServiceException("1977.customer.notfound", "请绑定手机号");
+                String uid = request.getParameter("cid");
+                if (StringUtils.hasLength(uid)) {
+                    Info info = JsonMapperUtils.fromJson(subject, Info.class);
+                    if (uid.equals(info.getCid())) {
+                        if (info.getOpen()) {
+                            throw new ServiceException("1977.customer.notfound", "请绑定手机号");
+                        }
+                    } else {
+                        throw new ServiceException("1977.session.expire", "请重新登录");
+                    }
                 }
             }
         }

@@ -39,11 +39,10 @@ public class UserController {
      * @param wxRegister 注册信息
      * @return 密钥及用户信息
      */
-    @PostMapping(value = {"users/{id}/setPhone"})
     @Transactional
+    @PostMapping(value = {"users/{id}/setPhone"})
     public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
-        User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在"));
-
+        User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在,请联系客服"));
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSessionKey(), wxRegister.getIv());
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
@@ -52,8 +51,7 @@ public class UserController {
         LocalDateTime now = LocalDateTime.now();
         user.setUpdateTime(now);
         userRepository.save(user);
-        Map<String, Object> result = new HashMap<>();
-        Info info = new Info(user.getId(), false, user.getUpdateTime());
+        Info info = new Info(user.getId(), false, now);
         Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
         String authorization = JWT.create()
                 .withIssuer("1977")
@@ -64,6 +62,7 @@ public class UserController {
                 .withSubject(JsonMapperUtils.toJson(info))
                 .withJWTId(user.getId())
                 .sign(algorithm);
+        Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("info", info);
         return Work.success("登录成功", result);
