@@ -88,7 +88,7 @@ public class StoreController {
         Store store = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("fail", "该商户已不存在，请联系客服!"));
         Map<String, Object> result = new HashMap<>();
         LocalDateTime now = LocalDateTime.now();
-        Info info = new Info(customer.getId(), true, store.getId(), store.getApplymentId(), store.getSubMchId(), now);
+        Info info = new Info(customer.getId(), false, store.getId(), store.getApplymentId(), store.getSubMchId(), now);
         Algorithm algorithm = Algorithm.HMAC256(systemConfig.getSecret());
         String authorization = JWT.create()
                 .withIssuer("1977")

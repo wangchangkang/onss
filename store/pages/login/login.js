@@ -5,7 +5,7 @@ Page({
     checkCustomer().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/customers/${info.cid}/setPhone`,
-        header: { authorization, open: true },
+        header: { authorization },
         method: "POST",
         data: { encryptedData: detail.encryptedData, iv: detail.iv },
       }).then(({ content }) => {
