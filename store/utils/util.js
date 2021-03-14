@@ -183,7 +183,7 @@ function checkCustomer() {
           wxRequest({
             url: `${domain}/wxLogin`,
             method: 'POST',
-            data: { code, subAppId:appid }
+            data: { code, subAppId: appid }
           }).then((data) => {
             const { authorization, info } = data.content
             wx.setStorageSync('authorization', authorization);
@@ -334,13 +334,15 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       timeout,
       header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
       success: ({ data }) => {
-        const { code, message, content } = data;
+        console.log(data);
+        resolve(data);
+      },
+      fail: (data) => {
         console.log(data)
+        wx.hideLoading()
+        const { code, message, content } = data;
         switch (code) {
-          case 'success':
-            resolve(data)
-            break;
-          case '1977.customer.notfound':
+          case 'NO_PHONE':
             if (content) {
               wx.setStorageSync('authorization', content.authorization);
               wx.setStorageSync('info', content.info);
@@ -349,27 +351,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
               url: '/pages/login/login'
             })
             break;
-          case '1977.store.notfound':
-            wx.setStorageSync('authorization', content.authorization);
-            wx.setStorageSync('info', content.info);
-            wx.reLaunch({
-              url: '/pages/login/register'
-            })
-            break;
-          case '1977.products.zero':
-            wx.showModal({
-              title: '警告',
-              content: message,
-              confirmColor: '#e64340',
-              showCancel: false,
-              success: () => {
-                wx.navigateTo({
-                  url: '/pages/product/create'
-                });
-              }
-            })
-            break;
-          case '1977.merchant.not_register':
+          case 'MERCHANT_NOT_REGISTER':
             wx.showModal({
               title: '警告',
               content: message,
@@ -382,7 +364,7 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
               }
             })
             break;
-          case '1977.session.expire':
+          case 'SESSION_EXPIRE':
             wx.removeStorageSync('authorization');
             wx.removeStorageSync('info');
             wx.reLaunch({
@@ -398,23 +380,6 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             })
             break;
         }
-      },
-      fail: (res) => {
-        wx.hideLoading()
-        console.log(res);
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-          success: (res) => {
-            if (res.confirm) {
-              wx.reLaunch({
-                url: '/pages/login/login'
-              })
-            }
-          }
-        });
       },
       complete: (res) => {
         wx.hideLoading()
