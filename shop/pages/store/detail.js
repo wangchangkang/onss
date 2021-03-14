@@ -6,9 +6,9 @@ Page({
   onLoad: function (options) {
     const authorization = wx.getStorageSync('authorization');
     const info = wx.getStorageSync('info');
-    getProduct(options.id, authorization, info, info.uid).then((data) => {
+    getProduct(options.id, authorization, info.uid).then((product) => {
       this.setData({
-        ...data.content,
+        ...product,
         index: options.index
       });
     })
@@ -23,9 +23,9 @@ Page({
           method: 'POST',
           header: { authorization },
           data: { sid, pid: id, uid: info.uid }
-        }).then((data) => {
+        }).then((prefer) => {
           this.setData({
-            prefer: data.content,
+            prefer,
           });
         });
       } else {
@@ -60,8 +60,8 @@ Page({
           method: 'POST',
           header: { authorization },
           data: { ...cart, num: cart.num + count },
-        }).then((data) => {
-          this.setCart(data.content, index, average, count)
+        }).then((cart) => {
+          this.setCart(cart, index, average, count)
         });
       } else {
         wxRequest({
@@ -69,8 +69,8 @@ Page({
           method: 'POST',
           header: { authorization },
           data: { sid: sid, pid: id, num: 1 },
-        }).then((data) => {
-          this.setCart(data.content, index, average, count)
+        }).then((cart) => {
+          this.setCart(cart, index, average, count)
         });
       }
     })

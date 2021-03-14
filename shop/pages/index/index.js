@@ -8,9 +8,10 @@ Page({
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
-        getStores(res.longitude, res.latitude).then((data) => {
+        getStores(res.longitude, res.latitude).then((stores) => {
+          console.log(stores)
           this.setData({
-            stores: data.content,
+            stores,
             latitude: res.latitude,
             longitude: res.longitude
           })

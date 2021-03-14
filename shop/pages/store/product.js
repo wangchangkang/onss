@@ -6,7 +6,8 @@ Page({
   onLoad: function (options) {
     if (options.id) {
       getProducts(options.id).then((data) => {
-        this.setData({ ...data.content });
+        console.log(data)
+        this.setData({ ...data });
       });
     } else {
       wx.reLaunch({
@@ -21,7 +22,7 @@ Page({
 
   onPullDownRefresh: function () {
     getProducts(this.data.store.id).then((data) => {
-      this.setData({ number: 0, last: false, products: data.content.products, });
+      this.setData({ number: 0, last: false, products: data.products, });
       wx.stopPullDownRefresh();
     })
   },
@@ -35,7 +36,7 @@ Page({
           this.setData({ last: true, });
         } else {
           let products = this.data.products;
-          products = products.concat(data.content.products);
+          products = products.concat(data.products);
           this.setData({ number, products });
         }
       });
@@ -69,7 +70,7 @@ Page({
             sum = sum.toFixed(2)
           }
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
             [`sum`]: sum,
           });
         });
@@ -82,7 +83,7 @@ Page({
         }).then((data) => {
           sum = parseFloat(sum) + parseFloat(product.average * count);
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
             sum: sum.toFixed(2)
           });
         });
@@ -111,7 +112,7 @@ Page({
           } else {
             sum = sum + total;
             cart.checked = true;
-            if (data.content === 0) {
+            if (data === 0) {
               checkAll = true
             }
           }
@@ -145,7 +146,7 @@ Page({
           }
         })
         this.setData({
-          sum: data.content,
+          sum: data,
           checkAll
         })
       })

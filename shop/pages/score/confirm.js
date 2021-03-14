@@ -23,21 +23,21 @@ Page({
         method: "POST",
         data: { sid: store.id, address, products, subAppId: appid, },
       }).then((data) => {
-        console.log(data.content);
+        console.log(data);
         wx.requestPayment(
           {
-            ...data.content.order, package: data.content.order.packageValue,
+            ...data.order, package: data.order.packageValue,
             'success': (res) => {
               setTimeout(() => {
                 wx.reLaunch({
-                  url: `/pages/score/detail?id=${data.content.score.id}`,
+                  url: `/pages/score/detail?id=${data.score.id}`,
                 })
               }, 300);
               console.log(res);
             },
             'fail': (res) => {
               wx.reLaunch({
-                url: `/pages/score/detail?id=${data.content.score.id}`,
+                url: `/pages/score/detail?id=${data.score.id}`,
               })
             },
             'complete': (res) => {

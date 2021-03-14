@@ -15,7 +15,7 @@ Page({
         this.setData({
           number: 0,
           last: false,
-          products: data.content
+          products: data
         })
       })
     })
@@ -34,7 +34,7 @@ Page({
         this.setData({
           number: 0,
           last: false,
-          products: data.content
+          products: data
         })
         wx.stopPullDownRefresh()
       })
@@ -51,12 +51,12 @@ Page({
         url: `${domain}/prefers?uid=${info.uid}&page=${number}&size=${size}`,
         header: { authorization },
       }).then((data) => {
-        if (data.content.length == 0) {
+        if (data.length == 0) {
           this.setData({
             last: true,
           });
         } else {
-          const products = this.data.products.concat(data.content)
+          const products = this.data.products.concat(data)
           this.setData({ number, products, });
         }
       })
@@ -86,7 +86,7 @@ Page({
           data: { id: product.cart.id, sid: product.sid, pid: product.id, num: product.cart.num + count },
         }).then((data) => {
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
           });
         });
       } else {
@@ -97,7 +97,7 @@ Page({
           data: { sid: product.sid, pid: product.id, num: 1 },
         }).then((data) => {
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
           });
         });
       }

@@ -23,7 +23,7 @@ Page({
           header: { authorization },
         }).then((data2) => {
           this.setData({
-            ...data2.content
+            ...data2
           })
         })
       })
@@ -61,7 +61,7 @@ Page({
             sum = sum.toFixed(2)
           }
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
             [`sum`]: sum,
           });
         });
@@ -74,7 +74,7 @@ Page({
         }).then((data) => {
           sum = parseFloat(sum) + parseFloat(product.average * count);
           this.setData({
-            [`products[${index}].cart`]: data.content,
+            [`products[${index}].cart`]: data,
             sum: sum.toFixed(2)
           });
         });
@@ -103,7 +103,7 @@ Page({
           } else {
             sum = sum + total;
             cart.checked = true;
-            if (data.content === 0) {
+            if (data === 0) {
               checkAll = true
             }
           }
@@ -137,7 +137,7 @@ Page({
           }
         })
         this.setData({
-          sum: data.content,
+          sum: data,
           checkAll
         })
       })

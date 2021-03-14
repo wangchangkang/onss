@@ -10,9 +10,9 @@ Page({
         url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
         header: { authorization },
       }).then((data) => {
-        console.log(data.content);
+        console.log(data);
         this.setData({
-          scores: data.content
+          scores: data
         });
       });
     });
@@ -24,11 +24,11 @@ Page({
         url: `${domain}/scores?uid=${info.uid}&page=0&size=${size}`,
         header: { authorization },
       }).then((data) => {
-        console.log(data.content);
+        console.log(data);
         this.setData({
           number: 0,
           last: false,
-          scores: data.content
+          scores: data
         })
         wx.stopPullDownRefresh()
       });
@@ -45,14 +45,14 @@ Page({
           url: `${domain}/scores?uid=${info.uid}&page=${number}&size=${size}`,
           header: { authorization },
         }).then((data) => {
-          if (data.content.length == 0) {
+          if (data.length == 0) {
             this.setData({
               last: true,
             });
           } else {
             this.setData({
               number,
-              scores: [...this.data.scores, ...data.content],
+              scores: [...this.data.scores, ...data],
             });
           }
         });

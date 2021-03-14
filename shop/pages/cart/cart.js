@@ -8,9 +8,9 @@ Page({
       wxRequest({
         url: `${domain}/carts/getStores?uid=${info.uid}`,
         header: { authorization }
-      }).then((data) => {
+      }).then((stores) => {
         this.setData({
-          stores: data.content
+          stores
         })
       })
     })

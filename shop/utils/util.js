@@ -86,7 +86,7 @@ function getProducts(sid, number = 0) {
   const authorization = wx.getStorageSync('authorization');
   const info = wx.getStorageSync('info');
   if (authorization && info) {
-    return wxRequest({ url: `${domain}/products?sid=${sid}&uid=${info.uid}&page=${number}&size=${size}`, header:{ authorization } })
+    return wxRequest({ url: `${domain}/products?sid=${sid}&uid=${info.uid}&page=${number}&size=${size}`, header: { authorization } })
   } else {
     return wxRequest({ url: `${domain}/products?sid=${sid}&page=${number}&size=${size}` })
   }
@@ -121,7 +121,7 @@ function getStore(id) {
  * @param {string} authorization 密钥
  * @param {string} uid 用户ID
  */
-function getProduct(id, authorization, info, uid) {
+function getProduct(id, authorization, uid) {
   let url = `${domain}/products/${id}`
   if (authorization && uid) {
     url = `${url}?uid=${uid}`
@@ -147,14 +147,15 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       timeout,
       header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
       success: ({ data }) => {
-        const { code, message, content } = data;
+        console.log(data);
+        resolve(data);
+      },
+      fail: (data) => {
         console.log(data)
+        wx.hideLoading()
+        const { code, message, content } = data;
         switch (code) {
-          case 'success':
-            resolve(data)
-            break;
-          case '1977.user.notfound':
-            console.log(content);
+          case 'NO_PHONE':
             if (content) {
               wx.setStorageSync('authorization', content.authorization);
               wx.setStorageSync('info', content.info);
@@ -163,7 +164,20 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
               url: '/pages/login'
             })
             break;
-          case '1977.session.expire':
+          case 'MERCHANT_NOT_REGISTER':
+            wx.showModal({
+              title: '警告',
+              content: message,
+              confirmColor: '#e64340',
+              showCancel: false,
+              success: () => {
+                wx.reLaunch({
+                  url: '/pages/store/merchant'
+                });
+              }
+            })
+            break;
+          case 'SESSION_EXPIRE':
             wx.removeStorageSync('authorization');
             wx.removeStorageSync('info');
             wx.reLaunch({
@@ -179,15 +193,6 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
             })
             break;
         }
-      },
-      fail: (res) => {
-        console.log(res);
-        wx.showModal({
-          title: '警告',
-          content: '加载失败',
-          confirmColor: '#e64340',
-          showCancel: false,
-        });
       },
       complete: (res) => {
         wx.hideLoading()

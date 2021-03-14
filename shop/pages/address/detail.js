@@ -70,7 +70,7 @@ Page({
           });
         }
         this.setData({
-          ...data.content
+          ...data
         });
         wx.navigateBack({
           delta: 1

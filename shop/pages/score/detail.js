@@ -12,7 +12,7 @@ Page({
       }).then((data) => {
         this.setData({
           ... options,
-          score: data.content
+          score: data
         });
       });
     })
@@ -25,8 +25,7 @@ Page({
         method: 'POST',
         data: this.data.score,
         header: { authorization },
-      }).then((data) => {
-        const { content } = data;
+      }).then((content) => {
         const index = this.data.index;
         wx.requestPayment(
           {
