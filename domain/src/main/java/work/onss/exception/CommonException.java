@@ -2,10 +2,12 @@ package work.onss.exception;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import work.onss.vo.Work;
 
@@ -19,11 +21,7 @@ import java.util.StringJoiner;
 @ResponseBody
 public class CommonException {
 
-    @ExceptionHandler(ServiceException.class)
-    public Work<Object> serviceException(ServiceException e) {
-        return Work.fail(e.getCode(), e.getMessage());
-    }
-
+    @ResponseStatus(code = HttpStatus.NOT_EXTENDED)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Work<Object> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         StringJoiner message = new StringJoiner(",", "[", "]");
@@ -34,20 +32,23 @@ public class CommonException {
     }
 
 
+    @ResponseStatus(code = HttpStatus.NOT_EXTENDED)
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public Work<Object> maxUploadSizeExceededException(MaxUploadSizeExceededException e) {
         return Work.fail("文件大小上限为1M");
     }
 
+    @ResponseStatus(code = HttpStatus.NOT_EXTENDED)
     @ExceptionHandler(Exception.class)
     public Work<Object> exception(Exception e) {
         e.printStackTrace();
         return Work.fail(e.getMessage() != null ? e.getMessage() : "服务器发生错误!");
     }
 
+    @ResponseStatus(code = HttpStatus.NOT_EXTENDED)
     @ExceptionHandler(JWTVerificationException.class)
     public Work<Object> exception(JWTVerificationException e) {
         e.printStackTrace();
-        return Work.fail("1977.session.expire", "请重新登录");
+        return Work.fail("SESSION_EXPIRE", "请重新登录");
     }
 }

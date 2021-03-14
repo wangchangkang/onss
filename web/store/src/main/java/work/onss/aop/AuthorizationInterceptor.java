@@ -40,10 +40,10 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
                     Info info = JsonMapperUtils.fromJson(subject, Info.class);
                     if (uid.equals(info.getCid())) {
                         if (info.getOpen()) {
-                            throw new ServiceException("1977.customer.notfound", "请绑定手机号");
+                            throw new ServiceException("NO_PHONE", "请绑定手机号");
                         }
                     } else {
-                        throw new ServiceException("1977.session.expire", "请重新登录");
+                        throw new ServiceException("SESSION_EXPIRE", "请重新登录");
                     }
                 }
             }

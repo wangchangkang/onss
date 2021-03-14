@@ -61,9 +61,8 @@ public class StoreController {
      * @return 商户列表
      */
     @GetMapping(value = {"stores"})
-    public Work<List<Store>> stores(@RequestParam(name = "cid") String cid) {
-        List<Store> stores = storeRepository.findByCustomersIdAndStateNot(cid, ApplymentStateEnum.APPLYMENT_STATE_CANCELED);
-        return Work.success("加载成功", stores);
+    public List<Store> stores(@RequestParam(name = "cid") String cid) {
+        return storeRepository.findByCustomersIdAndStateNot(cid, ApplymentStateEnum.APPLYMENT_STATE_CANCELED);
     }
 
     /**
@@ -72,9 +71,8 @@ public class StoreController {
      * @return 商户详情
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
-        Store store = storeRepository.findByIdAndCustomersId(id, cid).orElse(null);
-        return Work.success("加载成功", store);
+    public Store detail(@PathVariable String id, @RequestParam(name = "cid") String cid) {
+        return storeRepository.findByIdAndCustomersId(id, cid).orElse(null);
     }
 
     /**
@@ -83,9 +81,9 @@ public class StoreController {
      * @return 密钥及商户信息
      */
     @PostMapping(value = {"stores/{id}/bind"})
-    public Work<Map<String, Object>> bind(@PathVariable String id, @RequestParam(name = "cid") String cid) throws ServiceException {
-        Customer customer = customerRepository.findById(cid).orElseThrow(() -> new ServiceException("fail", "该用户已不存在，请联系客服"));
-        Store store = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("fail", "该商户已不存在，请联系客服!"));
+    public Map<String, Object> bind(@PathVariable String id, @RequestParam(name = "cid") String cid) throws ServiceException {
+        Customer customer = customerRepository.findById(cid).orElseThrow(() -> new ServiceException("FAIL", "该用户已不存在，请联系客服"));
+        Store store = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("FAIL", "该商户已不存在，请联系客服!"));
         Map<String, Object> result = new HashMap<>();
         LocalDateTime now = LocalDateTime.now();
         Info info = new Info(customer.getId(), false, store.getId(), store.getApplymentId(), store.getSubMchId(), now);
@@ -101,7 +99,7 @@ public class StoreController {
                 .sign(algorithm);
         result.put("authorization", authorization);
         result.put("info", info);
-        return Work.success("登陆成功", result);
+        return result;
     }
 
     /**
@@ -111,20 +109,13 @@ public class StoreController {
      * @return 商户状态
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) throws WxPayException {
-        boolean productExists = productRepository.existsBySid(id);
-        if (!productExists) {
-            return Work.fail("1977.products.zero", "请添加预售商品");
-        }
-        Store store = storeRepository.findByIdAndCustomersId(id, cid).orElse(null);
-        if (store == null) {
-            return Work.fail("该商户不存在,请立刻截图联系客服");
-        } else if (store.getState() == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
+    public void updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) throws WxPayException, ServiceException {
+        Store store = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("FAIL", "该商户不存在,请立刻截图联系客服"));
+        if (store.getState() == ApplymentStateEnum.APPLYMENT_STATE_FINISHED) {
             store.setStatus(status);
             storeRepository.save(store);
-            return Work.success("操作成功", status);
         } else if (store.getState() == ApplymentStateEnum.APPLYMENT_STATE_EDITTING || store.getState() == ApplymentStateEnum.APPLYMENT_STATE_REJECTED) {
-            return Work.fail("1977.merchant.not_register", "请完善商户资质");
+            throw new ServiceException("MERCHANT_NOT_REGISTER", "请完善商户资质");
         } else {
             wechatConfiguration.initServices();
             WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get("wxe78290c2a5313de3");
@@ -137,19 +128,17 @@ public class StoreController {
             storeRepository.save(store);
             switch (applymentStateEnum) {
                 case APPLYMENT_STATE_AUDITING:
-                    return Work.fail("正在审核中,请耐心等待");
+                    throw new ServiceException("FAIL", "正在审核中,请耐心等待");
                 case APPLYMENT_STATE_TO_BE_CONFIRMED:
-                    return Work.fail("请及时验证账户");
+                    throw new ServiceException("FAIL", "请及时验证账户");
                 case APPLYMENT_STATE_TO_BE_SIGNED:
-                    return Work.fail("请及时签约特约商户");
+                    throw new ServiceException("FAIL", "请及时签约特约商户");
                 case APPLYMENT_STATE_SIGNING:
-                    return Work.fail("开通权限中,请耐心等待");
+                    throw new ServiceException("FAIL", "开通权限中,请耐心等待");
                 case APPLYMENT_STATE_CANCELED:
-                    return Work.fail("申请特约商户已作废");
-                case APPLYMENT_STATE_FINISHED:
-                    return Work.success("操作成功", true);
+                    throw new ServiceException("FAIL", "申请特约商户已作废");
                 default:
-                    return Work.fail("系统异常,请立刻联系客服");
+                    throw new ServiceException("FAIL", "系统异常,请立刻联系客服");
             }
         }
     }
@@ -161,8 +150,8 @@ public class StoreController {
      * @return 商户详情
      */
     @PutMapping(value = {"stores/{id}"})
-    public Work<Store> update(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @Validated @RequestBody Store store) throws ServiceException {
-        Store store1 = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("fail", "该商户不存在,请联系客服!"));
+    public Store update(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @Validated @RequestBody Store store) throws ServiceException {
+        Store store1 = storeRepository.findByIdAndCustomersId(id, cid).orElseThrow(() -> new ServiceException("FAIL", "该商户不存在,请联系客服!"));
         store1.setName(store.getName());
         store1.setDescription(store.getDescription());
         store1.setTrademark(store.getTrademark() == null ? systemConfig.getLogo() : store.getTrademark());
@@ -172,7 +161,8 @@ public class StoreController {
         store1.setVideos(store.getVideos());
         store1.setOpenTime(store.getOpenTime());
         store1.setCloseTime(store.getCloseTime());
-        return Work.success("更新成功", store);
+        storeRepository.save(store1);
+        return store1;
     }
 
     /**
@@ -182,8 +172,8 @@ public class StoreController {
      */
     @Transactional
     @PostMapping(value = {"stores"})
-    public Work<Store> insert(@RequestParam String cid, @Validated @RequestBody Store store) throws ServiceException {
-        Customer customer = customerRepository.findById(cid).orElseThrow(() -> new ServiceException("fail", "当前用户不存在,请联系客服!"));
+    public Store insert(@RequestParam String cid, @Validated @RequestBody Store store) throws ServiceException {
+        Customer customer = customerRepository.findById(cid).orElseThrow(() -> new ServiceException("FAIL", "当前用户不存在,请联系客服!"));
         store.setCustomers(Collections.singletonList(customer));
         LocalDateTime now = LocalDateTime.now();
         store.setInsertTime(now);
@@ -192,7 +182,7 @@ public class StoreController {
         store.setState(ApplymentStateEnum.APPLYMENT_STATE_EDITTING);
         store.setTrademark(systemConfig.getLogo());
         storeRepository.save(store);
-        return Work.success("操作成功", store);
+        return store;
     }
 
     @Autowired
@@ -206,7 +196,7 @@ public class StoreController {
      */
     @Transactional
     @PostMapping(value = {"stores/{id}/setMerchant"})
-    public Work<Store> setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) throws ServiceException, WxPayException {
+    public Store setMerchant(@PathVariable String id, @RequestParam String cid, @RequestBody Store store) throws ServiceException, WxPayException {
 
         Merchant merchant = store.getMerchant();
 
@@ -274,7 +264,7 @@ public class StoreController {
                 .accountName(merchant.getAccountName())
                 .accountNumber(merchant.getAccountNumber())
                 .bankAccountType(merchant.getBankAccountType())
-                .bankAddressCode(Arrays.stream(merchant.getBankAddress().getCode()).skip(code.length - 1).findFirst().orElseThrow(() -> new ServiceException("fail", "银行地址编号错误")))
+                .bankAddressCode(Arrays.stream(merchant.getBankAddress().getCode()).skip(code.length - 1).findFirst().orElseThrow(() -> new ServiceException("FAIL", "银行地址编号错误")))
                 .bankName(merchant.getBankName())
                 .build();
         wechatConfiguration.initServices();
@@ -293,7 +283,7 @@ public class StoreController {
         WxPayApplymentCreateResult wxPayApplymentCreateResult = applyment4SubService.createApply(wxPayApplyment4SubCreateRequest);
 
         List<ApplymentStateEnum> applymentStateEnums = Arrays.asList(ApplymentStateEnum.APPLYMENT_STATE_REJECTED, ApplymentStateEnum.APPLYMENT_STATE_EDITTING, null);
-        Store store1 = storeRepository.findByIdAndCustomersIdAndStateIn(id, cid, applymentStateEnums).orElseThrow(() -> new ServiceException("fail", "该商户已不存在，请联系客服!"));
+        Store store1 = storeRepository.findByIdAndCustomersIdAndStateIn(id, cid, applymentStateEnums).orElseThrow(() -> new ServiceException("FAIL", "该商户已不存在，请联系客服!"));
         store1.setMerchant(merchant);
         store1.setBusinessCode(businessCode);
         store1.setState(store.getState());
@@ -302,7 +292,7 @@ public class StoreController {
         store1.setLicenseCopy(merchant.getLicenseCopy());
         store1.setApplymentId(wxPayApplymentCreateResult.getApplymentId());
         storeRepository.save(store);
-        return Work.success("编辑成功", store);
+        return store;
     }
 
     /**
@@ -312,9 +302,8 @@ public class StoreController {
      * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/{id}/uploadPicture")
-    public Work<String> uploadPicture(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
-        String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
-        return Work.success("上传成功", filePath);
+    public String uploadPicture(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
+        return Utils.uploadFile(file, systemConfig.getFilePath(), id);
     }
 
     /**
@@ -324,7 +313,7 @@ public class StoreController {
      * @throws Exception 文件上传失败异常
      */
     @PostMapping("stores/{id}/imageUploadV3")
-    public Work<Picture> imageUploadV3(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
+    public Picture imageUploadV3(@PathVariable String id, @RequestParam(value = "file") MultipartFile file) throws Exception {
         String filePath = Utils.uploadFile(file, systemConfig.getFilePath(), id);
         Picture picture = pictureRepository.findBySidAndFilePath(id, filePath).orElse(null);
         if (picture == null) {
@@ -335,7 +324,7 @@ public class StoreController {
             picture = new Picture(file.getOriginalFilename(), filePath, id, imageUploadResult.getMediaId());
             pictureRepository.save(picture);
         }
-        return Work.success("上传成功", picture);
+        return picture;
     }
 }
 

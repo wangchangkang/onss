@@ -50,7 +50,7 @@ public class CartController {
     @Transactional
     @PostMapping(value = {"carts"})
     public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) throws ServiceException {
-        Product product = productRepository.findById(cart.getPid()).orElseThrow(() -> new ServiceException("fail", "该商品已下架"));
+        Product product = productRepository.findById(cart.getPid()).orElseThrow(() -> new ServiceException("FAIL", "该商品已下架"));
         if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
             String message = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
             return Work.fail(message);
@@ -120,7 +120,7 @@ public class CartController {
                 checkAll = false;
             }
         }
-        Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("fail", "该商户已停用"));
+        Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("FAIL", "该商户已停用"));
         Map<String, Object> data = new HashMap<>();
         data.put("checkAll", checkAll);
         data.put("sum", sum.toPlainString());
@@ -132,7 +132,7 @@ public class CartController {
     @Transactional
     @PostMapping(value = {"carts/{id}/setChecked"})
     public Work<Long> setChecked(@PathVariable String id, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @RequestParam(name = "checked") Boolean checked) throws ServiceException {
-        Cart cart = cartRepository.findByUidAndId(uid, id).orElseThrow(() -> new ServiceException("fail", "请重新加入购物车"));
+        Cart cart = cartRepository.findByUidAndId(uid, id).orElseThrow(() -> new ServiceException("FAIL", "请重新加入购物车"));
         cart.setChecked(!checked);
         cartRepository.save(cart);
         long count = cartRepository.countByUidAndSidAndChecked(uid, sid, false);

@@ -21,9 +21,11 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
     Optional<Product> findByIdAndSid(String id, String sid);
 
-    void deleteByIdAndSid(String id,String sid);
+    void deleteByIdAndSid(String id, String sid);
 
-    void deleteByIdInAndSid(Collection<String> ids,String sid);
+    void deleteByIdInAndSid(Collection<String> ids, String sid);
 
     boolean existsBySid(String sid);
+
+    boolean existsByIdAndSid(String id, String sid);
 }

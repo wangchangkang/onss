@@ -42,7 +42,7 @@ public class UserController {
     @Transactional
     @PostMapping(value = {"users/{id}/setPhone"})
     public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
-        User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在,请联系客服"));
+        User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "用户不存在,请联系客服"));
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSessionKey(), wxRegister.getIv());
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);

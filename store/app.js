@@ -5,4 +5,8 @@ App({
   },
   onLaunch: function (e) {
   },
+
+  onError:function(e){
+    console.log(e)
+  }
 })

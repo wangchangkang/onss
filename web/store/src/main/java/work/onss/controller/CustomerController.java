@@ -41,8 +41,8 @@ public class CustomerController {
      */
     @Transactional
     @PostMapping(value = {"customers/{id}/setPhone"})
-    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
-        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "用户不存在,请联系客服"));
+    public Map<String, Object> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "用户不存在,请联系客服"));
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), customer.getSessionKey(), wxRegister.getIv());
         PhoneEncryptedData phoneEncryptedData = JsonMapperUtils.fromJson(encryptedData, PhoneEncryptedData.class);
@@ -65,7 +65,7 @@ public class CustomerController {
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("info", info);
-        return Work.success("登录成功", result);
+        return result;
     }
 }
 

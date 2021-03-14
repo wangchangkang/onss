@@ -35,9 +35,8 @@ public class ScoreController {
      * @return 订单详情
      */
     @GetMapping(value = {"scores/{id}"})
-    public Work<Score> score(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Score score = scoreRepository.findByIdAndSid(id, sid).orElse(null);
-        return Work.success("加载成功", score);
+    public Score score(@PathVariable String id, @RequestParam(name = "sid") String sid) {
+        return scoreRepository.findByIdAndSid(id, sid).orElse(null);
     }
 
     /**
@@ -46,9 +45,8 @@ public class ScoreController {
      * @return 订单列表
      */
     @GetMapping(value = {"scores"})
-    public Work<List<Score>> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<ScoreEnum> status, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        List<Score> scores = scoreRepository.findBySidAndStatusIn(sid, status, pageable);
-        return Work.success("加载成功", scores);
+    public List<Score> scores(@RequestParam(name = "sid") String sid, @RequestParam(name = "status") List<ScoreEnum> status, @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        return scoreRepository.findBySidAndStatusIn(sid, status, pageable);
     }
 
 }

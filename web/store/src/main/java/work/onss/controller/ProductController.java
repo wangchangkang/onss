@@ -30,9 +30,8 @@ public class ProductController {
      * @return 商品详情
      */
     @GetMapping(value = {"products/{id}"})
-    public Work<Product> product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
-        Product product = productRepository.findByIdAndSid(id, sid).orElse(null);
-        return Work.success("加载成功", product);
+    public Product product(@PathVariable String id, @RequestParam(name = "sid") String sid) {
+        return productRepository.findByIdAndSid(id, sid).orElse(null);
     }
 
     /**
@@ -40,9 +39,8 @@ public class ProductController {
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<List<Product>> products(@RequestParam(name = "sid") String sid) {
-        List<Product> products = productRepository.findBySid(sid);
-        return Work.success("加载成功", products);
+    public List<Product> products(@RequestParam(name = "sid") String sid) throws ServiceException {
+        return productRepository.findBySid(sid);
     }
 
 
@@ -52,10 +50,10 @@ public class ProductController {
      * @return 商品详情
      */
     @PostMapping(value = {"products"})
-    public Work<Product> insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
+    public Product insert(@RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) {
         product.setSid(sid);
         productRepository.save(product);
-        return Work.success("创建成功", product);
+        return product;
     }
 
     /**
@@ -65,15 +63,11 @@ public class ProductController {
      * @return 商品详情
      */
     @PutMapping(value = {"products/{id}"})
-    public Work<Product> update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) throws ServiceException {
-        Product product1 = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品不存在"));
-        if (product1.getSid().equals(sid)) {
-            product.setSid(sid);
-            productRepository.save(product);
-            return Work.success("编辑成功", product);
-        } else {
-            return Work.fail("商品不属于当前商户");
-        }
+    public Product update(@PathVariable String id, @RequestParam(name = "sid") String sid, @Validated @RequestBody Product product) throws ServiceException {
+        productRepository.findByIdAndSid(id, sid).orElseThrow(() -> new ServiceException("FAIL", "该商品不存在"));
+        product.setSid(sid);
+        productRepository.save(product);
+        return product;
     }
 
     /**
@@ -83,15 +77,10 @@ public class ProductController {
      * @return 商品状态
      */
     @PutMapping(value = {"products/{id}/updateStatus"})
-    public Work<Boolean> updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) throws ServiceException {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品不存在"));
-        if (product.getSid().equals(sid)) {
-            product.setStatus(status);
-            productRepository.save(product);
-            return Work.success("编辑成功", status);
-        } else {
-            return Work.fail("商品不属于当前商户");
-        }
+    public void updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) throws ServiceException {
+        Product product = productRepository.findByIdAndSid(id, sid).orElseThrow(() -> new ServiceException("FAIL", "该商品不存在"));
+        product.setStatus(status);
+        productRepository.save(product);
     }
 
     /**
@@ -102,13 +91,12 @@ public class ProductController {
      */
     @Transactional
     @PutMapping(value = {"products"})
-    public Work<Boolean> updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
+    public void updateStatus(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids, @RequestParam(name = "status") Boolean status) {
         List<Product> products = productRepository.findByIdInAndSid(ids, sid);
         products.forEach(product -> {
             product.setStatus(status);
         });
         productRepository.saveAll(products);
-        return Work.success("操作成功", status);
     }
 
     /**
@@ -117,9 +105,8 @@ public class ProductController {
      * @return 删除商品是否成功
      */
     @DeleteMapping(value = {"products/{id}"})
-    public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
-        productRepository.deleteByIdAndSid(id,sid);
-        return Work.success("删除成功", true);
+    public void delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
+        productRepository.deleteByIdAndSid(id, sid);
     }
 
     /**
@@ -128,8 +115,7 @@ public class ProductController {
      * @return 批量删除商品是否成功
      */
     @DeleteMapping(value = {"products"})
-    public Work<Boolean> delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
-        productRepository.deleteByIdInAndSid(ids,sid);
-        return Work.success("删除成功", true);
+    public void delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {
+        productRepository.deleteByIdInAndSid(ids, sid);
     }
 }

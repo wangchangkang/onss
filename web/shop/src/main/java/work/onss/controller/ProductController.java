@@ -38,8 +38,8 @@ public class ProductController {
      */
     @GetMapping(value = {"products/{id}"})
     public Work<Product> product(@PathVariable String id, @RequestParam(required = false) String uid) throws ServiceException {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("fail", "该商品已下架"));
-        Store store = storeRepository.findById(product.getSid()).orElseThrow(() -> new ServiceException("fail", "该商户已停用"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "该商品已下架"));
+        Store store = storeRepository.findById(product.getSid()).orElseThrow(() -> new ServiceException("FAIL", "该商户已停用"));
         product.setStore(store);
         if (uid != null) {
             Prefer prefer = preferRepository.findByPidAndUid(id, uid).orElse(null);
@@ -61,7 +61,7 @@ public class ProductController {
     @GetMapping(value = {"products"})
     public Work<Map<String, Object>> products(@RequestParam String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) throws ServiceException {
         List<Product> products = productRepository.findBySid(sid, pageable);
-        Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("fail", "该商户已停用"));
+        Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("FAIL", "该商户已停用"));
         BigDecimal sum = new BigDecimal("0.00");
         boolean checkAll = true;
         if (uid != null && products.size() > 0) {

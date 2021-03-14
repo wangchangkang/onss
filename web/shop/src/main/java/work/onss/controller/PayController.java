@@ -41,7 +41,7 @@
 //        List<String> audience = decodedJWT.getAudience();
 //        if (!audience.contains(subAppId)) {
 //            String format = String.format("小程序ID: %s 未授权,请立刻截图，再联系客服", subAppId);
-//            throw new ServiceException("fail", format);
+//            throw new ServiceException("FAIL", format);
 //        }
 //
 //        String uid = decodedJWT.getSubject();
@@ -49,7 +49,7 @@
 //        Address address = addressService.findOne(addressId, uid, Address.class);
 //        if (address == null) {
 //            String format = String.format("地址ID: %s 丢失,请立刻截图，再联系客服", addressId);
-//            throw new ServiceException("fail", format);
+//            throw new ServiceException("FAIL", format);
 //        }
 //
 //
@@ -60,7 +60,7 @@
 //
 //        if (store == null) {
 //            String format = String.format("商户ID: %s 丢失,请立刻截图，再联系客服", sid);
-//            throw new ServiceException("fail", format);
+//            throw new ServiceException("FAIL", format);
 //        }
 //
 //        BigDecimal total = new BigDecimal(score.getTotal());
@@ -68,7 +68,7 @@
 //        User user = userService.findById(uid, User.class);
 //        if (user == null) {
 //            String format = String.format("用户ID: %s 丢失,请立刻截图，再联系客服", uid);
-//            throw new ServiceException("fail", format);
+//            throw new ServiceException("FAIL", format);
 //
 //        }
 //
@@ -76,7 +76,7 @@
 //        Map<String, String> unifiedOrder = wxPayService.unifiedOrder(reqData);
 //        String prepayId = unifiedOrder.getOrDefault("prepay_id", null);
 //        if (prepayId == null) {
-//            throw new ServiceException("fail", "创建订单失败");
+//            throw new ServiceException("FAIL", "创建订单失败");
 //        }
 //        Map<String, String> miniPayment = wxPayService.miniPayment(subAppId, prepayId);
 //        score.setPrepayId1(prepayId);
@@ -103,17 +103,17 @@
 //        Score score = scoreService.findOne(id, uid, Score.class);
 //
 //        if (score == null) {
-//            throw new ServiceException("fail", "该订单不存在");
+//            throw new ServiceException("FAIL", "该订单不存在");
 //        } else if (score.getDifference().compareTo(BigDecimal.ZERO) < 0) {
 //            List<String> audience = decodedJWT.getAudience();
 //            if (!audience.contains(subAppId)) {
 //                String format = String.format("小程序ID: %s 未授权,请立刻截图，再联系客服", subAppId);
-//                throw new ServiceException("fail", format);
+//                throw new ServiceException("FAIL", format);
 //            }
 //            User user = userService.findById(uid, User.class);
 //            if (user == null) {
 //                String format = String.format("用户ID: %s 丢失,请立刻截图，再联系客服", uid);
-//                throw new ServiceException("fail", format);
+//                throw new ServiceException("FAIL", format);
 //            }
 //
 //            Map<String, String> miniPayment;
@@ -125,7 +125,7 @@
 //                Map<String, String> unifiedOrder = wxPayService.unifiedOrder(reqData);
 //                String prepayId = unifiedOrder.getOrDefault("prepay_id", null);
 //                if (prepayId == null) {
-//                    throw new ServiceException("fail", "创建订单失败");
+//                    throw new ServiceException("FAIL", "创建订单失败");
 //                }
 //
 //                score.setPrepayId2(prepayId);
@@ -139,7 +139,7 @@
 //            return Work.success("创建二次订单成功", miniPayment);
 //        } else {
 //            String format = MessageFormat.format("该订单差价信息为{0}元", score.getDifference());
-//            throw new ServiceException("fail", format);
+//            throw new ServiceException("FAIL", format);
 //        }
 //    }
 //

@@ -71,7 +71,7 @@ public class ScoreController {
      */
     @GetMapping(value = {"scores/{id}"})
     public Work<Score> score(@PathVariable String id, @RequestParam(name = "uid") String uid) throws ServiceException {
-        Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("fail", "该订单不存"));
+        Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
         return Work.success("加载成功", score);
     }
 
@@ -98,7 +98,7 @@ public class ScoreController {
         if (score.getAddress() == null) {
             return Work.fail("请选择收货地址");
         }
-        Store store = storeRepository.findById(score.getSid()).orElseThrow(() -> new ServiceException("fail", "该店铺不存,请联系客服!"));
+        Store store = storeRepository.findById(score.getSid()).orElseThrow(() -> new ServiceException("FAIL", "该店铺不存,请联系客服!"));
         if (!store.getStatus()) {
             return Work.fail("正在准备中,请稍后重试!");
         }
@@ -112,7 +112,7 @@ public class ScoreController {
 
         List<Product> products = productRepository.findByIdInAndSid(cartMap.keySet(), score.getSid());
         score.updateProduct(products);
-        User user = userRepository.findById(uid).orElseThrow(() -> new ServiceException("fail", "该用户不存在!"));
+        User user = userRepository.findById(uid).orElseThrow(() -> new ServiceException("FAIL", "该用户不存在!"));
 
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
@@ -201,7 +201,7 @@ public class ScoreController {
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
             WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
 
-            Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("fail", "订单丢失!"));
+            Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("FAIL", "订单丢失!"));
             String s = StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(score));
             log.warn(s);
             if (score.getStatus().equals(ScoreEnum.PAY)){

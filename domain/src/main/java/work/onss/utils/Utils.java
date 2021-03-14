@@ -56,15 +56,15 @@ public class Utils {
     public static Path upload(MultipartFile file, String dir, String... more) throws IOException, ServiceException {
         String filename = file.getOriginalFilename();
         if (filename == null) {
-            throw new ServiceException("fail", "上传失败!");
+            throw new ServiceException("FAIL", "上传失败!");
         }
         int index = filename.lastIndexOf(".");
         if (index == -1) {
-            throw new ServiceException("fail", "文件格式错误!");
+            throw new ServiceException("FAIL", "文件格式错误!");
         }
         Path path = Paths.get(dir, more);
         if (!Files.exists(path) && !path.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
+            throw new ServiceException("FAIL", "上传失败!");
         }
         String md5 = DigestUtils.md5DigestAsHex(file.getInputStream());
         return path.resolve(md5.concat(filename.substring(index)));
@@ -84,15 +84,15 @@ public class Utils {
     public static String uploadFile(MultipartFile file, String dir, String... more) throws ServiceException, IOException {
         String filename = file.getOriginalFilename();
         if (filename == null) {
-            throw new ServiceException("fail", "上传失败!");
+            throw new ServiceException("FAIL", "上传失败!");
         }
         int index = filename.lastIndexOf(".");
         if (index == -1) {
-            throw new ServiceException("fail", "文件格式错误!");
+            throw new ServiceException("FAIL", "文件格式错误!");
         }
         Path path = Paths.get(dir, more);
         if (!Files.exists(path) && !path.toFile().mkdirs()) {
-            throw new ServiceException("fail", "上传失败!");
+            throw new ServiceException("FAIL", "上传失败!");
         }
         String sha256 = SecureUtil.sha256(file.getInputStream());
         path = path.resolve(sha256.concat(filename.substring(index)));
