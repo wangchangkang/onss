@@ -9,12 +9,10 @@ Page({
       wxRequest({
         url: `${domain}/scores/${options.id}?sid=${info.sid}`,
         header: { authorization },
-      }).then((data) => {
-        console.log(data.content);
-
+      }).then((score) => {
         this.setData({
           index: options.index,
-          score: data.content
+          score
         });
       });
     })
@@ -25,7 +23,6 @@ Page({
       data: this.data.score.outTradeNo,
       success: (res) => {
         console.log(res);
-
       }
     })
   }

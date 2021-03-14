@@ -14,38 +14,8 @@ Page({
       [index]: value
     })
   },
-  getLocation: function (e) {
-    const y = e.currentTarget.dataset.y;
-    const x = e.currentTarget.dataset.x;
-    const name = e.currentTarget.dataset.name;
-    if (x && y) {
-      wx.chooseLocation({
-        longitude: x,
-        latitude: y,
-        name: name,
-        success: (res) => {
-          this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
-        }
-      })
-    } else {
-      wx.getLocation({
-        type: 'gcj02',
-        success: (res) => {
-          wx.chooseLocation({
-            longitude: parseFloat(res.longitude),
-            latitude: parseFloat(res.latitude),
-            success: (res) => {
-              this.setData({ location: { x: res.longitude, y: res.latitude, coordinates: [res.longitude, res.latitude] } })
-            }
-          })
-        }
-      })
-    }
-
-  },
 
   chooseLocation: function (e) {
-    console.log(this.data.address);
     const { point, name } = this.data.address;
     if (point && point.x && point.y) {
       wx.chooseLocation({
@@ -134,21 +104,19 @@ Page({
 
   updateStore: function (e) {
     console.log(e.detail.value)
-    const { name, type, openTime, closeTime, description, videos, address,trademark,pictures } = this.data;
+    const { name, type, openTime, closeTime, description, videos, address, trademark, pictures } = this.data;
     const { addressUsername, addressPhone, addressName, addressDetail } = e.detail.value;
     const store = {
       address: { username: addressUsername, phone: addressPhone, name: addressName, detail: addressDetail, point: address.point },
-      name, type, openTime, closeTime, description,trademark,pictures, videos
+      name, type, openTime, closeTime, description, trademark, pictures, videos
     }
-    console.log(store);
-
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
         data: store,
         method: "PUT",
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((content) => {
         const store = { ...this.data.store, ...content }
         this.setData({
           store
@@ -167,15 +135,15 @@ Page({
       wxRequest({
         url: `${domain}/stores/${info.sid}?cid=${info.cid}`,
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((store) => {
         let index = -1;
         types.find((value, key) => {
-          if (value.id === content.type) {
+          if (value.id === store.type) {
             index = key;
           }
         })
         this.setData({
-          ...content, index, store: content
+          ...store, index, store
         })
       })
     })

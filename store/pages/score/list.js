@@ -21,9 +21,9 @@ Page({
       wxRequest({
         url: `${domain}/scores?sid=${info.sid}&status=${options.status}&page=0&size=${size}`,
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((scores) => {
         this.setData({
-          scores: content
+          scores
         })
       })
     })

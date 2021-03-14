@@ -11,10 +11,10 @@ Page({
         url: `${domain}/products/${options.id}?sid=${info.sid}`,
         method: "GET",
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((product) => {
         this.setData({
           index: options.index,
-          product: content
+          product
         })
       })
     });

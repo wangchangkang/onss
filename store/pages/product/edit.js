@@ -9,7 +9,7 @@ Page({
     const length = this.data[id].length;
     count = count - length;
     checkStore().then(({ authorization, info }) => {
-      chooseImages(authorization,info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
+      chooseImages(authorization, info, count, `${domain}/stores/${info.sid}/uploadPicture`).then((data) => {
         const pictures = this.data[id];
         if (!pictures.includes(data)) {
           this.setData({
@@ -64,28 +64,26 @@ Page({
 
   updateProduct: function (e) {
     const { index, description, pictures, id } = this.data;
-    const product = { ...e.detail.value, description, pictures, id }
-    console.log(product);
     checkStore().then(({ authorization, info }) => {
       wxRequest({
         url: `${domain}/products/${id}?sid=${info.sid}`,
         method: "PUT",
-        data: product,
+        data: { ...e.detail.value, description, pictures, id },
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((product) => {
         this.setData({
-          ...content,
-          product: content
+          ...product,
+          product
         });
         let pages = getCurrentPages();//当前页面栈
         let detail = pages[pages.length - 2];//详情页面
         detail.setData({
-          product: content
+          product
         });
         let list = pages[pages.length - 3];//列表页面
         const key = `products[${index}]`
         list.setData({
-          [key]: content
+          [key]: product
         });
       });
     });
@@ -96,11 +94,11 @@ Page({
       wxRequest({
         url: `${domain}/products/${options.id}?sid=${info.sid}`,
         header: { authorization },
-      }).then(({ content }) => {
+      }).then((product) => {
         this.setData({
           index: options.index,
-          ...content,
-          product: content
+          ...product,
+          product
         })
       });
     })

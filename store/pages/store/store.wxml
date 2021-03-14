@@ -19,8 +19,8 @@
 		<view class="weui-cell__bd">{{openTime}} 至 {{closeTime}}</view>
 	</view>
 	<view class="weui-cells weui-cells_after-title storeInfo">
-		<view class="weui-cell" bindtap="getLocation" data-x="{{location.x}}" data-y="{{location.y}}"
-			data-name="{{address}}">
+		<view class="weui-cell" bindtap="getLocation" data-x="{{address.point.x}}" data-y="{{address.point.y}}"
+			data-name="{{address.name}}">
 			<view class="weui-cell__hd">店铺地址：</view>
 			<view class="weui-cell__bd">{{address.name}}</view>
 			<view class="weui-cell__ft">

@@ -1,9 +1,9 @@
 const app = getApp();
 const { windowWidth } = app.globalData;
 const size = 6;
-const domain = 'http://192.168.103.184/store';
+const domain = 'http://127.0.0.1/store';
 const appid = "wx950ae546eec14733";
-const prefix = 'http://192.168.103.184/';
+const prefix = 'http://127.0.0.1/';
 const scoreStatus = {
   PAY: "待支付", PACKAGE: "待配货", DELIVER: "待发货", SIGN: "待签收", FINISH: "已完成"
 };
@@ -220,7 +220,7 @@ function setPhone(id, authorization, info, encryptedData, iv, lastTime) {
         authorization
       },
     }).then((data) => {
-      const { authorization, info } = data.content;
+      const { authorization, info } = data;
       wx.setStorageSync('authorization', authorization);
       wx.setStorageSync('info', info);
       resolve({ authorization, info })
@@ -244,10 +244,7 @@ function chooseImages(authorization, info, count, url) {
       sizeType: ['original', 'compressed'],
       sourceType: ['album', 'camera'],
       success: res => {
-        wx.showLoading({
-          title: '加载中',
-          mask: true
-        })
+        wx.showLoading({ title: '加载中', mask: true })
         for (let filePath of res.tempFilePaths) {
           wx.uploadFile({
             header: { authorization },
@@ -255,19 +252,17 @@ function chooseImages(authorization, info, count, url) {
             filePath: filePath,
             name: 'file',
             success: res => {
-              const data = JSON.parse(res.data);
-              if (data.code === "success") {
-                resolve(data.content)
-              } else {
-                wx.showModal({
-                  title: '提示',
-                  content: data.message,
-                  showCancel: false,
-                })
-              }
-              wx.hideLoading()
+              resolve(res)
             },
-            fail: (res) => {
+            fail: (data) => {
+              const { code, message, content } = data;
+              wx.showModal({
+                title: '提示',
+                content: message,
+                showCancel: false,
+              })
+            },
+            complete: (data) => {
               wx.hideLoading()
             }
           })
