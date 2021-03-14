@@ -37,7 +37,7 @@ public class ProductController {
      * @return 商品信息
      */
     @GetMapping(value = {"products/{id}"})
-    public Work<Product> product(@PathVariable String id, @RequestParam(required = false) String uid) throws ServiceException {
+    public Product product(@PathVariable String id, @RequestParam(required = false) String uid) throws ServiceException {
         Product product = productRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "该商品已下架"));
         Store store = storeRepository.findById(product.getSid()).orElseThrow(() -> new ServiceException("FAIL", "该商户已停用"));
         product.setStore(store);
@@ -50,7 +50,7 @@ public class ProductController {
             }
             product.setCart(cart);
         }
-        return Work.success("加载成功", product);
+        return product;
     }
 
     /**
@@ -59,7 +59,7 @@ public class ProductController {
      * @return 商品列表
      */
     @GetMapping(value = {"products"})
-    public Work<Map<String, Object>> products(@RequestParam String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) throws ServiceException {
+    public Map<String, Object> products(@RequestParam String sid, @RequestParam(required = false) String uid, @PageableDefault Pageable pageable) throws ServiceException {
         List<Product> products = productRepository.findBySid(sid, pageable);
         Store store = storeRepository.findById(sid).orElseThrow(() -> new ServiceException("FAIL", "该商户已停用"));
         BigDecimal sum = new BigDecimal("0.00");
@@ -91,6 +91,6 @@ public class ProductController {
         data.put("sum", sum.toPlainString());
         data.put("store", store);
         data.put("products", products);
-        return Work.success("加载成功", data);
+        return data;
     }
 }

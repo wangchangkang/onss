@@ -1,6 +1,5 @@
 package work.onss.controller;
 
-
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.WxMaUserService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
@@ -10,6 +9,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +47,7 @@ public class LoginController {
      */
     @Transactional
     @PostMapping(value = {"wxLogin"})
-    public Work<Map<String, Object>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
+    public ResponseEntity<Work<Map<String, Object>>> wxLogin(@RequestBody WXLogin wxLogin) throws WxErrorException {
         WxMaService wxMaService = this.wxMaService.switchoverTo(wxLogin.getSubAppId());
         WxMaUserService userService = wxMaService.getUserService();
 
@@ -76,7 +77,7 @@ public class LoginController {
                     .sign(algorithm);
             result.put("authorization", authorization);
             result.put("info", info);
-            return Work.message("1977.user.notfound", "请绑定手机号", result);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Work.message("NO_PHONE", "请绑定手机号", result));
         } else if (user.getPhone() == null) {
             user.setSessionKey(wxMaJscode2SessionResult.getSessionKey());
             user.setUpdateTime(now);
@@ -88,7 +89,7 @@ public class LoginController {
                     .sign(algorithm);
             result.put("info", info);
             result.put("authorization", authorization);
-            return Work.message("1977.user.notfound", "请绑定手机号", result);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Work.message("NO_PHONE", "请绑定手机号", result));
         } else {
             user.setUpdateTime(now);
             userRepository.save(user);
@@ -99,7 +100,7 @@ public class LoginController {
                     .sign(algorithm);
             result.put("authorization", authorization);
             result.put("info", info);
-            return Work.success("登录成功", result);
+            return ResponseEntity.ok(Work.success(result));
         }
     }
 }

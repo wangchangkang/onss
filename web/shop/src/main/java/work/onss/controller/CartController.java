@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import work.onss.domain.*;
 import work.onss.exception.ServiceException;
 import work.onss.utils.Utils;
-import work.onss.vo.Work;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -37,9 +36,8 @@ public class CartController {
      * @return 删除购物车商品
      */
     @DeleteMapping(value = {"carts/{id}"})
-    public Work<Boolean> delete(@PathVariable String id, @RequestParam(name = "uid") String uid) {
+    public void delete(@PathVariable String id, @RequestParam(name = "uid") String uid) {
         cartRepository.deleteByIdAndUid(id, uid);
-        return Work.success("删除成功", true);
     }
 
     /**
@@ -49,15 +47,15 @@ public class CartController {
      */
     @Transactional
     @PostMapping(value = {"carts"})
-    public Work<Cart> updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) throws ServiceException {
+    public Cart updateNum(@RequestParam(name = "uid") String uid, @Validated @RequestBody Cart cart) throws ServiceException {
         Product product = productRepository.findById(cart.getPid()).orElseThrow(() -> new ServiceException("FAIL", "该商品已下架"));
         if (cart.getNum().compareTo(product.getMax()) > 0 || cart.getNum().compareTo(product.getMin()) < 0) {
             String message = MessageFormat.format("每次仅限购买{0}至{1}", product.getMin(), product.getMax());
-            return Work.fail(message);
+            throw new ServiceException("FAIL", message);
         } else if (cart.getNum().compareTo(BigDecimal.valueOf(product.getStock())) > 0) {
-            return Work.fail("库存不足");
+            throw new ServiceException("FAIL", "库存不足");
         } else if (!product.getStatus()) {
-            return Work.fail("该商品已下架");
+            throw new ServiceException("FAIL", "该商品已下架");
         }
         Query cartQuery = Query.query(Criteria.where("pid").is(cart.getPid()).and("uid").is(uid));
         if (null != cart.getId()) {
@@ -70,12 +68,12 @@ public class CartController {
             cart.setUid(uid);
             cart.setTotal(total);
             cartRepository.insert(cart);
-            return Work.success("加入购物车成功", cart);
+            return cart;
         } else {
             oldCart.setNum(cart.getNum());
             oldCart.setTotal(total);
             cartRepository.save(oldCart);
-            return Work.success("更新购物车成功", oldCart);
+            return oldCart;
         }
     }
 
@@ -84,19 +82,18 @@ public class CartController {
      * @return 购物车商户
      */
     @GetMapping(value = {"carts/getStores"})
-    public Work<List<Store>> getStores(@RequestParam(name = "uid") String uid) {
+    public List<Store> getStores(@RequestParam(name = "uid") String uid) {
         Query query = Query.query(Criteria.where(Utils.getName(Cart::getUid)).is(uid));
         List<String> sids = mongoTemplate.findDistinct(query, Utils.getName(Cart::getSid), Cart.class, String.class);
         if (sids.size() == 0) {
-            return Work.success("加载成功", null);
+            return null;
         } else {
             Query storeQuery = Query.query(Criteria.where(Utils.getName(Store::getId)).in(sids));
             List<String> names = Utils.getNames(Store::getCustomers, Store::getMerchant);
             for (String name : names) {
                 storeQuery.fields().exclude(name);
             }
-            List<Store> stores = mongoTemplate.find(storeQuery, Store.class);
-            return Work.success("加载成功", stores);
+            return mongoTemplate.find(storeQuery, Store.class);
         }
     }
 
@@ -105,7 +102,7 @@ public class CartController {
      * @return 购物车
      */
     @GetMapping(value = {"carts"})
-    public Work<Map<String, Object>> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) throws ServiceException {
+    public Map<String, Object> getCarts(@RequestParam(name = "sid") String sid, @RequestParam(name = "uid") String uid) throws ServiceException {
         List<Cart> carts = cartRepository.findByUidAndSid(uid, sid);
         Map<String, Cart> cartsPid = carts.stream().collect(Collectors.toMap(Cart::getPid, cart -> cart));
         List<Product> products = productRepository.findByIdInAndSid(cartsPid.keySet(), sid);
@@ -126,22 +123,21 @@ public class CartController {
         data.put("sum", sum.toPlainString());
         data.put("products", products);
         data.put("store", store);
-        return Work.success("加载成功", data);
+        return data;
     }
 
     @Transactional
     @PostMapping(value = {"carts/{id}/setChecked"})
-    public Work<Long> setChecked(@PathVariable String id, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @RequestParam(name = "checked") Boolean checked) throws ServiceException {
+    public Long setChecked(@PathVariable String id, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid, @RequestParam(name = "checked") Boolean checked) throws ServiceException {
         Cart cart = cartRepository.findByUidAndId(uid, id).orElseThrow(() -> new ServiceException("FAIL", "请重新加入购物车"));
         cart.setChecked(!checked);
         cartRepository.save(cart);
-        long count = cartRepository.countByUidAndSidAndChecked(uid, sid, false);
-        return Work.success("更新成功", count);
+        return cartRepository.countByUidAndSidAndChecked(uid, sid, false);
     }
 
     @Transactional
     @PostMapping(value = {"carts/setCheckAll"})
-    public Work<Object> setCheckAll(@RequestParam Boolean checkAll, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
+    public String setCheckAll(@RequestParam Boolean checkAll, @RequestParam(name = "uid") String uid, @RequestParam(name = "sid") String sid) {
         List<Cart> carts = cartRepository.findByUidAndSid(uid, sid);
         for (Cart cart : carts) {
             cart.setChecked(checkAll);
@@ -153,6 +149,6 @@ public class CartController {
                 sum = sum.add(cart.getTotal());
             }
         }
-        return Work.success("更新成功", sum.toPlainString());
+        return sum.toPlainString();
     }
 }

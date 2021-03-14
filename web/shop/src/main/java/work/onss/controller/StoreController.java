@@ -40,14 +40,13 @@ public class StoreController {
      * @return 店铺信息
      */
     @GetMapping(value = {"stores/{id}"})
-    public Work<Store> store(@PathVariable String id) {
+    public Store store(@PathVariable String id) {
         Query storeQuery = Query.query(Criteria.where(Utils.getName(Store::getId)).is(id));
         List<String> names = Utils.getNames(Store::getCustomers, Store::getMerchant);
         for (String name : names) {
             storeQuery.fields().exclude(name);
         }
-        Store store = mongoTemplate.findOne(storeQuery, Store.class);
-        return Work.success("加载成功", store);
+        return mongoTemplate.findOne(storeQuery, Store.class);
     }
 
     /**
@@ -59,7 +58,7 @@ public class StoreController {
      * @return 店铺分页
      */
     @GetMapping(path = "stores/{x}-{y}/near")
-    public Work<List<GeoResult<Store>>> store(@PathVariable(name = "x") Double x,
+    public List<GeoResult<Store>> store(@PathVariable(name = "x") Double x,
                                               @PathVariable(name = "y") Double y,
                                               @RequestParam(name = "r", defaultValue = "100000") Double r,
                                               @RequestParam(required = false) Integer type,
@@ -93,6 +92,6 @@ public class StoreController {
                 .query(query)
                 .with(pageable);
         GeoResults<Store> storeGeoResults = mongoTemplate.geoNear(nearQuery, Store.class);
-        return Work.success("加载成功", storeGeoResults.getContent());
+        return storeGeoResults.getContent();
     }
 }

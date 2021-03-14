@@ -111,7 +111,7 @@ Page({
           } else {
             sum = sum + total;
             cart.checked = true;
-            if (data.content == 0) {
+            if (data.content === 0) {
               checkAll = true
             }
           }
@@ -138,7 +138,7 @@ Page({
       }).then((data) => {
         products.forEach((product, index) => {
           let cart = product.cart;
-          if (cart && cart.checked != checkAll) {
+          if (cart && cart.checked !== checkAll) {
             this.setData({
               [`products[${index}].cart.checked`]: checkAll
             })

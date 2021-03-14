@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -70,9 +71,8 @@ public class ScoreController {
      * @return 订单信息
      */
     @GetMapping(value = {"scores/{id}"})
-    public Work<Score> score(@PathVariable String id, @RequestParam(name = "uid") String uid) throws ServiceException {
-        Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
-        return Work.success("加载成功", score);
+    public Score score(@PathVariable String id, @RequestParam(name = "uid") String uid) throws ServiceException {
+        return scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
     }
 
     /**
@@ -81,10 +81,9 @@ public class ScoreController {
      * @return 订单分页
      */
     @GetMapping(value = {"scores"})
-    public Work<List<Score>> all(@RequestParam(name = "uid") String uid,
-                                 @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        List<Score> scores = scoreRepository.findByUid(uid, pageable);
-        return Work.success("加载成功", scores);
+    public List<Score> all(@RequestParam(name = "uid") String uid,
+                           @PageableDefault(sort = {"insertTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        return scoreRepository.findByUid(uid, pageable);
     }
 
     /**
@@ -94,25 +93,22 @@ public class ScoreController {
      */
     @PostMapping(value = {"scores"})
     @Transactional
-    public Work<Map<String, Object>> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException, ServiceException {
-        if (score.getAddress() == null) {
-            return Work.fail("请选择收货地址");
-        }
+    public Map<String, Object> score(@RequestParam(name = "uid") String uid, @Validated @RequestBody Score score) throws WxPayException, ServiceException {
         Store store = storeRepository.findById(score.getSid()).orElseThrow(() -> new ServiceException("FAIL", "该店铺不存,请联系客服!"));
         if (!store.getStatus()) {
-            return Work.fail("正在准备中,请稍后重试!");
+            throw new ServiceException("FAIL", "正在准备中,请稍后重试!");
         }
         LocalTime now = LocalTime.now();
         if (now.isAfter(store.getCloseTime()) & now.isBefore(store.getOpenTime())) {
             String message = MessageFormat.format("营业时间:{0}-{1}", store.getOpenTime(), store.getCloseTime());
-            return Work.fail(message);
+            throw new ServiceException("FAIL", message);
         }
 
         Map<String, Product> cartMap = score.getProducts().stream().collect(Collectors.toMap(Product::getId, Function.identity()));
 
         List<Product> products = productRepository.findByIdInAndSid(cartMap.keySet(), score.getSid());
         score.updateProduct(products);
-        User user = userRepository.findById(uid).orElseThrow(() -> new ServiceException("FAIL", "该用户不存在!"));
+        User user = userRepository.findById(uid).orElseThrow(() -> new ServiceException("FAIL", "该用户不存在,请联系客服!"));
 
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
@@ -160,7 +156,7 @@ public class ScoreController {
         data.put("order", wxPayMpOrderResult);
         data.put("score", score);
         cartRepository.deleteByUidAndSidAndPidIn(uid, score.getSid(), cartMap.keySet());
-        return Work.success("创建订单成功", data);
+        return data;
     }
 
     /**
@@ -168,7 +164,7 @@ public class ScoreController {
      * @return 小程序支付参数
      */
     @PostMapping(value = {"scores/continuePay"})
-    public Work<WxPayMpOrderResult> pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws WxPayException {
+    public WxPayMpOrderResult pay(@RequestParam(name = "uid") String uid, @RequestBody Score score) throws WxPayException {
         wechatConfiguration.initServices();
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
@@ -180,7 +176,7 @@ public class ScoreController {
                 "prepay_id=" + score.getPrepayId()
         );
         log.info(wxPayMpOrderResult);
-        return Work.success("生成订单成功", wxPayMpOrderResult);
+        return wxPayMpOrderResult;
     }
 
 
@@ -204,7 +200,7 @@ public class ScoreController {
             Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("FAIL", "订单丢失!"));
             String s = StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(score));
             log.warn(s);
-            if (score.getStatus().equals(ScoreEnum.PAY)){
+            if (score.getStatus().equals(ScoreEnum.PAY)) {
                 Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
                 Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
                 mongoTemplate.updateFirst(query1, update, Score.class);
@@ -218,13 +214,12 @@ public class ScoreController {
                     mongoTemplate.updateFirst(query2, inc, Product.class);
                 }
             }
-
-            return Work.message("SUCCESS", "支付成功", null);
+            return Work.success("支付成功");
         } catch (Exception e) {
             log.warn(JsonMapperUtils.toJson(wxNotify));
             log.warn(decryptToString);
             log.warn(e.getLocalizedMessage());
         }
-        return Work.message("FAIL", "支付失败", null);
+        return Work.fail("支付失败");
     }
 }

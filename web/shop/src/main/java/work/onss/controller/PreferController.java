@@ -32,11 +32,11 @@ public class PreferController {
      * @return 新增收藏
      */
     @PostMapping(value = {"prefers"})
-    public Work<Prefer> saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Prefer prefer) {
+    public Prefer saveOrInsert(@RequestParam(name = "uid") String uid, @RequestBody @Validated Prefer prefer) {
         prefer.setUid(uid);
         prefer.setInsertTime(LocalDateTime.now());
         preferRepository.insert(prefer);
-        return Work.success("收藏成功", prefer);
+        return prefer;
     }
 
     /**
@@ -45,9 +45,8 @@ public class PreferController {
      * @return 删除收藏
      */
     @DeleteMapping(value = {"prefers/{id}"})
-    public Work<Boolean> delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {
+    public void delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {
         preferRepository.deleteByIdAndUid(id, uid);
-        return Work.success("取消收藏成功", true);
     }
 
     /**
@@ -55,7 +54,7 @@ public class PreferController {
      * @return 所有收藏
      */
     @GetMapping(value = {"prefers"})
-    public Work<List<Product>> findAll(@RequestParam(name = "uid") String uid, @PageableDefault Pageable pageable) {
+    public List<Product> findAll(@RequestParam(name = "uid") String uid) {
         List<Prefer> prefers = preferRepository.findByUid(uid);
         List<String> pids = prefers.stream().map(Prefer::getPid).collect(Collectors.toList());
         List<Product> products = productRepository.findByIdIn(pids);
@@ -72,6 +71,6 @@ public class PreferController {
                 }
             }
         }
-        return Work.success("加载成功", products);
+        return products;
     }
 }

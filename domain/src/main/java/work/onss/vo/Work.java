@@ -21,23 +21,23 @@ public class Work<T> implements Serializable {
     }
 
     public static <T> Work<T> success() {
-        return new Work<>("success", "操作成功", null);
+        return new Work<>("SUCCESS", "操作成功", null);
     }
 
     public static <T> Work<T> success(T t) {
-        return new Work<>("success", "操作成功", t);
+        return new Work<>("SUCCESS", "操作成功", t);
     }
 
     public static <T> Work<T> success(String message, T t) {
-        return new Work<>("success", message, t);
+        return new Work<>("SUCCESS", message, t);
     }
 
     public static <T> Work<T> fail() {
-        return new Work<>("fail", "操作失败", null);
+        return new Work<>("FAIL", "操作失败", null);
     }
 
     public static <T> Work<T> fail(String message) {
-        return new Work<>("fail", message, null);
+        return new Work<>("FAIL", message, null);
     }
 
     public static <T> Work<T> fail(String code,String message) {
@@ -45,11 +45,11 @@ public class Work<T> implements Serializable {
     }
 
     public static <T> Work<T> fail(T t) {
-        return new Work<>("fail", "操作失败", t);
+        return new Work<>("FAIL", "操作失败", t);
     }
 
     public static <T> Work<T> fail(String message, T t) {
-        return new Work<>("fail", message, t);
+        return new Work<>("FAIL", message, t);
     }
 
     public static <T> Work<T> message(String code, String message, T t) {

@@ -41,7 +41,7 @@ public class UserController {
      */
     @Transactional
     @PostMapping(value = {"users/{id}/setPhone"})
-    public Work<Map<String, Object>> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
+    public Map<String, Object> register(@PathVariable String id, @RequestBody WXRegister wxRegister) throws ServiceException {
         User user = userRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "用户不存在,请联系客服"));
         //微信用户手机号
         String encryptedData = Utils.getEncryptedData(wxRegister.getEncryptedData(), user.getSessionKey(), wxRegister.getIv());
@@ -65,7 +65,7 @@ public class UserController {
         Map<String, Object> result = new HashMap<>();
         result.put("authorization", authorization);
         result.put("info", info);
-        return Work.success("登录成功", result);
+        return result;
     }
 }
 
