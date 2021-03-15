@@ -74,7 +74,6 @@ public class ProductController {
      * @param id     商品ID
      * @param sid    商户ID
      * @param status 更新商品状态
-     * @return 商品状态
      */
     @PutMapping(value = {"products/{id}/updateStatus"})
     public void updateStatus(@PathVariable String id, @RequestParam(name = "sid") String sid, @RequestParam(name = "status") Boolean status) throws ServiceException {
@@ -87,7 +86,6 @@ public class ProductController {
      * @param sid    商户ID
      * @param ids    商品ID集合
      * @param status 更新商品状态
-     * @return 商品状态
      */
     @Transactional
     @PutMapping(value = {"products"})
@@ -102,7 +100,6 @@ public class ProductController {
     /**
      * @param sid 商户ID
      * @param id  商品ID
-     * @return 删除商品是否成功
      */
     @DeleteMapping(value = {"products/{id}"})
     public void delete(@RequestParam(name = "sid") String sid, @PathVariable String id) {
@@ -112,7 +109,6 @@ public class ProductController {
     /**
      * @param sid 商户ID
      * @param ids 商品ID集合
-     * @return 批量删除商品是否成功
      */
     @DeleteMapping(value = {"products"})
     public void delete(@RequestParam(name = "sid") String sid, @RequestParam Collection<String> ids) {

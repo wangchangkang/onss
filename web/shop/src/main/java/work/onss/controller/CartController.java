@@ -33,7 +33,6 @@ public class CartController {
     /**
      * @param uid 用户ID
      * @param id  主键
-     * @return 删除购物车商品
      */
     @DeleteMapping(value = {"carts/{id}"})
     public void delete(@PathVariable String id, @RequestParam(name = "uid") String uid) {

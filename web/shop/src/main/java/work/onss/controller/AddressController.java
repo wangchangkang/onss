@@ -45,7 +45,6 @@ public class AddressController {
     /**
      * @param uid 用户ID
      * @param id  主键
-     * @return 删除收货地址
      */
     @DeleteMapping(value = {"addresses/{id}"})
     public void delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {

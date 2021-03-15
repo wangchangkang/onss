@@ -106,7 +106,6 @@ public class StoreController {
      * @param id     商户ID
      * @param cid    营业员ID
      * @param status 更新商户状态
-     * @return 商户状态
      */
     @PutMapping(value = {"stores/{id}/updateStatus"})
     public void updateStatus(@PathVariable(name = "id") String id, @RequestParam(name = "cid") String cid, @RequestHeader(name = "status") Boolean status) throws WxPayException, ServiceException {

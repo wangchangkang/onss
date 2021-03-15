@@ -42,7 +42,6 @@ public class PreferController {
     /**
      * @param uid 用户ID
      * @param id  主键
-     * @return 删除收藏
      */
     @DeleteMapping(value = {"prefers/{id}"})
     public void delete(@RequestParam(name = "uid") String uid, @PathVariable String id) {
