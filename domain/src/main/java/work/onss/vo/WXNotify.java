@@ -28,4 +28,30 @@ public class WXNotify implements Serializable{
         private String originalType;
         private String associatedData;
     }
+
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+    @NoArgsConstructor
+    @Data
+    public static class WXRefund implements Serializable{
+
+        private String spMchid;
+        private String subMchid;
+        private String transactionId;
+        private String outTradeNo;
+        private String refundId;
+        private String outRefundNo;
+        private String refundStatus;
+        private String successTime;
+        private String userReceivedAccount;
+        private Amount amount;
+
+        @NoArgsConstructor
+        @Data
+        public static class Amount implements Serializable {
+            private int total;
+            private int refund;
+            private int payerTotal;
+            private int payerRefund;
+        }
+    }
 }

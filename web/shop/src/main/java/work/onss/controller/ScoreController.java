@@ -27,10 +27,7 @@ import work.onss.enums.ScoreEnum;
 import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
-import work.onss.vo.WXNotify;
-import work.onss.vo.WXScore;
-import work.onss.vo.WXTransaction;
-import work.onss.vo.Work;
+import work.onss.vo.*;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -144,6 +141,12 @@ public class ScoreController {
         score.setInsertTime(localDateTime);
         score.setUpdateTime(localDateTime);
         score.setPayTime(localDateTime);
+
+        score.setSpAppid(wxPayConfig.getAppId());
+        score.setSubAppId(wxPayConfig.getSubAppId());
+        score.setSpMchid(wxPayConfig.getMchId());
+        score.setSubMchid(store.getSubMchId());
+
         scoreRepository.save(score);
         WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
                 score.getSubAppId(),
@@ -202,15 +205,14 @@ public class ScoreController {
             log.warn(s);
             if (score.getStatus().equals(ScoreEnum.PAY)) {
                 Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
-                Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
+                Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId())
+                        .set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
                 mongoTemplate.updateFirst(query1, update, Score.class);
-
                 List<Product> products = score.getProducts();
-                String id = Utils.getName(Product::getId);
                 String stock = Utils.getName(Product::getStock);
                 for (Product product : products) {
                     Update inc = new Update().inc(stock, product.getCart().getNum().negate().intValue());
-                    Query query2 = Query.query(Criteria.where(id).is(product.getId()));
+                    Query query2 = Query.query(Criteria.where(Utils.getName(Product::getId)).is(product.getId()));
                     mongoTemplate.updateFirst(query2, inc, Product.class);
                 }
             }
@@ -221,5 +223,55 @@ public class ScoreController {
             log.warn(e.getLocalizedMessage());
         }
         return Work.fail("支付失败");
+    }
+
+
+    @PutMapping(value = {"scores/{id}/refund"})
+    public void refund(@PathVariable String id, @RequestParam(name = "uid") String uid) throws WxPayException, ServiceException {
+        Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
+        WXRefund.Amount amount = WXRefund.Amount.builder().refund(1).total(1).currency("CNY").build();
+        String notifyUrl = String.format("https://1977.work/shop/scores/%s/refund/notify", score.getId());
+        WXRefund wxRefund = WXRefund.builder().amount(amount)
+                .outRefundNo(score.getOutTradeNo())
+                .subMchid(score.getSubMchid())
+                .transactionId(score.getTransactionId())
+                .notifyUrl(notifyUrl)
+                .build();
+        wechatConfiguration.initServices();
+        WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
+        WxPayConfig wxPayConfig = wxPayService.getConfig();
+        wxPayConfig.initApiV3HttpClient();
+        String wxRefundStr = JsonMapperUtils.toJson(wxRefund);
+        log.info(wxRefundStr);
+        String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/refund/domestic/refunds", wxRefundStr);
+    }
+
+    @PostMapping(value = {"scores/{id}/refund/notify"})
+    public Work<String> refundNotify(@PathVariable String id, @RequestBody WXNotify wxNotify) {
+        String decryptToString = null;
+        try {
+            WXNotify.Resource resource = wxNotify.getResource();
+            String associatedData = resource.getAssociatedData();
+            String nonce = resource.getNonce();
+            String ciphertext = resource.getCiphertext();
+            String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
+            decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
+            WXNotify.WXRefund wxRefund = JsonMapperUtils.fromJson(decryptToString, WXNotify.WXRefund.class);
+            Score score = scoreRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "订单丢失!"));
+            String s = StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(score));
+            log.warn(s);
+            if (score.getStatus().equals(ScoreEnum.PAY)) {
+                Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
+                Update update = Update.update(Utils.getName(Score::getTransactionId), wxRefund.getTransactionId()).set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
+                mongoTemplate.updateFirst(query1, update, Score.class);
+
+            }
+            return Work.success("成功");
+        } catch (Exception e) {
+            log.warn(JsonMapperUtils.toJson(wxNotify));
+            log.warn(decryptToString);
+            log.warn(e.getLocalizedMessage());
+        }
+        return Work.fail("失败");
     }
 }
