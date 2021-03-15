@@ -146,9 +146,52 @@ function wxRequest({ url, data = {}, dataType = 'json', header, method = 'GET', 
       responseType,
       timeout,
       header: { 'Content-Type': 'application/json;charset=UTF-8', ...header },
-      success: ({ data }) => {
+      success: ({ data, statusCode }) => {
         console.log(data);
-        resolve(data);
+        if (statusCode === 200) {
+          resolve(data);
+        } else {
+          const { code, message, content } = data;
+          switch (code) {
+            case 'NO_PHONE':
+              if (content) {
+                wx.setStorageSync('authorization', content.authorization);
+                wx.setStorageSync('info', content.info);
+              }
+              wx.reLaunch({
+                url: '/pages/login'
+              })
+              break;
+            case 'MERCHANT_NOT_REGISTER':
+              wx.showModal({
+                title: '警告',
+                content: message,
+                confirmColor: '#e64340',
+                showCancel: false,
+                success: () => {
+                  wx.reLaunch({
+                    url: '/pages/store/merchant'
+                  });
+                }
+              })
+              break;
+            case 'SESSION_EXPIRE':
+              wx.removeStorageSync('authorization');
+              wx.removeStorageSync('info');
+              wx.reLaunch({
+                url: '/pages/index/index'
+              })
+              break;
+            default:
+              wx.showModal({
+                title: '警告',
+                content: message,
+                confirmColor: '#e64340',
+                showCancel: false,
+              })
+              break;
+          }
+        }
       },
       fail: (data) => {
         console.log(data)
