@@ -3,10 +3,10 @@ App({
   globalData: {
      windowWidth
   },
-
   onLaunch: function (e) {
-    // this.wxLogin();
   },
 
-
+  onError:function(e){
+    console.log(e)
+  }
 })

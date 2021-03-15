@@ -20,8 +20,6 @@
     "navigationBarTitleText": "一九七七",
     "navigationBarTextStyle": "black"
   },
-  "style": "v2",
-  "sitemapLocation": "sitemap.json",
   "tabBar": {
     "selectedColor": "#1296db",
     "borderStyle": "white",
@@ -57,5 +55,7 @@
       "version": "1.3.20",
       "provider": "wxa75efa648b60994b"
     }
-  }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
 }

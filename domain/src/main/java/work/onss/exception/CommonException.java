@@ -21,7 +21,7 @@ import java.util.StringJoiner;
 @ResponseBody
 public class CommonException {
 
-    @ResponseStatus(code = HttpStatus.NOT_EXTENDED)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Work<Object> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         StringJoiner message = new StringJoiner(",", "[", "]");
