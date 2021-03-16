@@ -82,10 +82,10 @@ public class Score implements Serializable {
     /**
      * 子商户公众号ID
      */
-    private String spAppid;
+    private String spAppId;
     private String subAppId;
-    private String spMchid;
-    private String subMchid;
+    private String spMchId;
+    private String subMchId;
     /**
      * 订单编号
      */

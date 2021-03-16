@@ -45,6 +45,7 @@ public class WXNotify implements Serializable{
         private String userReceivedAccount;
         private Amount amount;
 
+        @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
         @NoArgsConstructor
         @Data
         public static class Amount implements Serializable {

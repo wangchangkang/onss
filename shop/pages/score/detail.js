@@ -60,6 +60,18 @@ Page({
     })
   },
 
+  refund:function(e){
+    wxLogin().then(({ authorization, info }) => {
+      wxRequest({
+        url: `${domain}/scores/${this.data.score.id}/refund?uid=${info.uid}`,
+        method: 'PUT',
+        header: { authorization },
+      }).then((content) => {
+      
+      });
+    })
+  },
+
   clipBoard: function (e) {
     wx.setClipboardData({
       data: this.data.score.outTradeNo,

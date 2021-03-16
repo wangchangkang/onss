@@ -12,12 +12,10 @@ public class Work<T> implements Serializable {
 
     private String code;
     private String message;
-    private T content;
 
     public Work(String code, String message, T t) {
         this.code = code;
         this.message = message;
-        this.content = t;
     }
 
     public static <T> Work<T> success() {
