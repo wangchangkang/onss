@@ -32,8 +32,6 @@ public class StoreController {
 
     @Autowired
     protected MongoTemplate mongoTemplate;
-    @Autowired
-    private ProductRepository productRepository;
 
     /**
      * @param id 主键
