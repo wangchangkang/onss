@@ -16,9 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import work.onss.config.WechatConfiguration;
@@ -27,7 +25,10 @@ import work.onss.enums.ScoreEnum;
 import work.onss.exception.ServiceException;
 import work.onss.utils.JsonMapperUtils;
 import work.onss.utils.Utils;
-import work.onss.vo.*;
+import work.onss.vo.WXNotify;
+import work.onss.vo.WXRefund;
+import work.onss.vo.WXScore;
+import work.onss.vo.Work;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -130,9 +131,8 @@ public class ScoreController {
                 .outTradeNo(code)
                 .build();
         String wxScoreStr = JsonMapperUtils.toJson(wxScore);
-        log.info(wxScoreStr);
+        log.warn(wxScoreStr);
         String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/pay/partner/transactions/jsapi", wxScoreStr);
-        log.info(transactionStr);
         Map<String, String> prepayMap = JsonMapperUtils.fromJson(transactionStr, String.class, String.class);
         score.setPrepayId(prepayMap.get("prepay_id"));
         score.setOutTradeNo(code);
@@ -154,7 +154,6 @@ public class ScoreController {
                 SignUtils.genRandomStr(),
                 "prepay_id=" + score.getPrepayId()
         );
-        log.info(wxPayMpOrderResult);
         Map<String, Object> data = new HashMap<>();
         data.put("order", wxPayMpOrderResult);
         data.put("score", score);
@@ -172,14 +171,12 @@ public class ScoreController {
         WxPayService wxPayService = WechatConfiguration.wxPayServiceMap.get(score.getSubAppId());
         WxPayConfig wxPayConfig = wxPayService.getConfig();
         wxPayConfig.initApiV3HttpClient();
-        WxPayMpOrderResult wxPayMpOrderResult = score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
+        return score.getWxPayMpOrderResult(wxPayConfig.getPrivateKey(),
                 score.getSubAppId(),
                 String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8))),
                 SignUtils.genRandomStr(),
                 "prepay_id=" + score.getPrepayId()
         );
-        log.info(wxPayMpOrderResult);
-        return wxPayMpOrderResult;
     }
 
 
@@ -198,16 +195,11 @@ public class ScoreController {
             String ciphertext = resource.getCiphertext();
             String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
-            WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXTransaction.class);
-
+            WXNotify.WXTransaction wxTransaction = JsonMapperUtils.fromJson(decryptToString, WXNotify.WXTransaction.class);
             Score score = scoreRepository.findByOutTradeNo(wxTransaction.getOutTradeNo()).orElseThrow(() -> new ServiceException("FAIL", "订单丢失!"));
-            String s = StringUtils.trimAllWhitespace(JsonMapperUtils.toJson(score));
-            log.warn(s);
             if (score.getStatus().equals(ScoreEnum.PAY)) {
-                Query query1 = Query.query(Criteria.where(Utils.getName(Score::getId)).is(score.getId()));
-                Update update = Update.update(Utils.getName(Score::getTransactionId), wxTransaction.getTransactionId())
-                        .set(Utils.getName(Score::getStatus), ScoreEnum.PACKAGE);
-                mongoTemplate.updateFirst(query1, update, Score.class);
+                score.setStatus(ScoreEnum.PACKAGE);
+                scoreRepository.save(score);
                 List<Product> products = score.getProducts();
                 String stock = Utils.getName(Product::getStock);
                 for (Product product : products) {
@@ -218,9 +210,11 @@ public class ScoreController {
             }
             return Work.success("支付成功");
         } catch (Exception e) {
-            log.warn(JsonMapperUtils.toJson(wxNotify));
+            log.error(JsonMapperUtils.toJson(wxNotify));
+            log.error(decryptToString);
+            log.error(e.getLocalizedMessage());
+        }finally {
             log.warn(decryptToString);
-            log.warn(e.getLocalizedMessage());
         }
         return Work.fail("支付失败");
     }
@@ -229,6 +223,9 @@ public class ScoreController {
     @PutMapping(value = {"scores/{id}/refund"})
     public void refund(@PathVariable String id, @RequestParam(name = "uid") String uid) throws WxPayException, ServiceException {
         Score score = scoreRepository.findByIdAndUid(id, uid).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
+        if (score.getStatus().equals(ScoreEnum.FINISH)) {
+            throw new ServiceException("fail", "该订单已完成,请联系客服");
+        }
         WXRefund.Amount amount = WXRefund.Amount.builder().refund(1).total(1).currency("CNY").build();
         String notifyUrl = String.format("http://u18141i766.iask.in/shop/scores/%s/refund/notify", score.getId());
         WXRefund wxRefund = WXRefund.builder().amount(amount)
@@ -242,9 +239,11 @@ public class ScoreController {
         WxPayConfig wxPayConfig = wxPayService.getConfig();
         wxPayConfig.initApiV3HttpClient();
         String wxRefundStr = JsonMapperUtils.toJson(wxRefund);
-        log.info(wxRefundStr);
-        String transactionStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/refund/domestic/refunds", wxRefundStr);
-        log.info(transactionStr);
+        log.warn(wxRefundStr);
+        String resultStr = wxPayService.postV3("https://api.mch.weixin.qq.com/v3/refund/domestic/refunds", wxRefundStr);
+        WXRefund.Result result = JsonMapperUtils.fromJson(resultStr, WXRefund.Result.class);
+        score.setStatus(result.getStatus());
+        scoreRepository.save(score);
     }
 
     @PostMapping(value = {"scores/{id}/refund/notify"})
@@ -257,13 +256,17 @@ public class ScoreController {
             String ciphertext = resource.getCiphertext();
             String apiv3Key = wechatConfiguration.getWechatMpProperties().getApiv3Key();
             decryptToString = AesUtils.decryptToString(associatedData, nonce, ciphertext, apiv3Key);
-            log.info(decryptToString);
             WXNotify.WXRefund wxRefund = JsonMapperUtils.fromJson(decryptToString, WXNotify.WXRefund.class);
+            Score score = scoreRepository.findById(id).orElseThrow(() -> new ServiceException("FAIL", "该订单不存"));
+            score.setStatus(wxRefund.getRefundStatus());
+            scoreRepository.save(score);
             return Work.success("成功");
         } catch (Exception e) {
-            log.warn(JsonMapperUtils.toJson(wxNotify));
+            log.error(JsonMapperUtils.toJson(wxNotify));
+            log.error(decryptToString);
+            log.error(e.getLocalizedMessage());
+        }finally {
             log.warn(decryptToString);
-            log.warn(e.getLocalizedMessage());
         }
         return Work.fail("失败");
     }

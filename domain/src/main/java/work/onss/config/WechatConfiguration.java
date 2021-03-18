@@ -23,12 +23,7 @@ import java.util.Map;
 public class WechatConfiguration {
     @Autowired
     private WechatMpProperties wechatMpProperties;
-    @Autowired
-    private WechatOpenProperties wechatOpenProperties;
-    @Autowired
-    private WechatWorkProperties wechatWorkProperties;
 
-    public static Map<String, WxCpTpService> wxCpTpServiceMap = Maps.newHashMap();
     public static Map<String, WxPayService> wxPayServiceMap = Maps.newHashMap();
     public static WxMaService wxMaService = new WxMaServiceImpl();
 

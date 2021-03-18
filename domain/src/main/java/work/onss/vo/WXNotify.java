@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import work.onss.enums.ScoreEnum;
 
 import java.io.Serializable;
 
@@ -40,7 +41,7 @@ public class WXNotify implements Serializable{
         private String outTradeNo;
         private String refundId;
         private String outRefundNo;
-        private String refundStatus;
+        private ScoreEnum refundStatus;
         private String successTime;
         private String userReceivedAccount;
         private Amount amount;
@@ -53,6 +54,46 @@ public class WXNotify implements Serializable{
             private int refund;
             private int payerTotal;
             private int payerRefund;
+        }
+    }
+
+    @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+    @NoArgsConstructor
+    @Data
+    public static class WXTransaction implements Serializable {
+
+        private String spMchid;
+        private String subMchid;
+        private String spAppid;
+        private String subAppid;
+        private String outTradeNo;
+        private String transactionId;
+        private String tradeType;
+        private String tradeState;
+        private String tradeStateDesc;
+        private String bankType;
+        private String attach;
+        private String successTime;
+        private WXTransaction.Payer payer;
+        private WXTransaction.Amount amount;
+
+
+        @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+        @NoArgsConstructor
+        @Data
+        public static class Payer implements Serializable {
+            private String spOpenid;
+            private String subOpenid;
+        }
+
+        @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+        @NoArgsConstructor
+        @Data
+        public static class Amount implements Serializable {
+            private Integer total;
+            private Integer payerTotal;
+            private String currency;
+            private String payerCurrency;
         }
     }
 }
