@@ -3,7 +3,6 @@
 ```shell script
 vim /etc/yum.repos.d/nginx.repo 
 
-
 [nginx-stable]
 name=nginx stable repo
 baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
