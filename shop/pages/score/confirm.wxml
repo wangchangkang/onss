@@ -1,44 +1,66 @@
-	<view class="weui-cells__title">收货地址</view>
-	<navigator class="weui-panel weui-cells weui-cells_after-title" url='/pages/address/list'>
+<radio-group class="radio-group" bindchange="changeAddress">
+	<view class="weui-cells__title">门店自取</view>
+	<view class="weui-panel weui-cells weui-cells_after-title" url='/pages/address/list'>
 		<view class="weui-cell weui-cell_access">
+			<radio value="0" />
+			<view class="weui-cell__bd weui-cell_primary">
+				<view class='weui-media-box__desc'>{{store.address.name}}</view>
+				<view class='weui-media-box__title'>{{store.address.username}} {{store.address.phone}}</view>
+				<view class='weui-media-box__desc'>{{store.address.detail}}</view>
+			</view>
+		</view>
+	</view>
+
+	<view class="weui-cells__title">收货地址</view>
+	<view class="weui-panel weui-cells weui-cells_after-title">
+		<view class="weui-cell weui-cell_access">
+			<view class="weui-cell__hd">
+				<radio value="1" />
+			</view>
 			<view class="weui-cell__bd weui-cell_primary">
 				<view class='weui-media-box__desc'>{{address.name}}</view>
 				<view class='weui-media-box__title'>{{address.username}} {{address.phone}}</view>
 				<view class='weui-media-box__desc'>{{address.detail}}</view>
 			</view>
-			<view class="weui-cell__ft weui-cell__ft_in-access"></view>
-		</view>
-	</navigator>
-
-
-	<view class="weui-flex weui-cells__title">合计(<text class="weui-cell_warn">{{store.name}}</text>)</view>
-	<view class="weui-cells weui-cells_after-title">
-		<view class="weui-cell">
-			<view class="weui-cell__hd">预售总额</view>
-			<view class="weui-cell__bd"></view>
-			<view class="weui-cell__ft"><text class="weui-cell_warn">{{sum}}</text>元</view>
+			<navigator class="weui-cell__ft weui-cell__ft_in-access" url='/pages/address/list'></navigator>
 		</view>
 	</view>
 
-	<view class="weui-cells__title ">购物清单</view>
-	<view class="weui-cells weui-cells_after-title">
-		<view wx:for="{{products}}" wx:for-item='product' wx:key="index" wx:if="{{product.cart.checked}}" class="weui-cell">
-			<view class="weui-cell__hd">
-				<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
-					<view class="weui-media-box__thumb">
-						<view class="weui-badge">{{product.cart.num}}</view>
-						<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
-					</view>
+
+
+</radio-group>
+
+
+
+<view class="weui-flex weui-cells__title">合计(<text class="weui-cell_warn">{{store.name}}</text>)</view>
+<view class="weui-cells weui-cells_after-title">
+	<view class="weui-cell">
+		<view class="weui-cell__hd">预售总额</view>
+		<view class="weui-cell__bd"></view>
+		<view class="weui-cell__ft"><text class="weui-cell_warn">{{sum}}</text>元</view>
+	</view>
+</view>
+
+<view class="weui-cells__title ">购物清单</view>
+<view class="weui-cells weui-cells_after-title">
+	<view wx:for="{{products}}" wx:for-item='product' wx:key="index" wx:if="{{product.cart.checked}}" class="weui-cell">
+		<view class="weui-cell__hd">
+			<view class="weui-media-box__hd weui-media-box__hd_in-appmsg">
+				<view class="weui-media-box__thumb">
+					<view class="weui-badge">{{product.cart.num}}</view>
+					<image mode="aspectFit" class="weui-media-box__thumb" src="{{prefix}}{{product.pictures[0]}}" />
 				</view>
 			</view>
-			<view class="weui-cell__bd">
-				<view class="weui-media-box__title">{{product.name}} </view>
-				<view class="weui-media-box__desc">单价:{{product.average}}{{product.averageUnit}} × {{product.cart.num}} <label class='status'>小计{{product.cart.total}}元</label></view>
-			</view>
+		</view>
+		<view class="weui-cell__bd">
+			<view class="weui-media-box__title">{{product.name}} </view>
+			<view class="weui-media-box__desc">单价:{{product.average}}{{product.averageUnit}} × {{product.cart.num}} <label
+					class='status'>小计{{product.cart.total}}元</label></view>
 		</view>
 	</view>
-	<view style="min-height:180rpx"></view>
+</view>
+<view style="min-height:180rpx"></view>
 
-	<view class="weui-flex weui-footer_fixed-bottom">
-		<button class="weui-flex__item" type="primary" bindtap="saveScore">微信支付</button>
-	</view>
+<view class="weui-flex weui-footer_fixed-bottom">
+	<button class="weui-flex__item" type="primary" bindtap="saveScore">微信支付</button>
+</view>

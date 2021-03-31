@@ -1,6 +1,7 @@
 import { wxLogin, appid, wxRequest, domain } from '../../utils/util.js';
 Page({
   data: {
+    
   },
 
   onLoad: function (options) {
@@ -11,6 +12,14 @@ Page({
     this.setData({
       ...data
     })
+  },
+
+  changeAddress:function(e){
+   if(e.detail.value){
+     console.log(true)
+   }else{
+     console.log(false)
+   }
   },
 
   saveScore: function (e) {

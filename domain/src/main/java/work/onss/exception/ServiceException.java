@@ -20,4 +20,10 @@ public class ServiceException extends Exception {
         this.code = code;
         this.message = message;
     }
+
+    public ServiceException(String code, String message,Object data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
 }
